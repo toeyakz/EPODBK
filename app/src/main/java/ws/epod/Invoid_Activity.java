@@ -75,6 +75,7 @@ public class Invoid_Activity extends AppCompatActivity {
     private int statusArray = 0;
     private int statusArray2 = 0;
     private int commentArray = 0;
+    private int commentArray33333 = 0;
 
     TextView sign, tvNoData, tvUseComment;
 
