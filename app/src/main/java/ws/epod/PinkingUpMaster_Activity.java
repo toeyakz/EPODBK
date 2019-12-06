@@ -1,5 +1,6 @@
 package ws.epod;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
@@ -99,7 +100,7 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
             imgNewPick01, imgDeletePick01, imgNewPick02, imgDeletePick02, imgNewPick03, imgDeletePick03, imageView8, imgCameraScan, imgDetailConsignNo;
     EditText edtComment_PICK, edtFineWaybillPick;
     Button btnSaveComent_PICK;
-    CheckBox checkBox;
+
 
     AlertDialog alertDialog;
     AlertDialog alertDialog2;
@@ -127,6 +128,8 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
 
     RecyclerView rvDialogCons;
     DialogConsAdapter dialogConsAdapter;
+
+    private int ch_list = 0;
 
     private IntentIntegrator qrScan;
 
@@ -188,6 +191,14 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
 
         getSQLite();
 
+//        expandableListView.setOnGroupClickListener(new ExpandableListView.OnGroupClickListener() {
+//            @Override
+//            public boolean onGroupClick(ExpandableListView parent, View v,
+//                                        int groupPosition, long id) {
+//                return true; // This way the expander cannot be collapsed
+//            }
+//        });
+
         bnCloseJobPick.setOnClickListener(view -> {
             Animation animation = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.alpha);
             bnCloseJobPick.startAnimation(animation);
@@ -235,6 +246,7 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
                 alertbox.setNegativeButton("SAVE",
                         new DialogInterface.OnClickListener() {
 
+                            @SuppressLint("StaticFieldLeak")
                             public void onClick(DialogInterface arg0,
                                                 int arg1) {
 
@@ -268,6 +280,8 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
                                                     for (int j = 0; j < expandableListAdapter.getChildrenCount(i); j++) {
                                                         final PickingUpEexpand_Model expandedList = (PickingUpEexpand_Model) expandableListAdapter.getChild(i, j);
 
+                                                        Log.d("lloldo", "doInBackground: " + expandedList.getConsignment() + ">" + expandedList.getIs_scaned());
+
                                                         //  Log.d("lloldo", "doInBackground: " + picking.getConsignment());
 
 //                                                        if (picking.getConsignment().equals(expandedList.getConsignment())) {
@@ -281,12 +295,12 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
 //
 //                                                        }
 
-                                                        ContentValues cv = new ContentValues();
-                                                        cv.put("is_scaned", expandedList.getIs_scaned());
-                                                        cv.put("modified_date", getDate);
-                                                        databaseHelper.db().update("Plan", cv, "delivery_no= '" + expandedList.getDelivery_no() + "' and plan_seq = '" + expandedList.getPlan_seq() + "' and activity_type = 'LOAD' and " +
-                                                                " consignment_no = '" + expandedList.getConsignment() + "' and box_no = '" + expandedList.getBox_no() + "' and trash = '0'", null);
-//
+//                                                        ContentValues cv = new ContentValues();
+//                                                        cv.put("is_scaned", expandedList.getIs_scaned());
+//                                                        cv.put("modified_date", getDate);
+//                                                        databaseHelper.db().update("Plan", cv, "delivery_no= '" + expandedList.getDelivery_no() + "' and plan_seq = '" + expandedList.getPlan_seq() + "' and activity_type = 'LOAD' and " +
+//                                                                " consignment_no = '" + expandedList.getConsignment() + "' and box_no = '" + expandedList.getBox_no() + "' and trash = '0'", null);
+////
 
                                                         lastExpandedPosition = i;
                                                         IsSuccess = 1;
@@ -370,7 +384,9 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
                                 lastPosition = i;
 
                                 ((PickingUpEexpand_Model) expandableListAdapter.getChild(i, j)).setIs_scaned("1");
+
                                 Toast.makeText(PinkingUpMaster_Activity.this, "Checked.", Toast.LENGTH_SHORT).show();
+                                //getSQLite();
                                 expandableListView.setAdapter(expandableListAdapter);
                                 expandableListView.expandGroup(i);
                                 //expandableListAdapter.notifyDataSetChanged();
@@ -392,9 +408,11 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
                                 lastPosition = i;
                                 ((PickingUpEexpand_Model) expandableListAdapter.getChild(i, j)).setIs_scaned("0");
                                 Toast.makeText(PinkingUpMaster_Activity.this, "Un Check.", Toast.LENGTH_SHORT).show();
+
+                                // getSQLite();
                                 expandableListView.setAdapter(expandableListAdapter);
                                 expandableListView.expandGroup(i);
-                               // expandableListAdapter.notifyDataSetChanged();
+                                // expandableListAdapter.notifyDataSetChanged();
                             } else {
                                 //  Toast.makeText(PinkingUpMaster_Activity.this, "This Waybill No doesn't exist.", Toast.LENGTH_SHORT).show();
                             }
@@ -544,6 +562,7 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
                         String delivery_no2 = cursor_expand.getString(cursor_expand.getColumnIndex("delivery_no"));
                         String plan_seq2 = cursor_expand.getString(cursor_expand.getColumnIndex("plan_seq"));
 
+                        Log.d("Aslalllalal", "getSQLite: " + consignment + ">" + waybill_no + ">" + is_scaned);
 
                         list_expand.add(new PickingUpEexpand_Model(box_no, waybill_no, is_scaned, row_number, consignment, delivery_no2, plan_seq2));
                     } while (cursor_expand.moveToNext());
@@ -556,6 +575,8 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
 
         expandableListAdapter = new PickingUpAdapter(this, list, expandableListDetail);
         expandableListView.setAdapter(expandableListAdapter);
+//        for (int i = 0; i < expandableListAdapter.getGroupCount(); i++)
+//            expandableListView.expandGroup(i);
         user_data.edit().clear();
     }
 
@@ -597,29 +618,32 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
                 String getScanText = result.getContents();
                 getScanText = getScanText.trim();
 
-               // edtFineWaybillPick.setText(getScanText);
-
+                // edtFineWaybillPick.setText(getScanText);
 
 
                 if (INPUT_WAY.equals("PLUS")) {
                     for (int i = 0; i < expandableListAdapter.getGroupCount(); i++) {
-
+                        // expandableListView.expandGroup(i);
                         for (int j = 0; j < expandableListAdapter.getChildrenCount(i); j++) {
                             final PickingUpEexpand_Model expandedList = (PickingUpEexpand_Model) expandableListAdapter.getChild(i, j);
 
 
-
                             if (getScanText.equals(expandedList.getWaybil_no())) {
 
-                                Log.d("ASdgfjksdzfgsdf", "onActivityResult: "+result.getContents());
+                                Log.d("ASdgfjksdzfgsdf", "onActivityResult: " + result.getContents());
                                 lastPosition = i;
 
-                                ((PickingUpEexpand_Model) expandableListAdapter.getChild(i, j)).setIs_scaned("1");
+                                // ((PickingUpEexpand_Model) expandableListAdapter.getChild(i, j)).setIs_scaned("1");
+                                ((PickingUpEexpand_Model) expandableListAdapter.getChild(i, j)).setInto("1");
+
+
                                 Toast.makeText(PinkingUpMaster_Activity.this, "Checked.", Toast.LENGTH_SHORT).show();
+
                                 expandableListView.setAdapter(expandableListAdapter);
                                 expandableListView.expandGroup(i);
-                                //expandableListAdapter.notifyDataSetChanged();
+                                expandableListAdapter.notifyDataSetChanged();
                             } else {
+
                                 // Toast.makeText(PinkingUpMaster_Activity.this, "This Waybill No doesn't exist.", Toast.LENGTH_SHORT).show();
                             }
 
@@ -628,19 +652,22 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
                     }
                 } else {
                     for (int i = 0; i < expandableListAdapter.getGroupCount(); i++) {
-
+                        //expandableListView.expandGroup(i);
                         for (int j = 0; j < expandableListAdapter.getChildrenCount(i); j++) {
                             final PickingUpEexpand_Model expandedList = (PickingUpEexpand_Model) expandableListAdapter.getChild(i, j);
 
                             if (getScanText.equals(expandedList.getWaybil_no())) {
 
                                 lastPosition = i;
-                                ((PickingUpEexpand_Model) expandableListAdapter.getChild(i, j)).setIs_scaned("0");
+                                //((PickingUpEexpand_Model) expandableListAdapter.getChild(i, j)).setIs_scaned("0");
+                                ((PickingUpEexpand_Model) expandableListAdapter.getChild(i, j)).setInto("0");
                                 Toast.makeText(PinkingUpMaster_Activity.this, "Un Check.", Toast.LENGTH_SHORT).show();
+
                                 expandableListView.setAdapter(expandableListAdapter);
                                 expandableListView.expandGroup(i);
-                                //expandableListAdapter.notifyDataSetChanged();
+                                expandableListAdapter.notifyDataSetChanged();
                             } else {
+                                // expandableListView.expandGroup(i);
                                 //  Toast.makeText(PinkingUpMaster_Activity.this, "This Waybill No doesn't exist.", Toast.LENGTH_SHORT).show();
                             }
 
@@ -649,8 +676,6 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
 
                     }
                 }
-
-
 
 
             }
@@ -884,13 +909,52 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
             box_no = convertView.findViewById(R.id.tvExpand_Box);
             waybill_no = convertView.findViewById(R.id.tvExpand_waybill_no);
             tvExpand_Count = convertView.findViewById(R.id.tvExpand_Count);
-            checkBox = convertView.findViewById(R.id.cbExpand_isscaned);
+            CheckBox checkBox = convertView.findViewById(R.id.cbExpand_isscaned);
             imgEditBoxNoPickup = convertView.findViewById(R.id.imgEditBoxNoPickup);
 
 
             tvExpand_Count.setText(String.valueOf((expandedListPosition + 1)));
             box_no.setText("BoxNo. " + expandedList.getBox_no());
             waybill_no.setText("WaybillNo: " + expandedList.getWaybil_no());
+
+            Log.d("aassas", "getChildView: " + listPosition + ">" + expandedListPosition);
+
+            if (expandedList.getIs_scaned().equals("2")) {
+                checkBox.setChecked(true);
+//                imgEditBoxNoPickup.setEnabled(false);
+                checkBox.setEnabled(false);
+                checkBox.setButtonDrawable(R.drawable.ic_indeterminate_check_box_black_24dp);
+
+            } else {
+                // checkBox.setChecked(false);
+//                imgEditBoxNoPickup.setEnabled(false);
+                checkBox.setEnabled(true);
+                checkBox.setButtonDrawable(R.drawable.custom_checkbox);
+            }
+
+            if (expandedList.getInto().equals("0")) {
+                expandedList.setIs_scaned("0");
+                if (expandedList.getIs_scaned().equals("0")) {
+                    checkBox.setChecked(false);
+                    imgEditBoxNoPickup.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            Animation animation = AnimationUtils.loadAnimation(context, R.anim.alpha);
+                            imgEditBoxNoPickup.startAnimation(animation);
+
+                            showDialogBox(expandedList.getBox_no(), expandedList.getConsignment(), expandedList.getDelivery_no(), expandedList.getPlan_seq(), expandedListPosition);
+                        }
+                    });
+
+                }
+            } else {
+                expandedList.setIs_scaned("1");
+                if (expandedList.getIs_scaned().equals("1")) {
+                    checkBox.setChecked(true);
+                    checkBox.setEnabled(false);
+                    checkBox.setButtonDrawable(R.drawable.ic_check_box_disable);
+                }
+            }
 
 
             checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -907,7 +971,7 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
                                 Animation animation = AnimationUtils.loadAnimation(context, R.anim.alpha);
                                 imgEditBoxNoPickup.startAnimation(animation);
 
-                                showDialogBox(expandedList.getBox_no(), expandedList.getConsignment(), expandedList.getDelivery_no(), expandedList.getPlan_seq());
+                                showDialogBox(expandedList.getBox_no(), expandedList.getConsignment(), expandedList.getDelivery_no(), expandedList.getPlan_seq(), expandedListPosition);
                             }
                         });
                     }
@@ -916,30 +980,6 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
             });
 
 
-            if (expandedList.getIs_scaned().equals("1")) {
-                checkBox.setChecked(true);
-                checkBox.setEnabled(false);
-                checkBox.setButtonDrawable(R.drawable.ic_check_box_disable);
-            } else if (expandedList.getIs_scaned().equals("0")) {
-                checkBox.setChecked(false);
-                imgEditBoxNoPickup.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        Animation animation = AnimationUtils.loadAnimation(context, R.anim.alpha);
-                        imgEditBoxNoPickup.startAnimation(animation);
-
-                        showDialogBox(expandedList.getBox_no(), expandedList.getConsignment(), expandedList.getDelivery_no(), expandedList.getPlan_seq());
-                    }
-                });
-
-            }
-            if (expandedList.getIs_scaned().equals("2")) {
-                //imgEditBoxNoPickup.setEnabled(false);
-                // checkBox.setEnabled(false);
-                checkBox.setButtonDrawable(R.drawable.ic_indeterminate_check_box_black_24dp);
-
-            }
-
             if (!checkBox.isChecked()) {
                 imgEditBoxNoPickup.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -947,7 +987,7 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
                         Animation animation = AnimationUtils.loadAnimation(context, R.anim.alpha);
                         imgEditBoxNoPickup.startAnimation(animation);
 
-                        showDialogBox(expandedList.getBox_no(), expandedList.getConsignment(), expandedList.getDelivery_no(), expandedList.getPlan_seq());
+                        showDialogBox(expandedList.getBox_no(), expandedList.getConsignment(), expandedList.getDelivery_no(), expandedList.getPlan_seq(), expandedListPosition);
                     }
                 });
             } else {
@@ -1044,7 +1084,8 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
                     }
                     Log.d("Afsfss", "onClick: " + lastPosition);
 
-                    notifyDataSetChanged();
+
+                   // notifyDataSetChanged();
 
                     Log.d("askljb", "onClick: " + SWICH_EXPAND);
                 }
@@ -1086,6 +1127,7 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
                             , listTitle.getBox_total(), listTitle.getGlobal_total(), listTitle.getPrice());
                 }
             });
+
 
             //notifyDataSetChanged();
 
@@ -1302,7 +1344,7 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
 
         }
 
-        private void showDialogBox(final String box_no, final String consignment_no, final String delivery_no, final String plan_seq) {
+        private void showDialogBox(final String box_no, final String consignment_no, final String delivery_no, final String plan_seq, int position) {
 
 
             final SharedPreferences data_intent = getSharedPreferences("DATA_INTENT", Context.MODE_PRIVATE);
@@ -1379,6 +1421,7 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
 
 
                     alertDialog.dismiss();
+                    expandableListView.expandGroup(position);
                 }
             });
 
@@ -1453,6 +1496,7 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
                             databaseHelper.db().insert("image", null, cv2);
                         }
                     }
+
 
                     getSQLite();
                     alertDialog.dismiss();

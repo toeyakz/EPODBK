@@ -5,6 +5,7 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.content.res.Resources;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -95,7 +96,7 @@ public class DropPoint_Activity extends AppCompatActivity {
     private GoogleMap mMap;
 
     @Override
-    public void onCreate( Bundle savedInstanceState ) {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_drop_point_);
 
@@ -113,14 +114,12 @@ public class DropPoint_Activity extends AppCompatActivity {
 
         imgBack_Job.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick( View view ) {
+            public void onClick(View view) {
                 Animation animation = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.alpha);
                 imgBack_Job.startAnimation(animation);
                 finish();
             }
         });
-
-
 
 
         rvJob = findViewById(R.id.rvJob);
@@ -131,7 +130,7 @@ public class DropPoint_Activity extends AppCompatActivity {
         mMapView.onCreate(savedInstanceState);
         mMapView.getMapAsync(new OnMapReadyCallback() {
             @Override
-            public void onMapReady( GoogleMap googleMap ) {
+            public void onMapReady(GoogleMap googleMap) {
                 isMapRoute(googleMap);
             }
         });
@@ -158,7 +157,7 @@ public class DropPoint_Activity extends AppCompatActivity {
         final ArrayList<JobList_Model> jobList_models = new ArrayList<>();
         cursor.moveToFirst();
         do {
-            if ( cursor.getCount() > 0 ) {
+            if (cursor.getCount() > 0) {
                 String station_name = cursor.getString(cursor.getColumnIndex("station_name"));
                 String station_address = cursor.getString(cursor.getColumnIndex("station_address"));
                 String plan_in = cursor.getString(cursor.getColumnIndex("plan_in"));
@@ -189,7 +188,43 @@ public class DropPoint_Activity extends AppCompatActivity {
 
     }
 
-    private void isMapRoute( GoogleMap map ) {
+    public Bitmap GetBitmapMarker(Context mContext, int resourceId, String mText) {
+        try {
+            Resources resources = mContext.getResources();
+            float scale = resources.getDisplayMetrics().density;
+            Bitmap bitmap = BitmapFactory.decodeResource(resources, resourceId);
+
+            android.graphics.Bitmap.Config bitmapConfig = bitmap.getConfig();
+
+            // set default bitmap config if none
+            if (bitmapConfig == null)
+                bitmapConfig = android.graphics.Bitmap.Config.ARGB_8888;
+
+            bitmap = bitmap.copy(bitmapConfig, true);
+
+            Canvas canvas = new Canvas(bitmap);
+            Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
+            paint.setColor(Color.WHITE);
+            paint.setTextSize((int) (14 * scale));
+            paint.setShadowLayer(1f, 0f, 1f, Color.DKGRAY);
+
+            // draw text to the Canvas center
+            Rect bounds = new Rect();
+            paint.getTextBounds(mText, 0, mText.length(), bounds);
+            int x = (bitmap.getWidth() - bounds.width()) / 2;
+            int y = (bitmap.getHeight() + bounds.height()) / 3;
+
+            //canvas.drawText(mText, x*scale, y+bitmap.getHeight()/2+(bounds.bottom-bounds.top)/2, paint);
+            canvas.drawText(mText, x * scale, y * scale, paint);
+
+            return bitmap;
+
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    private void isMapRoute(GoogleMap map) {
         mMap = map;
         //int round = getIntent().getExtras().getInt("round");
         String delivery_date = getIntent().getExtras().getString("delivery_date");
@@ -205,7 +240,7 @@ public class DropPoint_Activity extends AppCompatActivity {
 
         cursor.moveToFirst();
         do {
-            if ( cursor.getCount() > 0 ) {
+            if (cursor.getCount() > 0) {
 
                 String station_name = cursor.getString(cursor.getColumnIndex("station_name"));
                 String station_lat = cursor.getString(cursor.getColumnIndex("station_lat"));
@@ -224,17 +259,17 @@ public class DropPoint_Activity extends AppCompatActivity {
 
             coords.add(new LatLng(latitude, longitude));
 
-            if ( latitude == 0 && longitude == 0 ) {
+            if (latitude == 0 && longitude == 0) {
 
                 Toast.makeText(this, "not have station location.", Toast.LENGTH_SHORT).show();
                 LocationListener listener = new LocationListener() {
-                    public void onLocationChanged( Location loc ) {
+                    public void onLocationChanged(Location loc) {
                         LatLng coordinate = new LatLng(loc.getLatitude()
                                 , loc.getLongitude());
                         lat = loc.getLatitude();
                         lng = loc.getLongitude();
 
-                        if ( mMarker != null )
+                        if (mMarker != null)
                             mMarker.remove();
 
                         mMarker = mMap.addMarker(new MarkerOptions()
@@ -243,18 +278,18 @@ public class DropPoint_Activity extends AppCompatActivity {
                                 coordinate, 16));
                     }
 
-                    public void onStatusChanged( String provider, int status
-                            , Bundle extras ) {
+                    public void onStatusChanged(String provider, int status
+                            , Bundle extras) {
                     }
 
-                    public void onProviderEnabled( String provider ) {
+                    public void onProviderEnabled(String provider) {
                     }
 
-                    public void onProviderDisabled( String provider ) {
+                    public void onProviderDisabled(String provider) {
                     }
                 };
-                if ( ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
-                        && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED ) {
+                if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                        && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                     // TODO: Consider calling
                     //    ActivityCompat#requestPermissions
                     // here to request the missing permissions, and then overriding
@@ -268,7 +303,7 @@ public class DropPoint_Activity extends AppCompatActivity {
                         , 5000, 10, listener);
                 Location loc = lm.getLastKnownLocation(
                         LocationManager.GPS_PROVIDER);
-                if ( loc != null ) {
+                if (loc != null) {
                     lat = loc.getLatitude();
                     lng = loc.getLongitude();
                 }
@@ -278,23 +313,24 @@ public class DropPoint_Activity extends AppCompatActivity {
 
                 Log.d("asdfwa", "isMapRoute: " + station_name);
 
-                Marker marker = mMap.addMarker(new MarkerOptions()
+                Bitmap bitmap = GetBitmapMarker(getApplicationContext(), R.drawable.default_marker, String.valueOf(plan_seq));
+
+                mMap.addMarker(new MarkerOptions()
                         .position(coords.get(i))
-                        .icon(BitmapDescriptorFactory.fromBitmap(Bitmap
-                                .createScaledBitmap(writeTextOnDrawable(R.drawable.default_marker, String.valueOf(plan_seq)), 75, 120, false)))
+                        .icon(BitmapDescriptorFactory.fromBitmap(bitmap))
                         .title(station_name)
                         .anchor(0.5f, 1));
 
 
                 mMap.setInfoWindowAdapter(new GoogleMap.InfoWindowAdapter() {
                     @Override
-                    public View getInfoWindow( Marker markerss ) {
+                    public View getInfoWindow(Marker markerss) {
                         // TODO Auto-generated method stub
                         return null;
                     }
 
                     @Override
-                    public View getInfoContents( Marker markerss ) {
+                    public View getInfoContents(Marker markerss) {
                         // TODO Auto-generated method stub
 
                         View ll = getLayoutInflater().inflate(R.layout.layout_custom_title_marker, null);
@@ -312,7 +348,7 @@ public class DropPoint_Activity extends AppCompatActivity {
         }
 
         //check center map camera
-        if ( mMapView.getViewTreeObserver().isAlive() ) {
+        if (mMapView.getViewTreeObserver().isAlive()) {
             mMapView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
                 @SuppressLint("NewApi")
                 @Override
@@ -324,8 +360,19 @@ public class DropPoint_Activity extends AppCompatActivity {
                         LatLng ll = new LatLng(latitude, longitude);
                         bld.include(ll);
                     }
+
+//                    LatLngBounds bounds = bld.build();
+//
+//                    // Setup camera movement
+//                    final int width = getResources().getDisplayMetrics().widthPixels;
+//                    final int height = getResources().getDisplayMetrics().heightPixels;
+//                    final int minMetric = Math.min(width, height);
+//                    final int padding = (int) (minMetric * 0.40); // offset from edges of the map in pixels
+//                    CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, width, height, padding);
+
+
                     LatLngBounds bounds = bld.build();
-                    mMap.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds, 200));
+                    mMap.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds, 0));
                     mMapView.getViewTreeObserver().removeGlobalOnLayoutListener(this);
 
                 }
@@ -334,7 +381,7 @@ public class DropPoint_Activity extends AppCompatActivity {
 
     }
 
-    private Bitmap writeTextOnDrawable( int drawableId, String text ) {
+    private Bitmap writeTextOnDrawable(int drawableId, String text) {
 
         Bitmap bm = BitmapFactory.decodeResource(getResources(), drawableId)
                 .copy(Bitmap.Config.ARGB_8888, true);
@@ -355,14 +402,14 @@ public class DropPoint_Activity extends AppCompatActivity {
         Canvas canvas = new Canvas(bm);
 
         //If the text is bigger than the canvas , reduce the font size
-        if ( textRect.width() >= ( canvas.getWidth() - 4 ) )     //the padding on either sides is considered as 4, so as to appropriately fit in the text
+        if (textRect.width() >= (canvas.getWidth() - 4))     //the padding on either sides is considered as 4, so as to appropriately fit in the text
             paint.setTextSize(convertToPixels(getApplicationContext(), 9));        //Scaling needs to be used for different dpi's
 
         //Calculate the positions
-        int xPos = ( canvas.getWidth() / 2 ) - 2;     //-2 is for regulating the x position offset
+        int xPos = (canvas.getWidth() / 2) - 2;     //-2 is for regulating the x position offset
 
         //"- ((paint.descent() + paint.ascent()) / 2)" is the distance from the baseline to the center.
-        int yPos = (int) ( ( canvas.getHeight() / 3 ) - ( ( paint.descent() + paint.ascent() ) / 2 ) );
+        int yPos = (int) ((canvas.getHeight() / 3) - ((paint.descent() + paint.ascent()) / 2));
 
         canvas.drawText(text, xPos, yPos, paint);
 
@@ -370,14 +417,14 @@ public class DropPoint_Activity extends AppCompatActivity {
     }
 
 
-    public static int convertToPixels( Context context, int nDP ) {
+    public static int convertToPixels(Context context, int nDP) {
         final float conversionScale = context.getResources().getDisplayMetrics().density;
 
-        return (int) ( ( nDP * conversionScale ) + 0.5f );
+        return (int) ((nDP * conversionScale) + 0.5f);
 
     }
 
-    private String getDirectionsUrl( LatLng origin, LatLng dest ) {
+    private String getDirectionsUrl(LatLng origin, LatLng dest) {
 
 // Origin of route
         String str_origin = "origin=" + origin.latitude + "," + origin.longitude;
@@ -392,7 +439,7 @@ public class DropPoint_Activity extends AppCompatActivity {
         String waypoints = "";
         for (int i = 2; i < markerPoints.size(); i++) {
             LatLng point = (LatLng) markerPoints.get(i);
-            if ( i == 2 )
+            if (i == 2)
                 waypoints = "waypoints=";
             waypoints += point.latitude + "," + point.longitude + "|";
         }
@@ -414,7 +461,7 @@ public class DropPoint_Activity extends AppCompatActivity {
      * A method to download json data from url
      */
 
-    private String downloadUrl( String strUrl ) throws IOException {
+    private String downloadUrl(String strUrl) throws IOException {
         String data = "";
         InputStream iStream = null;
         HttpURLConnection urlConnection = null;
@@ -435,7 +482,7 @@ public class DropPoint_Activity extends AppCompatActivity {
             StringBuffer sb = new StringBuffer();
 
             String line = "";
-            while (( line = br.readLine() ) != null) {
+            while ((line = br.readLine()) != null) {
                 sb.append(line);
             }
 
@@ -456,7 +503,7 @@ public class DropPoint_Activity extends AppCompatActivity {
 
         // Downloading data in non-ui thread
         @Override
-        protected String doInBackground( String... url ) {
+        protected String doInBackground(String... url) {
 
             // For storing data from web service
             String data = "";
@@ -473,7 +520,7 @@ public class DropPoint_Activity extends AppCompatActivity {
         // Executes in UI thread, after the execution of
         // doInBackground()
         @Override
-        protected void onPostExecute( String result ) {
+        protected void onPostExecute(String result) {
             super.onPostExecute(result);
 
             Log.d("resultDownloadTask", "onPostExecute: " + result + " success");
@@ -492,7 +539,7 @@ public class DropPoint_Activity extends AppCompatActivity {
 
         // Parsing the data in non-ui thread
         @Override
-        protected List<List<HashMap<String, String>>> doInBackground( String... jsonData ) {
+        protected List<List<HashMap<String, String>>> doInBackground(String... jsonData) {
 
             JSONObject jObject;
             List<List<HashMap<String, String>>> routes = null;
@@ -511,7 +558,7 @@ public class DropPoint_Activity extends AppCompatActivity {
 
         // Executes in UI thread, after the parsing process
         @Override
-        protected void onPostExecute( List<List<HashMap<String, String>>> result ) {
+        protected void onPostExecute(List<List<HashMap<String, String>>> result) {
 
             ArrayList points = null;
             PolylineOptions lineOptions = null;
@@ -572,13 +619,13 @@ public class DropPoint_Activity extends AppCompatActivity {
     }
 
     @Override
-    protected void onSaveInstanceState( Bundle outState ) {
+    protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         mMapView.onSaveInstanceState(outState);
     }
 
     @Override
-    public boolean onCreateOptionsMenu( Menu menu ) {
+    public boolean onCreateOptionsMenu(Menu menu) {
 //        getMenuInflater().inflate(R.menu.menu_job, menu);
 //        MenuItem item = menu.add(1, 2, 2, delivery_no).setEnabled(false);
 //        item.setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS);

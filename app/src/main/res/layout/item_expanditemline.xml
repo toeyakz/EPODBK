@@ -35,14 +35,14 @@
 
     <ImageView
         android:id="@+id/imgEditBoxNoPickup"
-        android:layout_width="24dp"
-        android:layout_height="24dp"
+        android:layout_width="16dp"
+        android:layout_height="16dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="16dp"
         android:layout_marginBottom="8dp"
         android:cropToPadding="true"
         android:src="@drawable/edit_pencil"
-        app:layout_constraintBottom_toTopOf="@+id/view"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -76,16 +76,16 @@
         app:layout_constraintStart_toEndOf="@+id/cbExpand_isscaned"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <View
-        android:id="@+id/view"
-        android:layout_width="fill_parent"
-        android:layout_height="1dip"
-        android:layout_marginStart="64dp"
-        android:layout_marginTop="5dp"
-        android:layout_marginEnd="8dp"
-        android:background="@android:color/darker_gray"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tvExpand_waybill_no" />
+<!--    <View-->
+<!--        android:id="@+id/view"-->
+<!--        android:layout_width="fill_parent"-->
+<!--        android:layout_height="1dip"-->
+<!--        android:layout_marginStart="64dp"-->
+<!--        android:layout_marginTop="5dp"-->
+<!--        android:layout_marginEnd="8dp"-->
+<!--        android:background="@android:color/darker_gray"-->
+<!--        app:layout_constraintBottom_toBottomOf="parent"-->
+<!--        app:layout_constraintEnd_toEndOf="parent"-->
+<!--        app:layout_constraintStart_toStartOf="parent"-->
+<!--        app:layout_constraintTop_toBottomOf="@+id/tvExpand_waybill_no" />-->
 </androidx.constraintlayout.widget.ConstraintLayout>
