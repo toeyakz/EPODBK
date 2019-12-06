@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Green -->
+    <color name="colorPrimary">#1e701c</color>
+    <color name="colorPrimaryDark">#1D781F</color>
+    <color name="colorAccent">#539e4f</color>
+    <color name="colorSubAccent">#74C671</color>
+
+    <!-- Orange -->
+    <color name="OrangePrimary">#ffaa18</color>
+    <color name="OrangePrimaryDark">#dcab23</color>
+    <color name="OrangeAccent">#FFC518</color>
+    <color name="OrangeSubAccent">#ffcd18</color>
+
+    <!-- Black -->
+    <color name="BlackMetal">#B6B6B6</color>
+</resources>
