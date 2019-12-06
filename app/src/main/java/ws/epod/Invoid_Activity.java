@@ -256,7 +256,7 @@ public class Invoid_Activity extends AppCompatActivity {
                     statusArray = 0;
                     commentArray = 0;
                     statusArray2 = 0;
-//
+
 
                     return null;
                 }

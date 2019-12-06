@@ -373,7 +373,7 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
                                 Toast.makeText(PinkingUpMaster_Activity.this, "Checked.", Toast.LENGTH_SHORT).show();
                                 expandableListView.setAdapter(expandableListAdapter);
                                 expandableListView.expandGroup(i);
-                                expandableListAdapter.notifyDataSetChanged();
+                                //expandableListAdapter.notifyDataSetChanged();
                             } else {
                                 // Toast.makeText(PinkingUpMaster_Activity.this, "This Waybill No doesn't exist.", Toast.LENGTH_SHORT).show();
                             }
@@ -394,7 +394,7 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
                                 Toast.makeText(PinkingUpMaster_Activity.this, "Un Check.", Toast.LENGTH_SHORT).show();
                                 expandableListView.setAdapter(expandableListAdapter);
                                 expandableListView.expandGroup(i);
-                                expandableListAdapter.notifyDataSetChanged();
+                               // expandableListAdapter.notifyDataSetChanged();
                             } else {
                                 //  Toast.makeText(PinkingUpMaster_Activity.this, "This Waybill No doesn't exist.", Toast.LENGTH_SHORT).show();
                             }
@@ -594,7 +594,65 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
             if (result.getContents() == null) {
                 Toast.makeText(this, "Result not found", Toast.LENGTH_SHORT).show();
             } else {
-                edtFineWaybillPick.setText(result.getContents());
+                String getScanText = result.getContents();
+                getScanText = getScanText.trim();
+
+               // edtFineWaybillPick.setText(getScanText);
+
+
+
+                if (INPUT_WAY.equals("PLUS")) {
+                    for (int i = 0; i < expandableListAdapter.getGroupCount(); i++) {
+
+                        for (int j = 0; j < expandableListAdapter.getChildrenCount(i); j++) {
+                            final PickingUpEexpand_Model expandedList = (PickingUpEexpand_Model) expandableListAdapter.getChild(i, j);
+
+
+
+                            if (getScanText.equals(expandedList.getWaybil_no())) {
+
+                                Log.d("ASdgfjksdzfgsdf", "onActivityResult: "+result.getContents());
+                                lastPosition = i;
+
+                                ((PickingUpEexpand_Model) expandableListAdapter.getChild(i, j)).setIs_scaned("1");
+                                Toast.makeText(PinkingUpMaster_Activity.this, "Checked.", Toast.LENGTH_SHORT).show();
+                                expandableListView.setAdapter(expandableListAdapter);
+                                expandableListView.expandGroup(i);
+                                //expandableListAdapter.notifyDataSetChanged();
+                            } else {
+                                // Toast.makeText(PinkingUpMaster_Activity.this, "This Waybill No doesn't exist.", Toast.LENGTH_SHORT).show();
+                            }
+
+                        }
+
+                    }
+                } else {
+                    for (int i = 0; i < expandableListAdapter.getGroupCount(); i++) {
+
+                        for (int j = 0; j < expandableListAdapter.getChildrenCount(i); j++) {
+                            final PickingUpEexpand_Model expandedList = (PickingUpEexpand_Model) expandableListAdapter.getChild(i, j);
+
+                            if (getScanText.equals(expandedList.getWaybil_no())) {
+
+                                lastPosition = i;
+                                ((PickingUpEexpand_Model) expandableListAdapter.getChild(i, j)).setIs_scaned("0");
+                                Toast.makeText(PinkingUpMaster_Activity.this, "Un Check.", Toast.LENGTH_SHORT).show();
+                                expandableListView.setAdapter(expandableListAdapter);
+                                expandableListView.expandGroup(i);
+                                //expandableListAdapter.notifyDataSetChanged();
+                            } else {
+                                //  Toast.makeText(PinkingUpMaster_Activity.this, "This Waybill No doesn't exist.", Toast.LENGTH_SHORT).show();
+                            }
+
+                        }
+
+
+                    }
+                }
+
+
+
+
             }
         } else {
             super.onActivityResult(requestCode, resultCode, data);
@@ -1049,8 +1107,6 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
 
         private void dialogDetail(String consignment, String station_address, String pay_type, String box_total, String global_total, String price) {
 
-            final TabHost mTabHost;
-            final TabWidget tabs;
             TextView tvConsignment_con_dialog;
 
             final AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
@@ -1064,8 +1120,7 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
 
 
             imgClose_dialog = popupInputDialogView2.findViewById(R.id.imgClose_dialog);
-            // mTabHost = popupInputDialogView2.findViewById(android.R.id.tabhost);
-            tabs = popupInputDialogView2.findViewById(android.R.id.tabs);
+            // mTabHost = popupInputDialogView2.findViewById(android.R.id.tabhost)
             tvConsignment_con_dialog = popupInputDialogView2.findViewById(R.id.tvConsignment_con_dialog);
             TextView pick_dialog_station_address = popupInputDialogView2.findViewById(R.id.tv_dialog_station_address);
             TextView pick_dialog_pay_type = popupInputDialogView2.findViewById(R.id.pick_dialog_pay_type);

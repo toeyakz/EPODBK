@@ -8,14 +8,14 @@
     <androidx.cardview.widget.CardView
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="5dp"
+        android:layout_marginStart="8dp"
         android:layout_marginTop="4dp"
-        android:layout_marginEnd="5dp"
+        android:layout_marginEnd="8dp"
         android:layout_marginBottom="4dp"
+        android:foreground="?android:attr/selectableItemBackground"
         app:cardCornerRadius="5dp"
         app:cardElevation="1dp"
         app:cardMaxElevation="5dp"
-        android:foreground="?android:attr/selectableItemBackground"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -31,6 +31,7 @@
                 android:layout_height="16dp"
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="8dp"
+                android:tint="#03A9F4"
                 android:src="@drawable/ic_location_on_black_24dp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/tvCustomer_name_Job" />
@@ -40,7 +41,8 @@
                 android:layout_width="15dp"
                 android:layout_height="15dp"
                 android:layout_marginStart="16dp"
-                android:layout_marginTop="10dp"
+                android:layout_marginTop="5dp"
+                android:tint="#03A9F4"
                 android:src="@drawable/ic_date_range_black_24dp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/tvStation_address_job" />
@@ -100,7 +102,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="5dp"
-                android:layout_marginTop="8dp"
+                android:layout_marginTop="2dp"
                 android:text="Appoint :"
                 app:layout_constraintStart_toEndOf="@+id/imageView4"
                 app:layout_constraintTop_toBottomOf="@+id/tvStation_address_job" />
@@ -111,59 +113,59 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="9dp"
-                android:layout_marginTop="8dp"
+                android:layout_marginTop="2dp"
                 android:layout_marginEnd="16dp"
                 android:text="23/08/2019 09:30"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/textView20"
                 app:layout_constraintTop_toBottomOf="@+id/tvStation_address_job" />
 
-            <View
-                android:id="@+id/view2"
-                android:layout_width="fill_parent"
-                android:layout_height="1dip"
-                android:layout_marginStart="32dp"
-                android:layout_marginTop="8dp"
-                android:layout_marginEnd="8dp"
-                android:layout_marginBottom="8dp"
-                android:background="@android:color/darker_gray"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/textView9" />
+            <!--            <View-->
+            <!--                android:id="@+id/view2"-->
+            <!--                android:layout_width="fill_parent"-->
+            <!--                android:layout_height="1dip"-->
+            <!--                android:layout_marginStart="32dp"-->
+            <!--                android:layout_marginTop="8dp"-->
+            <!--                android:layout_marginEnd="8dp"-->
+            <!--                android:layout_marginBottom="8dp"-->
+            <!--                android:background="@android:color/darker_gray"-->
+            <!--                app:layout_constraintBottom_toBottomOf="parent"-->
+            <!--                app:layout_constraintEnd_toEndOf="parent"-->
+            <!--                app:layout_constraintStart_toStartOf="parent"-->
+            <!--                app:layout_constraintTop_toBottomOf="@+id/textView9" />-->
 
-            <TextView
-                android:id="@+id/textView9"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="5dp"
-                android:layout_marginTop="5dp"
-                android:text="Status :"
-                app:layout_constraintStart_toEndOf="@+id/imageView16"
-                app:layout_constraintTop_toBottomOf="@+id/tvPlan_in_Job" />
+            <!--            <TextView-->
+            <!--                android:id="@+id/textView9"-->
+            <!--                android:layout_width="wrap_content"-->
+            <!--                android:layout_height="wrap_content"-->
+            <!--                android:layout_marginStart="5dp"-->
+            <!--                android:layout_marginTop="5dp"-->
+            <!--                android:text="Status :"-->
+            <!--                app:layout_constraintStart_toEndOf="@+id/imageView16"-->
+            <!--                app:layout_constraintTop_toBottomOf="@+id/tvPlan_in_Job" />-->
 
-            <ImageView
-                android:id="@+id/imageView16"
-                android:layout_width="15dp"
-                android:layout_height="15dp"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="8dp"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/tvPlan_in_Job"
-                app:srcCompat="@drawable/ic_cloud_circle_black_24dp"
-                tools:ignore="VectorDrawableCompat" />
+            <!--            <ImageView-->
+            <!--                android:id="@+id/imageView16"-->
+            <!--                android:layout_width="15dp"-->
+            <!--                android:layout_height="15dp"-->
+            <!--                android:layout_marginStart="16dp"-->
+            <!--                android:layout_marginTop="8dp"-->
+            <!--                app:layout_constraintStart_toStartOf="parent"-->
+            <!--                app:layout_constraintTop_toBottomOf="@+id/tvPlan_in_Job"-->
+            <!--                app:srcCompat="@drawable/ic_cloud_circle_black_24dp"-->
+            <!--                tools:ignore="VectorDrawableCompat" />-->
 
             <TextView
                 android:id="@+id/tvStatusJob"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="17dp"
                 android:layout_marginTop="5dp"
                 android:layout_marginEnd="16dp"
+                android:layout_marginBottom="5dp"
                 android:text="รับ (-/-) | ส่ง (-/-)"
+                android:textSize="12sp"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.0"
-                app:layout_constraintStart_toEndOf="@+id/textView9"
                 app:layout_constraintTop_toBottomOf="@+id/tvPlan_in_Job" />
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.cardview.widget.CardView>
