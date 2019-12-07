@@ -295,12 +295,11 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
 //
 //                                                        }
 
-//                                                        ContentValues cv = new ContentValues();
-//                                                        cv.put("is_scaned", expandedList.getIs_scaned());
-//                                                        cv.put("modified_date", getDate);
-//                                                        databaseHelper.db().update("Plan", cv, "delivery_no= '" + expandedList.getDelivery_no() + "' and plan_seq = '" + expandedList.getPlan_seq() + "' and activity_type = 'LOAD' and " +
-//                                                                " consignment_no = '" + expandedList.getConsignment() + "' and box_no = '" + expandedList.getBox_no() + "' and trash = '0'", null);
-////
+                                                        ContentValues cv = new ContentValues();
+                                                        cv.put("is_scaned", expandedList.getIs_scaned());
+                                                        cv.put("modified_date", getDate);
+                                                        databaseHelper.db().update("Plan", cv, "delivery_no= '" + expandedList.getDelivery_no() + "' and plan_seq = '" + expandedList.getPlan_seq() + "' and activity_type = 'LOAD' and " +
+                                                                " consignment_no = '" + expandedList.getConsignment() + "' and box_no = '" + expandedList.getBox_no() + "' and trash = '0'", null);
 
                                                         lastExpandedPosition = i;
                                                         IsSuccess = 1;
@@ -626,11 +625,11 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
                         // expandableListView.expandGroup(i);
                         for (int j = 0; j < expandableListAdapter.getChildrenCount(i); j++) {
                             final PickingUpEexpand_Model expandedList = (PickingUpEexpand_Model) expandableListAdapter.getChild(i, j);
-
+                            Log.d("ASdgfjksdzfgsdf", "onActivityResult: " + getScanText);
 
                             if (getScanText.equals(expandedList.getWaybil_no())) {
 
-                                Log.d("ASdgfjksdzfgsdf", "onActivityResult: " + result.getContents());
+
                                 lastPosition = i;
 
                                 // ((PickingUpEexpand_Model) expandableListAdapter.getChild(i, j)).setIs_scaned("1");
@@ -917,25 +916,25 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
             box_no.setText("BoxNo. " + expandedList.getBox_no());
             waybill_no.setText("WaybillNo: " + expandedList.getWaybil_no());
 
-            Log.d("aassas", "getChildView: " + listPosition + ">" + expandedListPosition);
+            Log.d("aassas", "getChildView: " + listPosition + ">" + expandedListPosition + ">" + expandedList.getIs_scaned() + " into>" + expandedList.getInto());
 
             if (expandedList.getIs_scaned().equals("2")) {
                 checkBox.setChecked(true);
-//                imgEditBoxNoPickup.setEnabled(false);
+//              imgEditBoxNoPickup.setEnabled(false);
                 checkBox.setEnabled(false);
                 checkBox.setButtonDrawable(R.drawable.ic_indeterminate_check_box_black_24dp);
 
             } else {
-                // checkBox.setChecked(false);
-//                imgEditBoxNoPickup.setEnabled(false);
                 checkBox.setEnabled(true);
                 checkBox.setButtonDrawable(R.drawable.custom_checkbox);
             }
 
+
             if (expandedList.getInto().equals("0")) {
-                expandedList.setIs_scaned("0");
+
                 if (expandedList.getIs_scaned().equals("0")) {
                     checkBox.setChecked(false);
+                    //expandedList.setIs_scaned("0");
                     imgEditBoxNoPickup.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
@@ -956,28 +955,64 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
                 }
             }
 
+            if (expandedList.getIs_scaned().equals("1")) {
+                checkBox.setChecked(true);
+                checkBox.setEnabled(false);
+                checkBox.setButtonDrawable(R.drawable.ic_check_box_disable);
+            }
 
-            checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                @Override
-                public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                    if (b) {
-                        expandedList.setIs_scaned("1");
-                        imgEditBoxNoPickup.setClickable(false);
-                    } else {
-                        expandedList.setIs_scaned("0");
-                        imgEditBoxNoPickup.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View view) {
-                                Animation animation = AnimationUtils.loadAnimation(context, R.anim.alpha);
-                                imgEditBoxNoPickup.startAnimation(animation);
-
-                                showDialogBox(expandedList.getBox_no(), expandedList.getConsignment(), expandedList.getDelivery_no(), expandedList.getPlan_seq(), expandedListPosition);
-                            }
-                        });
+            checkBox.setOnClickListener(v -> {
+                if (((CheckBox) v).isChecked()) {
+                    if (!expandedList.getIs_scaned().equals("2")) {
+                            expandedList.setIs_scaned("1");
+                            imgEditBoxNoPickup.setClickable(false);
                     }
+                } else {
+                    if (!expandedList.getIs_scaned().equals("2")) {
+                        expandedList.setIs_scaned("0");
+                    }
+                    imgEditBoxNoPickup.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            Animation animation = AnimationUtils.loadAnimation(context, R.anim.alpha);
+                            imgEditBoxNoPickup.startAnimation(animation);
 
+                            showDialogBox(expandedList.getBox_no(), expandedList.getConsignment(), expandedList.getDelivery_no(), expandedList.getPlan_seq(), expandedListPosition);
+                        }
+                    });
                 }
+
             });
+
+
+//            checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+//                @Override
+//                public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+//                    Log.d("aassas", "onCheckedChanged: " + b);
+//                    if (b) {
+//                        if (!expandedList.getIs_scaned().equals("2")) {
+//                            expandedList.setIs_scaned("1");
+//                            imgEditBoxNoPickup.setClickable(false);
+//                        }
+//
+//
+//                    } else {
+//                        if (!expandedList.getIs_scaned().equals("2")) {
+//                            expandedList.setIs_scaned("0");
+//                        }
+//                        imgEditBoxNoPickup.setOnClickListener(new View.OnClickListener() {
+//                            @Override
+//                            public void onClick(View view) {
+//                                Animation animation = AnimationUtils.loadAnimation(context, R.anim.alpha);
+//                                imgEditBoxNoPickup.startAnimation(animation);
+//
+//                                showDialogBox(expandedList.getBox_no(), expandedList.getConsignment(), expandedList.getDelivery_no(), expandedList.getPlan_seq(), expandedListPosition);
+//                            }
+//                        });
+//                    }
+//
+//                }
+//            });
 
 
             if (!checkBox.isChecked()) {
@@ -1085,7 +1120,7 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
                     Log.d("Afsfss", "onClick: " + lastPosition);
 
 
-                   // notifyDataSetChanged();
+                    // notifyDataSetChanged();
 
                     Log.d("askljb", "onClick: " + SWICH_EXPAND);
                 }

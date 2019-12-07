@@ -9,6 +9,8 @@ public class DeliverExpand_Model {
     public String consignment = "";
     public String delivery_no = "";
     public String plan_seq = "";
+    public String into = "0";
+
 
     public DeliverExpand_Model( String box_no, String waybil_no, String is_scaned, String row_number, String consignment, String delivery_no, String plan_seq ) {
         this.box_no = box_no;
@@ -18,6 +20,14 @@ public class DeliverExpand_Model {
         this.consignment = consignment;
         this.delivery_no = delivery_no;
         this.plan_seq = plan_seq;
+    }
+
+    public String getInto() {
+        return into;
+    }
+
+    public void setInto(String into) {
+        this.into = into;
     }
 
     public String getBox_no() {

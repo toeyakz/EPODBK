@@ -1,5 +1,6 @@
 package ws.epod;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
@@ -234,6 +235,7 @@ public class Deliver_Activity extends AppCompatActivity {
                 alertbox.setNegativeButton("SAVE",
                         new DialogInterface.OnClickListener() {
 
+                            @SuppressLint("StaticFieldLeak")
                             public void onClick(DialogInterface arg0,
                                                 int arg1) {
 
@@ -263,7 +265,7 @@ public class Deliver_Activity extends AppCompatActivity {
                                                     expandableListAdapter.getChildrenCount(i);
                                                     for (int j = 0; j < expandableListAdapter.getChildrenCount(i); j++) {
                                                         final DeliverExpand_Model expandedList = (DeliverExpand_Model) expandableListAdapter.getChild(i, j);
-//
+////
                                                         ContentValues cv = new ContentValues();
                                                         cv.put("is_scaned", expandedList.getIs_scaned());
                                                         cv.put("modified_date", getDate);
@@ -547,7 +549,55 @@ public class Deliver_Activity extends AppCompatActivity {
             if (result.getContents() == null) {
                 Toast.makeText(this, "Result not found", Toast.LENGTH_SHORT).show();
             } else {
-                edtFineWaybillPick.setText(result.getContents());
+                String getScanText = result.getContents();
+                getScanText = getScanText.trim();
+
+               // edtFineWaybillPick.setText(result.getContents());
+
+                if (INPUT_WAY.equals("PLUS")) {
+                    for (int i = 0;
+                         i < expandableListAdapter.getGroupCount(); i++) {
+                        for (int j = 0; j < expandableListAdapter.getChildrenCount(i); j++) {
+                            final DeliverExpand_Model expandedList = (DeliverExpand_Model) expandableListAdapter.getChild(i, j);
+
+                            if (getScanText.equals(expandedList.getWaybil_no())) {
+
+                                lastPosition = i;
+
+                                ((DeliverExpand_Model) expandableListAdapter.getChild(i, j)).setInto("1");
+                                Toast.makeText(Deliver_Activity.this, "Checked.", Toast.LENGTH_SHORT).show();
+                                expandableListView.setAdapter(expandableListAdapter);
+                                expandableListView.expandGroup(i);
+                                expandableListAdapter.notifyDataSetChanged();
+                            } else {
+                                // Toast.makeText(PinkingUpMaster_Activity.this, "This Waybill No doesn't exist.", Toast.LENGTH_SHORT).show();
+                            }
+
+                        }
+                    }
+                } else {
+                    for (int i = 0;
+                         i < expandableListAdapter.getGroupCount(); i++) {
+                        for (int j = 0; j < expandableListAdapter.getChildrenCount(i); j++) {
+                            final DeliverExpand_Model expandedList = (DeliverExpand_Model) expandableListAdapter.getChild(i, j);
+
+                            if (getScanText.equals(expandedList.getWaybil_no())) {
+
+                                lastPosition = i;
+
+                                ((DeliverExpand_Model) expandableListAdapter.getChild(i, j)).setInto("0");
+                                Toast.makeText(Deliver_Activity.this, "Un Check.", Toast.LENGTH_SHORT).show();
+                                expandableListView.setAdapter(expandableListAdapter);
+                                expandableListView.expandGroup(i);
+                                expandableListAdapter.notifyDataSetChanged();
+                            } else {
+                                //  Toast.makeText(PinkingUpMaster_Activity.this, "This Waybill No doesn't exist.", Toast.LENGTH_SHORT).show();
+                            }
+
+                        }
+                    }
+                }
+
             }
         } else {
             super.onActivityResult(requestCode, resultCode, data);
@@ -730,49 +780,95 @@ public class Deliver_Activity extends AppCompatActivity {
             box_no.setText("BoxNo. " + expandedList.getBox_no());
             waybill_no.setText("WaybillNo: " + expandedList.getWaybil_no());
 
-            checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                @Override
-                public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                    if (b) {
-                        expandedList.setIs_scaned("1");
-                        imgEditBoxNoPickup.setClickable(false);
-                    } else {
-                        expandedList.setIs_scaned("0");
-                        imgEditBoxNoPickup.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View view) {
-                                Animation animation = AnimationUtils.loadAnimation(context, R.anim.alpha);
-                                imgEditBoxNoPickup.startAnimation(animation);
 
-                                showDialogBox(expandedList.getBox_no(), expandedList.getConsignment(), expandedList.getDelivery_no(), expandedList.getPlan_seq());
-                            }
-                        });
-                    }
+            if (expandedList.getIs_scaned().equals("2")) {
+                checkBox.setChecked(true);
+//              imgEditBoxNoPickup.setEnabled(false);
+                checkBox.setEnabled(false);
+                checkBox.setButtonDrawable(R.drawable.ic_indeterminate_check_box_black_24dp);
+
+            } else {
+                checkBox.setEnabled(true);
+                checkBox.setButtonDrawable(R.drawable.custom_checkbox);
+            }
+
+            if (expandedList.getInto().equals("0")) {
+
+                if (expandedList.getIs_scaned().equals("0")) {
+                    checkBox.setChecked(false);
+                    //expandedList.setIs_scaned("0");
+                    imgEditBoxNoPickup.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            Animation animation = AnimationUtils.loadAnimation(context, R.anim.alpha);
+                            imgEditBoxNoPickup.startAnimation(animation);
+
+                            showDialogBox(expandedList.getBox_no(), expandedList.getConsignment(), expandedList.getDelivery_no(), expandedList.getPlan_seq(), expandedListPosition);
+                        }
+                    });
 
                 }
-            });
+            } else {
+                expandedList.setIs_scaned("1");
+                if (expandedList.getIs_scaned().equals("1")) {
+                    checkBox.setChecked(true);
+                    checkBox.setEnabled(false);
+                    checkBox.setButtonDrawable(R.drawable.ic_check_box_disable);
+                }
+            }
+
 
             if (expandedList.getIs_scaned().equals("1")) {
                 checkBox.setChecked(true);
                 checkBox.setEnabled(false);
                 checkBox.setButtonDrawable(R.drawable.ic_check_box_disable);
-            } else if (expandedList.getIs_scaned().equals("0")) {
-                checkBox.setChecked(false);
-                imgEditBoxNoPickup.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        Animation animation = AnimationUtils.loadAnimation(context, R.anim.alpha);
-                        imgEditBoxNoPickup.startAnimation(animation);
-
-                        showDialogBox(expandedList.getBox_no(), expandedList.getConsignment(), expandedList.getDelivery_no(), expandedList.getPlan_seq());
-                    }
-                });
-
-            } else if (expandedList.getIs_scaned().equals("2")) {
-//                imgEditBoxNoPickup.setEnabled(false);
-//                checkBox.setEnabled(false);
-                checkBox.setButtonDrawable(R.drawable.ic_indeterminate_check_box_black_24dp);
             }
+
+            checkBox.setOnClickListener(v -> {
+                if (((CheckBox) v).isChecked()) {
+                    if (!expandedList.getIs_scaned().equals("2")) {
+                        expandedList.setIs_scaned("1");
+                        imgEditBoxNoPickup.setClickable(false);
+                    }
+                } else {
+                    if (!expandedList.getIs_scaned().equals("2")) {
+                        expandedList.setIs_scaned("0");
+                    }
+                    imgEditBoxNoPickup.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            Animation animation = AnimationUtils.loadAnimation(context, R.anim.alpha);
+                            imgEditBoxNoPickup.startAnimation(animation);
+
+                            showDialogBox(expandedList.getBox_no(), expandedList.getConsignment(), expandedList.getDelivery_no(), expandedList.getPlan_seq(), expandedListPosition);
+                        }
+                    });
+                }
+
+            });
+
+
+//            if (expandedList.getIs_scaned().equals("1")) {
+//                checkBox.setChecked(true);
+//                checkBox.setEnabled(false);
+//                checkBox.setButtonDrawable(R.drawable.ic_check_box_disable);
+//            } else if (expandedList.getIs_scaned().equals("0")) {
+//                checkBox.setChecked(false);
+//                imgEditBoxNoPickup.setOnClickListener(new View.OnClickListener() {
+//                    @Override
+//                    public void onClick(View view) {
+//                        Animation animation = AnimationUtils.loadAnimation(context, R.anim.alpha);
+//                        imgEditBoxNoPickup.startAnimation(animation);
+//
+//                        showDialogBox(expandedList.getBox_no(), expandedList.getConsignment(), expandedList.getDelivery_no(), expandedList.getPlan_seq(), expandedListPosition);
+//                    }
+//                });
+//
+//            } else if (expandedList.getIs_scaned().equals("2")) {
+////                imgEditBoxNoPickup.setEnabled(false);
+////                checkBox.setEnabled(false);
+//                checkBox.setButtonDrawable(R.drawable.ic_indeterminate_check_box_black_24dp);
+//            }
 
             if (!checkBox.isChecked()) {
                 imgEditBoxNoPickup.setOnClickListener(new View.OnClickListener() {
@@ -781,7 +877,7 @@ public class Deliver_Activity extends AppCompatActivity {
                         Animation animation = AnimationUtils.loadAnimation(context, R.anim.alpha);
                         imgEditBoxNoPickup.startAnimation(animation);
 
-                        showDialogBox(expandedList.getBox_no(), expandedList.getConsignment(), expandedList.getDelivery_no(), expandedList.getPlan_seq());
+                        showDialogBox(expandedList.getBox_no(), expandedList.getConsignment(), expandedList.getDelivery_no(), expandedList.getPlan_seq(), expandedListPosition);
                     }
                 });
             } else {
@@ -1131,7 +1227,7 @@ public class Deliver_Activity extends AppCompatActivity {
 
         }
 
-        private void showDialogBox(final String box_no, final String consignment_no, final String delivery_no, final String plan_seq) {
+        private void showDialogBox(final String box_no, final String consignment_no, final String delivery_no, final String plan_seq, int position) {
 
 
             final SharedPreferences data_intent = getSharedPreferences("DATA_INTENT", Context.MODE_PRIVATE);
@@ -1204,6 +1300,7 @@ public class Deliver_Activity extends AppCompatActivity {
 
 
                     alertDialog.dismiss();
+                    expandableListView.expandGroup(position);
                 }
             });
 
