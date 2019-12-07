@@ -16,6 +16,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
+import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Parcelable;
@@ -72,9 +73,12 @@ public class Invoid_Activity extends AppCompatActivity {
     ConnectionDetector netCon;
     DatabaseHelper databaseHelper;
     NarisBaseValue narisv;
-    private int statusArray = 0;
-    private int statusArray2 = 0;
-    private int commentArray = 0;
+    private int statusReject = 0;
+    private int statusComplete = 0;
+    private int statusReturn = 0;
+    private int commentReject = 0;
+    private int commentReturn = 0;
+    private int commentComplete = 0;
 
 
     TextView sign, tvNoData, tvUseComment;
@@ -253,9 +257,12 @@ public class Invoid_Activity extends AppCompatActivity {
 //
 //                        }
 //                    } while (cursor.moveToNext());
-                    statusArray = 0;
-                    commentArray = 0;
-                    statusArray2 = 0;
+                    statusComplete = 0;
+                    statusReject = 0;
+                    statusReturn = 0;
+                    commentReject = 0;
+                    commentReturn = 0;
+                    commentComplete = 0;
 
 
                     return null;
@@ -274,46 +281,95 @@ public class Invoid_Activity extends AppCompatActivity {
                         for (int i = 0; i < invAdapter.getItemCount(); i++) {
                             Sign_Model sign_model = invAdapter.list.get(i);
 
+                            Log.d("hhhjujh", "onPostExecute: " + sign_model.getStatus() + ">" + sign_model.getComment());
+
                             if (sign_model.getSignature().equals("")) {
                                 if (sign_model.getStatus().equals("1")) {
-                                    statusArray2 += 1;
-                                }
-                                if (sign_model.getStatus().equals("2")) {
-                                    statusArray += 1;
+                                    statusComplete += 1;
 
                                     if (!sign_model.getComment().equals("")) {
-                                        commentArray += 1;
+                                        commentComplete += 1;
+                                    }
+                                }
+                                if (sign_model.getStatus().equals("2")) {
+                                    statusReject += 1;
+
+                                    if (!sign_model.getComment().equals("")) {
+                                        commentReject += 1;
+                                    }
+                                }
+                                if (sign_model.getStatus().equals("3")) {
+                                    statusReturn += 1;
+                                    if (!sign_model.getComment().equals("")) {
+                                        commentReturn += 1;
                                     }
                                 }
                             }
 
                         }
 
-                        if (statusArray != 0 || statusArray2 != 0 || commentArray != 0) {
+                        Log.d("hhhjujh", "onPostExecute: complete:" + statusComplete + " reject:" + statusReject + " return:" + statusReturn + " comment:" + commentReject);
 
-                            if (statusArray != 0 && commentArray != 0 && statusArray == commentArray && statusArray2 != 0) {
-                                Animation animation = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.alpha);
-                                sign.startAnimation(animation);
-                                dataToSign();
-                                //  showDialogBox();
-                                Log.d("hhhjujh", "onPostExecute: 3");
-                            } else if (statusArray2 != 0 && statusArray != commentArray) {
-                                Log.d("hhhjujh", "onPostExecute: 4");
-                            } else if (statusArray2 != 0) {
-                                Animation animation = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.alpha);
-                                sign.startAnimation(animation);
-                                dataToSign();
-                                //showDialogBox();
-                                Log.d("hhhjujh", "onPostExecute: 2");
-                            } else if (statusArray == commentArray) {
-                                Animation animation = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.alpha);
-                                sign.startAnimation(animation);
-                                dataToSign();
-                                // showDialogBox();
-                                Log.d("hhhjujh", "onPostExecute: 1");
-                            } else if (statusArray != commentArray) {
-                                Log.d("hhhjujh", "onPostExecute: เลือก reject - ยังไม่คอมเม้น");
+                        if (statusReject != 0 || statusComplete != 0 || commentReject != 0 || statusReturn != 0 || commentReturn != 0 || commentComplete != 0) {
+
+                            if (statusReturn != 0 && statusReturn == commentReturn) {
+                                Log.d("checkIntent", ">> ติ๊ก return และ คอมเม้น return แล้ว");
+
+                            } else if (statusReject != 0 && statusReject == commentReject) {
+                                Log.d("checkIntent", ">> ติ๊ก reject และ คอมเม้น reject แล้ว");
+
+                            } else if (statusComplete != 0 && statusComplete != commentComplete) {
+                                Log.d("checkIntent", ">> ติ๊ก complete แต่ไม่คอมเม้น");
+
+                            } else if (statusComplete != 0 && statusComplete == commentComplete) {
+                                Log.d("checkIntent", ">> ติ๊ก complete และ คอมเม้น complete แล้ว");
+
                             }
+                            //เงื่อนไขไม่ครบ
+                            else if (statusReturn != 0 && statusReturn != commentReturn) {
+                                Log.d("checkIntent", ">> ติ๊ก return แต่ไม่คอมเม้น");
+
+                            } else if (statusReject != 0 && statusReject != commentReject) {
+                                Log.d("checkIntent", ">> ติ๊ก reject แต่ไม่คอมเม้น");
+
+                            }
+
+
+//                            if (statusReturn != 0 && commentReturn != 0 && statusReturn == commentReturn &&
+//                                    statusReject != 0 && commentReject != 0 && statusReject == commentReject &&
+//                                    statusComplete != 0 && commentComplete != 0) {
+//                                Animation animation = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.alpha);
+//                                sign.startAnimation(animation);
+//                                dataToSign();
+//                                //  showDialogBox();
+//                                Log.d("hhhjujh", "onPostExecute: 3");
+//                            } else if (statusComplete != 0 && statusReturn != commentReject) {
+//                                Log.d("hhhjujh", "onPostExecute: 4");
+//                            } else if (statusComplete != 0 && statusReject != commentReject) {
+//                                Log.d("hhhjujh", "onPostExecute: 4");
+//                            } else if (statusComplete != 0) {
+//                                Animation animation = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.alpha);
+//                                sign.startAnimation(animation);
+//                                dataToSign();
+//                                //showDialogBox();
+//                                Log.d("hhhjujh", "onPostExecute: 2");
+//                            } else if (statusReturn == commentReject && statusReturn != 0) {
+//                                Animation animation = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.alpha);
+//                                sign.startAnimation(animation);
+//                                dataToSign();
+//                                // showDialogBox();
+//                                Log.d("hhhjujh", "onPostExecute: 1.1");
+//                            } else if (statusReturn != commentReject && statusReject == 0) {
+//                                Log.d("hhhjujh", "onPostExecute: เลือก return - ยังไม่คอมเม้น");
+//                            } else if (statusReject == commentReject && statusReject != 0) {
+//                                Animation animation = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.alpha);
+//                                sign.startAnimation(animation);
+//                                dataToSign();
+//                                // showDialogBox();
+//                                Log.d("hhhjujh", "onPostExecute: 1");
+//                            } else if (statusReject != commentReject && statusReject == 0) {
+//                                Log.d("hhhjujh", "onPostExecute: เลือก reject - ยังไม่คอมเม้น");
+//                            }
 
                         } else {
                             Animation animation = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.alpha);
@@ -652,6 +708,7 @@ public class Invoid_Activity extends AppCompatActivity {
                 holder.textView22.setVisibility(View.VISIBLE);
                 holder.imageView11.setVisibility(View.VISIBLE);
                 holder.reCheck.setVisibility(View.GONE);
+                holder.reTurnCheck.setVisibility(View.GONE);
                 holder.comCheck.setVisibility(View.INVISIBLE);
                 holder.imgEditBoxNoPickup.setEnabled(false);
             } else {
@@ -659,6 +716,7 @@ public class Invoid_Activity extends AppCompatActivity {
                 holder.textView22.setVisibility(View.GONE);
                 holder.imageView11.setVisibility(View.GONE);
                 holder.reCheck.setVisibility(View.VISIBLE);
+                holder.reTurnCheck.setVisibility(View.VISIBLE);
                 holder.comCheck.setVisibility(View.VISIBLE);
                 holder.imgEditBoxNoPickup.setEnabled(true);
             }
@@ -669,9 +727,29 @@ public class Invoid_Activity extends AppCompatActivity {
 
             if (list.get(position).getStatus().equals("1")) {
                 holder.comCheck.setChecked(true);
+                if (!list.get(position).getComment().equals("")) {
+                    holder.tvUseComment.setText("Commented.");
+                    holder.tvUseComment.setTextColor(R.color.colorPrimary);
+                    holder.tvUseComment.setVisibility(View.VISIBLE);
+                } else {
+                    holder.tvUseComment.setVisibility(View.GONE);
+                }
                 //  holder.reCheck.setChecked(false);
             } else {
                 holder.comCheck.setChecked(false);
+            }
+
+            if (list.get(position).getStatus().equals("3")) {
+                holder.reTurnCheck.setChecked(true);
+                if (!list.get(position).getComment().equals("")) {
+                    holder.tvUseComment.setText("Commented.");
+                    holder.tvUseComment.setTextColor(R.color.colorPrimary);
+                    holder.tvUseComment.setVisibility(View.VISIBLE);
+                } else {
+                    holder.tvUseComment.setVisibility(View.VISIBLE);
+                }
+            } else {
+                holder.reTurnCheck.setChecked(false);
             }
 
 
@@ -692,32 +770,110 @@ public class Invoid_Activity extends AppCompatActivity {
             }
 
 
-            holder.comCheck.setOnCheckedChangeListener((compoundButton, b) -> {
-                if (b) {
+            holder.comCheck.setOnClickListener(v -> {
+                if (((CheckBox) v).isChecked()) {
+                    updateList(position, "", String.valueOf(position));
+
                     holder.reCheck.setChecked(false);
+                    holder.reTurnCheck.setChecked(false);
                     list.get(position).setStatus("1");
                     list.get(position).setInto("1");
+
+                    if (list.get(position).getStatus().equals("1") && list.get(position).getComment().equals("")) {
+                        Log.d("Akkksk", "onBindViewHolder: 1");
+                        holder.tvUseComment.setVisibility(View.GONE);
+                    } else if (list.get(position).getStatus().equals("1") && !list.get(position).getComment().equals("")) {
+                        Log.d("Akkksk", "onBindViewHolder: 2");
+                        holder.tvUseComment.setText("Commented.");
+                        holder.tvUseComment.setTextColor(R.color.colorPrimary);
+                        holder.tvUseComment.setVisibility(View.VISIBLE);
+                    }
                     holder.imgEditBoxNoPickup.setEnabled(true);
 
                 } else {
                     holder.imgEditBoxNoPickup.setEnabled(false);
                     list.get(position).setStatus("0");
                     list.get(position).setInto("0");
+
+                    if (list.get(position).getStatus().equals("0") && list.get(position).getComment().equals("")) {
+                        Log.d("Akkksk", "onBindViewHolder: 1");
+                        holder.tvUseComment.setVisibility(View.GONE);
+                    } else if (list.get(position).getStatus().equals("0") && !list.get(position).getComment().equals("")) {
+                        holder.tvUseComment.setVisibility(View.GONE);
+                        list.get(position).setComment("");
+                    }
                 }
             });
-            holder.reCheck.setOnCheckedChangeListener((compoundButton, b) -> {
-                if (b) {
+
+            holder.reCheck.setOnClickListener(v -> {
+                if (((CheckBox) v).isChecked()) {
+                    updateList(position, "", String.valueOf(position));
                     holder.comCheck.setChecked(false);
+                    holder.reTurnCheck.setChecked(false);
                     list.get(position).setStatus("2");
+
+                    if (list.get(position).getStatus().equals("2") && list.get(position).getComment().equals("")) {
+                        Log.d("Akkksk", "onBindViewHolder: 1");
+
+                        holder.tvUseComment.setVisibility(View.VISIBLE);
+                        holder.tvUseComment.setText("Please comment.");
+                        holder.tvUseComment.setTextColor(Color.RED);
+                    } else if (list.get(position).getStatus().equals("2") && !list.get(position).getComment().equals("")) {
+                        Log.d("Akkksk", "onBindViewHolder: 2");
+                        holder.tvUseComment.setText("Commented.");
+                        holder.tvUseComment.setVisibility(View.VISIBLE);
+                    }
+
                     holder.imgEditBoxNoPickup.setEnabled(true);
                     Log.d("SDss", "onBindViewHolder:  > > isCheck: " + list.get(position).getStatus() + ">" + list.get(position).getDeli_note_no());
                 } else {
                     list.get(position).setStatus("0");
+                    if (list.get(position).getStatus().equals("0") && list.get(position).getComment().equals("")) {
+                        Log.d("Akkksk", "onBindViewHolder: 1");
+                        holder.tvUseComment.setVisibility(View.GONE);
+                    } else if (list.get(position).getStatus().equals("0") && !list.get(position).getComment().equals("")) {
+                        holder.tvUseComment.setVisibility(View.GONE);
+                        list.get(position).setComment("");
+                    }
                     holder.imgEditBoxNoPickup.setEnabled(false);
                     Log.d("SDss", "onBindViewHolder:  > > unCheck: " + list.get(position).getStatus() + ">" + list.get(position).getDeli_note_no());
                 }
+            });
+
+            holder.reTurnCheck.setOnClickListener(v -> {
+                if (((CheckBox) v).isChecked()) {
+                    holder.imgEditBoxNoPickup.setEnabled(true);
+                    updateList(position, "", String.valueOf(position));
+                    holder.comCheck.setChecked(false);
+                    holder.reCheck.setChecked(false);
+                    list.get(position).setStatus("3");
+                    if (list.get(position).getStatus().equals("3") && list.get(position).getComment().equals("")) {
+                        Log.d("Akkksk", "onBindViewHolder: 1");
+                        holder.tvUseComment.setVisibility(View.VISIBLE);
+                        holder.tvUseComment.setText("Please comment.");
+                        holder.tvUseComment.setTextColor(Color.RED);
+                    } else if (list.get(position).getStatus().equals("3") && !list.get(position).getComment().equals("")) {
+                        Log.d("Akkksk", "onBindViewHolder: 2");
+                        holder.tvUseComment.setText("Commented.");
+                        holder.tvUseComment.setTextColor(R.color.colorPrimary);
+                        holder.tvUseComment.setVisibility(View.VISIBLE);
+                    }
+
+                    Log.d("SDss", "onBindViewHolder:  > > isCheck: " + list.get(position).getStatus() + ">" + list.get(position).getDeli_note_no());
+                } else {
+                    holder.imgEditBoxNoPickup.setEnabled(false);
+                    list.get(position).setStatus("0");
+                    if (list.get(position).getStatus().equals("0") && list.get(position).getComment().equals("")) {
+                        Log.d("Akkksk", "onBindViewHolder: 1");
+                        holder.tvUseComment.setVisibility(View.GONE);
+                    } else if (list.get(position).getStatus().equals("0") && !list.get(position).getComment().equals("")) {
+                        holder.tvUseComment.setVisibility(View.GONE);
+                        list.get(position).setComment("");
+                    }
 
 
+                    Log.d("SDss", "onBindViewHolder:  > > unCheck: " + list.get(position).getStatus() + ">" + list.get(position).getDeli_note_no());
+                }
             });
 
 
@@ -732,7 +888,7 @@ public class Invoid_Activity extends AppCompatActivity {
                 Animation animation = AnimationUtils.loadAnimation(context, R.anim.alpha);
                 holder.imgEditBoxNoPickup.startAnimation(animation);
                 showDialogComment(list.get(position).getConsignment_no(), list.get(position).getDeli_note_no(),
-                        list.get(position).getOrder_no(), list.get(position).getDelivery_no(), position, list.get(position).getComment());
+                        list.get(position).getOrder_no(), list.get(position).getDelivery_no(), position, list.get(position).getComment(), list.get(position).getStatus());
             });
             holder.imageView11.setOnClickListener(view -> {
                 Animation animation = AnimationUtils.loadAnimation(context, R.anim.alpha);
@@ -749,7 +905,7 @@ public class Invoid_Activity extends AppCompatActivity {
         }
 
         public class ViewHolder extends RecyclerView.ViewHolder {
-            CheckBox comCheck, reCheck;
+            CheckBox comCheck, reCheck, reTurnCheck;
             ImageView imgEditBoxNoPickup, imageView11;
             TextView tvUseComment, textView21, textView22, textView15;
 
@@ -764,13 +920,32 @@ public class Invoid_Activity extends AppCompatActivity {
                 reCheck = itemView.findViewById(R.id.reCheck);
                 imgEditBoxNoPickup = itemView.findViewById(R.id.imgEditBoxNoPickup);
                 imageView11 = itemView.findViewById(R.id.imageView11);
+                reTurnCheck = itemView.findViewById(R.id.reTurnCheck);
 
             }
         }
 
-        public void updateList(int i, String comment) {
+        public void updateList2(int i, String comment, String status) {
 
             list.get(i).setComment(comment);
+            notifyItemChanged(i, list.get(i));
+
+            Log.d("position333", "updateList: " + list.get(i).getDeli_note_no());
+            Log.d("position333", "updateList: " + i);
+            // notifyItemChanged(i);
+
+        }
+
+        public void updateList(int i, String comment, String status) {
+
+            if (status.equals("3")) {
+                list.get(i).setComment("");
+            } else if (status.equals("2")) {
+                list.get(i).setComment("");
+            } else {
+                list.get(i).setComment(comment);
+            }
+
             notifyItemChanged(i, list.get(i));
 
             Log.d("position333", "updateList: " + list.get(i).getDeli_note_no());
@@ -835,7 +1010,7 @@ public class Invoid_Activity extends AppCompatActivity {
         alertbox.show();
     }
 
-    private void showDialogComment(String cons, String inv, String order_no, String delivery_no, int position, String lastComment) {
+    private void showDialogComment(String cons, String inv, String order_no, String delivery_no, int position, String lastComment, String status) {
 
         final AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
         alertDialogBuilder.setCancelable(false);
@@ -852,8 +1027,6 @@ public class Invoid_Activity extends AppCompatActivity {
         Spinner spinner = popupInputDialogView.findViewById(R.id.spinnerTariffCalculator);
 
         edtComment_PICK.setText(lastComment);
-
-
 
 
         imgClose_dialog.setOnClickListener(new View.OnClickListener() {
@@ -890,7 +1063,7 @@ public class Invoid_Activity extends AppCompatActivity {
 //            } catch (JSONException e) {
 //                e.printStackTrace();
 //            }
-            invAdapter.updateList(position, commentText);
+            invAdapter.updateList2(position, commentText, status);
 //            invAdapter.list.get(position).setComment(commentText);
 //            invAdapter.notifyItemChanged(position);
 
