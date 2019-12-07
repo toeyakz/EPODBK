@@ -165,57 +165,57 @@ public class Signature_Activity extends AppCompatActivity {
                 Log.d("Asfjshdflkasdfasd", "addJpgSignatureToGallery: " + arrayList.get(i).getOrder_no() + " > " + arrayList.get(i).getStatus() + " comment:" + arrayList.get(i).getComment());
 
 
-//
-//                JSONObject jsonInsertPicSign = new JSONObject();
-//                JSONArray jsonArrayInsertPicSign = new JSONArray();
-//
-//                JSONObject jsonInsertComment = new JSONObject();
-//                JSONArray jsonArrayInsertComment = new JSONArray();
-//
-//                try {
-//
-//                        jsonInsertPicSign.put("consignment_no", arrayList.get(i).getConsignment_no());
-//                        jsonInsertPicSign.put("order_no", arrayList.get(i).getOrder_no());
-//                        jsonInsertPicSign.put("invoice_no", arrayList.get(i).getDeli_note_no());
-//                        jsonInsertPicSign.put("status_load", arrayList.get(i).getStatus());
-//                        jsonInsertPicSign.put("pic_sign_load", image.getName());
-//                        jsonInsertPicSign.put("date_sign_load", getDate);
-//
-//
-//                    if (!arrayList.get(i).getComment().equals("")) {
-//                        jsonInsertComment.put("consignment_no", arrayList.get(i).getConsignment_no());
-//                        jsonInsertComment.put("order_no", arrayList.get(i).getOrder_no());
-//                        jsonInsertComment.put("invoice_no", arrayList.get(i).getDeli_note_no());
-//                        jsonInsertComment.put("comment", arrayList.get(i).getComment());
-//                        jsonInsertComment.put("status_load", arrayList.get(i).getStatus());
-//                        jsonInsertComment.put("delivery_no", arrayList.get(i).getDelivery_no());
-//                    }
-//
-//                    //อัพเดต status ตาราง consignment
-//                    ContentValues cv = new ContentValues();
-//                    cv.put("status_order_no", arrayList.get(i).getStatus());
-//                    databaseHelper.db().update("Plan", cv, "consignment_no= '" + arrayList.get(i).getConsignment_no() + "' and order_no='"+arrayList.get(i).getOrder_no()+"'" +
-//                            " and activity_type = 'LOAD' and trash = '0'", null);
-//
-//                    jsonArrayInsertPicSign.put(jsonInsertPicSign);
-//                    jsonArrayInsertComment.put(jsonInsertComment);
-//                    if (!arrayList.get(i).getStatus().equals("0")) {
-//                        if (narisv.INSERT_AS_SQL("pic_sign", jsonArrayInsertPicSign, "")) {
-//                            Log.d("PlanWorkLOG", "SAVED Pic_sign.");
-//                            if (narisv.INSERT_AS_SQL("comment_invoice", jsonArrayInsertComment, "")) {
-//                                Log.d("PlanWorkLOG", "SAVED Comment.");
-//                            } else {
-//                                Log.d("PlanWorkLOG", "FAIL save Comment.");
-//                            }
-//                        } else {
-//                            Log.d("PlanWorkLOG", "FAIL save Pic_sign.");
-//                        }
-//                    }
-//
-//
-//                } catch (JSONException e) {
-//                    e.printStackTrace();
-//                }
+
+                JSONObject jsonInsertPicSign = new JSONObject();
+                JSONArray jsonArrayInsertPicSign = new JSONArray();
+
+                JSONObject jsonInsertComment = new JSONObject();
+                JSONArray jsonArrayInsertComment = new JSONArray();
+
+                try {
+
+                        jsonInsertPicSign.put("consignment_no", arrayList.get(i).getConsignment_no());
+                        jsonInsertPicSign.put("order_no", arrayList.get(i).getOrder_no());
+                        jsonInsertPicSign.put("invoice_no", arrayList.get(i).getDeli_note_no());
+                        jsonInsertPicSign.put("status_load", arrayList.get(i).getStatus());
+                        jsonInsertPicSign.put("pic_sign_load", image.getName());
+                        jsonInsertPicSign.put("date_sign_load", getDate);
+
+
+                    if (!arrayList.get(i).getComment().equals("")) {
+                        jsonInsertComment.put("consignment_no", arrayList.get(i).getConsignment_no());
+                        jsonInsertComment.put("order_no", arrayList.get(i).getOrder_no());
+                        jsonInsertComment.put("invoice_no", arrayList.get(i).getDeli_note_no());
+                        jsonInsertComment.put("comment", arrayList.get(i).getComment());
+                        jsonInsertComment.put("status_load", arrayList.get(i).getStatus());
+                        jsonInsertComment.put("delivery_no", arrayList.get(i).getDelivery_no());
+                    }
+
+                    //อัพเดต status ตาราง consignment
+                    ContentValues cv = new ContentValues();
+                    cv.put("status_order_no", arrayList.get(i).getStatus());
+                    databaseHelper.db().update("Plan", cv, "consignment_no= '" + arrayList.get(i).getConsignment_no() + "' and order_no='"+arrayList.get(i).getOrder_no()+"'" +
+                            " and activity_type = 'LOAD' and trash = '0'", null);
+
+                    jsonArrayInsertPicSign.put(jsonInsertPicSign);
+                    jsonArrayInsertComment.put(jsonInsertComment);
+                    if (!arrayList.get(i).getStatus().equals("0")) {
+                        if (narisv.INSERT_AS_SQL("pic_sign", jsonArrayInsertPicSign, "")) {
+                            Log.d("PlanWorkLOG", "SAVED Pic_sign.");
+                            if (narisv.INSERT_AS_SQL("comment_invoice", jsonArrayInsertComment, "")) {
+                                Log.d("PlanWorkLOG", "SAVED Comment.");
+                            } else {
+                                Log.d("PlanWorkLOG", "FAIL save Comment.");
+                            }
+                        } else {
+                            Log.d("PlanWorkLOG", "FAIL save Pic_sign.");
+                        }
+                    }
+
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
 
 
             }

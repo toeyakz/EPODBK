@@ -308,31 +308,118 @@ public class Invoid_Activity extends AppCompatActivity {
 
                         }
 
-                        Log.d("hhhjujh", "onPostExecute: complete:" + statusComplete + " reject:" + statusReject + " return:" + statusReturn + " comment:" + commentReject);
+                        // Log.d("hhhjujh", "onPostExecute: complete:" + statusComplete + " reject:" + statusReject + " return:" + statusReturn + " comment:" + commentReject);
 
                         if (statusReject != 0 || statusComplete != 0 || commentReject != 0 || statusReturn != 0 || commentReturn != 0 || commentComplete != 0) {
 
-                            if (statusReturn != 0 && statusReturn == commentReturn) {
-                                Log.d("checkIntent", ">> ติ๊ก return และ คอมเม้น return แล้ว");
+                            if (statusReturn != 0 && commentReturn != 0 && statusReturn == commentReturn && statusReject != 0 && commentReject != 0 && statusReject == commentReject && statusComplete != 0 && statusComplete == commentComplete
+                            ) {
 
-                            } else if (statusReject != 0 && statusReject == commentReject) {
-                                Log.d("checkIntent", ">> ติ๊ก reject และ คอมเม้น reject แล้ว");
+                                Log.d("checkIntent", ">> ติ๊ก return และ คอมเม้น return แล้ว\n" +
+                                        " ติ๊ก reject และ คอมเม้น reject แล้ว\n" +
+                                        " ติ๊ก complete และ คอมเม้น complete แล้ว");
 
-                            } else if (statusComplete != 0 && statusComplete != commentComplete) {
-                                Log.d("checkIntent", ">> ติ๊ก complete แต่ไม่คอมเม้น");
-
-                            } else if (statusComplete != 0 && statusComplete == commentComplete) {
-                                Log.d("checkIntent", ">> ติ๊ก complete และ คอมเม้น complete แล้ว");
-
+                            } else if (statusReturn != 0 && commentReturn != 0 && statusReturn == commentReturn) {
+                                Log.d("checkIntent", ">> ติ๊ก return และคอมเม้นแล้ว");
+                            } else if (statusReject != 0 && commentReject != 0 && statusReject == commentReject) {
+                                Log.d("checkIntent", ">> ติ๊ก reject และคอมเม้นแล้ว");
+                            } else if (statusComplete != 0 && commentComplete != 0 && statusComplete == commentComplete || statusComplete != 0 && commentComplete == 0) {
+                                Log.d("checkIntent", ">> ติ๊ก complete และคอมเม้นแล้ว");
+                            } else if (statusReturn != 0 && commentReturn != 0 && statusReturn == commentReturn && (statusReject != 0 && commentReject == 0)) {
+                                Log.d("checkIntent", ">> ติ๊ก return และ คอมเม้น return แล้ว และ ติ้๊ก reject และ คอมเม้นแล้วหรืออาจจะยังก็ได้");
+                            } else if (statusReject != 0 && commentReject != 0 && statusReject == commentReject && (statusReturn != 0 && commentReturn == 0)) {
+                                Log.d("checkIntent", ">> ติ๊ก reject และ คอมเม้น return แล้ว และ ติ้๊ก return และ คอมเม้นแล้วหรืออาจจะยังก็ได้");
+                            } else if (statusReturn != commentReturn) {
+                                Log.d("checkIntent", ">> ติ๊ก return แต่ไม่ได้คอมเม้น");
+                            } else if (statusReject != commentReject) {
+                                Log.d("checkIntent", ">> ติ๊ก reject แต่ไม่ได้คอมเม้น");
                             }
-                            //เงื่อนไขไม่ครบ
-                            else if (statusReturn != 0 && statusReturn != commentReturn) {
-                                Log.d("checkIntent", ">> ติ๊ก return แต่ไม่คอมเม้น");
 
-                            } else if (statusReject != 0 && statusReject != commentReject) {
-                                Log.d("checkIntent", ">> ติ๊ก reject แต่ไม่คอมเม้น");
 
-                            }
+//                            else if (statusReturn != 0 && commentReturn != 0 && statusReturn == commentReturn) {
+//                                Log.d("checkIntent", ">> ติ๊ก return และ คอมเม้น return แล้ว");
+//                            }
+
+
+//                            if ((statusReturn != 0 && commentReturn != 0 && statusReturn == commentReturn) ||
+//                                    (statusReject != 0 && commentReject != 0 && statusReject == commentReject) ||
+//                                    (statusComplete != 0 && commentComplete != 0 && statusComplete == commentComplete) &&
+//                                    (statusComplete != 0 && commentComplete == 0 && statusComplete != commentComplete)) {
+//                                Log.d("checkIntent", ">> ติ๊ก return และ คอมเม้น return แล้ว\n" +
+//                                        " ติ๊ก reject และ คอมเม้น reject แล้ว\n" +
+//                                        " ติ๊ก complete และ คอมเม้น complete แล้ว");
+//
+//                                Animation animation = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.alpha);
+//                                sign.startAnimation(animation);
+//                                dataToSign();
+//
+//                            } else if (statusComplete != 0 && commentComplete != 0 && statusComplete == commentComplete ||
+//                                    commentComplete == 0 && statusComplete != commentComplete &&
+//                                            statusReturn != 0 && commentReturn == 0 && statusReturn != commentReturn &&
+//                                            statusReject != 0 && commentReject == 0 && statusReject != commentReject) {
+//                                Log.d("checkIntent", ">> ติ๊ก complete แต่ไม่ได้คอมเม้นหรือคอมเม้นแล้ว\n" +
+//                                        " ติ๊ก return แต่ไม่ได้คอมเม้นฃื\n" +
+//                                        " ตึก reject แต่ไม่ได้คอมเม้น");
+//
+//
+//                            } else if (statusReturn != 0 && commentReturn != 0 && statusReturn == commentReturn &&
+//                                    statusReject != 0 && commentReject != 0 && statusReject == commentReject) {
+//                                Log.d("checkIntent", ">> ติ๊ก return และ คอมเม้น return แล้ว\n" +
+//                                        " ติ๊ก reject และ คอมเม้น reject แล้ว");
+//
+//                                Animation animation = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.alpha);
+//                                sign.startAnimation(animation);
+//                                dataToSign();
+//
+//                            } else if (statusReturn != 0 && commentReturn != 0 && statusReturn == commentReturn &&
+//                                    statusReject != 0 && commentReject == 0 && statusReject != commentReject) {
+//                                Log.d("checkIntent", ">> ติ๊ก return และ คอมเม้น return แล้ว\n" +
+//                                        " ติ๊ก reject แต่ไมา่ได้คอมเม้น");
+//
+//                            } else if (statusReject != 0 && commentReject != 0 && statusReject == commentReject &&
+//                                    statusReturn != 0 && commentReturn == 0 && statusReturn != commentReturn) {
+//                                Log.d("checkIntent", ">> ติ๊ก return และ คอมเม้น return แล้ว\n" +
+//                                        " ติ๊ก reject แต่ไม่ได้คอมเม้น");
+//
+//                            } else if (statusReturn != 0 && statusReturn == commentReturn) {
+//                                Log.d("checkIntent", ">> ติ๊ก return และ คอมเม้น return แล้ว");
+//
+//                                Animation animation = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.alpha);
+//                                sign.startAnimation(animation);
+//                                dataToSign();
+//
+//                            } else if (statusReject != 0 && statusReject == commentReject) {
+//                                Log.d("checkIntent", ">> ติ๊ก reject และ คอมเม้น reject แล้ว");
+//
+//                                Animation animation = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.alpha);
+//                                sign.startAnimation(animation);
+//                                dataToSign();
+//
+//                            } else if (statusComplete != 0 && statusComplete == commentComplete) {
+//                                Log.d("checkIntent", ">> ติ๊ก complete และ คอมเม้น complete แล้ว");
+//
+//                                Animation animation = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.alpha);
+//                                sign.startAnimation(animation);
+//                                dataToSign();
+//
+//                            } else if (statusComplete != 0 && statusComplete == commentComplete ||
+//                                    statusComplete != 0 && statusComplete != commentComplete) {
+//                                Log.d("checkIntent", ">> ติ๊ก complete และ คอมเม้น complete แล้ว\n" +
+//                                        "และ ติํก complete แต่ยังไม่ได้คอมเม้น");
+//
+//                                Animation animation = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.alpha);
+//                                sign.startAnimation(animation);
+//                                dataToSign();
+//
+//                            }
+//                            //เงื่อนไขไม่ครบ
+//                            else if (statusReturn != 0 && statusReturn != commentReturn) {
+//                                Log.d("checkIntent", ">> ติ๊ก return แต่ไม่คอมเม้น");
+//
+//                            } else if (statusReject != 0 && statusReject != commentReject) {
+//                                Log.d("checkIntent", ">> ติ๊ก reject แต่ไม่คอมเม้น");
+//
+//                            }
 
 
 //                            if (statusReturn != 0 && commentReturn != 0 && statusReturn == commentReturn &&
