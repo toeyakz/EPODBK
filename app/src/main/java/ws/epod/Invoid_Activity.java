@@ -312,14 +312,21 @@ public class Invoid_Activity extends AppCompatActivity {
 
                         if (statusReject != 0 || statusComplete != 0 || commentReject != 0 || statusReturn != 0 || commentReturn != 0 || commentComplete != 0) {
 
-                            if (statusReturn != 0 && commentReturn != 0 && statusReturn == commentReturn && statusReject != 0 && commentReject != 0 && statusReject == commentReject && statusComplete != 0 && statusComplete == commentComplete
+                            if (statusReturn != 0 && commentReturn != 0 && statusReturn == commentReturn && statusReject != 0 && commentReject != 0 && statusReject == commentReject &&
+                                    (statusComplete != 0 && commentComplete != 0 && statusComplete == commentComplete || statusComplete != 0 && commentComplete == 0)
                             ) {
 
                                 Log.d("checkIntent", ">> ติ๊ก return และ คอมเม้น return แล้ว\n" +
                                         " ติ๊ก reject และ คอมเม้น reject แล้ว\n" +
                                         " ติ๊ก complete และ คอมเม้น complete แล้ว");
 
-                            } else if (statusReturn != 0 && commentReturn != 0 && statusReturn == commentReturn) {
+                            } else if ((statusReturn != 0 && commentReturn != 0 && statusReturn == commentReturn) && (statusReject != 0 && commentReject != 0 && statusReject == commentReject)) {
+                                Log.d("checkIntent", ">> ติ๊ก return , reject และคอมเม้นทั้งสองแล้ว");
+                            } else if ((statusReturn != 0 && commentReturn != 0 && statusReturn == commentReturn) && (statusComplete != 0)) {
+                                Log.d("checkIntent", ">> ติ๊ก return , complete และคอมเม้นทั้งสองแล้ว");
+                            } else if ((statusReject != 0 && commentReject != 0 && statusReject == commentReject) && (statusComplete != 0)) {
+                                Log.d("checkIntent", ">> ติ๊ก reject , complete และคอมเม้นทั้งสองแล้ว");
+                            } else if (statusReturn != 0 && commentReturn != 0 && statusReturn == commentReturn ) {
                                 Log.d("checkIntent", ">> ติ๊ก return และคอมเม้นแล้ว");
                             } else if (statusReject != 0 && commentReject != 0 && statusReject == commentReject) {
                                 Log.d("checkIntent", ">> ติ๊ก reject และคอมเม้นแล้ว");
