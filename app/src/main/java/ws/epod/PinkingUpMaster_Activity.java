@@ -1457,6 +1457,7 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
                     } else {
                         commentOfspinner = "";
                     }
+                    Log.d("ASdasdasd", "onClick: "+ commentOfspinner);
 
                 }
 
@@ -1525,7 +1526,7 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
 
                     // String commentText = edtComment_PICK.getText().toString();
 
-
+                    Log.d("ASdasdasd", "onClick: "+ commentOfspinner);
                     for (int i = 0; i < deleteImage.size(); i++) {
                         Log.d("deltetImage", "onClick: " + deleteImage.get(i));
                         File file = new File(deleteImage.get(i));

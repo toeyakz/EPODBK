@@ -100,12 +100,12 @@ public class Deliver_Activity extends AppCompatActivity {
     ImageView imgBack_Deliver, imgClose_dialog, imgCommentPick_01, imgNewPick01, imgDeletePick01, imgCommentPick_02, imgNewPick02, imgDeletePick02, imgCommentPick_03, imgNewPick03, imgDeletePick03, imageView8, imgCameraScan;
 
     EditText edtComment_PICK, edtFineWaybillPick;
-    Button btnSaveComent_PICK;
+
     TextView btnEnterWaybillNo, imgSave_dialog_Deli, bnCloseJobDeliver;
 
     String INPUT_WAY = "PLUS";
     String SWICH_EXPAND = "ON";
-
+    Button btnSaveComent_PICK;
     int lastPosition = 0;
 
     String getDate = "";
@@ -117,7 +117,7 @@ public class Deliver_Activity extends AppCompatActivity {
     String picture2 = "";
     String picture3 = "";
 
-    String commentOfspinner = "";
+    private String commentOfspinner = "";
 
     String[] arrayNameImage = new String[3];
 
@@ -558,7 +558,7 @@ public class Deliver_Activity extends AppCompatActivity {
                 String getScanText = result.getContents();
                 getScanText = getScanText.trim();
 
-               // edtFineWaybillPick.setText(result.getContents());
+                // edtFineWaybillPick.setText(result.getContents());
 
                 if (INPUT_WAY.equals("PLUS")) {
                     for (int i = 0;
@@ -789,9 +789,19 @@ public class Deliver_Activity extends AppCompatActivity {
 
             if (expandedList.getIs_scaned().equals("2")) {
                 checkBox.setChecked(true);
-//              imgEditBoxNoPickup.setEnabled(false);
+                imgEditBoxNoPickup.setEnabled(true);
                 checkBox.setEnabled(false);
                 checkBox.setButtonDrawable(R.drawable.ic_indeterminate_check_box_black_24dp);
+
+                imgEditBoxNoPickup.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        Animation animation = AnimationUtils.loadAnimation(context, R.anim.alpha);
+                        imgEditBoxNoPickup.startAnimation(animation);
+
+                        showDialogBox(expandedList.getBox_no(), expandedList.getConsignment(), expandedList.getDelivery_no(), expandedList.getPlan_seq(), expandedListPosition);
+                    }
+                });
 
             } else {
                 checkBox.setEnabled(true);
@@ -1248,6 +1258,7 @@ public class Deliver_Activity extends AppCompatActivity {
             alertDialogBuilder.setView(popupInputDialogView);
             alertDialog = alertDialogBuilder.create();
 
+
             tvConsignment_Dialog = popupInputDialogView.findViewById(R.id.tvConsignment_con_dialog);
             tv_BoxNo_Dialog = popupInputDialogView.findViewById(R.id.tv_BoxNo_Dialog);
             imgClose_dialog = popupInputDialogView.findViewById(R.id.imgClose_dialog);
@@ -1290,6 +1301,7 @@ public class Deliver_Activity extends AppCompatActivity {
                     } else {
                         commentOfspinner = "";
                     }
+                    Log.d("ASdasdasd", "onClick: "+ commentOfspinner);
 
                 }
 
@@ -1348,7 +1360,9 @@ public class Deliver_Activity extends AppCompatActivity {
                 @Override
                 public void onClick(View view) {
 
-                   // String commentText = edtComment_PICK.getText().toString();
+                    // String commentText = edtComment_PICK.getText().toString();
+
+                    Log.d("ASdasdasd", "onClick: "+ commentOfspinner);
 
                     for (int i = 0; i < deleteImage.size(); i++) {
 
@@ -1397,7 +1411,7 @@ public class Deliver_Activity extends AppCompatActivity {
                     }
 
                     cv.put("modified_date", getDate);
-                    databaseHelper.db().update("Plan", cv, "delivery_no= '" + delivery_no + "' and plan_seq = '" + plan_seq + "' and activity_type = 'LOAD' and " +
+                    databaseHelper.db().update("Plan", cv, "delivery_no= '" + delivery_no + "' and plan_seq = '" + plan_seq + "' and activity_type = 'UNLOAD' and " +
                             " consignment_no = '" + consignment_no + "' and box_no = '" + box_no + "' and trash = '0'", null);
 
                     Log.d("pathString", "onClick: " + delivery_no + "--" + plan_seq + "--" + consignment_no + "--" + box_no);
@@ -1540,7 +1554,7 @@ public class Deliver_Activity extends AppCompatActivity {
                         int spinnerPosition = adapter.getPosition(comment);
                         spinner.setSelection(spinnerPosition + 1);
                     }
-                   // edtComment_PICK.setText(comment);
+                    // edtComment_PICK.setText(comment);
 
                     if (!picture2.equals("")) {
                         picTemp2.add(picture2);
@@ -1835,37 +1849,37 @@ public class Deliver_Activity extends AppCompatActivity {
                 }
             });
 
-            btnSaveComent_PICK.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-
-                    String commentText = edtComment_PICK.getText().toString();
-
-                    if (commentText.matches("")) {
-                        ContentValues cv = new ContentValues();
-                        cv.putNull("comment");
-                        cv.put("is_scaned", "0");
-                        cv.put("modified_date", getDate);
-                        databaseHelper.db().update("Plan", cv, "delivery_no= '" + delivery_no + "' and plan_seq = '" + plan_seq + "' and activity_type = 'UNLOAD' and " +
-                                " consignment_no = '" + consignment_no + "' and box_no = '" + box_no + "' and trash = '0'", null);
-                        alertDialog.dismiss();
-                        getSQLite();
-                        Toast.makeText(Deliver_Activity.this, "Saved.", Toast.LENGTH_SHORT).show();
-                    } else {
-                        ContentValues cv = new ContentValues();
-                        cv.put("comment", commentText);
-                        cv.put("is_scaned", "2");
-                        cv.put("modified_date", getDate);
-                        databaseHelper.db().update("Plan", cv, "delivery_no= '" + delivery_no + "' and plan_seq = '" + plan_seq + "' and activity_type = 'UNLOAD' and " +
-                                " consignment_no = '" + consignment_no + "' and box_no = '" + box_no + "' and trash = '0'", null);
-                        alertDialog.dismiss();
-                        getSQLite();
-                        Toast.makeText(Deliver_Activity.this, "Saved.", Toast.LENGTH_SHORT).show();
-                    }
-
-
-                }
-            });
+//            btnSaveComent_PICK.setOnClickListener(new View.OnClickListener() {
+//                @Override
+//                public void onClick(View view) {
+//
+//                    ฝฝString commentText = edtComment_PICK.getText().toString();
+//
+//                    if (commentOfspinner.matches("")) {
+//                        ContentValues cv = new ContentValues();
+//                        cv.putNull("comment");
+//                        cv.put("is_scaned", "0");
+//                        cv.put("modified_date", getDate);
+//                        databaseHelper.db().update("Plan", cv, "delivery_no= '" + delivery_no + "' and plan_seq = '" + plan_seq + "' and activity_type = 'UNLOAD' and " +
+//                                " consignment_no = '" + consignment_no + "' and box_no = '" + box_no + "' and trash = '0'", null);
+//                        alertDialog.dismiss();
+//                        getSQLite();
+//                        Toast.makeText(Deliver_Activity.this, "Saved.", Toast.LENGTH_SHORT).show();
+//                    } else {
+//                        ContentValues cv = new ContentValues();
+//                        cv.put("comment", commentText);
+//                        cv.put("is_scaned", "2");
+//                        cv.put("modified_date", getDate);
+//                        databaseHelper.db().update("Plan", cv, "delivery_no= '" + delivery_no + "' and plan_seq = '" + plan_seq + "' and activity_type = 'UNLOAD' and " +
+//                                " consignment_no = '" + consignment_no + "' and box_no = '" + box_no + "' and trash = '0'", null);
+//                        alertDialog.dismiss();
+//                        getSQLite();
+//                        Toast.makeText(Deliver_Activity.this, "Saved.", Toast.LENGTH_SHORT).show();
+//                    }
+//
+//
+//                }
+//            });
 
 
             alertDialog.show();
