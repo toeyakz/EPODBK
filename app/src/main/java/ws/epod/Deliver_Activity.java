@@ -32,6 +32,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.BaseExpandableListAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -61,8 +63,10 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 
+import fr.ganfra.materialspinner.MaterialSpinner;
 import me.dm7.barcodescanner.zxing.ZXingScannerView;
 import ws.epod.Adapter.DialogConsAdapter;
 import ws.epod.Helper.ConnectionDetector;
@@ -112,6 +116,8 @@ public class Deliver_Activity extends AppCompatActivity {
     String picture1 = "";
     String picture2 = "";
     String picture3 = "";
+
+    String commentOfspinner = "";
 
     String[] arrayNameImage = new String[3];
 
@@ -1260,6 +1266,39 @@ public class Deliver_Activity extends AppCompatActivity {
             tvConsignment_Dialog.setText("Cons.No: " + consignment_no);
             tv_BoxNo_Dialog.setText("BoxNo: " + box_no);
 
+            List<String> categories = new ArrayList<>();
+            categories.add("File");
+            categories.add("Edit");
+            categories.add("View");
+            categories.add("Navigate");
+            categories.add("Code");
+            categories.add("Analyze");
+            categories.add("Refactor");
+            categories.add("Build");
+
+            ArrayAdapter<String> adapter = new ArrayAdapter<>(getApplicationContext(), android.R.layout.simple_spinner_item, categories);
+            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+            MaterialSpinner spinner = popupInputDialogView.findViewById(R.id.spinner);
+            spinner.setAdapter(adapter);
+
+            spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                @Override
+                public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+
+                    if (i != -1) {
+                        commentOfspinner = adapterView.getItemAtPosition(i).toString();
+                    } else {
+                        commentOfspinner = "";
+                    }
+
+                }
+
+                @Override
+                public void onNothingSelected(AdapterView<?> adapterView) {
+
+                }
+            });
+
             imgClose_dialog.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -1309,7 +1348,7 @@ public class Deliver_Activity extends AppCompatActivity {
                 @Override
                 public void onClick(View view) {
 
-                    String commentText = edtComment_PICK.getText().toString();
+                   // String commentText = edtComment_PICK.getText().toString();
 
                     for (int i = 0; i < deleteImage.size(); i++) {
 
@@ -1349,9 +1388,9 @@ public class Deliver_Activity extends AppCompatActivity {
                         index++;
                     }
 
-                    if (!picture1.equals("") || !picture2.equals("") || !picture3.equals("") || !commentText.matches("")) {
+                    if (!picture1.equals("") || !picture2.equals("") || !picture3.equals("") || !commentOfspinner.equals("")) {
                         cv.put("is_scaned", "2");
-                        cv.put("comment", commentText);
+                        cv.put("comment", commentOfspinner);
                     } else {
                         cv.put("comment", "");
                         cv.put("is_scaned", "0");
@@ -1390,7 +1429,11 @@ public class Deliver_Activity extends AppCompatActivity {
 
                     String comment = cursor.getString(cursor.getColumnIndex("comment"));
                     picture1 = cursor.getString(cursor.getColumnIndex("picture1"));
-                    edtComment_PICK.setText(comment);
+                    if (comment != null) {
+                        int spinnerPosition = adapter.getPosition(comment);
+                        spinner.setSelection(spinnerPosition + 1);
+                    }
+                    //edtComment_PICK.setText(comment);
 
                     if (!picture1.equals("")) {
                         picTemp1.add(picture1);
@@ -1493,7 +1536,11 @@ public class Deliver_Activity extends AppCompatActivity {
 
                     String comment = cursor02.getString(cursor02.getColumnIndex("comment"));
                     picture2 = cursor02.getString(cursor02.getColumnIndex("picture2"));
-                    edtComment_PICK.setText(comment);
+                    if (comment != null) {
+                        int spinnerPosition = adapter.getPosition(comment);
+                        spinner.setSelection(spinnerPosition + 1);
+                    }
+                   // edtComment_PICK.setText(comment);
 
                     if (!picture2.equals("")) {
                         picTemp2.add(picture2);
@@ -1598,7 +1645,11 @@ public class Deliver_Activity extends AppCompatActivity {
 
                     String comment = cursor03.getString(cursor03.getColumnIndex("comment"));
                     picture3 = cursor03.getString(cursor03.getColumnIndex("picture3"));
-                    edtComment_PICK.setText(comment);
+                    if (comment != null) {
+                        int spinnerPosition = adapter.getPosition(comment);
+                        spinner.setSelection(spinnerPosition + 1);
+                    }
+                    //edtComment_PICK.setText(comment);
 
                     if (!picture3.equals("")) {
                         picTemp3.add(picture3);

@@ -19,6 +19,22 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/linearLayout" />
 
+    <fr.ganfra.materialspinner.MaterialSpinner
+        android:id="@+id/spinner"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="16dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView32"
+        app:ms_arrowColor="#A9A9A9"
+        app:ms_arrowSize="14dp"
+        app:ms_hint="Select comment."
+        app:ms_hintColor="#A9A9A9"
+        app:ms_multiline="true" />
+
     <EditText
         android:id="@+id/edtComment_PICK"
         android:layout_width="0dp"
@@ -31,6 +47,7 @@
         android:inputType="textMultiLine"
         android:maxLines="8"
         android:padding="3dp"
+        android:visibility="gone"
         android:scrollbars="vertical"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
@@ -100,8 +117,8 @@
 
             <ImageView
                 android:id="@+id/imgCommentPick_02"
-                android:layout_width="100dp"
-                android:layout_height="100dp"
+                android:layout_width="101dp"
+                android:layout_height="102dp"
                 android:layout_gravity="center"
                 android:scaleType="centerCrop"
                 app:srcCompat="@mipmap/add_photo" />
@@ -175,13 +192,13 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="16dp"
         android:layout_marginEnd="8dp"
         android:text="Picture :"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/edtComment_PICK" />
+        app:layout_constraintTop_toBottomOf="@+id/spinner" />
 
     <TextView
         android:id="@+id/textView32"

@@ -31,6 +31,8 @@ import android.view.animation.AccelerateInterpolator;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.animation.DecelerateInterpolator;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
@@ -43,13 +45,18 @@ import android.widget.Toast;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.gson.Gson;
 
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.List;
 
+import fr.ganfra.materialspinner.MaterialSpinner;
 import ws.epod.Adapter.DialogConsAdapter;
 import ws.epod.Adapter.SignAdapter;
 import ws.epod.Helper.ConnectionDetector;
@@ -79,6 +86,8 @@ public class Invoid_Activity extends AppCompatActivity {
     private int commentReject = 0;
     private int commentReturn = 0;
     private int commentComplete = 0;
+
+    String commentOfspinner = "";
 
 
     TextView sign, tvNoData, tvUseComment;
@@ -326,7 +335,11 @@ public class Invoid_Activity extends AppCompatActivity {
                                 Log.d("checkIntent", ">> ติ๊ก return , complete และคอมเม้นทั้งสองแล้ว");
                             } else if ((statusReject != 0 && commentReject != 0 && statusReject == commentReject) && (statusComplete != 0)) {
                                 Log.d("checkIntent", ">> ติ๊ก reject , complete และคอมเม้นทั้งสองแล้ว");
-                            } else if (statusReturn != 0 && commentReturn != 0 && statusReturn == commentReturn ) {
+                            } else if (statusReturn != 0 && commentReturn != 0 && statusReturn == commentReturn && statusReject != 0 && commentReject == 0) {
+                                Log.d("checkIntent", ">> ติ๊ก return , reject แล้วแต่ยังไม่ได้คอมเม้น reject ");
+                            } else if (statusReject != 0 && commentReject != 0 && statusReject == commentReject && statusReturn != 0 && commentReturn == 0) {
+                                Log.d("checkIntent", ">> ติ๊ก return , reject แล้วแต่ยังไม่ได้คอมเม้น return ");
+                            } else if (statusReturn != 0 && commentReturn != 0 && statusReturn == commentReturn) {
                                 Log.d("checkIntent", ">> ติ๊ก return และคอมเม้นแล้ว");
                             } else if (statusReject != 0 && commentReject != 0 && statusReject == commentReject) {
                                 Log.d("checkIntent", ">> ติ๊ก reject และคอมเม้นแล้ว");
@@ -840,7 +853,10 @@ public class Invoid_Activity extends AppCompatActivity {
                     holder.tvUseComment.setTextColor(R.color.colorPrimary);
                     holder.tvUseComment.setVisibility(View.VISIBLE);
                 } else {
+                    holder.tvUseComment.setText("Please commented.");
+                    holder.tvUseComment.setTextColor(Color.RED);
                     holder.tvUseComment.setVisibility(View.VISIBLE);
+
                 }
             } else {
                 holder.reTurnCheck.setChecked(false);
@@ -856,6 +872,8 @@ public class Invoid_Activity extends AppCompatActivity {
                     holder.tvUseComment.setVisibility(View.VISIBLE);
 
                 } else {
+                    holder.tvUseComment.setText("Please commented.");
+                    holder.tvUseComment.setTextColor(Color.RED);
                     holder.tvUseComment.setVisibility(View.VISIBLE);
                 }
                 // holder.comCheck.setChecked(false);
@@ -1021,10 +1039,15 @@ public class Invoid_Activity extends AppCompatActivity {
 
         public void updateList2(int i, String comment, String status) {
 
-            list.get(i).setComment(comment);
+            if (comment.equals("")) {
+                list.get(i).setComment("");
+            } else {
+                list.get(i).setComment(comment);
+            }
+
             notifyItemChanged(i, list.get(i));
 
-            Log.d("position333", "updateList: " + list.get(i).getDeli_note_no());
+            Log.d("position333", "updateList: " + list.get(i).getComment());
             Log.d("position333", "updateList: " + i);
             // notifyItemChanged(i);
 
@@ -1115,12 +1138,51 @@ public class Invoid_Activity extends AppCompatActivity {
         alertDialogBuilder.setView(popupInputDialogView);
         AlertDialog alertDialog = alertDialogBuilder.create();
 
+
         ImageView imgClose_dialog = popupInputDialogView.findViewById(R.id.imgClose_dialog);
         EditText edtComment_PICK = popupInputDialogView.findViewById(R.id.edtComment_PICK);
         Button btnSaveComent_PICK = popupInputDialogView.findViewById(R.id.btnSaveComent_PICK);
-        Spinner spinner = popupInputDialogView.findViewById(R.id.spinnerTariffCalculator);
+//        Spinner spinner = popupInputDialogView.findViewById(R.id.spinnerTariffCalculator);
 
         edtComment_PICK.setText(lastComment);
+
+        List<String> categories = new ArrayList<>();
+        categories.add("File");
+        categories.add("Edit");
+        categories.add("View");
+        categories.add("Navigate");
+        categories.add("Code");
+        categories.add("Analyze");
+        categories.add("Refactor");
+        categories.add("Build");
+
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(getApplicationContext(), android.R.layout.simple_spinner_item, categories);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        MaterialSpinner spinner = popupInputDialogView.findViewById(R.id.spinner);
+        spinner.setAdapter(adapter);
+
+        if (lastComment != null) {
+            int spinnerPosition = adapter.getPosition(lastComment);
+            spinner.setSelection(spinnerPosition + 1);
+        }
+
+        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+
+                if (i != -1) {
+                    commentOfspinner = adapterView.getItemAtPosition(i).toString();
+                } else {
+                    commentOfspinner = "00";
+                }
+
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
 
 
         imgClose_dialog.setOnClickListener(new View.OnClickListener() {
@@ -1133,9 +1195,18 @@ public class Invoid_Activity extends AppCompatActivity {
         });
 
         btnSaveComent_PICK.setOnClickListener(view -> {
-            String commentText = "";
-            if (!edtComment_PICK.getText().toString().trim().matches("")) {
-                commentText = edtComment_PICK.getText().toString().trim();
+//            String commentText = "";
+//            if (!edtComment_PICK.getText().toString().trim().matches("")) {
+//                commentText = edtComment_PICK.getText().toString().trim();
+//            }
+
+            if (commentOfspinner.equals("00")) {
+                Log.d("jjjjdjdj", "showDialogComment: ไม่ว่าง " + commentOfspinner);
+                commentOfspinner = "";
+                invAdapter.updateList2(position, commentOfspinner, status);
+            } else {
+                Log.d("jjjjdjdj", "showDialogComment: ว่าง" + commentOfspinner);
+                invAdapter.updateList2(position, commentOfspinner, status);
             }
 
 //            JSONObject json = new JSONObject();
@@ -1157,7 +1228,7 @@ public class Invoid_Activity extends AppCompatActivity {
 //            } catch (JSONException e) {
 //                e.printStackTrace();
 //            }
-            invAdapter.updateList2(position, commentText, status);
+            //           invAdapter.updateList2(position, commentOfspinner, status);
 //            invAdapter.list.get(position).setComment(commentText);
 //            invAdapter.notifyItemChanged(position);
 
