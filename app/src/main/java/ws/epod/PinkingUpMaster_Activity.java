@@ -21,7 +21,6 @@ import android.os.Handler;
 import android.provider.MediaStore;
 
 import androidx.annotation.Nullable;
-import androidx.core.app.ActivityCompat;
 import androidx.core.content.FileProvider;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -39,22 +38,15 @@ import android.widget.ArrayAdapter;
 import android.widget.BaseExpandableListAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ExpandableListView;
 import android.widget.ImageView;
-import android.widget.TabHost;
-import android.widget.TabWidget;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.addisonelliott.segmentedbutton.SegmentedButtonGroup;
-import com.google.zxing.Result;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
-
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -117,7 +109,6 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
     int lastPosition = 0;
     String lastData = "";
 
-    String getDate = "";
 
     String picture1 = "";
     String picture2 = "";
@@ -174,9 +165,6 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
 
         qrScan = new IntentIntegrator(this);
 
-        String pattern = "yyyy-MM-dd kk:mm:ss";
-        SimpleDateFormat sdf = new SimpleDateFormat(pattern, new Locale("en", "th"));
-        getDate = sdf.format(Calendar.getInstance().getTime());
 
         imageView8 = findViewById(R.id.imageView8);
         savePickingUp = findViewById(R.id.savePickingUp);
@@ -196,6 +184,7 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
 //
 //        }
 
+
         getSQLite();
 
 //        expandableListView.setOnGroupClickListener(new ExpandableListView.OnGroupClickListener() {
@@ -209,7 +198,7 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
         bnCloseJobPick.setOnClickListener(view -> {
             Animation animation = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.alpha);
             bnCloseJobPick.startAnimation(animation);
-            Intent intent = new Intent(getApplicationContext(), Invoid_Activity.class);
+            Intent intent = new Intent(getApplicationContext(), Invoice_Activity.class);
             startActivity(intent);
         });
 
@@ -292,26 +281,13 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
                                                             final PickingUpEexpand_Model expandedList = (PickingUpEexpand_Model) expandableListAdapter.getChild(i, j);
 
                                                             Log.d("lloldo", "doInBackground: " + expandedList.getConsignment() + ">" + expandedList.getIs_scaned());
+                                                            Log.d("ASfasdjkhhfgksdf", "onCreate: " + getdate());
 
-                                                            //  Log.d("lloldo", "doInBackground: " + picking.getConsignment());
-
-
-//                                                        if (picking.getConsignment().equals(expandedList.getConsignment())) {
-//                                                            if (expandedList.getIs_scaned().equals("0")) {
-//                                                                Log.d("lloldo", "doInBackground: " + expandedList.getConsignment() + ">" + expandedList.getIs_scaned());
-//
-//                                                            } else {
-//
-//                                                            }
-//                                                        } else {
-//
-//                                                        }
-
-//                                                        ContentValues cv = new ContentValues();
-//                                                        cv.put("is_scaned", expandedList.getIs_scaned());
-//                                                        cv.put("modified_date", getDate);
-//                                                        databaseHelper.db().update("Plan", cv, "delivery_no= '" + expandedList.getDelivery_no() + "' and plan_seq = '" + expandedList.getPlan_seq() + "' and activity_type = 'LOAD' and " +
-//                                                                " consignment_no = '" + expandedList.getConsignment() + "' and box_no = '" + expandedList.getBox_no() + "' and trash = '0'", null);
+                                                            ContentValues cv = new ContentValues();
+                                                            cv.put("is_scaned", expandedList.getIs_scaned());
+                                                            cv.put("modified_date", getdate());
+                                                            databaseHelper.db().update("Plan", cv, "delivery_no= '" + expandedList.getDelivery_no() + "' and plan_seq = '" + expandedList.getPlan_seq() + "' and activity_type = 'LOAD' and " +
+                                                                    " consignment_no = '" + expandedList.getConsignment() + "' and box_no = '" + expandedList.getBox_no() + "' and trash = '0'", null);
 
                                                             lastExpandedPosition = i;
                                                             IsSuccess = 1;
@@ -458,6 +434,16 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
         });
 
 
+    }
+
+    private String getdate() {
+
+        String temp = "";
+        String pattern = "yyyy-MM-dd kk:mm:ss";
+        SimpleDateFormat sdf = new SimpleDateFormat(pattern, new Locale("en", "th"));
+        temp = sdf.format(Calendar.getInstance().getTime());
+
+        return temp;
     }
 
     private int[] isCheckSaveBox(PickingUpAdapter expandableListAdapter) {
@@ -1008,7 +994,7 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
                         Animation animation = AnimationUtils.loadAnimation(context, R.anim.alpha);
                         imgEditBoxNoPickup.startAnimation(animation);
 
-                        showDialogBox(expandedList.getBox_no(), expandedList.getConsignment(), expandedList.getDelivery_no(), expandedList.getPlan_seq(), expandedListPosition);
+                        showDialogBox(expandedList.getBox_no(), expandedList.getConsignment(), expandedList.getDelivery_no(), expandedList.getPlan_seq(), listPosition);
                     }
                 });
 
@@ -1029,7 +1015,7 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
                             Animation animation = AnimationUtils.loadAnimation(context, R.anim.alpha);
                             imgEditBoxNoPickup.startAnimation(animation);
 
-                            showDialogBox(expandedList.getBox_no(), expandedList.getConsignment(), expandedList.getDelivery_no(), expandedList.getPlan_seq(), expandedListPosition);
+                            showDialogBox(expandedList.getBox_no(), expandedList.getConsignment(), expandedList.getDelivery_no(), expandedList.getPlan_seq(), listPosition);
                         }
                     });
 
@@ -1065,7 +1051,7 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
                             Animation animation = AnimationUtils.loadAnimation(context, R.anim.alpha);
                             imgEditBoxNoPickup.startAnimation(animation);
 
-                            showDialogBox(expandedList.getBox_no(), expandedList.getConsignment(), expandedList.getDelivery_no(), expandedList.getPlan_seq(), expandedListPosition);
+                            showDialogBox(expandedList.getBox_no(), expandedList.getConsignment(), expandedList.getDelivery_no(), expandedList.getPlan_seq(), listPosition);
                         }
                     });
                 }
@@ -1110,7 +1096,7 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
                         Animation animation = AnimationUtils.loadAnimation(context, R.anim.alpha);
                         imgEditBoxNoPickup.startAnimation(animation);
 
-                        showDialogBox(expandedList.getBox_no(), expandedList.getConsignment(), expandedList.getDelivery_no(), expandedList.getPlan_seq(), expandedListPosition);
+                        showDialogBox(expandedList.getBox_no(), expandedList.getConsignment(), expandedList.getDelivery_no(), expandedList.getPlan_seq(), listPosition);
                     }
                 });
             } else {
@@ -1208,7 +1194,7 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
                     Log.d("Afsfss", "onClick: " + lastPosition);
 
 
-                     notifyDataSetChanged();
+                    notifyDataSetChanged();
 
                     Log.d("askljb", "onClick: " + SWICH_EXPAND);
                 }
@@ -1467,7 +1453,7 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
 
         }
 
-        private void showDialogBox(final String box_no, final String consignment_no, final String delivery_no, final String plan_seq, int position) {
+        private void showDialogBox(final String box_no, final String consignment_no, final String delivery_no, final String plan_seq, int positionGroup) {
 
 
             final SharedPreferences data_intent = getSharedPreferences("DATA_INTENT", Context.MODE_PRIVATE);
@@ -1585,7 +1571,7 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
 
 
                     alertDialog.dismiss();
-                    expandableListView.expandGroup(position);
+                    expandableListView.expandGroup(positionGroup);
                 }
             });
 
@@ -1646,7 +1632,7 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
                     }
 
 
-                    cv.put("modified_date", getDate);
+                    cv.put("modified_date", getdate());
                     databaseHelper.db().update("Plan", cv, "delivery_no= '" + delivery_no + "' and plan_seq = '" + plan_seq + "' and activity_type = 'LOAD' and " +
                             " consignment_no = '" + consignment_no + "' and box_no = '" + box_no + "' and trash = '0'", null);
 
@@ -1663,6 +1649,8 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
 
 
                     getSQLite();
+                    expandableListView.smoothScrollToPosition(positionGroup);
+                    expandableListView.expandGroup(positionGroup);
                     alertDialog.dismiss();
                     Toast.makeText(PinkingUpMaster_Activity.this, "Saved.", Toast.LENGTH_SHORT).show();
 
@@ -1869,7 +1857,7 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
 
                                                 ContentValues cv = new ContentValues();
                                                 cv.put("picture2", "");
-                                                cv.put("modified_date", getDate);
+                                                cv.put("modified_date", getdate());
                                                 databaseHelper.db().update("Plan", cv, "delivery_no= '" + delivery_no + "' and plan_seq = '" + plan_seq + "' and activity_type = 'LOAD' and " +
                                                         " consignment_no = '" + consignment_no + "' and box_no = '" + box_no + "' and trash = '0'", null);
 
@@ -1979,7 +1967,7 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
 
                                                 ContentValues cv = new ContentValues();
                                                 cv.put("picture3", "");
-                                                cv.put("modified_date", getDate);
+                                                cv.put("modified_date", getdate());
                                                 databaseHelper.db().update("Plan", cv, "delivery_no= '" + delivery_no + "' and plan_seq = '" + plan_seq + "' and activity_type = 'LOAD' and " +
                                                         " consignment_no = '" + consignment_no + "' and box_no = '" + box_no + "' and trash = '0'", null);
 

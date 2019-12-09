@@ -284,6 +284,8 @@ public class PlanWork_Activity extends AppCompatActivity {
         });
 
         fabToday.setOnClickListener(view -> {
+            Animation animation = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.alpha);
+            fabToday.startAnimation(animation);
             hideAll();
             String pattern = "yyyy-MM-dd";
             SimpleDateFormat sdf = new SimpleDateFormat(pattern, new Locale("th", "th"));
@@ -292,6 +294,8 @@ public class PlanWork_Activity extends AppCompatActivity {
             tvFilterStatus.setText("Filter by: Today");
         });
         fabFilterDate.setOnClickListener(view -> {
+            Animation animation = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.alpha);
+            fabFilterDate.startAnimation(animation);
             hideAll();
             filterDateDialog();
         });
@@ -320,6 +324,12 @@ public class PlanWork_Activity extends AppCompatActivity {
         ImageView imgClose_dialog = popupInputDialogView.findViewById(R.id.imgClose_dialog);
         TextView textView18 = popupInputDialogView.findViewById(R.id.textView18);
 
+        String pattern = "yyyy-MM-dd";
+        SimpleDateFormat sdf = new SimpleDateFormat(pattern, new Locale("en", "th"));
+        //tvPlan_date_bar.setText(sdf.format(Calendar.getInstance().getTime()));
+
+        edtFromDate.setText(sdf.format(Calendar.getInstance().getTime()));
+
 
         edtFromDate.setSelection(edtFromDate.getText().length());
         edtToDate.setSelection(edtToDate.getText().length());
@@ -327,6 +337,8 @@ public class PlanWork_Activity extends AppCompatActivity {
         dateFormatter = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
 
         edtFromDate.setOnClickListener(view -> {
+            Animation animation = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.alpha);
+            edtFromDate.startAnimation(animation);
             Calendar calendar = Calendar.getInstance(Locale.getDefault());
             DatePickerDialog datePickerDialog = new DatePickerDialog(this, ( datePicker, i, i1, i2 ) -> {
                 Calendar newDate = Calendar.getInstance();
@@ -341,6 +353,8 @@ public class PlanWork_Activity extends AppCompatActivity {
         });
 
         edtToDate.setOnClickListener(view -> {
+            Animation animation = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.alpha);
+            edtToDate.startAnimation(animation);
             Calendar calendar = Calendar.getInstance(Locale.getDefault());
             DatePickerDialog datePickerDialog = new DatePickerDialog(this, ( datePicker, i, i1, i2 ) -> {
                 Calendar newDate = Calendar.getInstance();
@@ -355,6 +369,9 @@ public class PlanWork_Activity extends AppCompatActivity {
         });
 
         button.setOnClickListener(view -> {
+            Animation animation = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.alpha);
+            button.startAnimation(animation);
+
             String FilterFromDate = edtFromDate.getText().toString().trim();
             String FilterToDate = edtToDate.getText().toString().trim();
 

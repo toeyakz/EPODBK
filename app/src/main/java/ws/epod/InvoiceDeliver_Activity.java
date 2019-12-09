@@ -24,6 +24,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
@@ -40,7 +42,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.List;
 
+import fr.ganfra.materialspinner.MaterialSpinner;
 import ws.epod.Helper.ConnectionDetector;
 import ws.epod.Helper.DatabaseHelper;
 import ws.epod.Helper.NarisBaseValue;
@@ -64,6 +68,8 @@ public class InvoiceDeliver_Activity extends AppCompatActivity {
     private int commentReturn = 0;
     private int commentComplete = 0;
 
+    String commentOfspinner = "";
+
     TextView textView15, textView21, textView22, sign, tvNoData;
 
     View popupInputDialogView = null;
@@ -78,6 +84,7 @@ public class InvoiceDeliver_Activity extends AppCompatActivity {
     LinearLayout layoutJobHome, layoutJobToday;
 
     boolean isCheckAll = true;
+    int positionScll = 0;
 
     @Override
     protected void onResume() {
@@ -196,156 +203,25 @@ public class InvoiceDeliver_Activity extends AppCompatActivity {
                                     commentReturn += 1;
                                 }
                             }
+
+                            if (statusReturn != commentReturn || statusReject != commentReject) {
+                                positionScll = i;
+                            } else {
+                                positionScll = 0;
+                            }
                             // }
                         }
 
-                        if (statusReject != 0 || statusComplete != 0 || commentReject != 0 || statusReturn != 0 || commentReturn != 0 || commentComplete != 0) {
-
-                            if (statusReturn != 0 && commentReturn != 0 && statusReturn == commentReturn &&
-                                    statusReject != 0 && commentReject != 0 && statusReject == commentReject &&
-                                    statusComplete != 0 && commentComplete != 0 && statusComplete == commentComplete ||
-                                    statusComplete != 0 && commentComplete == 0 && statusComplete != commentComplete
-                            ) {
-                                Log.d("checkIntent", ">> ติ๊ก return และ คอมเม้น return แล้ว\n" +
-                                        " ติ๊ก reject และ คอมเม้น reject แล้ว\n" +
-                                        " ติ๊ก complete และ คอมเม้น complete แล้ว");
-
-//                                Animation animation = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.alpha);
-//                                sign.startAnimation(animation);
-//                                dataToSign();
-
-                            } else if (statusReturn != 0 && commentReturn != 0 && statusReturn == commentReturn &&
-                                    statusReject != 0 && commentReject != 0 && statusReject == commentReject) {
-                                Log.d("checkIntent", ">> ติ๊ก return และ คอมเม้น return แล้ว\n" +
-                                        " ติ๊ก reject และ คอมเม้น reject แล้ว");
-
-//                                Animation animation = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.alpha);
-//                                sign.startAnimation(animation);
-//                                dataToSign();
-
-                            } else if (statusReturn != 0 && commentReturn != 0 && statusReturn == commentReturn &&
-                                    statusReject != 0 && commentReject == 0 && statusReject != commentReject) {
-                                Log.d("checkIntent", ">> ติ๊ก return และ คอมเม้น return แล้ว\n" +
-                                        " ติ๊ก reject แต่ไมา่ได้คอมเม้น");
-
-                            } else if (statusReject != 0 && commentReject != 0 && statusReject == commentReject &&
-                                    statusReturn != 0 && commentReturn == 0 && statusReturn != commentReturn) {
-                                Log.d("checkIntent", ">> ติ๊ก return และ คอมเม้น return แล้ว\n" +
-                                        " ติ๊ก reject แต่ไม่ได้คอมเม้น");
-
-                            } else if (statusReturn != 0 && statusReturn == commentReturn) {
-                                Log.d("checkIntent", ">> ติ๊ก return และ คอมเม้น return แล้ว");
-
-//                                Animation animation = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.alpha);
-//                                sign.startAnimation(animation);
-//                                dataToSign();
-
-                            } else if (statusReject != 0 && statusReject == commentReject) {
-                                Log.d("checkIntent", ">> ติ๊ก reject และ คอมเม้น reject แล้ว");
-
-//                                Animation animation = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.alpha);
-//                                sign.startAnimation(animation);
-//                                dataToSign();
-
-                            } else if (statusComplete != 0 && statusComplete == commentComplete) {
-                                Log.d("checkIntent", ">> ติ๊ก complete และ คอมเม้น complete แล้ว");
-
-//                                Animation animation = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.alpha);
-//                                sign.startAnimation(animation);
-//                                dataToSign();
-
-                            } else if (statusComplete != 0 && statusComplete == commentComplete ||
-                                    statusComplete != 0 && statusComplete != commentComplete) {
-                                Log.d("checkIntent", ">> ติ๊ก complete และ คอมเม้น complete แล้ว\n" +
-                                        "และ ติํก complete แต่ยังไม่ได้คอมเม้น");
-
-//                                Animation animation = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.alpha);
-//                                sign.startAnimation(animation);
-//                                dataToSign();
-
-                            }
-                            //เงื่อนไขไม่ครบ
-                            else if (statusReturn != 0 && statusReturn != commentReturn) {
-                                Log.d("checkIntent", ">> ติ๊ก return แต่ไม่คอมเม้น");
-
-                            } else if (statusReject != 0 && statusReject != commentReject) {
-                                Log.d("checkIntent", ">> ติ๊ก reject แต่ไม่คอมเม้น");
-                            }
-
-
-//                            if (statusReturn != 0 && commentReturn != 0 && statusReturn == commentReturn &&
-//                                    statusReject != 0 && commentReject != 0 && statusReject == commentReject &&
-//                                    statusComplete != 0 && commentComplete != 0) {
-//                                Animation animation = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.alpha);
-//                                sign.startAnimation(animation);
-//                                dataToSign();
-//                                //  showDialogBox();
-//                                Log.d("hhhjujh", "onPostExecute: 3");
-//                            } else if (statusComplete != 0 && statusReturn != commentReject) {
-//                                Log.d("hhhjujh", "onPostExecute: 4");
-//                            } else if (statusComplete != 0 && statusReject != commentReject) {
-//                                Log.d("hhhjujh", "onPostExecute: 4");
-//                            } else if (statusComplete != 0) {
-//                                Animation animation = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.alpha);
-//                                sign.startAnimation(animation);
-//                                dataToSign();
-//                                //showDialogBox();
-//                                Log.d("hhhjujh", "onPostExecute: 2");
-//                            } else if (statusReturn == commentReject && statusReturn != 0) {
-//                                Animation animation = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.alpha);
-//                                sign.startAnimation(animation);
-//                                dataToSign();
-//                                // showDialogBox();
-//                                Log.d("hhhjujh", "onPostExecute: 1.1");
-//                            } else if (statusReturn != commentReject && statusReject == 0) {
-//                                Log.d("hhhjujh", "onPostExecute: เลือก return - ยังไม่คอมเม้น");
-//                            } else if (statusReject == commentReject && statusReject != 0) {
-//                                Animation animation = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.alpha);
-//                                sign.startAnimation(animation);
-//                                dataToSign();
-//                                // showDialogBox();
-//                                Log.d("hhhjujh", "onPostExecute: 1");
-//                            } else if (statusReject != commentReject && statusReject == 0) {
-//                                Log.d("hhhjujh", "onPostExecute: เลือก reject - ยังไม่คอมเม้น");
-//                            }
-
-                        } else {
+                        if (isCheckIntent(statusReturn, statusReject, statusComplete, commentReturn, commentReject)) {
+                            //Toast.makeText(Invoice_Activity.this, "Gooo", Toast.LENGTH_SHORT).show();
                             Animation animation = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.alpha);
                             sign.startAnimation(animation);
-                            Toast.makeText(InvoiceDeliver_Activity.this, "Please select Invoice.", Toast.LENGTH_SHORT).show();
+                            dataToSign();
+                        } else {
+                           // Toast.makeText(InvoiceDeliver_Activity.this, "Please select Invoice.", Toast.LENGTH_SHORT).show();
                         }
+                        rvInv.getLayoutManager().scrollToPosition(positionScll);
 
-//                        if (statusArray != 0 || statusArray2 != 0 || commentArray != 0) {
-//
-//                            if (statusArray != 0 && commentArray != 0 && statusArray == commentArray && statusArray2 != 0) {
-//                                Animation animation = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.alpha);
-//                                sign.startAnimation(animation);
-//                                dataToSign();
-//                                //  showDialogBox();
-//                                Log.d("hhhjujh", "onPostExecute: 3");
-//                            } else if (statusArray2 != 0 && statusArray != commentArray) {
-//                                Log.d("hhhjujh", "onPostExecute: 4");
-//                            } else if (statusArray2 != 0) {
-//                                Animation animation = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.alpha);
-//                                sign.startAnimation(animation);
-//                                dataToSign();
-//                                //showDialogBox();
-//                                Log.d("hhhjujh", "onPostExecute: 2");
-//                            } else if (statusArray == commentArray) {
-//                                Animation animation = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.alpha);
-//                                sign.startAnimation(animation);
-//                                dataToSign();
-//                                // showDialogBox();
-//                                Log.d("hhhjujh", "onPostExecute: 1");
-//                            } else if (statusArray != commentArray) {
-//                                Log.d("hhhjujh", "onPostExecute: เลือก reject - ยังไม่คอมเม้น");
-//                            }
-//
-//                        } else {
-//                            Animation animation = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.alpha);
-//                            sign.startAnimation(animation);
-//                            Toast.makeText(InvoiceDeliver_Activity.this, "Please select Invoice.", Toast.LENGTH_SHORT).show();
-//                        }
                     }
 
                 }
@@ -353,6 +229,50 @@ public class InvoiceDeliver_Activity extends AppCompatActivity {
 
 
         });
+
+    }
+
+    private boolean isCheckIntent(int statusReturn, int statusReject, int statusComplete, int commentReturn, int commentReject) {
+
+        if (statusReject != 0 || statusComplete != 0 || commentReject != 0 || statusReturn != 0 || commentReturn != 0) {
+
+            if (statusReturn != 0) {
+                if (statusReturn == commentReturn) {
+                    Log.d("checkIntent", "onPostExecute:  ติ๊ก return และ คอมเม้น return แล้ว");
+                } else {
+                    Log.d("checkIntent", "onPostExecute:  ติ๊ก return ไม่ได้คอมเม้น");
+                    Toast.makeText(InvoiceDeliver_Activity.this, "Please comment return.", Toast.LENGTH_SHORT).show();
+                    return false;
+                }
+            }
+
+            if (statusReject != 0) {
+                if (statusReject == commentReject) {
+                    Log.d("checkIntent", "onPostExecute:  ติ๊ก reject และ คอมเม้น reject แล้ว");
+                } else {
+                    Log.d("checkIntent", "onPostExecute:  ติ๊ก reject ไม่ได้คอมเม้น");
+                    Toast.makeText(InvoiceDeliver_Activity.this, "Please comment reject.", Toast.LENGTH_SHORT).show();
+                    return false;
+                }
+            }
+
+
+            if (statusComplete != 0) {
+                Log.d("checkIntent", "onPostExecute:  ติ๊ก complete แล้ว");
+            }
+//            else {
+//                Log.d("checkIntent", "onPostExecute:  ติ๊ก complete ไม่ได้คอมเม้น");
+//                return false;
+//
+//            }
+
+
+        } else {
+            Toast.makeText(InvoiceDeliver_Activity.this, "Please select invoice.", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+
+        return true;
 
     }
 
@@ -690,7 +610,7 @@ public class InvoiceDeliver_Activity extends AppCompatActivity {
                 holder.imgEditBoxNoPickup.setEnabled(true);
             }
 
-            if (list.get(position).getStatus().equals("0")) {
+            if (list.get(position).getStatus().equals("") || list.get(position).getStatus().equals("0")) {
                 holder.imgEditBoxNoPickup.setEnabled(false);
             }
 
@@ -715,6 +635,8 @@ public class InvoiceDeliver_Activity extends AppCompatActivity {
                     holder.tvUseComment.setTextColor(R.color.colorPrimary);
                     holder.tvUseComment.setVisibility(View.VISIBLE);
                 } else {
+                    holder.tvUseComment.setText("Please comment.");
+                    holder.tvUseComment.setTextColor(Color.RED);
                     holder.tvUseComment.setVisibility(View.VISIBLE);
                 }
             } else {
@@ -730,6 +652,8 @@ public class InvoiceDeliver_Activity extends AppCompatActivity {
                     holder.tvUseComment.setVisibility(View.VISIBLE);
 
                 } else {
+                    holder.tvUseComment.setText("Please comment.");
+                    holder.tvUseComment.setTextColor(Color.RED);
                     holder.tvUseComment.setVisibility(View.VISIBLE);
                 }
                 // holder.comCheck.setChecked(false);
@@ -896,7 +820,12 @@ public class InvoiceDeliver_Activity extends AppCompatActivity {
 
         public void updateList2(int i, String comment, String status) {
 
-            list.get(i).setComment(comment);
+            if (comment.equals("")) {
+                list.get(i).setComment("");
+            } else {
+                list.get(i).setComment(comment);
+            }
+
             notifyItemChanged(i, list.get(i));
 
             Log.d("position333", "updateList: " + list.get(i).getDeli_note_no());
@@ -996,6 +925,44 @@ public class InvoiceDeliver_Activity extends AppCompatActivity {
 
         edtComment_PICK.setText(lastComment);
 
+        List<String> categories = new ArrayList<>();
+        categories.add("File");
+        categories.add("Edit");
+        categories.add("View");
+        categories.add("Navigate");
+        categories.add("Code");
+        categories.add("Analyze");
+        categories.add("Refactor");
+        categories.add("Build");
+
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(getApplicationContext(), android.R.layout.simple_spinner_item, categories);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        MaterialSpinner spinner = popupInputDialogView.findViewById(R.id.spinner);
+        spinner.setAdapter(adapter);
+
+        if (lastComment != null) {
+            int spinnerPosition = adapter.getPosition(lastComment);
+            spinner.setSelection(spinnerPosition + 1);
+        }
+
+        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+
+                if (i != -1) {
+                    commentOfspinner = adapterView.getItemAtPosition(i).toString();
+                } else {
+                    commentOfspinner = "00";
+                }
+
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
+
 
         imgClose_dialog.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -1007,9 +974,18 @@ public class InvoiceDeliver_Activity extends AppCompatActivity {
         });
 
         btnSaveComent_PICK.setOnClickListener(view -> {
-            String commentText = "";
-            if (!edtComment_PICK.getText().toString().trim().matches("")) {
-                commentText = edtComment_PICK.getText().toString().trim();
+//            String commentText = "";
+//            if (!edtComment_PICK.getText().toString().trim().matches("")) {
+//                commentText = edtComment_PICK.getText().toString().trim();
+//            }
+
+            if (commentOfspinner.equals("00")) {
+                Log.d("jjjjdjdj", "showDialogComment: ว่าง " + commentOfspinner);
+                commentOfspinner = "";
+                invAdapter.updateList2(position, commentOfspinner, status);
+            } else {
+                Log.d("jjjjdjdj", "showDialogComment: ไม่ว่าง" + commentOfspinner);
+                invAdapter.updateList2(position, commentOfspinner, status);
             }
 
 //            JSONObject json = new JSONObject();
@@ -1031,7 +1007,7 @@ public class InvoiceDeliver_Activity extends AppCompatActivity {
 //            } catch (JSONException e) {
 //                e.printStackTrace();
 //            }
-            invAdapter.updateList2(position, commentText, status);
+//            invAdapter.updateList2(position, commentText, status);
 //            invAdapter.list.get(position).setComment(commentText);
 //            invAdapter.notifyItemChanged(position);
 

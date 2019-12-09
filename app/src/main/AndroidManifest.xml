@@ -33,7 +33,7 @@
         android:windowSoftInputMode="adjustResize|stateAlwaysHidden">
         <activity android:name=".Signature_Deliver_Activity"></activity>
         <activity android:name=".InvoiceDeliver_Activity" />
-        <activity android:name=".Invoid_Activity" />
+        <activity android:name=".Invoice_Activity" />
 
         <provider
             android:name="androidx.core.content.FileProvider"

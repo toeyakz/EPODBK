@@ -110,8 +110,6 @@ public class Deliver_Activity extends AppCompatActivity {
     Button btnSaveComent_PICK;
     int lastPosition = 0;
 
-    String getDate = "";
-
     AlertDialog alertDialog;
     AlertDialog alertDialog2;
 
@@ -163,9 +161,7 @@ public class Deliver_Activity extends AppCompatActivity {
 
         qrScan = new IntentIntegrator(this);
 
-        String pattern = "yyyy-MM-dd kk:mm:ss";
-        SimpleDateFormat sdf = new SimpleDateFormat(pattern, new Locale("en", "th"));
-        getDate = sdf.format(Calendar.getInstance().getTime());
+
 
         imgBack_Deliver = findViewById(R.id.imgBack_Deliver);
         imgSave_dialog_Deli = findViewById(R.id.imgSave_dialog_Deli);
@@ -279,11 +275,11 @@ public class Deliver_Activity extends AppCompatActivity {
                                                         for (int j = 0; j < expandableListAdapter.getChildrenCount(i); j++) {
                                                             final DeliverExpand_Model expandedList = (DeliverExpand_Model) expandableListAdapter.getChild(i, j);
 ////
-//                                                            ContentValues cv = new ContentValues();
-//                                                            cv.put("is_scaned", expandedList.getIs_scaned());
-//                                                            cv.put("modified_date", getDate);
-//                                                            databaseHelper.db().update("Plan", cv, "delivery_no= '" + expandedList.getDelivery_no() + "' and plan_seq = '" + expandedList.getPlan_seq() + "' and activity_type = 'UNLOAD' and " +
-//                                                                    " consignment_no = '" + expandedList.getConsignment() + "' and box_no = '" + expandedList.getBox_no() + "' and trash = '0'", null);
+                                                            ContentValues cv = new ContentValues();
+                                                            cv.put("is_scaned", expandedList.getIs_scaned());
+                                                            cv.put("modified_date", getdate());
+                                                            databaseHelper.db().update("Plan", cv, "delivery_no= '" + expandedList.getDelivery_no() + "' and plan_seq = '" + expandedList.getPlan_seq() + "' and activity_type = 'UNLOAD' and " +
+                                                                    " consignment_no = '" + expandedList.getConsignment() + "' and box_no = '" + expandedList.getBox_no() + "' and trash = '0'", null);
                                                             //Toast.makeText(PinkingUpMaster_Activity.this, "Successfully_01." + expandedList.getBox_no(), Toast.LENGTH_SHORT).show();
                                                             lastExpandedPosition = i;
                                                             IsSuccess = 1;
@@ -417,6 +413,16 @@ public class Deliver_Activity extends AppCompatActivity {
         });
 
 
+    }
+
+    private String getdate() {
+
+        String temp = "";
+        String pattern = "yyyy-MM-dd kk:mm:ss";
+        SimpleDateFormat sdf = new SimpleDateFormat(pattern, new Locale("en", "th"));
+        temp = sdf.format(Calendar.getInstance().getTime());
+
+        return temp;
     }
 
     private int[] isCheckSaveBox(DeliverAdapter expandableListAdapter) {
@@ -847,6 +853,8 @@ public class Deliver_Activity extends AppCompatActivity {
             waybill_no.setText("WaybillNo: " + expandedList.getWaybil_no());
 
 
+
+
             if (expandedList.getIs_scaned().equals("2")) {
                 checkBox.setChecked(true);
                 imgEditBoxNoPickup.setEnabled(true);
@@ -859,7 +867,7 @@ public class Deliver_Activity extends AppCompatActivity {
                         Animation animation = AnimationUtils.loadAnimation(context, R.anim.alpha);
                         imgEditBoxNoPickup.startAnimation(animation);
 
-                        showDialogBox(expandedList.getBox_no(), expandedList.getConsignment(), expandedList.getDelivery_no(), expandedList.getPlan_seq(), expandedListPosition);
+                        showDialogBox(expandedList.getBox_no(), expandedList.getConsignment(), expandedList.getDelivery_no(), expandedList.getPlan_seq(), listPosition);
                     }
                 });
 
@@ -879,7 +887,7 @@ public class Deliver_Activity extends AppCompatActivity {
                             Animation animation = AnimationUtils.loadAnimation(context, R.anim.alpha);
                             imgEditBoxNoPickup.startAnimation(animation);
 
-                            showDialogBox(expandedList.getBox_no(), expandedList.getConsignment(), expandedList.getDelivery_no(), expandedList.getPlan_seq(), expandedListPosition);
+                            showDialogBox(expandedList.getBox_no(), expandedList.getConsignment(), expandedList.getDelivery_no(), expandedList.getPlan_seq(), listPosition);
                         }
                     });
 
@@ -916,7 +924,7 @@ public class Deliver_Activity extends AppCompatActivity {
                             Animation animation = AnimationUtils.loadAnimation(context, R.anim.alpha);
                             imgEditBoxNoPickup.startAnimation(animation);
 
-                            showDialogBox(expandedList.getBox_no(), expandedList.getConsignment(), expandedList.getDelivery_no(), expandedList.getPlan_seq(), expandedListPosition);
+                            showDialogBox(expandedList.getBox_no(), expandedList.getConsignment(), expandedList.getDelivery_no(), expandedList.getPlan_seq(), listPosition);
                         }
                     });
                 }
@@ -953,7 +961,7 @@ public class Deliver_Activity extends AppCompatActivity {
                         Animation animation = AnimationUtils.loadAnimation(context, R.anim.alpha);
                         imgEditBoxNoPickup.startAnimation(animation);
 
-                        showDialogBox(expandedList.getBox_no(), expandedList.getConsignment(), expandedList.getDelivery_no(), expandedList.getPlan_seq(), expandedListPosition);
+                        showDialogBox(expandedList.getBox_no(), expandedList.getConsignment(), expandedList.getDelivery_no(), expandedList.getPlan_seq(), listPosition);
                     }
                 });
             } else {
@@ -1470,7 +1478,7 @@ public class Deliver_Activity extends AppCompatActivity {
                         cv.put("is_scaned", "0");
                     }
 
-                    cv.put("modified_date", getDate);
+                    cv.put("modified_date", getdate());
                     databaseHelper.db().update("Plan", cv, "delivery_no= '" + delivery_no + "' and plan_seq = '" + plan_seq + "' and activity_type = 'UNLOAD' and " +
                             " consignment_no = '" + consignment_no + "' and box_no = '" + box_no + "' and trash = '0'", null);
 
@@ -1485,7 +1493,11 @@ public class Deliver_Activity extends AppCompatActivity {
                         }
                     }
 
+
+
                     getSQLite();
+                    expandableListView.expandGroup(position,true);
+                    expandableListView.smoothScrollToPosition(position);
                     alertDialog.dismiss();
                     Toast.makeText(Deliver_Activity.this, "Saved.", Toast.LENGTH_SHORT).show();
 
@@ -1566,7 +1578,7 @@ public class Deliver_Activity extends AppCompatActivity {
 
                                                 ContentValues cv = new ContentValues();
                                                 cv.putNull("picture1");
-                                                cv.put("modified_date", getDate);
+                                                cv.put("modified_date", getdate());
                                                 databaseHelper.db().update("Plan", cv, "delivery_no= '" + delivery_no + "' and plan_seq = '" + plan_seq + "' and activity_type = 'UNLOAD' and " +
                                                         " consignment_no = '" + consignment_no + "' and box_no = '" + box_no + "' and trash = '0'", null);
 
@@ -1674,7 +1686,7 @@ public class Deliver_Activity extends AppCompatActivity {
 
                                                 ContentValues cv = new ContentValues();
                                                 cv.putNull("picture2");
-                                                cv.put("modified_date", getDate);
+                                                cv.put("modified_date", getdate());
                                                 databaseHelper.db().update("Plan", cv, "delivery_no= '" + delivery_no + "' and plan_seq = '" + plan_seq + "' and activity_type = 'UNLOAD' and " +
                                                         " consignment_no = '" + consignment_no + "' and box_no = '" + box_no + "' and trash = '0'", null);
 
@@ -1782,7 +1794,7 @@ public class Deliver_Activity extends AppCompatActivity {
 
                                                 ContentValues cv = new ContentValues();
                                                 cv.putNull("picture3");
-                                                cv.put("modified_date", getDate);
+                                                cv.put("modified_date", getdate());
                                                 databaseHelper.db().update("Plan", cv, "delivery_no= '" + delivery_no + "' and plan_seq = '" + plan_seq + "' and activity_type = 'UNLOAD' and " +
                                                         " consignment_no = '" + consignment_no + "' and box_no = '" + box_no + "' and trash = '0'", null);
 

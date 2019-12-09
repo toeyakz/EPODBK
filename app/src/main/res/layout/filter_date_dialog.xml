@@ -42,46 +42,73 @@
             app:layout_constraintTop_toTopOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <EditText
-        android:id="@+id/editText"
-        android:layout_width="0dp"
-        android:layout_height="40dp"
+    <FrameLayout
+        android:id="@+id/linearLayout2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:layout_marginStart="32dp"
         android:layout_marginTop="32dp"
         android:layout_marginEnd="32dp"
-        android:background="@drawable/edt_select_date"
-        android:gravity="center"
-        android:padding="8dp"
-        android:hint="Select from date."
-        android:editable="false"
-        android:inputType="none"
-        android:focusable="false"
-        android:textColor="#727272"
-        android:textSize="14sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/constraintLayout3" />
+        app:layout_constraintTop_toBottomOf="@+id/constraintLayout3">
 
-    <EditText
-        android:id="@+id/editText2"
-        android:layout_width="0dp"
-        android:layout_height="40dp"
+        <EditText
+            android:id="@+id/editText"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:background="@drawable/eedt_date_bg"
+            android:editable="false"
+            android:focusable="false"
+            android:gravity="center"
+            android:hint="Select from date."
+            android:inputType="none"
+            android:padding="8dp"
+            android:textColor="#727272"
+            android:textSize="14sp" />
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center|end"
+            android:layout_marginEnd="1dp"
+            android:src="@drawable/ic_start_edt_date" />
+    </FrameLayout>
+
+    <FrameLayout
+        android:id="@+id/ccc"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:layout_marginStart="32dp"
         android:layout_marginTop="16dp"
         android:layout_marginEnd="32dp"
-        android:background="@drawable/edt_select_date"
-        android:gravity="center"
-        android:padding="8dp"
-        android:editable="false"
-        android:hint="Select to date."
-        android:inputType="none"
-        android:focusable="false"
-        android:textColor="#727272"
-        android:textSize="14sp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView16" />
+        app:layout_constraintTop_toBottomOf="@+id/textView16">
+
+        <EditText
+            android:id="@+id/editText2"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:background="@drawable/eedt_date_bg"
+            android:editable="false"
+            android:focusable="false"
+            android:gravity="center"
+            android:hint="Select to date."
+            android:inputType="none"
+            android:padding="8dp"
+            android:textColor="#727272"
+            android:textSize="14sp" />
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center|end"
+            android:layout_marginEnd="1dp"
+            android:src="@drawable/ic_start_edt_date" />
+
+
+    </FrameLayout>
 
     <TextView
         android:id="@+id/textView16"
@@ -90,27 +117,27 @@
         android:layout_gravity="center"
         android:layout_marginTop="16dp"
         android:padding="10dp"
-        android:text="To"
+        android:text="to"
         android:textSize="20dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/editText" />
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout2" />
 
     <RelativeLayout
         android:id="@+id/button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="32dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="40dp"
         android:layout_marginEnd="32dp"
-        android:layout_marginBottom="16dp"
+        android:layout_marginBottom="32dp"
         android:background="@drawable/custom_button_selector"
         android:clickable="true"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView18">
+        app:layout_constraintTop_toBottomOf="@+id/ccc">
 
         <LinearLayout
             android:layout_width="wrap_content"
@@ -140,13 +167,14 @@
         android:id="@+id/textView18"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="3dp"
+        android:layout_marginTop="5dp"
         android:layout_marginEnd="32dp"
         android:text="Please Select Date."
         android:textColor="#FF0000"
+        android:textSize="12sp"
         android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/editText2" />
+        app:layout_constraintTop_toBottomOf="@+id/ccc" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
