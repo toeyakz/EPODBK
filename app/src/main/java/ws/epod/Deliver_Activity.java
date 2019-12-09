@@ -17,6 +17,7 @@ import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Environment;
+import android.os.Handler;
 import android.provider.MediaStore;
 
 import androidx.annotation.Nullable;
@@ -75,6 +76,7 @@ import ws.epod.Helper.NarisBaseValue;
 import ws.epod.ObjectClass.SQLiteModel.DeliverExpand_Model;
 import ws.epod.ObjectClass.SQLiteModel.Deliver_Model;
 import ws.epod.ObjectClass.SQLiteModel.Dialog_Cons_Detail_Model;
+import ws.epod.ObjectClass.SQLiteModel.PickingUpEexpand_Model;
 
 public class Deliver_Activity extends AppCompatActivity {
 
@@ -247,6 +249,7 @@ public class Deliver_Activity extends AppCompatActivity {
 
                                 new AsyncTask<Void, Void, Void>() {
                                     int IsSuccess = 1;
+                                    int positionGroup = -1;
                                     ProgressDialog pd;
                                     private int lastExpandedPosition = -1;
 
@@ -267,21 +270,30 @@ public class Deliver_Activity extends AppCompatActivity {
                                             if (expandableListAdapter == null) {
                                                 cancel(true);
                                             } else {
-                                                for (int i = 0; i < expandableListAdapter.getGroupCount(); i++) {
-                                                    expandableListAdapter.getChildrenCount(i);
-                                                    for (int j = 0; j < expandableListAdapter.getChildrenCount(i); j++) {
-                                                        final DeliverExpand_Model expandedList = (DeliverExpand_Model) expandableListAdapter.getChild(i, j);
+
+                                                int[] position = isCheckSaveBox(expandableListAdapter);
+                                                positionGroup = position[1];
+                                                if (position[0] == 1) {
+                                                    for (int i = 0; i < expandableListAdapter.getGroupCount(); i++) {
+                                                        expandableListAdapter.getChildrenCount(i);
+                                                        for (int j = 0; j < expandableListAdapter.getChildrenCount(i); j++) {
+                                                            final DeliverExpand_Model expandedList = (DeliverExpand_Model) expandableListAdapter.getChild(i, j);
 ////
-                                                        ContentValues cv = new ContentValues();
-                                                        cv.put("is_scaned", expandedList.getIs_scaned());
-                                                        cv.put("modified_date", getDate);
-                                                        databaseHelper.db().update("Plan", cv, "delivery_no= '" + expandedList.getDelivery_no() + "' and plan_seq = '" + expandedList.getPlan_seq() + "' and activity_type = 'UNLOAD' and " +
-                                                                " consignment_no = '" + expandedList.getConsignment() + "' and box_no = '" + expandedList.getBox_no() + "' and trash = '0'", null);
-                                                        //Toast.makeText(PinkingUpMaster_Activity.this, "Successfully_01." + expandedList.getBox_no(), Toast.LENGTH_SHORT).show();
-                                                        lastExpandedPosition = i;
-                                                        IsSuccess = 1;
+//                                                            ContentValues cv = new ContentValues();
+//                                                            cv.put("is_scaned", expandedList.getIs_scaned());
+//                                                            cv.put("modified_date", getDate);
+//                                                            databaseHelper.db().update("Plan", cv, "delivery_no= '" + expandedList.getDelivery_no() + "' and plan_seq = '" + expandedList.getPlan_seq() + "' and activity_type = 'UNLOAD' and " +
+//                                                                    " consignment_no = '" + expandedList.getConsignment() + "' and box_no = '" + expandedList.getBox_no() + "' and trash = '0'", null);
+                                                            //Toast.makeText(PinkingUpMaster_Activity.this, "Successfully_01." + expandedList.getBox_no(), Toast.LENGTH_SHORT).show();
+                                                            lastExpandedPosition = i;
+                                                            IsSuccess = 1;
+                                                        }
                                                     }
+                                                }else{
+                                                    Log.d("checkFail", "doInBackground: save fail");
+                                                    IsSuccess = 0;
                                                 }
+
                                             }
 
                                         } catch (Exception e) {
@@ -296,14 +308,26 @@ public class Deliver_Activity extends AppCompatActivity {
                                     protected void onPostExecute(Void aVoid) {
                                         super.onPostExecute(aVoid);
 
-                                        getSQLite();
-
                                         pd.dismiss();
 
                                         if (IsSuccess == 1) {
-                                            expandableListAdapter.notifyDataSetChanged();
                                             Toast.makeText(Deliver_Activity.this, "Saved.", Toast.LENGTH_SHORT).show();
+                                            getSQLite();
+
                                         } else {
+                                            if (positionGroup != -1) {
+                                                expandableListView.smoothScrollToPosition(positionGroup);
+                                                new Handler().postDelayed(new Runnable() {
+                                                    @Override
+                                                    public void run() {
+                                                        //expandableListView.setSelectedGroup(positionGroub);
+
+                                                        expandableListView.expandGroup(positionGroup);
+                                                    }
+                                                }, 500);
+
+
+                                            }
                                             Toast.makeText(Deliver_Activity.this, "can't save.", Toast.LENGTH_SHORT).show();
                                         }
                                     }
@@ -393,6 +417,40 @@ public class Deliver_Activity extends AppCompatActivity {
         });
 
 
+    }
+
+    private int[] isCheckSaveBox(DeliverAdapter expandableListAdapter) {
+
+        int[] position = new int[2];
+        for (int i = 0; i < expandableListAdapter.getGroupCount(); i++) {
+            expandableListAdapter.getChildrenCount(i);
+            int countScanned = 0;
+            position[0] = 1;
+            position[1] = -1;
+            for (int j = 0; j < expandableListAdapter.getChildrenCount(i); j++) {
+                final DeliverExpand_Model expandedList = (DeliverExpand_Model) expandableListAdapter.getChild(i, j);
+
+                String scanned = expandedList.getIs_scaned();
+
+                Log.d("checkFail", "isCheckSaveBox: " + scanned);
+
+                if (scanned.equals("1") || scanned.equals("2")) {
+                    countScanned++;
+                }
+
+            }
+
+            if (expandableListAdapter.getChildrenCount(i) > 0 && expandableListAdapter.getChildrenCount(i) != countScanned && countScanned > 0) {
+                //  errorSaveFail(i);
+                position[0] = 0;
+                position[1] = i;
+
+                return position;
+
+            }
+
+        }
+        return position;
     }
 
 
@@ -575,6 +633,7 @@ public class Deliver_Activity extends AppCompatActivity {
                                 expandableListView.setAdapter(expandableListAdapter);
                                 expandableListView.expandGroup(i);
                                 expandableListAdapter.notifyDataSetChanged();
+                                expandableListView.smoothScrollToPosition(i);
                             } else {
                                 // Toast.makeText(PinkingUpMaster_Activity.this, "This Waybill No doesn't exist.", Toast.LENGTH_SHORT).show();
                             }
@@ -596,6 +655,7 @@ public class Deliver_Activity extends AppCompatActivity {
                                 expandableListView.setAdapter(expandableListAdapter);
                                 expandableListView.expandGroup(i);
                                 expandableListAdapter.notifyDataSetChanged();
+                                expandableListView.smoothScrollToPosition(i);
                             } else {
                                 //  Toast.makeText(PinkingUpMaster_Activity.this, "This Waybill No doesn't exist.", Toast.LENGTH_SHORT).show();
                             }
@@ -1301,7 +1361,7 @@ public class Deliver_Activity extends AppCompatActivity {
                     } else {
                         commentOfspinner = "";
                     }
-                    Log.d("ASdasdasd", "onClick: "+ commentOfspinner);
+                    Log.d("ASdasdasd", "onClick: " + commentOfspinner);
 
                 }
 
@@ -1362,7 +1422,7 @@ public class Deliver_Activity extends AppCompatActivity {
 
                     // String commentText = edtComment_PICK.getText().toString();
 
-                    Log.d("ASdasdasd", "onClick: "+ commentOfspinner);
+                    Log.d("ASdasdasd", "onClick: " + commentOfspinner);
 
                     for (int i = 0; i < deleteImage.size(); i++) {
 

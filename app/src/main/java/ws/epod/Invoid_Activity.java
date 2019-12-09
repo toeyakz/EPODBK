@@ -317,43 +317,17 @@ public class Invoid_Activity extends AppCompatActivity {
 
                         }
 
-                        // Log.d("hhhjujh", "onPostExecute: complete:" + statusComplete + " reject:" + statusReject + " return:" + statusReturn + " comment:" + commentReject);
+                        if (isCheckIntent(statusReturn, statusReject, statusComplete, commentReturn, commentReject)) {
+                            //Toast.makeText(Invoid_Activity.this, "Gooo", Toast.LENGTH_SHORT).show();
+                            Animation animation = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.alpha);
+                            sign.startAnimation(animation);
+                            dataToSign();
+                        } else {
+                            Toast.makeText(Invoid_Activity.this, "Please select Invoice.", Toast.LENGTH_SHORT).show();
+                        }
 
-                        if (statusReject != 0 || statusComplete != 0 || commentReject != 0 || statusReturn != 0 || commentReturn != 0 || commentComplete != 0) {
 
-                            if (statusReturn != 0 && commentReturn != 0 && statusReturn == commentReturn && statusReject != 0 && commentReject != 0 && statusReject == commentReject &&
-                                    (statusComplete != 0 && commentComplete != 0 && statusComplete == commentComplete || statusComplete != 0 && commentComplete == 0)
-                            ) {
-
-                                Log.d("checkIntent", ">> ติ๊ก return และ คอมเม้น return แล้ว\n" +
-                                        " ติ๊ก reject และ คอมเม้น reject แล้ว\n" +
-                                        " ติ๊ก complete และ คอมเม้น complete แล้ว");
-
-                            } else if ((statusReturn != 0 && commentReturn != 0 && statusReturn == commentReturn) && (statusReject != 0 && commentReject != 0 && statusReject == commentReject)) {
-                                Log.d("checkIntent", ">> ติ๊ก return , reject และคอมเม้นทั้งสองแล้ว");
-                            } else if ((statusReturn != 0 && commentReturn != 0 && statusReturn == commentReturn) && (statusComplete != 0)) {
-                                Log.d("checkIntent", ">> ติ๊ก return , complete และคอมเม้นทั้งสองแล้ว");
-                            } else if ((statusReject != 0 && commentReject != 0 && statusReject == commentReject) && (statusComplete != 0)) {
-                                Log.d("checkIntent", ">> ติ๊ก reject , complete และคอมเม้นทั้งสองแล้ว");
-                            } else if (statusReturn != 0 && commentReturn != 0 && statusReturn == commentReturn && statusReject != 0 && commentReject == 0) {
-                                Log.d("checkIntent", ">> ติ๊ก return , reject แล้วแต่ยังไม่ได้คอมเม้น reject ");
-                            } else if (statusReject != 0 && commentReject != 0 && statusReject == commentReject && statusReturn != 0 && commentReturn == 0) {
-                                Log.d("checkIntent", ">> ติ๊ก return , reject แล้วแต่ยังไม่ได้คอมเม้น return ");
-                            } else if (statusReturn != 0 && commentReturn != 0 && statusReturn == commentReturn) {
-                                Log.d("checkIntent", ">> ติ๊ก return และคอมเม้นแล้ว");
-                            } else if (statusReject != 0 && commentReject != 0 && statusReject == commentReject) {
-                                Log.d("checkIntent", ">> ติ๊ก reject และคอมเม้นแล้ว");
-                            } else if (statusComplete != 0 && commentComplete != 0 && statusComplete == commentComplete || statusComplete != 0 && commentComplete == 0) {
-                                Log.d("checkIntent", ">> ติ๊ก complete และคอมเม้นแล้ว");
-                            } else if (statusReturn != 0 && commentReturn != 0 && statusReturn == commentReturn && (statusReject != 0 && commentReject == 0)) {
-                                Log.d("checkIntent", ">> ติ๊ก return และ คอมเม้น return แล้ว และ ติ้๊ก reject และ คอมเม้นแล้วหรืออาจจะยังก็ได้");
-                            } else if (statusReject != 0 && commentReject != 0 && statusReject == commentReject && (statusReturn != 0 && commentReturn == 0)) {
-                                Log.d("checkIntent", ">> ติ๊ก reject และ คอมเม้น return แล้ว และ ติ้๊ก return และ คอมเม้นแล้วหรืออาจจะยังก็ได้");
-                            } else if (statusReturn != commentReturn) {
-                                Log.d("checkIntent", ">> ติ๊ก return แต่ไม่ได้คอมเม้น");
-                            } else if (statusReject != commentReject) {
-                                Log.d("checkIntent", ">> ติ๊ก reject แต่ไม่ได้คอมเม้น");
-                            }
+                        //  Log.d("hhhjujh", "onPostExecute: complete:" + statusComplete + " reject:" + statusReject + " return:" + statusReturn + " comment:" + commentReject);
 
 
 //                            else if (statusReturn != 0 && commentReturn != 0 && statusReturn == commentReturn) {
@@ -478,11 +452,11 @@ public class Invoid_Activity extends AppCompatActivity {
 //                                Log.d("hhhjujh", "onPostExecute: เลือก reject - ยังไม่คอมเม้น");
 //                            }
 
-                        } else {
-                            Animation animation = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.alpha);
-                            sign.startAnimation(animation);
-                            Toast.makeText(Invoid_Activity.this, "Please select Invoice.", Toast.LENGTH_SHORT).show();
-                        }
+//                        } else {
+//                            Animation animation = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.alpha);
+//                            sign.startAnimation(animation);
+//                            Toast.makeText(Invoid_Activity.this, "Please select Invoice.", Toast.LENGTH_SHORT).show();
+//                        }
                     }
 
                 }
@@ -493,6 +467,47 @@ public class Invoid_Activity extends AppCompatActivity {
 
         onClickFab();
         setView();
+
+    }
+
+    private boolean isCheckIntent(int statusReturn, int statusReject, int statusComplete, int commentReturn, int commentReject) {
+
+        if (statusReject != 0 || statusComplete != 0 || commentReject != 0 || statusReturn != 0 || commentReturn != 0) {
+
+            if (statusReturn != 0) {
+                if (statusReturn == commentReturn) {
+                    Log.d("checkIntent", "onPostExecute:  ติ๊ก return และ คอมเม้น return แล้ว");
+                } else {
+                    Log.d("checkIntent", "onPostExecute:  ติ๊ก return ไม่ได้คอมเม้น");
+                    return false;
+                }
+            }
+
+            if (statusReject != 0) {
+                if (statusReject == commentReject) {
+                    Log.d("checkIntent", "onPostExecute:  ติ๊ก reject และ คอมเม้น reject แล้ว");
+                } else {
+                    Log.d("checkIntent", "onPostExecute:  ติ๊ก reject ไม่ได้คอมเม้น");
+                    return false;
+                }
+            }
+
+
+            if (statusComplete != 0) {
+                Log.d("checkIntent", "onPostExecute:  ติ๊ก complete แล้ว");
+            }
+//            else {
+//                Log.d("checkIntent", "onPostExecute:  ติ๊ก complete ไม่ได้คอมเม้น");
+//                return false;
+//
+//            }
+
+
+        } else {
+            return false;
+        }
+
+        return true;
 
     }
 
@@ -853,7 +868,7 @@ public class Invoid_Activity extends AppCompatActivity {
                     holder.tvUseComment.setTextColor(R.color.colorPrimary);
                     holder.tvUseComment.setVisibility(View.VISIBLE);
                 } else {
-                    holder.tvUseComment.setText("Please commented.");
+                    holder.tvUseComment.setText("Please comment.");
                     holder.tvUseComment.setTextColor(Color.RED);
                     holder.tvUseComment.setVisibility(View.VISIBLE);
 
@@ -872,7 +887,7 @@ public class Invoid_Activity extends AppCompatActivity {
                     holder.tvUseComment.setVisibility(View.VISIBLE);
 
                 } else {
-                    holder.tvUseComment.setText("Please commented.");
+                    holder.tvUseComment.setText("Please comment.");
                     holder.tvUseComment.setTextColor(Color.RED);
                     holder.tvUseComment.setVisibility(View.VISIBLE);
                 }
