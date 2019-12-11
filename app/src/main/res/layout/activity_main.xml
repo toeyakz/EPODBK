@@ -85,6 +85,7 @@
             android:layout_marginTop="12dp"
             android:src="@drawable/ic_profile"
             android:tint="#3f9c39"
+            android:visibility="gone"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -94,6 +95,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:text="@string/name_driver"
+            android:visibility="gone"
             app:layout_constraintStart_toEndOf="@+id/imageView2"
             app:layout_constraintTop_toBottomOf="@+id/textView4" />
 
@@ -103,6 +105,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:text="@string/user"
+            android:visibility="gone"
             app:layout_constraintStart_toEndOf="@+id/imageView2"
             app:layout_constraintTop_toBottomOf="@+id/textView2" />
 
@@ -112,6 +115,7 @@
             android:layout_height="wrap_content"
             android:layout_marginEnd="8dp"
             android:text="**"
+            android:visibility="gone"
             app:layout_constraintEnd_toStartOf="@+id/tvMain_planSeq"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toEndOf="@+id/textView4"
@@ -123,6 +127,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:layout_marginTop="16dp"
+            android:visibility="gone"
             android:text="@string/truck"
             app:layout_constraintStart_toEndOf="@+id/imageView2"
             app:layout_constraintTop_toTopOf="parent" />
@@ -133,6 +138,7 @@
             android:layout_height="wrap_content"
             android:layout_marginEnd="8dp"
             android:text="**"
+            android:visibility="gone"
             app:layout_constraintEnd_toStartOf="@+id/tvMain_planSeq"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toEndOf="@+id/textView5"
@@ -140,6 +146,7 @@
 
         <TextView
             android:id="@+id/tvMain_truck"
+            android:visibility="gone"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
@@ -157,6 +164,7 @@
             android:layout_marginEnd="8dp"
             android:background="@drawable/oval_accent"
             android:padding="10dp"
+            android:visibility="gone"
             android:text="@string/drop"
             android:textColor="#ffffff"
             app:layout_constraintBottom_toTopOf="@+id/view2"
@@ -233,6 +241,7 @@
             android:layout_width="fill_parent"
             android:layout_height="1dp"
             android:layout_marginStart="24dp"
+            android:visibility="gone"
             android:layout_marginTop="14dp"
             android:layout_marginEnd="8dp"
             android:background="@android:color/darker_gray"

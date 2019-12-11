@@ -65,7 +65,7 @@ public class JobAdapter extends RecyclerView.Adapter<JobAdapter.ViewHolder> {
         } else {
             viewHolder.tvPlan_in_Job.setText("");
         }
-        viewHolder.tvStatusJob.setText(context.getString(R.string.picking_up) + " (" + list.get(i).getPickUp() + "/" + list.get(i).getPick() + ") | " + context.getString(R.string.deliver) +
+        viewHolder.tvStatusJob.setText(context.getString(R.string.pickup) + " (" + list.get(i).getPickUp() + "/" + list.get(i).getPick() + ") | " + context.getString(R.string.deliver) +
                 " (" + list.get(i).getDelivery() + "/" + list.get(i).getDeli() + ")");
 
         viewHolder.itemView.setOnLongClickListener(new View.OnLongClickListener() {

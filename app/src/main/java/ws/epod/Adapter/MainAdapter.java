@@ -72,9 +72,14 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHolder> {
         databaseHelper = new DatabaseHelper(context);
 
         viewHolder.picking_Menu.setText(list.get(i).TEXT);
-        viewHolder.tvConsignmentMain.setText(list.get(i).CONSIGNMENT + "•Consignment");
-        viewHolder.tvBoxesMain.setText(list.get(i).BOXES + "•Boxes");
-        viewHolder.textView4.setText(list.get(i).GLOBAL + "•Unit(Global)");
+        viewHolder.tvConsignmentMain.setText(list.get(i).CONSIGNMENT + "•"+context.getString(R.string.consignment));
+        if(list.get(i).BOXES.equals("1")){
+            viewHolder.tvBoxesMain.setText(list.get(i).BOXES + "•"+context.getString(R.string.box));
+        }else{
+            viewHolder.tvBoxesMain.setText(list.get(i).BOXES + "•"+context.getString(R.string.boxes));
+        }
+
+        viewHolder.textView4.setText(list.get(i).GLOBAL + "•"+context.getString(R.string.unit));
         viewHolder.icon.setImageResource(list.get(i).IMAGE);
 
         viewHolder.itemView.setOnClickListener(new View.OnClickListener() {

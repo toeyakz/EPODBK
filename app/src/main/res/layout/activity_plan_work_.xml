@@ -216,7 +216,7 @@
                     android:layout_marginRight="8dp"
                     android:layout_weight="1"
                     android:background="@drawable/fab_label_background"
-                    android:text="Filter Date"
+                    android:text="@string/filterdate"
                     android:textColor="#fff"
                     android:textSize="14sp"
                     tools:layout_editor_absoluteY="44dp" />
@@ -261,7 +261,7 @@
                     android:layout_marginRight="8dp"
                     android:layout_weight="1"
                     android:background="@drawable/fab_label_background"
-                    android:text="Today"
+                    android:text="@string/today"
                     android:textColor="#fff"
                     android:textSize="14sp"
                     tools:layout_editor_absoluteX="7dp"

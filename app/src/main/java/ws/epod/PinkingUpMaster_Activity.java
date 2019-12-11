@@ -33,6 +33,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.BaseExpandableListAdapter;
@@ -41,10 +42,12 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ExpandableListView;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.addisonelliott.segmentedbutton.SegmentedButtonGroup;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 
@@ -72,6 +75,7 @@ import ws.epod.Helper.NarisBaseValue;
 import ws.epod.ObjectClass.SQLiteModel.Dialog_Cons_Detail_Model;
 import ws.epod.ObjectClass.SQLiteModel.PickingUpEexpand_Model;
 import ws.epod.ObjectClass.SQLiteModel.PickingUp_Model;
+import ws.epod.ObjectClass.SQLiteModel.Sign_Model;
 
 public class PinkingUpMaster_Activity extends AppCompatActivity {
 
@@ -131,6 +135,10 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
 
     private IntentIntegrator qrScan;
 
+    FloatingActionButton fabHome, fabJobHome, fabJobToday;
+    Animation showLayout, hideLayout;
+    LinearLayout layoutJobHome, layoutJobToday;
+
 
     @Override
     protected void onResume() {
@@ -174,6 +182,16 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
         btnEnterWaybillNo = findViewById(R.id.btnEnterWaybillNo);
         bnCloseJobPick = findViewById(R.id.bnCloseJobPick);
 
+        fabHome = findViewById(R.id.fabHome);
+        layoutJobHome = findViewById(R.id.layoutJobHome);
+        layoutJobToday = findViewById(R.id.layoutJobToday);
+        fabJobHome = findViewById(R.id.fabJobHome);
+        fabJobToday = findViewById(R.id.fabJobToday);
+
+
+        showLayout = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.show_layout);
+        hideLayout = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.hide_layout);
+
 //        if ( getIntent().getStringExtra("publicKey") != null ) {
 //
 //            String resultCode = getIntent().getStringExtra("publicKey");
@@ -186,6 +204,8 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
 
 
         getSQLite();
+
+        onClickFab();
 
 //        expandableListView.setOnGroupClickListener(new ExpandableListView.OnGroupClickListener() {
 //            @Override
@@ -480,10 +500,51 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
         return position;
     }
 
-    private void errorSaveFail(int i) {
+    private void onClickFab() {
 
-        expandableListView.expandGroup(i);
+        fabHome.setOnClickListener(v -> {
+            if (layoutJobHome.getVisibility() == View.VISIBLE && layoutJobToday.getVisibility()
+                    == View.VISIBLE) {
+                hideAll();
+            } else {
+                showAll();
 
+            }
+        });
+
+        fabJobHome.setOnClickListener(v -> {
+            Intent intent = new Intent(getApplicationContext(), PlanWork_Activity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(intent);
+        });
+
+        fabJobToday.setOnClickListener(v -> {
+            Intent intent = new Intent(getApplicationContext(), Main_Activity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            intent.putExtra("EXIT", true);
+            startActivity(intent);
+        });
+
+    }
+
+
+
+
+    private void hideAll() {
+
+        layoutJobHome.startAnimation(hideLayout);
+        layoutJobToday.startAnimation(hideLayout);
+        layoutJobHome.setVisibility(View.GONE);
+        layoutJobToday.setVisibility(View.GONE);
+
+    }
+
+    private void showAll() {
+
+        layoutJobHome.startAnimation(showLayout);
+        layoutJobToday.startAnimation(showLayout);
+        layoutJobHome.setVisibility(View.VISIBLE);
+        layoutJobToday.setVisibility(View.VISIBLE);
 
     }
 
@@ -978,8 +1039,8 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
 
 
             tvExpand_Count.setText(String.valueOf((expandedListPosition + 1)));
-            box_no.setText("BoxNo. " + expandedList.getBox_no());
-            waybill_no.setText("WaybillNo: " + expandedList.getWaybil_no());
+            box_no.setText(context.getString(R.string.box_no) + ": " + expandedList.getBox_no());
+            waybill_no.setText(context.getString(R.string.waybill_no) + ": " + expandedList.getWaybil_no());
 
             Log.d("aassas", "getChildView: " + listPosition + ">" + expandedListPosition + ">" + expandedList.getIs_scaned() + " into>" + expandedList.getInto());
 
@@ -1157,11 +1218,17 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
 
 
             consignment.setTypeface(null, Typeface.BOLD);
-            consignment.setText("Cons.No: " + listTitle.getConsignment());
+            consignment.setText(context.getString(R.string.consignment2) + ": " + listTitle.getConsignment());
             tvConGroupCountPick.setText(String.valueOf((listPosition + 1)));
             TextView box = convertView.findViewById(R.id.tvPickingUp_Box);
             TextView tvPickUp_global = convertView.findViewById(R.id.tvPickUp_global);
-            box.setText("Box (" + listTitle.getBox_checked() + " | " + listTitle.getBox_total() + ")");
+
+            if (listTitle.getBox_total().equals("1")) {
+                box.setText(context.getString(R.string.box) + " (" + listTitle.getBox_checked() + " | " + listTitle.getBox_total() + ")");
+            } else {
+                box.setText(context.getString(R.string.boxes) + " (" + listTitle.getBox_checked() + " | " + listTitle.getBox_total() + ")");
+            }
+
 
             // Log.d("ASfjhbaskjdfgsdfasd", "getGroupView: " + listTitle.getGlobal_cancel());
 
@@ -1169,7 +1236,7 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
 
             if (!listTitle.getGlobal_cancel().equals("0")) {
                 tv_Global_cancel.setVisibility(View.VISIBLE);
-                tv_Global_cancel.setText(listTitle.getGlobal_cancel() + " Canceled.");
+                tv_Global_cancel.setText(listTitle.getGlobal_cancel() + " " + context.getString(R.string.canceled) + ".");
             }
 
             ImageView img_selection = convertView.findViewById(R.id.img_arrow_drop);
@@ -1482,9 +1549,13 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
             imgCommentPick_03 = popupInputDialogView.findViewById(R.id.imgCommentPick_03);
             imgNewPick03 = popupInputDialogView.findViewById(R.id.imgNewPick03);
             imgDeletePick03 = popupInputDialogView.findViewById(R.id.imgDeletePick03);
+            TextView textView32 = popupInputDialogView.findViewById(R.id.textView32);
+            TextView textView33 = popupInputDialogView.findViewById(R.id.textView33);
 
-            tvConsignment_Dialog.setText("Cons.No: " + consignment_no);
-            tv_BoxNo_Dialog.setText("BoxNo: " + box_no);
+            tvConsignment_Dialog.setText(getApplicationContext().getString(R.string.consignment2)+": " + consignment_no);
+            tv_BoxNo_Dialog.setText(getApplicationContext().getString(R.string.box_no)+": " + box_no);
+            textView32.setText(getApplicationContext().getString(R.string.reason)+":");
+            textView33.setText(getApplicationContext().getString(R.string.picture)+":");
 
 
             List<String> categories = new ArrayList<>();

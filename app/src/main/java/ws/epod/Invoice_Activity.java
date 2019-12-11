@@ -490,8 +490,6 @@ public class Invoice_Activity extends AppCompatActivity {
 
         layoutJobHome.startAnimation(hideLayout);
         layoutJobToday.startAnimation(hideLayout);
-//        layBar.startAnimation(hideLayout);
-//        layBar.setVisibility(View.GONE);
         layoutJobHome.setVisibility(View.GONE);
         layoutJobToday.setVisibility(View.GONE);
 
@@ -513,20 +511,22 @@ public class Invoice_Activity extends AppCompatActivity {
         String delivery_no = user_data.getString("delivery_no", "");
         String plan_seq = user_data.getString("plan_seq", "");
 
-        String sql = "select cm.deli_note_no \n" +
-                ", cm.consignment_no \n" +
-                ",ifnull((select ps4.status_load from pic_sign ps4 where ps4.order_no = pl.order_no ),'') as status \n" +
-                ", pl.order_no \n" +
-                ",(SELECT pl.delivery_no) AS delivery_no \n" +
-                ",ifnull((select ci2.comment from comment_invoice ci2 where ci2.order_no = pl.order_no) ,'') as comment\n" +
-                ", pl.activity_type\n" +
-                ",ifnull((select ps2.pic_sign_load from pic_sign ps2 where ps2.order_no = pl.order_no) ,'') as pic_sign_load \n" +
-                "from Consignment cm \n" +
-                "inner join Plan pl on pl.consignment_no = cm.consignment_no \n" +
-                "LEFT JOIN comment_invoice ci on ci.consignment_no = cm.consignment_no \n" +
-                "LEFT JOIN pic_sign ps on ps.consignment_no = cm.consignment_no \n" +
-                "where pl.delivery_no = '" + delivery_no + "' AND pl.plan_seq = '" + plan_seq + "' AND pl.activity_type = 'LOAD' AND pl.trash = '0'  " +
-                "GROUP by deli_note_no";
+        String sql = "select cm.deli_note_no  \n" +
+                ", cm.consignment_no  \n" +
+                ",ifnull((select ps4.status_load from pic_sign ps4 where ps4.order_no = pl.order_no ),'') as status  \n" +
+                ", pl.order_no  \n" +
+                ",(SELECT pl.delivery_no) AS delivery_no  \n" +
+                ",ifnull((select ci2.comment from comment_invoice ci2 where ci2.order_no = pl.order_no) ,'') as comment \n" +
+                ", pl.activity_type \n" +
+                ",ifnull((select ps2.pic_sign_load from pic_sign ps2 where ps2.order_no = pl.order_no) ,'') as pic_sign_load  \n" +
+                ", pl.is_scaned\n" +
+                ", pl.waybill_no\n" +
+                "from Consignment cm  \n" +
+                "inner join Plan pl on pl.consignment_no = cm.consignment_no  \n" +
+                "LEFT JOIN comment_invoice ci on ci.consignment_no = cm.consignment_no  \n" +
+                "LEFT JOIN pic_sign ps on ps.consignment_no = cm.consignment_no  \n" +
+                "where pl.delivery_no = '" + delivery_no + "' AND pl.plan_seq = '" + plan_seq + "' AND pl.activity_type = 'LOAD' AND pl.trash = '0'and pl.is_scaned = '1' " +
+                "GROUP by pl.order_no, cm.deli_note_no";
         Cursor cursor = databaseHelper.selectDB(sql);
         Log.d("isMapRoute", "total line " + sql);
 

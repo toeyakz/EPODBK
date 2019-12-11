@@ -5,7 +5,7 @@
     <string name="password">Password</string>
     <string name="username">Username</string>
     <string name="version">Version</string>
-    <string name="serial">Serial</string>
+    <string name="serial">Serial Number</string>
     <string name="truck">Truck</string>
     <string name="employee_id">Employee ID</string>
     <string name="staff">Staff</string>
@@ -62,6 +62,44 @@
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="title_activity_main2">Main2Activity</string>
+    <string name="filterdate">Filter Date</string>
+    <string name="today">Today</string>
+    <string name="address">Address</string>
+    <string name="appoint">Appoint</string>
+    <string name="consignment">Consignment</string>
+    <string name="boxes">Boxes</string>
+    <string name="unit">Unit(Global)</string>
+    <string name="consignment2">Cons.No</string>
+    <string name="credit">Credit</string>
+    <string name="cash">Cash</string>
+    <string name="waybill_no">Waybill No</string>
+    <string name="box_no">Box No</string>
+    <string name="pay_type">Pay Type</string>
+    <string name="summary">Summary</string>
+    <string name="all">All</string>
+    <string name="confirm2">Confirm</string>
+    <string name="processing">Processing</string>
+    <string name="canceled">Canceled</string>
+    <string name="global_no">Global No</string>
+    <string name="price">Price</string>
+    <string name="remark">Ramark</string>
+    <string name="enter">enter</string>
+    <string name="enter_waybill_no">Enter waybillno here..</string>
+    <string name="reason">Reason</string>
+    <string name="picture">Picture</string>
+    <string name="save">Save</string>
+    <string name="order_no">Order No</string>
+    <string name="invoice">Invoice</string>
+    <string name="invoice_no">Invoice No</string>
+    <string name="return_">Return</string>
+    <string name="reject">Reject</string>
+    <string name="complete">Complete</string>
+    <string name="select_all">Select All</string>
+    <string name="enter_reson">Enter reason.</string>
+    <string name="commented">Commented.</string>
+    <string name="search">SEARCH</string>
+    <string name="to">to</string>
+    <string name="select">Select</string>
 
 
 </resources>

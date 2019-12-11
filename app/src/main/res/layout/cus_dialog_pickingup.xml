@@ -12,7 +12,7 @@
         android:layout_height="wrap_content"
         android:layout_marginEnd="12dp"
         android:layout_marginBottom="12dp"
-        android:text="Save"
+        android:text="@string/save"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
@@ -31,7 +31,7 @@
         app:layout_constraintTop_toBottomOf="@+id/textView32"
         app:ms_arrowColor="#A9A9A9"
         app:ms_arrowSize="14dp"
-        app:ms_hint="Select comment."
+        app:ms_hint="@string/select"
         app:ms_hintColor="#A9A9A9"
         app:ms_multiline="true" />
 
