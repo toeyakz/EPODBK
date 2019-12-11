@@ -182,34 +182,36 @@ public class InvoiceDeliver_Activity extends AppCompatActivity {
                         for (int i = 0; i < invAdapter.getItemCount(); i++) {
                             Sign_Model sign_model = invAdapter.list.get(i);
 
-                            // if (sign_model.getSignature().equals("")) {
-                            if (sign_model.getStatus().equals("1")) {
-                                statusComplete += 1;
+                            Log.d("Adfjksdfgagsdfg", "onPostExecute: " + sign_model.getStatus());
 
-                                if (!sign_model.getComment().equals("")) {
-                                    commentComplete += 1;
+                            if (sign_model.getSignature().equals("")) {
+                                if (sign_model.getStatus().equals("1")) {
+                                    statusComplete += 1;
+
+                                    if (!sign_model.getComment().equals("")) {
+                                        commentComplete += 1;
+                                    }
+                                }
+                                if (sign_model.getStatus().equals("2")) {
+                                    statusReject += 1;
+
+                                    if (!sign_model.getComment().equals("")) {
+                                        commentReject += 1;
+                                    }
+                                }
+                                if (sign_model.getStatus().equals("3")) {
+                                    statusReturn += 1;
+                                    if (!sign_model.getComment().equals("")) {
+                                        commentReturn += 1;
+                                    }
+                                }
+
+                                if (statusReturn != commentReturn || statusReject != commentReject) {
+                                    positionScll = i;
+                                } else {
+                                    positionScll = 0;
                                 }
                             }
-                            if (sign_model.getStatus().equals("2")) {
-                                statusReject += 1;
-
-                                if (!sign_model.getComment().equals("")) {
-                                    commentReject += 1;
-                                }
-                            }
-                            if (sign_model.getStatus().equals("3")) {
-                                statusReturn += 1;
-                                if (!sign_model.getComment().equals("")) {
-                                    commentReturn += 1;
-                                }
-                            }
-
-                            if (statusReturn != commentReturn || statusReject != commentReject) {
-                                positionScll = i;
-                            } else {
-                                positionScll = 0;
-                            }
-                            // }
                         }
 
                         if (isCheckIntent(statusReturn, statusReject, statusComplete, commentReturn, commentReject)) {
@@ -218,7 +220,7 @@ public class InvoiceDeliver_Activity extends AppCompatActivity {
                             sign.startAnimation(animation);
                             dataToSign();
                         } else {
-                           // Toast.makeText(InvoiceDeliver_Activity.this, "Please select Invoice.", Toast.LENGTH_SHORT).show();
+                            // Toast.makeText(InvoiceDeliver_Activity.this, "Please select Invoice.", Toast.LENGTH_SHORT).show();
                         }
                         rvInv.getLayoutManager().scrollToPosition(positionScll);
 
@@ -285,7 +287,7 @@ public class InvoiceDeliver_Activity extends AppCompatActivity {
             for (int i = 0; i < invAdapter.getItemCount(); i++) {
                 Sign_Model sign_model = invAdapter.list.get(i);
 
-                if (!sign_model.getStatus().equals("0")) {
+                if (!sign_model.getStatus().equals("")) {
                     signObjectClasses.add(new Sign_Model(sign_model.getConsignment_no(), sign_model.getDeli_note_no(), sign_model.getStatus()
                             , sign_model.getSignature(), sign_model.getOrder_no(), sign_model.getDelivery_no(), sign_model.getComment()));
                 }
@@ -588,9 +590,9 @@ public class InvoiceDeliver_Activity extends AppCompatActivity {
         @Override
         public void onBindViewHolder(@NonNull InvAdapter.ViewHolder holder, int position) {
 
-            holder.textView15.setText(context.getString(R.string.order_no)+": " + list.get(position).getOrder_no());
-            holder.textView21.setText(context.getString(R.string.consignment2)+": " + list.get(position).getConsignment_no());
-            holder.textView9.setText(context.getString(R.string.invoice_no)+": " + list.get(position).getDeli_note_no());
+            holder.textView15.setText(context.getString(R.string.order_no) + ": " + list.get(position).getOrder_no());
+            holder.textView21.setText(context.getString(R.string.consignment2) + ": " + list.get(position).getConsignment_no());
+            holder.textView9.setText(context.getString(R.string.invoice_no) + ": " + list.get(position).getDeli_note_no());
 
 
             if (!list.get(position).getSignature().equals("")) {
