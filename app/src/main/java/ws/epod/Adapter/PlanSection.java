@@ -9,9 +9,12 @@ import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
+import java.util.Locale;
 
 import io.github.luizgrp.sectionedrecyclerviewadapter.SectionParameters;
 import io.github.luizgrp.sectionedrecyclerviewadapter.StatelessSection;
@@ -29,7 +32,7 @@ public class PlanSection extends StatelessSection {
 
     PlanWork_Activity planWork_activity;
 
-    public PlanSection( String title, ArrayList<Plan_model> item, Context mContext ) {
+    public PlanSection(String title, ArrayList<Plan_model> item, Context mContext) {
         super(SectionParameters.builder()
                 .itemResourceId(R.layout.item_newplan)
                 .headerResourceId(R.layout.section_header)
@@ -45,12 +48,12 @@ public class PlanSection extends StatelessSection {
     }
 
     @Override
-    public RecyclerView.ViewHolder getItemViewHolder( View view ) {
+    public RecyclerView.ViewHolder getItemViewHolder(View view) {
         return new ItemViewHolder(view);
     }
 
     @Override
-    public void onBindItemViewHolder( RecyclerView.ViewHolder viewHolder, int i ) {
+    public void onBindItemViewHolder(RecyclerView.ViewHolder viewHolder, int i) {
         final ItemViewHolder itemHolder = (ItemViewHolder) viewHolder;
 
 //        String Delivery_date = planWork_activity.dateNewFormat(item.get(i).getDelivery_date());
@@ -58,12 +61,12 @@ public class PlanSection extends StatelessSection {
 
         itemHolder.tvRound_no.setText(item.get(i).getDelivery_no());
         itemHolder.tvDrop_planSeq.setText(String.valueOf(item.get(i).getPlan_seq()));
-        if ( item.get(i).getPick() != null ) {
+        if (item.get(i).getPick() != null) {
             itemHolder.tvDrop_pickUp.setText(String.valueOf(item.get(i).getPick()));
         } else {
             itemHolder.tvDrop_pickUp.setText("0");
         }
-        if ( item.get(i).getDeli() != null ) {
+        if (item.get(i).getDeli() != null) {
             itemHolder.tvDrop_deli.setText(String.valueOf(item.get(i).getDeli()));
         } else {
             itemHolder.tvDrop_deli.setText("0");
@@ -73,13 +76,13 @@ public class PlanSection extends StatelessSection {
 
         itemHolder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick( View view ) {
+            public void onClick(View view) {
                 //Toast.makeText(context, "" + list.get(i).getDelivery_no(), Toast.LENGTH_SHORT).show();
 
-                Log.d("ASdfASF6ASDD", "Delivery no: "+item.get(i).getDelivery_no()+"Delivery Date: "+item.get(i).getDelivery_date());
+                Log.d("ASdfASF6ASDD", "Delivery no: " + item.get(i).getDelivery_no() + "Delivery Date: " + item.get(i).getDelivery_date());
                 Intent intent = new Intent(mContext, DropPoint_Activity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-               // intent.putExtra("plan_seq", list.get(i).getRound_no());
+                // intent.putExtra("plan_seq", list.get(i).getRound_no());
                 intent.putExtra("delivery_no", item.get(i).getDelivery_no());
                 intent.putExtra("delivery_date", item.get(i).getDelivery_date());
 
@@ -90,33 +93,53 @@ public class PlanSection extends StatelessSection {
     }
 
     @Override
-    public RecyclerView.ViewHolder getHeaderViewHolder( View view ) {
+    public RecyclerView.ViewHolder getHeaderViewHolder(View view) {
         return new HeaderViewHolder(view);
     }
 
     @Override
-    public void onBindHeaderViewHolder( RecyclerView.ViewHolder holder ) {
+    public void onBindHeaderViewHolder(RecyclerView.ViewHolder holder) {
         HeaderViewHolder headerHolder = (HeaderViewHolder) holder;
 
         Calendar cal = Calendar.getInstance();
-        SimpleDateFormat format1 = new SimpleDateFormat("dd/MM/yyyy");
+        SimpleDateFormat format1 = new SimpleDateFormat("dd-MM-yyyy");
         String mDate = format1.format(cal.getTime());
 
-        if ( title.equals(mDate) ) {
-            headerHolder.section.setText("Today");
-        } else {
-            headerHolder.section.setText(title);
-        }
+
+        Log.d("Asfjhsadklf", "onBindHeaderViewHolder: "+title);
+
+
+        headerHolder.section.setText(dateNewFormat(title));
+
 
     }
 
+    private String dateNewFormat(String pattern) {
+        String pattern2 = "dd-MM-yyyy";
+        SimpleDateFormat spf = new SimpleDateFormat("dd/MM/yyyy");
+        Date newDate = null;
+        try {
+            newDate = spf.parse(pattern);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        spf = new SimpleDateFormat(pattern2, new Locale("th", "th"));
+
+        pattern = spf.format(newDate);
+
+
+        return pattern;
+    }
+
 }
+
+
 
 class HeaderViewHolder extends RecyclerView.ViewHolder {
 
     public final TextView section;
 
-    HeaderViewHolder( View view ) {
+    HeaderViewHolder(View view) {
         super(view);
         section = view.findViewById(R.id.section);
     }
@@ -126,7 +149,7 @@ class ItemViewHolder extends RecyclerView.ViewHolder {
     public final View rootView;
     public final TextView tvRound_no, tvDrop_planSeq, tvDrop_pickUp, tvDrop_deli, tvDrop_Finish;
 
-    ItemViewHolder( View view ) {
+    ItemViewHolder(View view) {
         super(view);
 
         rootView = view;

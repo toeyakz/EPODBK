@@ -16,6 +16,7 @@
         android:layout_width="20dp"
         android:layout_height="0dp"
         android:layout_marginStart="2dp"
+        android:visibility="gone"
         android:background="@drawable/test_dot"
         app:layout_constraintBottom_toBottomOf="@+id/view5"
         app:layout_constraintStart_toStartOf="parent"
@@ -28,6 +29,7 @@
         android:layout_height="12dp"
         android:layout_marginStart="6dp"
         android:layout_marginTop="13dp"
+        android:visibility="gone"
         android:background="@drawable/cycle"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -38,6 +40,7 @@
         android:layout_height="12dp"
         android:layout_marginStart="6dp"
         android:layout_marginTop="19dp"
+        android:visibility="gone"
         android:background="@drawable/cycle"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/view1" />
@@ -47,21 +50,20 @@
         android:id="@+id/textView15"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="5dp"
-        android:layout_marginTop="5dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
         android:layout_marginEnd="16dp"
-        android:text="InvoiceNo: 1002"
-        android:textColor="#9C9C9C"
-        android:textSize="12sp"
+        android:text="Order No: T191115345"
+        android:textSize="14sp"
         app:layout_constraintEnd_toStartOf="@+id/imgEditBoxNoPickup"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toEndOf="@+id/view1"
-        app:layout_constraintTop_toBottomOf="@+id/view2" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <ImageView
         android:id="@+id/imgEditBoxNoPickup"
-        android:layout_width="24dp"
-        android:layout_height="24dp"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="18dp"
         android:layout_marginBottom="8dp"
@@ -74,26 +76,13 @@
         android:id="@+id/textView21"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="5dp"
-        android:layout_marginTop="10dp"
+        android:layout_marginStart="8dp"
         android:layout_marginEnd="16dp"
         android:text="ConsignmentNo: 20191102064654"
         android:textSize="14sp"
         app:layout_constraintEnd_toStartOf="@+id/imgEditBoxNoPickup"
-        app:layout_constraintStart_toEndOf="@+id/view1"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <View
-        android:id="@+id/view2"
-        android:layout_width="0dp"
-        android:layout_height="1dp"
-        android:layout_marginStart="5dp"
-        android:layout_marginTop="5dp"
-        android:layout_marginEnd="8dp"
-        android:background="@android:color/darker_gray"
-        app:layout_constraintEnd_toStartOf="@+id/imgEditBoxNoPickup"
-        app:layout_constraintStart_toEndOf="@+id/view1"
-        app:layout_constraintTop_toBottomOf="@+id/textView21" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView9" />
 
     <TextView
         android:id="@+id/textView22"
@@ -140,7 +129,7 @@
         android:id="@+id/reCheck"
         android:layout_width="wrap_content"
         android:layout_height="28dp"
-        android:layout_marginTop="4dp"
+        android:layout_marginTop="5dp"
         android:layout_marginEnd="8dp"
         android:layout_marginBottom="8dp"
         android:text="Reject"
@@ -148,13 +137,13 @@
         android:textSize="12sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/comCheck"
-        app:layout_constraintTop_toBottomOf="@+id/textView15" />
+        app:layout_constraintTop_toBottomOf="@+id/textView21" />
 
     <CheckBox
         android:id="@+id/comCheck"
         android:layout_width="wrap_content"
         android:layout_height="28dp"
-        android:layout_marginTop="4dp"
+        android:layout_marginTop="5dp"
         android:layout_marginEnd="16dp"
         android:layout_marginBottom="8dp"
         android:text="Complete"
@@ -162,13 +151,13 @@
         android:textSize="12sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView15" />
+        app:layout_constraintTop_toBottomOf="@+id/textView21" />
 
     <CheckBox
         android:id="@+id/reTurnCheck"
         android:layout_width="wrap_content"
         android:layout_height="28dp"
-        android:layout_marginTop="4dp"
+        android:layout_marginTop="5dp"
         android:layout_marginEnd="8dp"
         android:layout_marginBottom="8dp"
         android:text="Return"
@@ -178,6 +167,16 @@
         app:layout_constraintEnd_toStartOf="@+id/reCheck"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView15"
-        app:layout_constraintVertical_bias="0.39" />
+        app:layout_constraintTop_toBottomOf="@+id/textView21" />
+
+    <TextView
+        android:id="@+id/textView9"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="16dp"
+        android:text="InvoiceNo: 1002"
+        app:layout_constraintEnd_toStartOf="@+id/imgEditBoxNoPickup"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView15" />
 </androidx.constraintlayout.widget.ConstraintLayout>

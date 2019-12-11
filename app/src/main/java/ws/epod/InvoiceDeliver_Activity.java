@@ -458,7 +458,7 @@ public class InvoiceDeliver_Activity extends AppCompatActivity {
                 "inner join Plan pl on pl.consignment_no = cm.consignment_no  \n" +
                 "LEFT JOIN comment_invoice ci on ci.consignment_no = cm.consignment_no  \n" +
                 "LEFT JOIN pic_sign ps on ps.consignment_no = cm.consignment_no  \n" +
-                "where pl.delivery_no = '" + delivery_no + "' AND pl.plan_seq = '" + plan_seq + "' AND pl.activity_type = 'UNLOAD' and ps.status_load = '1'  AND pl.trash = '0'  and pl.order_no in (select ps6.order_no from pic_sign ps6 where ps6.pic_sign_load <> '')  " +
+                "where pl.delivery_no = '" + delivery_no + "' AND pl.plan_seq = '" + plan_seq + "' AND pl.activity_type = 'UNLOAD' and pl.is_scaned <> '0' and ps.status_load = '1'  AND pl.trash = '0'  and pl.order_no in (select ps6.order_no from pic_sign ps6 where ps6.pic_sign_load <> '')  " +
                 "GROUP by deli_note_no";
         Cursor cursor = databaseHelper.selectDB(sql);
         Log.d("isMapRoute", "total line " + sql);
@@ -588,8 +588,9 @@ public class InvoiceDeliver_Activity extends AppCompatActivity {
         @Override
         public void onBindViewHolder(@NonNull InvAdapter.ViewHolder holder, int position) {
 
-            holder.textView15.setText("InvoiceNo: " + list.get(position).getDeli_note_no());
-            holder.textView21.setText("ConsignmentNo: " + list.get(position).getConsignment_no());
+            holder.textView15.setText(context.getString(R.string.order_no)+": " + list.get(position).getOrder_no());
+            holder.textView21.setText(context.getString(R.string.consignment2)+": " + list.get(position).getConsignment_no());
+            holder.textView9.setText(context.getString(R.string.invoice_no)+": " + list.get(position).getDeli_note_no());
 
 
             if (!list.get(position).getSignature().equals("")) {
@@ -617,9 +618,10 @@ public class InvoiceDeliver_Activity extends AppCompatActivity {
             if (list.get(position).getStatus().equals("1")) {
                 holder.comCheck.setChecked(true);
                 if (!list.get(position).getComment().equals("")) {
-                    holder.tvUseComment.setText("Commented.");
-                    holder.tvUseComment.setTextColor(R.color.colorPrimary);
-                    holder.tvUseComment.setVisibility(View.VISIBLE);
+                    holder.tvUseComment.setVisibility(View.GONE);
+//                    holder.tvUseComment.setText("Commented.");
+//                    holder.tvUseComment.setTextColor(R.color.colorPrimary);
+//                    holder.tvUseComment.setVisibility(View.VISIBLE);
                 } else {
                     holder.tvUseComment.setVisibility(View.GONE);
                 }
@@ -631,9 +633,10 @@ public class InvoiceDeliver_Activity extends AppCompatActivity {
             if (list.get(position).getStatus().equals("3")) {
                 holder.reTurnCheck.setChecked(true);
                 if (!list.get(position).getComment().equals("")) {
-                    holder.tvUseComment.setText("Commented.");
-                    holder.tvUseComment.setTextColor(R.color.colorPrimary);
-                    holder.tvUseComment.setVisibility(View.VISIBLE);
+                    holder.tvUseComment.setVisibility(View.GONE);
+//                    holder.tvUseComment.setText("Commented.");
+//                    holder.tvUseComment.setTextColor(R.color.colorPrimary);
+//                    holder.tvUseComment.setVisibility(View.VISIBLE);
                 } else {
                     holder.tvUseComment.setText("Please comment.");
                     holder.tvUseComment.setTextColor(Color.RED);
@@ -646,10 +649,11 @@ public class InvoiceDeliver_Activity extends AppCompatActivity {
             if (list.get(position).getStatus().equals("2")) {
                 holder.reCheck.setChecked(true);
                 if (!list.get(position).getComment().equals("")) {
+                    holder.tvUseComment.setVisibility(View.GONE);
                     //holder.tvUseComment.setVisibility(View.GONE);
-                    holder.tvUseComment.setText("Commented.");
-                    holder.tvUseComment.setTextColor(R.color.colorPrimary);
-                    holder.tvUseComment.setVisibility(View.VISIBLE);
+//                    holder.tvUseComment.setText("Commented.");
+//                    holder.tvUseComment.setTextColor(R.color.colorPrimary);
+//                    holder.tvUseComment.setVisibility(View.VISIBLE);
 
                 } else {
                     holder.tvUseComment.setText("Please comment.");
@@ -676,9 +680,10 @@ public class InvoiceDeliver_Activity extends AppCompatActivity {
                         holder.tvUseComment.setVisibility(View.GONE);
                     } else if (list.get(position).getStatus().equals("1") && !list.get(position).getComment().equals("")) {
                         Log.d("Akkksk", "onBindViewHolder: 2");
-                        holder.tvUseComment.setText("Commented.");
-                        holder.tvUseComment.setTextColor(R.color.colorPrimary);
-                        holder.tvUseComment.setVisibility(View.VISIBLE);
+                        holder.tvUseComment.setVisibility(View.GONE);
+//                        holder.tvUseComment.setText("Commented.");
+//                        holder.tvUseComment.setTextColor(R.color.colorPrimary);
+//                        holder.tvUseComment.setVisibility(View.VISIBLE);
                     }
                     holder.imgEditBoxNoPickup.setEnabled(true);
 
@@ -713,8 +718,9 @@ public class InvoiceDeliver_Activity extends AppCompatActivity {
                         holder.tvUseComment.setTextColor(Color.RED);
                     } else if (list.get(position).getStatus().equals("2") && !list.get(position).getComment().equals("")) {
                         Log.d("Akkksk", "onBindViewHolder: 2");
-                        holder.tvUseComment.setText("Commented.");
-                        holder.tvUseComment.setVisibility(View.VISIBLE);
+                        holder.tvUseComment.setVisibility(View.GONE);
+//                        holder.tvUseComment.setText("Commented.");
+//                        holder.tvUseComment.setVisibility(View.VISIBLE);
                     }
 
                     holder.imgEditBoxNoPickup.setEnabled(true);
@@ -747,9 +753,10 @@ public class InvoiceDeliver_Activity extends AppCompatActivity {
                         holder.tvUseComment.setTextColor(Color.RED);
                     } else if (list.get(position).getStatus().equals("3") && !list.get(position).getComment().equals("")) {
                         Log.d("Akkksk", "onBindViewHolder: 2");
-                        holder.tvUseComment.setText("Commented.");
-                        holder.tvUseComment.setTextColor(R.color.colorPrimary);
-                        holder.tvUseComment.setVisibility(View.VISIBLE);
+                        holder.tvUseComment.setVisibility(View.GONE);
+//                        holder.tvUseComment.setText("Commented.");
+//                        holder.tvUseComment.setTextColor(R.color.colorPrimary);
+//                        holder.tvUseComment.setVisibility(View.VISIBLE);
                     }
 
                     Log.d("SDss", "onBindViewHolder:  > > isCheck: " + list.get(position).getStatus() + ">" + list.get(position).getDeli_note_no());
@@ -800,12 +807,13 @@ public class InvoiceDeliver_Activity extends AppCompatActivity {
         public class ViewHolder extends RecyclerView.ViewHolder {
             CheckBox comCheck, reCheck, reTurnCheck;
             ImageView imgEditBoxNoPickup, imageView11;
-            TextView tvUseComment, textView21, textView22, textView15;
+            TextView tvUseComment, textView21, textView22, textView15, textView9;
 
             public ViewHolder(View itemView) {
                 super(itemView);
 
                 textView15 = itemView.findViewById(R.id.textView15);
+                textView9 = itemView.findViewById(R.id.textView9);
                 reTurnCheck = itemView.findViewById(R.id.reTurnCheck);
                 tvUseComment = itemView.findViewById(R.id.tvUseComment);
                 textView21 = itemView.findViewById(R.id.textView21);

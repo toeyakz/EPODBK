@@ -1297,12 +1297,11 @@ public class PlanWork_Activity extends AppCompatActivity {
                     "        inner join consignment cm2 on cm2.consignment_no = pl2.consignment_no\n" +
                     "        where pl2.delivery_no = pl.delivery_no  and pl2.activity_type = 'UNLOAD' and pl2.consignment_no = cm2.consignment_no and cm2.trash = '0') as deli\n" +
                     "\n" +
-                    ", (select count(DISTINCT pl2.consignment_no)\n" +
-                    "        from Plan pl2\n" +
-                    "        inner join consignment cm2 on cm2.consignment_no = pl2.consignment_no\n" +
-                    "        where pl2.delivery_no = pl.delivery_no and pl2.activity_type = 'UNLOAD' and cm2.activity_type = 'UNLOAD' and pl2.consignment_no = cm2.consignment_no and cm2.trash = '0'\n" +
-                    "        and (select count(cm3.deli_note_no) from consignment cm3 where cm3.status <> '0' and pl2.consignment_no = cm3.consignment_no)) as finish\n" +
-                    "\n" +
+                    ", (select count(DISTINCT pl2.consignment_no) \n" +
+                    "from Plan pl2 \n" +
+                    "inner join consignment cm2 on cm2.consignment_no = pl2.consignment_no \n" +
+                    "where pl2.delivery_no = pl.delivery_no and pl2.activity_type = 'UNLOAD' and pl2.consignment_no = cm2.consignment_no and cm2.trash = '0' \n" +
+                    "and pl.order_no in (select order_no from pic_sign where pic_sign_unload <> '')) as finish " +
                     "from Plan pl\n" +
                     "inner join consignment cm on cm.consignment_no = pl.consignment_no\n" +
                     "where (pl.delivery_date between '" + dateBegin + "' and '" + dateEnd + "') \n" +
@@ -1321,12 +1320,11 @@ public class PlanWork_Activity extends AppCompatActivity {
                     "        inner join consignment cm2 on cm2.consignment_no = pl2.consignment_no\n" +
                     "        where pl2.delivery_no = pl.delivery_no  and pl2.activity_type = 'UNLOAD' and pl2.consignment_no = cm2.consignment_no and cm2.trash = '0') as deli\n" +
                     "\n" +
-                    ", (select count(DISTINCT pl2.consignment_no)\n" +
-                    "        from Plan pl2\n" +
-                    "        inner join consignment cm2 on cm2.consignment_no = pl2.consignment_no\n" +
-                    "        where pl2.delivery_no = pl.delivery_no and pl2.activity_type = 'UNLOAD' and cm2.activity_type = 'UNLOAD' and pl2.consignment_no = cm2.consignment_no and cm2.trash = '0'\n" +
-                    "        and (select count(cm3.deli_note_no) from consignment cm3 where cm3.status <> '0' and pl2.consignment_no = cm3.consignment_no)) as finish\n" +
-                    "\n" +
+                    ", (select count(DISTINCT pl2.consignment_no) \n" +
+                    "from Plan pl2 \n" +
+                    "inner join consignment cm2 on cm2.consignment_no = pl2.consignment_no \n" +
+                    "where pl2.delivery_no = pl.delivery_no and pl2.activity_type = 'UNLOAD' and pl2.consignment_no = cm2.consignment_no and cm2.trash = '0' \n" +
+                    "and pl.order_no in (select order_no from pic_sign where pic_sign_unload <> '')) as finish " +
                     "from Plan pl\n" +
                     "inner join consignment cm on cm.consignment_no = pl.consignment_no\n" +
                     "where pl.delivery_date >= '" + today + "'\n" +
@@ -1345,12 +1343,11 @@ public class PlanWork_Activity extends AppCompatActivity {
                     "        inner join consignment cm2 on cm2.consignment_no = pl2.consignment_no\n" +
                     "        where pl2.delivery_no = pl.delivery_no  and pl2.activity_type = 'UNLOAD' and pl2.consignment_no = cm2.consignment_no and cm2.trash = '0') as deli\n" +
                     "\n" +
-                    ", (select count(DISTINCT pl2.consignment_no)\n" +
-                    "        from Plan pl2\n" +
-                    "        inner join consignment cm2 on cm2.consignment_no = pl2.consignment_no\n" +
-                    "        where pl2.delivery_no = pl.delivery_no and pl2.activity_type = 'UNLOAD' and cm2.activity_type = 'UNLOAD' and pl2.consignment_no = cm2.consignment_no and cm2.trash = '0'\n" +
-                    "        and (select count(cm3.deli_note_no) from consignment cm3 where cm3.status <> '0' and pl2.consignment_no = cm3.consignment_no)) as finish\n" +
-                    "\n" +
+                    ", (select count(DISTINCT pl2.consignment_no) \n" +
+                    "from Plan pl2 \n" +
+                    "inner join consignment cm2 on cm2.consignment_no = pl2.consignment_no \n" +
+                    "where pl2.delivery_no = pl.delivery_no and pl2.activity_type = 'UNLOAD' and pl2.consignment_no = cm2.consignment_no and cm2.trash = '0' \n" +
+                    "and pl.order_no in (select order_no from pic_sign where pic_sign_unload <> '')) as finish " +
                     "from Plan pl\n" +
                     "inner join consignment cm on cm.consignment_no = pl.consignment_no\n" +
                     "where pl.delivery_date >= date('now')\n" +

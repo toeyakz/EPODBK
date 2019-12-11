@@ -58,7 +58,7 @@
                     android:layout_marginRight="8dp"
                     android:layout_weight="1"
                     android:background="@drawable/fab_label_background"
-                    android:text="Job Home"
+                    android:text="@string/delivery_plan"
                     android:textColor="#fff"
                     android:textSize="14sp"
                     tools:layout_editor_absoluteY="44dp" />
@@ -103,7 +103,7 @@
                     android:layout_marginRight="8dp"
                     android:layout_weight="1"
                     android:background="@drawable/fab_label_background"
-                    android:text="Job Today"
+                    android:text="@string/job"
                     android:textColor="#fff"
                     android:textSize="14sp"
                     tools:layout_editor_absoluteX="7dp"

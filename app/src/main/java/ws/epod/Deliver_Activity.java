@@ -42,12 +42,14 @@ import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ExpandableListView;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TabHost;
 import android.widget.TabWidget;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.addisonelliott.segmentedbutton.SegmentedButtonGroup;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.zxing.Result;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
@@ -134,6 +136,10 @@ public class Deliver_Activity extends AppCompatActivity {
 
     IntentIntegrator qrScan;
 
+    FloatingActionButton fabHome, fabJobHome, fabJobToday;
+    Animation showLayout, hideLayout;
+    LinearLayout layoutJobHome, layoutJobToday;
+
     @Override
     protected void onResume() {
         super.onResume();
@@ -171,7 +177,18 @@ public class Deliver_Activity extends AppCompatActivity {
         imageView8 = findViewById(R.id.imageView8);
         imgCameraScan = findViewById(R.id.imgCameraScan);
 
+        fabHome = findViewById(R.id.fabHome5);
+        layoutJobHome = findViewById(R.id.layoutJobHome);
+        layoutJobToday = findViewById(R.id.layoutJobToday);
+        fabJobHome = findViewById(R.id.fabJobHome);
+        fabJobToday = findViewById(R.id.fabJobToday);
+
+
+        showLayout = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.show_layout);
+        hideLayout = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.hide_layout);
+
         getSQLite();
+        onClickFab();
 
         imgCameraScan.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -425,6 +442,51 @@ public class Deliver_Activity extends AppCompatActivity {
         return temp;
     }
 
+    private void onClickFab() {
+
+        fabHome.setOnClickListener(v -> {
+            if (layoutJobHome.getVisibility() == View.VISIBLE && layoutJobToday.getVisibility()
+                    == View.VISIBLE) {
+                hideAll();
+            } else {
+                showAll();
+
+            }
+        });
+
+        fabJobHome.setOnClickListener(v -> {
+            Intent intent = new Intent(getApplicationContext(), PlanWork_Activity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(intent);
+        });
+
+        fabJobToday.setOnClickListener(v -> {
+            Intent intent = new Intent(getApplicationContext(), Main_Activity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            intent.putExtra("EXIT", true);
+            startActivity(intent);
+        });
+
+    }
+
+    private void hideAll() {
+
+        layoutJobHome.startAnimation(hideLayout);
+        layoutJobToday.startAnimation(hideLayout);
+        layoutJobHome.setVisibility(View.GONE);
+        layoutJobToday.setVisibility(View.GONE);
+
+    }
+
+    private void showAll() {
+
+        layoutJobHome.startAnimation(showLayout);
+        layoutJobToday.startAnimation(showLayout);
+        layoutJobHome.setVisibility(View.VISIBLE);
+        layoutJobToday.setVisibility(View.VISIBLE);
+
+    }
+
     private int[] isCheckSaveBox(DeliverAdapter expandableListAdapter) {
 
         int[] position = new int[2];
@@ -530,7 +592,7 @@ public class Deliver_Activity extends AppCompatActivity {
                 ",(select count(DISTINCT cm.global_no) from consignment cm where cm.consignment_no = pl.consignment_no and cm.detail_remarks <> null) as global_cancel\n" +
                 "from Plan pl\n" +
                 "inner join consignment cm on cm.consignment_no = pl.consignment_no\n" +
-                "where pl.delivery_no = '" + delivery_no + "' and  pl.plan_seq = '" + plan_seq + "' and pl.activity_type = 'UNLOAD' and pl.trash = '0'" +
+                "where pl.delivery_no = '" + delivery_no + "' and  pl.plan_seq = '" + plan_seq + "' and pl.activity_type = 'UNLOAD' and pl.trash = '0' and pl.order_no in (select order_no from pic_sign where pic_sign_load <> '' )" +
                 "GROUP BY pl.delivery_no, pl.consignment_no";
         Cursor cursor = databaseHelper.selectDB(sql);
         Log.d("DeliverLOG", "total line " + cursor.getCount());

@@ -182,7 +182,7 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
         btnEnterWaybillNo = findViewById(R.id.btnEnterWaybillNo);
         bnCloseJobPick = findViewById(R.id.bnCloseJobPick);
 
-        fabHome = findViewById(R.id.fabHome);
+        fabHome = findViewById(R.id.fabHome3);
         layoutJobHome = findViewById(R.id.layoutJobHome);
         layoutJobToday = findViewById(R.id.layoutJobToday);
         fabJobHome = findViewById(R.id.fabJobHome);

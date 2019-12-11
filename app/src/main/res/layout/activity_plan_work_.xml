@@ -115,14 +115,15 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/constraintLayout"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
+            android:layout_height="1dp"
+            android:layout_marginStart="16dp"
             android:layout_marginTop="3dp"
-            android:layout_marginEnd="8dp"
+            android:layout_marginEnd="16dp"
             android:background="@drawable/oval_accent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/constraintLayout2">
+
 
             <TextView
                 android:id="@+id/tvPlan_date_bar"
@@ -132,6 +133,7 @@
                 android:layout_marginEnd="8dp"
                 android:text="วันจันทร์ที่ 15 พฤศจิกายน 2558"
                 android:textColor="#fff"
+                android:visibility="gone"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.0"
@@ -144,7 +146,7 @@
             android:id="@+id/rvPlanWork"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            android:layout_marginTop="3dp"
+            android:layout_marginTop="5dp"
             android:layout_marginBottom="8dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -152,8 +154,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/tvFilterStatus"
             tools:itemCount="2"
-            tools:listitem="@layout/item_newplan"
-            />
+            tools:listitem="@layout/item_newplan" />
 
         <include
             android:id="@+id/toolbarPlanWork"
