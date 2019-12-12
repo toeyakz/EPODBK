@@ -36,6 +36,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.common.util.MapUtils;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
@@ -191,41 +192,6 @@ public class DropPoint_Activity extends AppCompatActivity {
 
     }
 
-    public Bitmap GetBitmapMarker(Context mContext, int resourceId, String mText) {
-        try {
-            Resources resources = mContext.getResources();
-            float scale = resources.getDisplayMetrics().density;
-            Bitmap bitmap = BitmapFactory.decodeResource(resources, resourceId);
-
-            android.graphics.Bitmap.Config bitmapConfig = bitmap.getConfig();
-
-            // set default bitmap config if none
-            if (bitmapConfig == null)
-                bitmapConfig = android.graphics.Bitmap.Config.ARGB_8888;
-
-            bitmap = bitmap.copy(bitmapConfig, true);
-
-            Canvas canvas = new Canvas(bitmap);
-            Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
-            paint.setColor(Color.WHITE);
-            paint.setTextSize((int) (14 * scale));
-            paint.setShadowLayer(1f, 0f, 1f, Color.DKGRAY);
-
-            // draw text to the Canvas center
-            Rect bounds = new Rect();
-            paint.getTextBounds(mText, 0, mText.length(), bounds);
-            int x = (bitmap.getWidth() - bounds.width()) / 2;
-            int y = (bitmap.getHeight() + bounds.height()) / 3;
-
-            //canvas.drawText(mText, x*scale, y+bitmap.getHeight()/2+(bounds.bottom-bounds.top)/2, paint);
-            canvas.drawText(mText, x * scale, y * scale, paint);
-
-            return bitmap;
-
-        } catch (Exception e) {
-            return null;
-        }
-    }
 
     private void isMapRoute(GoogleMap map) {
         mMap = map;
@@ -316,11 +282,9 @@ public class DropPoint_Activity extends AppCompatActivity {
 
                 Log.d("asdfwa", "isMapRoute: " + station_name);
 
-                Bitmap bitmap = GetBitmapMarker(getApplicationContext(), R.drawable.default_marker, String.valueOf(plan_seq));
-
                 mMap.addMarker(new MarkerOptions()
                         .position(coords.get(i))
-                        .icon(BitmapDescriptorFactory.fromBitmap(bitmap))
+                        .icon(BitmapDescriptorFactory.fromBitmap(createStoreMarker(plan_seq)))
                         .title(station_name)
                         .anchor(0.5f, 1));
 
@@ -384,48 +348,23 @@ public class DropPoint_Activity extends AppCompatActivity {
 
     }
 
-    private Bitmap writeTextOnDrawable(int drawableId, String text) {
+    private Bitmap createStoreMarker(String dropCount) {
+        View markerLayout = getLayoutInflater().inflate(R.layout.store_marker_layout, null);
 
-        Bitmap bm = BitmapFactory.decodeResource(getResources(), drawableId)
-                .copy(Bitmap.Config.ARGB_8888, true);
+        ImageView markerImage = (ImageView) markerLayout.findViewById(R.id.marker_image);
+        TextView markerRating = (TextView) markerLayout.findViewById(R.id.marker_text);
+        markerImage.setImageResource(R.drawable.default_marker);
+        markerRating.setText(dropCount);
 
+        markerLayout.measure(View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED), View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED));
+        markerLayout.layout(0, 0, markerLayout.getMeasuredWidth(), markerLayout.getMeasuredHeight());
 
-        Typeface tf = Typeface.create("Helvetica", Typeface.BOLD);
-
-        Paint paint = new Paint();
-        paint.setStyle(Paint.Style.FILL);
-        paint.setColor(Color.WHITE);
-        paint.setTypeface(tf);
-        paint.setTextAlign(Paint.Align.CENTER);
-        paint.setTextSize(convertToPixels(getApplicationContext(), 50));
-
-        Rect textRect = new Rect();
-        paint.getTextBounds(text, 0, text.length(), textRect);
-
-        Canvas canvas = new Canvas(bm);
-
-        //If the text is bigger than the canvas , reduce the font size
-        if (textRect.width() >= (canvas.getWidth() - 4))     //the padding on either sides is considered as 4, so as to appropriately fit in the text
-            paint.setTextSize(convertToPixels(getApplicationContext(), 9));        //Scaling needs to be used for different dpi's
-
-        //Calculate the positions
-        int xPos = (canvas.getWidth() / 2) - 2;     //-2 is for regulating the x position offset
-
-        //"- ((paint.descent() + paint.ascent()) / 2)" is the distance from the baseline to the center.
-        int yPos = (int) ((canvas.getHeight() / 3) - ((paint.descent() + paint.ascent()) / 2));
-
-        canvas.drawText(text, xPos, yPos, paint);
-
-        return bm;
+        final Bitmap bitmap = Bitmap.createBitmap(markerLayout.getMeasuredWidth(), markerLayout.getMeasuredHeight(), Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(bitmap);
+        markerLayout.draw(canvas);
+        return bitmap;
     }
 
-
-    public static int convertToPixels(Context context, int nDP) {
-        final float conversionScale = context.getResources().getDisplayMetrics().density;
-
-        return (int) ((nDP * conversionScale) + 0.5f);
-
-    }
 
     private String getDirectionsUrl(LatLng origin, LatLng dest) {
 

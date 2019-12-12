@@ -128,6 +128,10 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
     ArrayList<String> picTemp3 = new ArrayList<>();
     ArrayList<String> deleteImage = new ArrayList<>();
 
+    ArrayList<String> Temp1 = new ArrayList<>();
+    ArrayList<String> Temp2 = new ArrayList<>();
+    ArrayList<String> Temp3 = new ArrayList<>();
+
     RecyclerView rvDialogCons;
     DialogConsAdapter dialogConsAdapter;
 
@@ -138,6 +142,8 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
     FloatingActionButton fabHome, fabJobHome, fabJobToday;
     Animation showLayout, hideLayout;
     LinearLayout layoutJobHome, layoutJobToday;
+
+    int arrayIsScan = 0;
 
 
     @Override
@@ -154,7 +160,7 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        // checkBackCon();
+        checkBackCon();
     }
 
     @Override
@@ -187,33 +193,15 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
         layoutJobToday = findViewById(R.id.layoutJobToday);
         fabJobHome = findViewById(R.id.fabJobHome);
         fabJobToday = findViewById(R.id.fabJobToday);
+        expandableListView = findViewById(R.id.exPandDeli);
 
 
         showLayout = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.show_layout);
         hideLayout = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.hide_layout);
 
-//        if ( getIntent().getStringExtra("publicKey") != null ) {
-//
-//            String resultCode = getIntent().getStringExtra("publicKey");
-//
-//            Log.d("asdfqawergok", "handleResult: " + resultCode);
-//
-//            edtFineWaybillPick.setText(resultCode);
-//
-//        }
-
 
         getSQLite();
-
         onClickFab();
-
-//        expandableListView.setOnGroupClickListener(new ExpandableListView.OnGroupClickListener() {
-//            @Override
-//            public boolean onGroupClick(ExpandableListView parent, View v,
-//                                        int groupPosition, long id) {
-//                return true; // This way the expander cannot be collapsed
-//            }
-//        });
 
         bnCloseJobPick.setOnClickListener(view -> {
             Animation animation = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.alpha);
@@ -243,8 +231,8 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
             public void onClick(View view) {
                 Animation animation = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.alpha);
                 imgBack_test.startAnimation(animation);
+                checkBackCon();
                 finish();
-                //checkBackCon();
             }
         });
 
@@ -300,19 +288,42 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
                                                         for (int j = 0; j < expandableListAdapter.getChildrenCount(i); j++) {
                                                             final PickingUpEexpand_Model expandedList = (PickingUpEexpand_Model) expandableListAdapter.getChild(i, j);
 
-                                                            Log.d("lloldo", "doInBackground: " + expandedList.getConsignment() + ">" + expandedList.getIs_scaned());
-                                                            Log.d("ASfasdjkhhfgksdf", "onCreate: " + getdate());
-
                                                             ContentValues cv = new ContentValues();
+                                                            ContentValues cv2 = new ContentValues();
                                                             cv.put("is_scaned", expandedList.getIs_scaned());
+                                                            if (expandedList.getPicture1() != null) {
+                                                                cv.put("picture1", expandedList.getPicture1());
+                                                                cv2.put("name_img", expandedList.getPicture1());
+
+                                                            }
+                                                            if (expandedList.getPicture2() != null) {
+                                                                cv.put("picture2", expandedList.getPicture2());
+                                                                cv2.put("name_img", expandedList.getPicture2());
+                                                            }
+                                                            if (expandedList.getPicture3() != null) {
+                                                                cv.put("picture3", expandedList.getPicture3());
+                                                                cv2.put("name_img", expandedList.getPicture3());
+                                                            }
+                                                            if (expandedList.getComment() != null) {
+                                                                cv.put("comment", expandedList.getComment());
+                                                            }
+
                                                             cv.put("modified_date", getdate());
                                                             databaseHelper.db().update("Plan", cv, "delivery_no= '" + expandedList.getDelivery_no() + "' and plan_seq = '" + expandedList.getPlan_seq() + "' and activity_type = 'LOAD' and " +
                                                                     " consignment_no = '" + expandedList.getConsignment() + "' and box_no = '" + expandedList.getBox_no() + "' and trash = '0'", null);
+
+                                                            cv2.put("status_img", "0");
+                                                            databaseHelper.db().insert("image", null, cv2);
+
 
                                                             lastExpandedPosition = i;
                                                             IsSuccess = 1;
                                                         }
                                                     }
+
+                                                    Temp1 = new ArrayList<>();
+                                                    Temp2 = new ArrayList<>();
+                                                    Temp3 = new ArrayList<>();
                                                 } else {
                                                     // Toast.makeText(PinkingUpMaster_Activity.this, "fail.", Toast.LENGTH_SHORT).show();
                                                     Log.d("checkFail", "doInBackground: save fail");
@@ -479,7 +490,7 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
 
                 String scanned = expandedList.getIs_scaned();
 
-                Log.d("checkFail", "isCheckSaveBox: " + scanned);
+                Log.d("checkFail", "isCheckSaveBox: " + expandedList.getComment() + ">" + expandedList.getIs_scaned() + ">" + expandedList.getWaybil_no() + " image >" + expandedList.getPicture1());
 
                 if (scanned.equals("1") || scanned.equals("2")) {
                     countScanned++;
@@ -528,8 +539,6 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
     }
 
 
-
-
     private void hideAll() {
 
         layoutJobHome.startAnimation(hideLayout);
@@ -569,57 +578,34 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
 //    }
 
     private void checkBackCon() {
-        final SharedPreferences user_data = getSharedPreferences("DATA_DETAIL_PICK", Context.MODE_PRIVATE);
-        final String delivery_no = user_data.getString("delivery_no", "");
-        final String plan_seq = user_data.getString("plan_seq", "");
 
-        String isscaned_pick = "";
+        for (int i = 0; i < Temp1.size(); i++) {
+            Log.d("fsdlfjks", "checkBackCon: pic1: " + Temp1.get(i));
+            File file = new File("/storage/emulated/0/Android/data/ws.epod/files/Pictures/" + Temp1.get(i));
+            file.delete();
 
-        String sql = "select (select count( pl2.is_scaned) from Plan pl2 where pl2.activity_type = 'LOAD' and pl2.plan_seq = pl.plan_seq and pl2.delivery_no = pl.delivery_no and is_scaned = '0' and pl2.trash = pl.trash) as isscaned_pick\n" +
-                "from Plan pl\n" +
-                "where pl.delivery_no = '" + delivery_no + "' and  pl.plan_seq = '" + plan_seq + "' and pl.trash = '0'" +
-                "GROUP BY pl.delivery_no";
-        Cursor cursor = databaseHelper.selectDB(sql);
-        Log.d("PickingUpLOG_001", "total line " + cursor.getColumnCount());
-
-        list_expand = new ArrayList<>();
-
-        cursor.moveToFirst();
-        if (cursor.getCount() > 0) {
-            do {
-                isscaned_pick = cursor.getString(cursor.getColumnIndex("isscaned_pick"));
-                Log.d("PickingUpLOG_001", isscaned_pick);
-            } while (cursor.moveToNext());
         }
+        Temp1 = new ArrayList<>();
 
-        if (!isscaned_pick.equals("0")) {
-            final AlertDialog.Builder alertbox = new AlertDialog.Builder(this);
-            alertbox.setTitle(getString(R.string.alert));
-            alertbox.setMessage(getString(R.string.work_pending));
+        for (int i = 0; i < Temp2.size(); i++) {
+            Log.d("fsdlfjks", "checkBackCon: pic2: " + Temp2.get(i));
 
+            File file = new File("/storage/emulated/0/Android/data/ws.epod/files/Pictures/" + Temp2.get(i));
+            file.delete();
 
-            alertbox.setNegativeButton(getString(R.string.confirm),
-                    new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface arg0,
-                                            int arg1) {
-                            finish();
-                        }
-                    });
-            alertbox.setNeutralButton(getString(R.string.cancel),
-                    new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialogInterface, int i) {
-
-                            dialogInterface.cancel();
-
-                        }
-                    });
-
-            alertbox.show();
-        } else {
-            user_data.edit().clear();
-            finish();
         }
+        Temp2 = new ArrayList<>();
+
+        for (int i = 0; i < Temp3.size(); i++) {
+            Log.d("fsdlfjks", "checkBackCon: pic3: " + Temp3.get(i));
+
+            File file = new File("/storage/emulated/0/Android/data/ws.epod/files/Pictures/" + Temp3.get(i));
+            file.delete();
+
+        }
+        Temp3 = new ArrayList<>();
+
+
     }
 
     private void getSQLite() {
@@ -664,7 +650,7 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
                 list.add(new PickingUp_Model(consignment, box_total, box_checked, global_total, station_address, pay_type, global_cancel, price));
 
 
-                String sql_expand = "select delivery_no, plan_seq, box_no, waybill_no, is_scaned, (box_no - 1)+1 as row_number from Plan where consignment_no = '" + consignment + "' and activity_type = 'LOAD' and delivery_no = '" + delivery_no + "' and plan_seq = '" + plan_seq + "' and trash = '0'";
+                String sql_expand = "select delivery_no, plan_seq, box_no, waybill_no, is_scaned, comment, picture1, picture2, picture3, (box_no - 1)+1 as row_number from Plan where consignment_no = '" + consignment + "' and activity_type = 'LOAD' and delivery_no = '" + delivery_no + "' and plan_seq = '" + plan_seq + "' and trash = '0' order by row_number";
                 Cursor cursor_expand = databaseHelper.selectDB(sql_expand);
                 Log.d("PickingUpLOG", "total line " + cursor_expand.getColumnCount());
 
@@ -679,14 +665,18 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
                         String row_number = cursor_expand.getString(cursor_expand.getColumnIndex("row_number"));
                         String delivery_no2 = cursor_expand.getString(cursor_expand.getColumnIndex("delivery_no"));
                         String plan_seq2 = cursor_expand.getString(cursor_expand.getColumnIndex("plan_seq"));
+                        String comment = cursor_expand.getString(cursor_expand.getColumnIndex("comment"));
+                        String picture1 = cursor_expand.getString(cursor_expand.getColumnIndex("picture1"));
+                        String picture2 = cursor_expand.getString(cursor_expand.getColumnIndex("picture2"));
+                        String picture3 = cursor_expand.getString(cursor_expand.getColumnIndex("picture3"));
 
                         Log.d("Aslalllalal", "getSQLite: " + consignment + ">" + waybill_no + ">" + is_scaned);
 
-                        list_expand.add(new PickingUpEexpand_Model(box_no, waybill_no, is_scaned, row_number, consignment, delivery_no2, plan_seq2));
+                        list_expand.add(new PickingUpEexpand_Model(box_no, waybill_no, is_scaned, row_number, consignment, delivery_no2, plan_seq2, comment, picture1, picture2, picture3));
                     } while (cursor_expand.moveToNext());
                 }
 
-                expandableListView = findViewById(R.id.exPandDeli);
+
                 expandableListDetail.put(consignment, list_expand);
             } while (cursor.moveToNext());
         }
@@ -988,7 +978,7 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
     //***********************************************************************************************************************************************************************//
     public class PickingUpAdapter extends BaseExpandableListAdapter {
 
-        View popupInputDialogView = null;
+
         View popupInputDialogView2 = null;
         boolean expanded = false;
 
@@ -1055,7 +1045,8 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
                         Animation animation = AnimationUtils.loadAnimation(context, R.anim.alpha);
                         imgEditBoxNoPickup.startAnimation(animation);
 
-                        showDialogBox(expandedList.getBox_no(), expandedList.getConsignment(), expandedList.getDelivery_no(), expandedList.getPlan_seq(), listPosition);
+                        showDialogBox(expandedList.getBox_no(), expandedList.getConsignment(), expandedList.getDelivery_no(), expandedList.getPlan_seq(), listPosition, expandedList,
+                                expandedList.getComment(), expandedList.getPicture1(), expandedList.getPicture2(), expandedList.getPicture3());
                     }
                 });
 
@@ -1076,7 +1067,8 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
                             Animation animation = AnimationUtils.loadAnimation(context, R.anim.alpha);
                             imgEditBoxNoPickup.startAnimation(animation);
 
-                            showDialogBox(expandedList.getBox_no(), expandedList.getConsignment(), expandedList.getDelivery_no(), expandedList.getPlan_seq(), listPosition);
+                            showDialogBox(expandedList.getBox_no(), expandedList.getConsignment(), expandedList.getDelivery_no(), expandedList.getPlan_seq(), listPosition, expandedList,
+                                    expandedList.getComment(), expandedList.getPicture1(), expandedList.getPicture2(), expandedList.getPicture3());
                         }
                     });
 
@@ -1112,7 +1104,8 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
                             Animation animation = AnimationUtils.loadAnimation(context, R.anim.alpha);
                             imgEditBoxNoPickup.startAnimation(animation);
 
-                            showDialogBox(expandedList.getBox_no(), expandedList.getConsignment(), expandedList.getDelivery_no(), expandedList.getPlan_seq(), listPosition);
+                            showDialogBox(expandedList.getBox_no(), expandedList.getConsignment(), expandedList.getDelivery_no(), expandedList.getPlan_seq(), listPosition, expandedList,
+                                    expandedList.getComment(), expandedList.getPicture1(), expandedList.getPicture2(), expandedList.getPicture3());
                         }
                     });
                 }
@@ -1157,7 +1150,8 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
                         Animation animation = AnimationUtils.loadAnimation(context, R.anim.alpha);
                         imgEditBoxNoPickup.startAnimation(animation);
 
-                        showDialogBox(expandedList.getBox_no(), expandedList.getConsignment(), expandedList.getDelivery_no(), expandedList.getPlan_seq(), listPosition);
+                        showDialogBox(expandedList.getBox_no(), expandedList.getConsignment(), expandedList.getDelivery_no(), expandedList.getPlan_seq(), listPosition, expandedList,
+                                expandedList.getComment(), expandedList.getPicture1(), expandedList.getPicture2(), expandedList.getPicture3());
                     }
                 });
             } else {
@@ -1520,7 +1514,8 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
 
         }
 
-        private void showDialogBox(final String box_no, final String consignment_no, final String delivery_no, final String plan_seq, int positionGroup) {
+        private void showDialogBox(final String box_no, final String consignment_no, final String delivery_no, final String plan_seq, int position, PickingUpEexpand_Model picking
+                , String comment_set, String picture1_set, String picture2_set, String picture3_set) {
 
 
             final SharedPreferences data_intent = getSharedPreferences("DATA_INTENT", Context.MODE_PRIVATE);
@@ -1530,7 +1525,7 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
             alertDialogBuilder.setCancelable(false);
 
             LayoutInflater layoutInflater = LayoutInflater.from(context);
-            popupInputDialogView = layoutInflater.inflate(R.layout.cus_dialog_pickingup, null);
+            View popupInputDialogView = layoutInflater.inflate(R.layout.cus_dialog_pickingup, null);
 
             alertDialogBuilder.setView(popupInputDialogView);
             alertDialog = alertDialogBuilder.create();
@@ -1552,10 +1547,10 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
             TextView textView32 = popupInputDialogView.findViewById(R.id.textView32);
             TextView textView33 = popupInputDialogView.findViewById(R.id.textView33);
 
-            tvConsignment_Dialog.setText(getApplicationContext().getString(R.string.consignment2)+": " + consignment_no);
-            tv_BoxNo_Dialog.setText(getApplicationContext().getString(R.string.box_no)+": " + box_no);
-            textView32.setText(getApplicationContext().getString(R.string.reason)+":");
-            textView33.setText(getApplicationContext().getString(R.string.picture)+":");
+            tvConsignment_Dialog.setText(getApplicationContext().getString(R.string.consignment2) + ": " + consignment_no);
+            tv_BoxNo_Dialog.setText(getApplicationContext().getString(R.string.box_no) + ": " + box_no);
+            textView32.setText(getApplicationContext().getString(R.string.reason) + ":");
+            textView33.setText(getApplicationContext().getString(R.string.picture) + ":");
 
 
             List<String> categories = new ArrayList<>();
@@ -1576,7 +1571,18 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
 //            if (lastComment != null) {
 //                int spinnerPosition = adapter.getPosition(lastComment);
 //                spinner.setSelection(spinnerPosition + 1);
+
+            Log.d("Sdfsdfwgersg", "showDialogBox: " + picture1_set + ">" + picture2_set + ">" + picture3_set);
+
+            if (!picking.getComment().equals("")) {
+                int spinnerPosition = adapter.getPosition(picking.getComment());
+                spinner.setSelection(spinnerPosition + 1);
+                Log.d("ASDfasdhjfasdf", "showDialogBox: " + picking.getComment());
+
+            }
+
 //            }
+
 
             spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                 @Override
@@ -1605,12 +1611,7 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
                     imgClose_dialog.startAnimation(animation);
                     data_intent.edit().clear();
 
-                    Log.d("Djar", "onClick: 1" + picTemp1);
-                    Log.d("Djar", "onClick: 2" + picTemp2);
-                    Log.d("Djar", "onClick: 3" + picTemp3);
-
                     for (int i = 0; i < picTemp1.size(); i++) {
-
 
                         if (i != 0) {
                             File file = new File("/storage/emulated/0/Android/data/ws.epod/files/Pictures/" + picTemp1.get(i));
@@ -1642,7 +1643,7 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
 
 
                     alertDialog.dismiss();
-                    expandableListView.expandGroup(positionGroup);
+                    expandableListView.expandGroup(position);
                 }
             });
 
@@ -1677,16 +1678,22 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
                             case 0:
                                 if (!path.equals("")) {
                                     cv.put("picture1", path);
+                                    Temp1.add(path);
+                                    picking.setPicture1(path);
                                 }
                                 break;
                             case 1:
                                 if (!path.equals("")) {
                                     cv.put("picture2", path);
+                                    Temp2.add(path);
+                                    picking.setPicture2(path);
                                 }
                                 break;
                             case 2:
                                 if (!path.equals("")) {
                                     cv.put("picture3", path);
+                                    Temp3.add(path);
+                                    picking.setPicture3(path);
                                 }
                                 break;
                         }
@@ -1696,32 +1703,38 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
 
                     if (!picture1.equals("") || !picture2.equals("") || !picture3.equals("") || !commentOfspinner.equals("")) {
                         cv.put("is_scaned", "2");
+                        picking.setComment(commentOfspinner);
+                        picking.setIs_scaned("2");
                         cv.put("comment", commentOfspinner);
                     } else {
                         cv.put("comment", "");
                         cv.put("is_scaned", "0");
+
+                        picking.setComment("");
+                        picking.setIs_scaned("0");
                     }
 
 
-                    cv.put("modified_date", getdate());
-                    databaseHelper.db().update("Plan", cv, "delivery_no= '" + delivery_no + "' and plan_seq = '" + plan_seq + "' and activity_type = 'LOAD' and " +
-                            " consignment_no = '" + consignment_no + "' and box_no = '" + box_no + "' and trash = '0'", null);
-
-                    Log.d("pathString", "onClick: " + delivery_no + "--" + plan_seq + "--" + consignment_no + "--" + box_no);
-
-                    ContentValues cv2 = new ContentValues();
-                    for (String path : arrayNameImage) {
-                        if (!path.equals("")) {
-                            cv2.put("name_img", path);
-                            cv2.put("status_img", "0");
-                            databaseHelper.db().insert("image", null, cv2);
-                        }
-                    }
-
-
-                    getSQLite();
-                    expandableListView.smoothScrollToPosition(positionGroup);
-                    expandableListView.expandGroup(positionGroup);
+//                    cv.put("modified_date", getdate());
+//                    databaseHelper.db().update("Plan", cv, "delivery_no= '" + delivery_no + "' and plan_seq = '" + plan_seq + "' and activity_type = 'LOAD' and " +
+//                            " consignment_no = '" + consignment_no + "' and box_no = '" + box_no + "' and trash = '0'", null);
+//
+//                    Log.d("pathString", "onClick: " + delivery_no + "--" + plan_seq + "--" + consignment_no + "--" + box_no);
+//
+//                    ContentValues cv2 = new ContentValues();
+//                    for (String path : arrayNameImage) {
+//                        if (!path.equals("")) {
+//                            cv2.put("name_img", path);
+//                            cv2.put("status_img", "0");
+//                            databaseHelper.db().insert("image", null, cv2);
+//                        }
+//                    }
+//
+//
+                    //                  getSQLite();
+                    expandableListView.setAdapter(expandableListAdapter);
+//                    expandableListView.smoothScrollToPosition(positionGroup);
+//                    expandableListView.expandGroup(positionGroup);
                     alertDialog.dismiss();
                     Toast.makeText(PinkingUpMaster_Activity.this, "Saved.", Toast.LENGTH_SHORT).show();
 
@@ -1730,85 +1743,87 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
 
 
             //**************************************************************************************************
-            String sql = "select comment,  ifnull(picture1,'') picture1  from Plan where activity_type = 'LOAD' and delivery_no = '" + delivery_no + "' and plan_seq = '" + plan_seq + "' " +
-                    "and box_no = '" + box_no + "' and consignment_no = '" + consignment_no + "' and trash = '0'";
-            Cursor cursor = databaseHelper.selectDB(sql);
-            cursor.moveToFirst();
-            if (cursor.getCount() > 0) {
-                do {
+//            String sql = "select comment,  ifnull(picture1,'') picture1  from Plan where activity_type = 'LOAD' and delivery_no = '" + delivery_no + "' and plan_seq = '" + plan_seq + "' " +
+//                    "and box_no = '" + box_no + "' and consignment_no = '" + consignment_no + "' and trash = '0'";
+//            Cursor cursor = databaseHelper.selectDB(sql);
+//            cursor.moveToFirst();
+//            if (cursor.getCount() > 0) {
+//                do {
 
-                    String comment = cursor.getString(cursor.getColumnIndex("comment"));
-                    picture1 = cursor.getString(cursor.getColumnIndex("picture1"));
-
-                    if (comment != null) {
-                        int spinnerPosition = adapter.getPosition(comment);
-                        spinner.setSelection(spinnerPosition + 1);
-                    }
-                    // edtComment_PICK.setText(comment);
+//                    String comment = cursor.getString(cursor.getColumnIndex("comment"));
+//                    picture1 = cursor.getString(cursor.getColumnIndex("picture1"));
+            picture1 = picking.getPicture1();
 
 
-                    Log.d("AsfiuASEHFIOPqeu", "showDialogBox: " + "/storage/emulated/0/Android/data/ws.epod/files/Pictures/" + picture1);
+//                    if (comment != null) {
+//                        int spinnerPosition = adapter.getPosition(comment);
+//                        spinner.setSelection(spinnerPosition + 1);
+//                    }
+            // edtComment_PICK.setText(comment);
 
 
-                    if (!picture1.equals("")) {
-                        try {
+            Log.d("AsfiuASEHFIOPqeu", "showDialogBox: " + "/storage/emulated/0/Android/data/ws.epod/files/Pictures/" + picture1);
 
-                            picTemp1.add(picture1);
-                            File file = new File("/storage/emulated/0/Android/data/ws.epod/files/Pictures/" + picture1);
-                            Bitmap myBitmap = BitmapFactory.decodeFile(file.getAbsolutePath());
-                            imgCommentPick_01.setImageBitmap(myBitmap);
-                        } catch (Exception e) {
-                        }
 
-                        imgCommentPick_01.setEnabled(false);
+            if (!picture1.equals("")) {
+                try {
 
-                        imgNewPick01.setVisibility(View.VISIBLE);
-                        imgDeletePick01.setVisibility(View.GONE);
+                    picTemp1.add(picture1);
+                    File file = new File("/storage/emulated/0/Android/data/ws.epod/files/Pictures/" + picture1);
+                    Bitmap myBitmap = BitmapFactory.decodeFile(file.getAbsolutePath());
+                    imgCommentPick_01.setImageBitmap(myBitmap);
+                } catch (Exception e) {
+                }
 
-                        imgNewPick01.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View view) {
-                                Animation animation = AnimationUtils.loadAnimation(context, R.anim.alpha);
-                                imgNewPick01.startAnimation(animation);
-                                data_intent.edit().putString("box_no", box_no).apply();
-                                data_intent.edit().putString("consignment_no", consignment_no).apply();
-                                data_intent.edit().putString("delivery_no", delivery_no).apply();
-                                data_intent.edit().putString("plan_seq", plan_seq).apply();
+                imgCommentPick_01.setEnabled(false);
 
-                                Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                                if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
-                                    File photoFile = null;
-                                    try {
-                                        photoFile = createImageFile();
-                                    } catch (IOException ex) {
-                                    }
-                                    if (photoFile != null) {
-                                        Uri photoURI = FileProvider.getUriForFile(context,
-                                                BuildConfig.APPLICATION_ID + ".provider",
-                                                photoFile);
-                                        takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
-                                        startActivityForResult(takePictureIntent, IMAGE_01);
-                                    }
-                                }
+                imgNewPick01.setVisibility(View.VISIBLE);
+                imgDeletePick01.setVisibility(View.GONE);
+
+                imgNewPick01.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        Animation animation = AnimationUtils.loadAnimation(context, R.anim.alpha);
+                        imgNewPick01.startAnimation(animation);
+                        data_intent.edit().putString("box_no", box_no).apply();
+                        data_intent.edit().putString("consignment_no", consignment_no).apply();
+                        data_intent.edit().putString("delivery_no", delivery_no).apply();
+                        data_intent.edit().putString("plan_seq", plan_seq).apply();
+
+                        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                        if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
+                            File photoFile = null;
+                            try {
+                                photoFile = createImageFile();
+                            } catch (IOException ex) {
                             }
-                        });
+                            if (photoFile != null) {
+                                Uri photoURI = FileProvider.getUriForFile(context,
+                                        BuildConfig.APPLICATION_ID + ".provider",
+                                        photoFile);
+                                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
+                                startActivityForResult(takePictureIntent, IMAGE_01);
+                            }
+                        }
+                    }
+                });
 
-                        imgDeletePick01.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View view) {
+                imgDeletePick01.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
 
-                                Animation animation = AnimationUtils.loadAnimation(context, R.anim.alpha);
-                                imgDeletePick01.startAnimation(animation);
+                        Animation animation = AnimationUtils.loadAnimation(context, R.anim.alpha);
+                        imgDeletePick01.startAnimation(animation);
 
-                                final AlertDialog.Builder alertbox = new AlertDialog.Builder(view.getRootView().getContext());
-                                alertbox.setTitle(context.getString(R.string.alert));
-                                alertbox.setMessage("Delete this image?");
+                        final AlertDialog.Builder alertbox = new AlertDialog.Builder(view.getRootView().getContext());
+                        alertbox.setTitle(context.getString(R.string.alert));
+                        alertbox.setMessage("Delete this image?");
 
-                                alertbox.setNegativeButton("DELETE",
-                                        new DialogInterface.OnClickListener() {
+                        alertbox.setNegativeButton("DELETE",
+                                new DialogInterface.OnClickListener() {
 
-                                            public void onClick(DialogInterface arg0,
-                                                                int arg1) {
+                                    public void onClick(DialogInterface arg0,
+                                                        int arg1) {
 
 
 //
@@ -1820,260 +1835,265 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
 //
 //                                                databaseHelper.db().delete("image", "name_img=?", new String[]{ picture1 });
 
-                                                //databaseHelper.db().execSQL("DELETE FROM " + imageTable + " WHERE " + CONTACTS_COLUMN_TITLE + "= '" + title + "'");
+                                        //databaseHelper.db().execSQL("DELETE FROM " + imageTable + " WHERE " + CONTACTS_COLUMN_TITLE + "= '" + title + "'");
 
-                                                imgCommentPick_01.setImageResource(R.mipmap.add_photo);
-                                                imgNewPick01.setVisibility(View.GONE);
-                                                imgDeletePick01.setVisibility(View.GONE);
-                                                imgCommentPick_01.setEnabled(true);
-                                                Toast.makeText(PinkingUpMaster_Activity.this, "Successfully deleted.", Toast.LENGTH_SHORT).show();
+                                        imgCommentPick_01.setImageResource(R.mipmap.add_photo);
+                                        imgNewPick01.setVisibility(View.GONE);
+                                        imgDeletePick01.setVisibility(View.GONE);
+                                        imgCommentPick_01.setEnabled(true);
+                                        Toast.makeText(PinkingUpMaster_Activity.this, "Successfully deleted.", Toast.LENGTH_SHORT).show();
 
-                                            }
-                                        });
-                                alertbox.setNeutralButton(context.getString(R.string.cancel),
-                                        new DialogInterface.OnClickListener() {
-                                            @Override
-                                            public void onClick(DialogInterface dialogInterface, int i) {
+                                    }
+                                });
+                        alertbox.setNeutralButton(context.getString(R.string.cancel),
+                                new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialogInterface, int i) {
 
-                                            }
-                                        });
-                                alertbox.show();
+                                    }
+                                });
+                        alertbox.show();
 
 
-                            }
-                        });
-
-                    } else {
-                        picTemp1.add("");
                     }
+                });
 
-                } while (cursor.moveToNext());
-
+            } else {
+                picTemp1.add("");
             }
+
+//                } while (cursor.moveToNext());
+//
+//            }
 //**************************************************************************************************
 
-            String sql02 = "select comment, ifnull(picture2,'') picture2 from Plan where activity_type = 'LOAD' and delivery_no = '" + delivery_no + "' and plan_seq = '" + plan_seq + "' " +
-                    "and box_no = '" + box_no + "' and consignment_no = '" + consignment_no + "' and trash = '0'";
-            Cursor cursor02 = databaseHelper.selectDB(sql02);
+//            String sql02 = "select comment, ifnull(picture2,'') picture2 from Plan where activity_type = 'LOAD' and delivery_no = '" + delivery_no + "' and plan_seq = '" + plan_seq + "' " +
+//                    "and box_no = '" + box_no + "' and consignment_no = '" + consignment_no + "' and trash = '0'";
+//            Cursor cursor02 = databaseHelper.selectDB(sql02);
+//
+//            cursor02.moveToFirst();
+//            if (cursor02.getCount() > 0) {
+//                do {
+//
+//                    String comment = cursor02.getString(cursor02.getColumnIndex("comment"));
+//                    picture2 = cursor02.getString(cursor02.getColumnIndex("picture2"));
 
-            cursor02.moveToFirst();
-            if (cursor02.getCount() > 0) {
-                do {
-
-                    String comment = cursor02.getString(cursor02.getColumnIndex("comment"));
-                    picture2 = cursor02.getString(cursor02.getColumnIndex("picture2"));
-
-                    if (comment != null) {
-                        int spinnerPosition = adapter.getPosition(comment);
-                        spinner.setSelection(spinnerPosition + 1);
-                    }
-                    //edtComment_PICK.setText(comment);
+            picture2 = picking.getPicture2();
 
 
-                    if (!picture2.equals("")) {
-                        picTemp2.add(picture2);
-                        File file = new File("/storage/emulated/0/Android/data/ws.epod/files/Pictures/" + picture2);
-                        Bitmap myBitmap = BitmapFactory.decodeFile(file.getAbsolutePath());
-                        imgCommentPick_02.setImageBitmap(myBitmap);
-                        imgCommentPick_02.setEnabled(false);
+//                    if (comment != null) {
+//                        int spinnerPosition = adapter.getPosition(comment);
+//                        spinner.setSelection(spinnerPosition + 1);
+//                    }
+            //edtComment_PICK.setText(comment);
 
-                        imgNewPick02.setVisibility(View.VISIBLE);
-                        imgDeletePick02.setVisibility(View.GONE);
 
-                        imgNewPick02.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View view) {
-                                Animation animation = AnimationUtils.loadAnimation(context, R.anim.alpha);
-                                imgNewPick02.startAnimation(animation);
-                                data_intent.edit().putString("box_no", box_no).apply();
-                                data_intent.edit().putString("consignment_no", consignment_no).apply();
-                                data_intent.edit().putString("delivery_no", delivery_no).apply();
-                                data_intent.edit().putString("plan_seq", plan_seq).apply();
+            if (!picture2.equals("")) {
+                picTemp2.add(picture2);
+                File file = new File("/storage/emulated/0/Android/data/ws.epod/files/Pictures/" + picture2);
+                Bitmap myBitmap = BitmapFactory.decodeFile(file.getAbsolutePath());
+                imgCommentPick_02.setImageBitmap(myBitmap);
+                imgCommentPick_02.setEnabled(false);
 
-                                Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                                if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
-                                    File photoFile = null;
-                                    try {
-                                        photoFile = createImageFile();
-                                    } catch (IOException ex) {
-                                    }
-                                    if (photoFile != null) {
-                                        Uri photoURI = FileProvider.getUriForFile(context,
-                                                BuildConfig.APPLICATION_ID + ".provider",
-                                                photoFile);
-                                        takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
-                                        startActivityForResult(takePictureIntent, IMAGE_02);
-                                    }
-                                }
+                imgNewPick02.setVisibility(View.VISIBLE);
+                imgDeletePick02.setVisibility(View.GONE);
+
+                imgNewPick02.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        Animation animation = AnimationUtils.loadAnimation(context, R.anim.alpha);
+                        imgNewPick02.startAnimation(animation);
+                        data_intent.edit().putString("box_no", box_no).apply();
+                        data_intent.edit().putString("consignment_no", consignment_no).apply();
+                        data_intent.edit().putString("delivery_no", delivery_no).apply();
+                        data_intent.edit().putString("plan_seq", plan_seq).apply();
+
+                        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                        if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
+                            File photoFile = null;
+                            try {
+                                photoFile = createImageFile();
+                            } catch (IOException ex) {
                             }
-                        });
-
-
-                        imgDeletePick02.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View view) {
-                                Animation animation = AnimationUtils.loadAnimation(context, R.anim.alpha);
-                                imgDeletePick02.startAnimation(animation);
-
-
-                                final AlertDialog.Builder alertbox = new AlertDialog.Builder(view.getRootView().getContext());
-                                alertbox.setTitle(context.getString(R.string.alert));
-                                alertbox.setMessage("Delete this image?");
-
-                                alertbox.setNegativeButton(context.getString(R.string.delete),
-                                        new DialogInterface.OnClickListener() {
-
-                                            public void onClick(DialogInterface arg0,
-                                                                int arg1) {
-
-                                                ContentValues cv = new ContentValues();
-                                                cv.put("picture2", "");
-                                                cv.put("modified_date", getdate());
-                                                databaseHelper.db().update("Plan", cv, "delivery_no= '" + delivery_no + "' and plan_seq = '" + plan_seq + "' and activity_type = 'LOAD' and " +
-                                                        " consignment_no = '" + consignment_no + "' and box_no = '" + box_no + "' and trash = '0'", null);
-
-                                                databaseHelper.db().delete("image", "name_img=?", new String[]{picture2});
-
-                                                imgCommentPick_02.setImageResource(R.mipmap.add_photo);
-                                                imgNewPick02.setVisibility(View.GONE);
-                                                imgDeletePick02.setVisibility(View.GONE);
-                                                imgCommentPick_02.setEnabled(true);
-                                                Toast.makeText(PinkingUpMaster_Activity.this, "Successfully deleted.", Toast.LENGTH_SHORT).show();
-
-                                            }
-                                        });
-                                alertbox.setNeutralButton(context.getString(R.string.cancel),
-                                        new DialogInterface.OnClickListener() {
-                                            @Override
-                                            public void onClick(DialogInterface dialogInterface, int i) {
-
-                                            }
-                                        });
-                                alertbox.show();
-
-
+                            if (photoFile != null) {
+                                Uri photoURI = FileProvider.getUriForFile(context,
+                                        BuildConfig.APPLICATION_ID + ".provider",
+                                        photoFile);
+                                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
+                                startActivityForResult(takePictureIntent, IMAGE_02);
                             }
-                        });
-
-                    } else {
-                        picTemp2.add("");
+                        }
                     }
+                });
 
-                } while (cursor02.moveToNext());
 
+                imgDeletePick02.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        Animation animation = AnimationUtils.loadAnimation(context, R.anim.alpha);
+                        imgDeletePick02.startAnimation(animation);
+
+
+                        final AlertDialog.Builder alertbox = new AlertDialog.Builder(view.getRootView().getContext());
+                        alertbox.setTitle(context.getString(R.string.alert));
+                        alertbox.setMessage("Delete this image?");
+
+                        alertbox.setNegativeButton(context.getString(R.string.delete),
+                                new DialogInterface.OnClickListener() {
+
+                                    public void onClick(DialogInterface arg0,
+                                                        int arg1) {
+
+                                        ContentValues cv = new ContentValues();
+                                        cv.put("picture2", "");
+                                        cv.put("modified_date", getdate());
+                                        databaseHelper.db().update("Plan", cv, "delivery_no= '" + delivery_no + "' and plan_seq = '" + plan_seq + "' and activity_type = 'LOAD' and " +
+                                                " consignment_no = '" + consignment_no + "' and box_no = '" + box_no + "' and trash = '0'", null);
+
+                                        databaseHelper.db().delete("image", "name_img=?", new String[]{picture2});
+
+                                        imgCommentPick_02.setImageResource(R.mipmap.add_photo);
+                                        imgNewPick02.setVisibility(View.GONE);
+                                        imgDeletePick02.setVisibility(View.GONE);
+                                        imgCommentPick_02.setEnabled(true);
+                                        Toast.makeText(PinkingUpMaster_Activity.this, "Successfully deleted.", Toast.LENGTH_SHORT).show();
+
+                                    }
+                                });
+                        alertbox.setNeutralButton(context.getString(R.string.cancel),
+                                new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialogInterface, int i) {
+
+                                    }
+                                });
+                        alertbox.show();
+
+
+                    }
+                });
+
+            } else {
+                picTemp2.add("");
             }
+
+//                } while (cursor02.moveToNext());
+//
+//            }
 //**************************************************************************************************
 
-            String sql03 = "select comment, ifnull(picture3,'') picture3 from Plan where activity_type = 'LOAD' and delivery_no = '" + delivery_no + "' and plan_seq = '" + plan_seq + "' " +
-                    "and box_no = '" + box_no + "' and consignment_no = '" + consignment_no + "' and trash = '0'";
-            Cursor cursor03 = databaseHelper.selectDB(sql03);
+//            String sql03 = "select comment, ifnull(picture3,'') picture3 from Plan where activity_type = 'LOAD' and delivery_no = '" + delivery_no + "' and plan_seq = '" + plan_seq + "' " +
+//                    "and box_no = '" + box_no + "' and consignment_no = '" + consignment_no + "' and trash = '0'";
+//            Cursor cursor03 = databaseHelper.selectDB(sql03);
+//
+//            cursor03.moveToFirst();
+//            if (cursor03.getCount() > 0) {
+//                do {
+//
+//                    String comment = cursor03.getString(cursor03.getColumnIndex("comment"));
+//                    picture3 = cursor03.getString(cursor03.getColumnIndex("picture3"));
+//                    if (comment != null) {
+//                        int spinnerPosition = adapter.getPosition(comment);
+//                        spinner.setSelection(spinnerPosition + 1);
+//                    }
+            // edtComment_PICK.setText(comment);
 
-            cursor03.moveToFirst();
-            if (cursor03.getCount() > 0) {
-                do {
+            picture3 = picking.getPicture3();
 
-                    String comment = cursor03.getString(cursor03.getColumnIndex("comment"));
-                    picture3 = cursor03.getString(cursor03.getColumnIndex("picture3"));
-                    if (comment != null) {
-                        int spinnerPosition = adapter.getPosition(comment);
-                        spinner.setSelection(spinnerPosition + 1);
+
+            if (!picture3.equals("")) {
+                picTemp3.add(picture3);
+                File file = new File("/storage/emulated/0/Android/data/ws.epod/files/Pictures/" + picture3);
+                Bitmap myBitmap = BitmapFactory.decodeFile(file.getAbsolutePath());
+                imgCommentPick_03.setImageBitmap(myBitmap);
+                imgCommentPick_03.setEnabled(false);
+
+                imgNewPick03.setVisibility(View.VISIBLE);
+                imgDeletePick03.setVisibility(View.GONE);
+
+                imgNewPick03.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        Animation animation = AnimationUtils.loadAnimation(context, R.anim.alpha);
+                        imgNewPick03.startAnimation(animation);
+                        data_intent.edit().putString("box_no", box_no).apply();
+                        data_intent.edit().putString("consignment_no", consignment_no).apply();
+                        data_intent.edit().putString("delivery_no", delivery_no).apply();
+                        data_intent.edit().putString("plan_seq", plan_seq).apply();
+
+                        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                        if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
+                            File photoFile = null;
+                            try {
+                                photoFile = createImageFile();
+                            } catch (IOException ex) {
+                            }
+                            if (photoFile != null) {
+                                Uri photoURI = FileProvider.getUriForFile(context,
+                                        BuildConfig.APPLICATION_ID + ".provider",
+                                        photoFile);
+                                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
+                                startActivityForResult(takePictureIntent, IMAGE_03);
+                            }
+                        }
                     }
-                    // edtComment_PICK.setText(comment);
+                });
 
+                imgDeletePick03.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
 
-                    if (!picture3.equals("")) {
-                        picTemp3.add(picture3);
-                        File file = new File("/storage/emulated/0/Android/data/ws.epod/files/Pictures/" + picture3);
-                        Bitmap myBitmap = BitmapFactory.decodeFile(file.getAbsolutePath());
-                        imgCommentPick_03.setImageBitmap(myBitmap);
-                        imgCommentPick_03.setEnabled(false);
+                        Animation animation = AnimationUtils.loadAnimation(context, R.anim.alpha);
+                        imgDeletePick03.startAnimation(animation);
 
-                        imgNewPick03.setVisibility(View.VISIBLE);
-                        imgDeletePick03.setVisibility(View.GONE);
+                        final AlertDialog.Builder alertbox = new AlertDialog.Builder(view.getRootView().getContext());
+                        alertbox.setTitle(context.getString(R.string.alert));
+                        alertbox.setMessage("Delete this image?");
 
-                        imgNewPick03.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View view) {
-                                Animation animation = AnimationUtils.loadAnimation(context, R.anim.alpha);
-                                imgNewPick03.startAnimation(animation);
-                                data_intent.edit().putString("box_no", box_no).apply();
-                                data_intent.edit().putString("consignment_no", consignment_no).apply();
-                                data_intent.edit().putString("delivery_no", delivery_no).apply();
-                                data_intent.edit().putString("plan_seq", plan_seq).apply();
+                        alertbox.setNegativeButton("DELETE",
+                                new DialogInterface.OnClickListener() {
 
-                                Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                                if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
-                                    File photoFile = null;
-                                    try {
-                                        photoFile = createImageFile();
-                                    } catch (IOException ex) {
+                                    public void onClick(DialogInterface arg0,
+                                                        int arg1) {
+
+                                        ContentValues cv = new ContentValues();
+                                        cv.put("picture3", "");
+                                        cv.put("modified_date", getdate());
+                                        databaseHelper.db().update("Plan", cv, "delivery_no= '" + delivery_no + "' and plan_seq = '" + plan_seq + "' and activity_type = 'LOAD' and " +
+                                                " consignment_no = '" + consignment_no + "' and box_no = '" + box_no + "' and trash = '0'", null);
+
+                                        databaseHelper.db().delete("image", "name_img=?", new String[]{picture3});
+                                        //  databaseHelper.db().delete("image", "name_img=" + picture3, null);
+
+                                        imgCommentPick_03.setImageResource(R.mipmap.add_photo);
+                                        imgNewPick03.setVisibility(View.GONE);
+                                        imgDeletePick03.setVisibility(View.GONE);
+                                        imgCommentPick_03.setEnabled(true);
+                                        Toast.makeText(PinkingUpMaster_Activity.this, "Successfully deleted.", Toast.LENGTH_SHORT).show();
+
                                     }
-                                    if (photoFile != null) {
-                                        Uri photoURI = FileProvider.getUriForFile(context,
-                                                BuildConfig.APPLICATION_ID + ".provider",
-                                                photoFile);
-                                        takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
-                                        startActivityForResult(takePictureIntent, IMAGE_03);
+                                });
+                        alertbox.setNeutralButton(context.getString(R.string.cancel),
+                                new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialogInterface, int i) {
+
                                     }
-                                }
-                            }
-                        });
+                                });
+                        alertbox.show();
 
-                        imgDeletePick03.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View view) {
-
-                                Animation animation = AnimationUtils.loadAnimation(context, R.anim.alpha);
-                                imgDeletePick03.startAnimation(animation);
-
-                                final AlertDialog.Builder alertbox = new AlertDialog.Builder(view.getRootView().getContext());
-                                alertbox.setTitle(context.getString(R.string.alert));
-                                alertbox.setMessage("Delete this image?");
-
-                                alertbox.setNegativeButton("DELETE",
-                                        new DialogInterface.OnClickListener() {
-
-                                            public void onClick(DialogInterface arg0,
-                                                                int arg1) {
-
-                                                ContentValues cv = new ContentValues();
-                                                cv.put("picture3", "");
-                                                cv.put("modified_date", getdate());
-                                                databaseHelper.db().update("Plan", cv, "delivery_no= '" + delivery_no + "' and plan_seq = '" + plan_seq + "' and activity_type = 'LOAD' and " +
-                                                        " consignment_no = '" + consignment_no + "' and box_no = '" + box_no + "' and trash = '0'", null);
-
-                                                databaseHelper.db().delete("image", "name_img=?", new String[]{picture3});
-                                                //  databaseHelper.db().delete("image", "name_img=" + picture3, null);
-
-                                                imgCommentPick_03.setImageResource(R.mipmap.add_photo);
-                                                imgNewPick03.setVisibility(View.GONE);
-                                                imgDeletePick03.setVisibility(View.GONE);
-                                                imgCommentPick_03.setEnabled(true);
-                                                Toast.makeText(PinkingUpMaster_Activity.this, "Successfully deleted.", Toast.LENGTH_SHORT).show();
-
-                                            }
-                                        });
-                                alertbox.setNeutralButton(context.getString(R.string.cancel),
-                                        new DialogInterface.OnClickListener() {
-                                            @Override
-                                            public void onClick(DialogInterface dialogInterface, int i) {
-
-                                            }
-                                        });
-                                alertbox.show();
-
-
-                            }
-                        });
-
-                    } else {
-                        picTemp3.add("");
 
                     }
+                });
 
-                } while (cursor03.moveToNext());
+            } else {
+                picTemp3.add("");
 
             }
+//
+//                } while (cursor03.moveToNext());
+//
+//            }
 
             imgCommentPick_01.setOnClickListener(new View.OnClickListener() {
                 @Override

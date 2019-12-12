@@ -640,7 +640,7 @@ public class InvoiceDeliver_Activity extends AppCompatActivity {
 //                    holder.tvUseComment.setTextColor(R.color.colorPrimary);
 //                    holder.tvUseComment.setVisibility(View.VISIBLE);
                 } else {
-                    holder.tvUseComment.setText("Please comment.");
+                    holder.tvUseComment.setText(context.getString(R.string.enter_reson));
                     holder.tvUseComment.setTextColor(Color.RED);
                     holder.tvUseComment.setVisibility(View.VISIBLE);
                 }
@@ -658,7 +658,7 @@ public class InvoiceDeliver_Activity extends AppCompatActivity {
 //                    holder.tvUseComment.setVisibility(View.VISIBLE);
 
                 } else {
-                    holder.tvUseComment.setText("Please comment.");
+                    holder.tvUseComment.setText(context.getString(R.string.enter_reson));
                     holder.tvUseComment.setTextColor(Color.RED);
                     holder.tvUseComment.setVisibility(View.VISIBLE);
                 }
@@ -716,7 +716,7 @@ public class InvoiceDeliver_Activity extends AppCompatActivity {
                         Log.d("Akkksk", "onBindViewHolder: 1");
 
                         holder.tvUseComment.setVisibility(View.VISIBLE);
-                        holder.tvUseComment.setText("Please comment.");
+                        holder.tvUseComment.setText(context.getString(R.string.enter_reson));
                         holder.tvUseComment.setTextColor(Color.RED);
                     } else if (list.get(position).getStatus().equals("2") && !list.get(position).getComment().equals("")) {
                         Log.d("Akkksk", "onBindViewHolder: 2");
@@ -751,7 +751,7 @@ public class InvoiceDeliver_Activity extends AppCompatActivity {
                     if (list.get(position).getStatus().equals("3") && list.get(position).getComment().equals("")) {
                         Log.d("Akkksk", "onBindViewHolder: 1");
                         holder.tvUseComment.setVisibility(View.VISIBLE);
-                        holder.tvUseComment.setText("Please comment.");
+                        holder.tvUseComment.setText(context.getString(R.string.enter_reson));
                         holder.tvUseComment.setTextColor(Color.RED);
                     } else if (list.get(position).getStatus().equals("3") && !list.get(position).getComment().equals("")) {
                         Log.d("Akkksk", "onBindViewHolder: 2");

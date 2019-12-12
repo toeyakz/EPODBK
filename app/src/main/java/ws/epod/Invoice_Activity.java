@@ -37,6 +37,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.gson.Gson;
 
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -704,7 +705,7 @@ public class Invoice_Activity extends AppCompatActivity {
 //                    holder.tvUseComment.setTextColor(R.color.colorPrimary);
 //                    holder.tvUseComment.setVisibility(View.VISIBLE);
                 } else {
-                    holder.tvUseComment.setText("Please comment.");
+                    holder.tvUseComment.setText(context.getString(R.string.enter_reson));
                     holder.tvUseComment.setTextColor(Color.RED);
                     holder.tvUseComment.setVisibility(View.VISIBLE);
 
@@ -724,7 +725,7 @@ public class Invoice_Activity extends AppCompatActivity {
 //                    holder.tvUseComment.setVisibility(View.VISIBLE);
 
                 } else {
-                    holder.tvUseComment.setText("Please comment.");
+                    holder.tvUseComment.setText(context.getString(R.string.enter_reson));
                     holder.tvUseComment.setTextColor(Color.RED);
                     holder.tvUseComment.setVisibility(View.VISIBLE);
                 }
@@ -781,7 +782,7 @@ public class Invoice_Activity extends AppCompatActivity {
                         Log.d("Akkksk", "onBindViewHolder: 1");
 
                         holder.tvUseComment.setVisibility(View.VISIBLE);
-                        holder.tvUseComment.setText("Please comment.");
+                        holder.tvUseComment.setText(context.getString(R.string.enter_reson));
                         holder.tvUseComment.setTextColor(Color.RED);
                     } else if (list.get(position).getStatus().equals("2") && !list.get(position).getComment().equals("")) {
                         Log.d("Akkksk", "onBindViewHolder: 2");
@@ -816,7 +817,7 @@ public class Invoice_Activity extends AppCompatActivity {
                     if (list.get(position).getStatus().equals("3") && list.get(position).getComment().equals("")) {
                         Log.d("Akkksk", "onBindViewHolder: 1");
                         holder.tvUseComment.setVisibility(View.VISIBLE);
-                        holder.tvUseComment.setText("Please comment.");
+                        holder.tvUseComment.setText(context.getString(R.string.enter_reson));
                         holder.tvUseComment.setTextColor(Color.RED);
                     } else if (list.get(position).getStatus().equals("3") && !list.get(position).getComment().equals("")) {
                         Log.d("Akkksk", "onBindViewHolder: 2");
@@ -860,7 +861,7 @@ public class Invoice_Activity extends AppCompatActivity {
             holder.imageView11.setOnClickListener(view -> {
                 Animation animation = AnimationUtils.loadAnimation(context, R.anim.alpha);
                 holder.imageView11.startAnimation(animation);
-                showDialogCancel(list.get(position).getConsignment_no(), list.get(position).getDeli_note_no(), list.get(position).getOrder_no());
+                showDialogCancel(list.get(position).getConsignment_no(), list.get(position).getDeli_note_no(), list.get(position).getOrder_no(), list.get(position).getSignature(), position);
             });
 
 
@@ -929,7 +930,7 @@ public class Invoice_Activity extends AppCompatActivity {
 
     }
 
-    private void showDialogCancel(String cons, String deli_note, String order_no) {
+    private void showDialogCancel(String cons, String deli_note, String order_no, String signature, int position) {
         final AlertDialog.Builder alertbox = new AlertDialog.Builder(this);
         alertbox.setTitle(getString(R.string.alert));
         alertbox.setMessage("Cancel ?");
@@ -952,6 +953,10 @@ public class Invoice_Activity extends AppCompatActivity {
 
                                     databaseHelper.db().delete("pic_sign", "order_no = ? and pic_sign_load <> ? ", new String[]{order_no, "''"});
                                     databaseHelper.db().delete("comment_invoice", "order_no = ? and comment <> ?", new String[]{order_no, "''"});
+
+                                    File file = new File("/storage/emulated/0/Android/data/ws.epod/files/Signature/" + signature);
+                                    file.delete();
+
                                 } catch (Exception e) {
 
                                 }
@@ -964,6 +969,7 @@ public class Invoice_Activity extends AppCompatActivity {
                                 super.onPostExecute(aVoid);
                                 //invAdapter.notifyDataSetChanged();
                                 setView();
+                                rvInv.scrollToPosition(position);
                             }
                         }.execute();
 

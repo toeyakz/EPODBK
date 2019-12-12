@@ -9,8 +9,13 @@ public class PickingUpEexpand_Model {
     public String delivery_no = "";
     public String plan_seq = "";
     private String into = "0";
+    private String comment = "";
+    private String picture1 = "";
+    private String picture2 = "";
+    private String picture3 = "";
 
-    public PickingUpEexpand_Model( String box_no, String waybil_no, String is_scaned, String row_number, String consignment, String delivery_no, String plan_seq ) {
+    public PickingUpEexpand_Model( String box_no, String waybil_no, String is_scaned, String row_number, String consignment, String delivery_no, String plan_seq, String comment
+    ,String picture1, String picture2, String picture3) {
         this.box_no = box_no;
         this.waybil_no = waybil_no;
         this.is_scaned = is_scaned;
@@ -18,6 +23,42 @@ public class PickingUpEexpand_Model {
         this.consignment = consignment;
         this.delivery_no = delivery_no;
         this.plan_seq = plan_seq;
+        this.comment = comment;
+        this.picture1 = picture1;
+        this.picture2 = picture2;
+        this.picture3 = picture3;
+    }
+
+    public String getPicture1() {
+        return picture1;
+    }
+
+    public void setPicture1(String picture1) {
+        this.picture1 = picture1;
+    }
+
+    public String getPicture2() {
+        return picture2;
+    }
+
+    public void setPicture2(String picture2) {
+        this.picture2 = picture2;
+    }
+
+    public String getPicture3() {
+        return picture3;
+    }
+
+    public void setPicture3(String picture3) {
+        this.picture3 = picture3;
+    }
+
+    public String getComment() {
+        return comment;
+    }
+
+    public void setComment(String comment) {
+        this.comment = comment;
     }
 
     public String getInto() {

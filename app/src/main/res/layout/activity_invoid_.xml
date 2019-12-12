@@ -46,7 +46,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="left"
-            android:text="Invoice Pick Up"
+            android:text="@string/invoice"
             android:textColor="#fff"
             android:textSize="20sp"
             android:textStyle="bold"

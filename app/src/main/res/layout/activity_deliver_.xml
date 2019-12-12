@@ -17,6 +17,7 @@
         android:groupIndicator="@null"
         android:indicatorLeft="?android:attr/expandableListPreferredItemIndicatorLeft"
         android:scrollbars="none"
+
         app:layout_constraintBottom_toTopOf="@+id/layoutbarcode"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
