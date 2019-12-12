@@ -923,27 +923,46 @@ public class Deliver_Activity extends AppCompatActivity {
             checkBox = convertView.findViewById(R.id.cbExpand_isscaned);
             imgEditBoxNoPickup = convertView.findViewById(R.id.imgEditBoxNoPickup);
 
+            Log.d("sdfgjhkasdfuiol", "getChildView: " + expandedList.getIs_scaned());
+
 
             tvExpand_Count.setText(String.valueOf((expandedListPosition + 1)));
             box_no.setText("BoxNo. " + expandedList.getBox_no());
             waybill_no.setText("WaybillNo: " + expandedList.getWaybil_no());
 
+            if (!checkBox.isChecked() && !expandedList.getIs_scaned().equals("1")) {
+                imgEditBoxNoPickup.setEnabled(true);
+//                imgEditBoxNoPickup.setOnClickListener(new View.OnClickListener() {
+//                    @Override
+//                    public void onClick(View view) {
+//                        Animation animation = AnimationUtils.loadAnimation(context, R.anim.alpha);
+//                        imgEditBoxNoPickup.startAnimation(animation);
+//
+//                        showDialogBox(expandedList.getBox_no(), expandedList.getConsignment(), expandedList.getDelivery_no(), expandedList.getPlan_seq(), listPosition, expandedList, expandedListPosition);
+//                    }
+//                });
+            } else {
+                imgEditBoxNoPickup.setEnabled(false);
+            }
+
+            if (expandedList.getIs_scaned().equals("0")) {
+                imgEditBoxNoPickup.setEnabled(true);
+            }
 
             if (expandedList.getIs_scaned().equals("2")) {
                 checkBox.setChecked(true);
                 imgEditBoxNoPickup.setEnabled(true);
                 checkBox.setEnabled(false);
                 checkBox.setButtonDrawable(R.drawable.ic_indeterminate_check_box_black_24dp);
-
-                imgEditBoxNoPickup.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        Animation animation = AnimationUtils.loadAnimation(context, R.anim.alpha);
-                        imgEditBoxNoPickup.startAnimation(animation);
-
-                        showDialogBox(expandedList.getBox_no(), expandedList.getConsignment(), expandedList.getDelivery_no(), expandedList.getPlan_seq(), listPosition, expandedList, expandedListPosition);
-                    }
-                });
+//                imgEditBoxNoPickup.setOnClickListener(new View.OnClickListener() {
+//                    @Override
+//                    public void onClick(View view) {
+//                        Animation animation = AnimationUtils.loadAnimation(context, R.anim.alpha);
+//                        imgEditBoxNoPickup.startAnimation(animation);
+//
+//                        showDialogBox(expandedList.getBox_no(), expandedList.getConsignment(), expandedList.getDelivery_no(), expandedList.getPlan_seq(), listPosition, expandedList, expandedListPosition);
+//                    }
+//                });
 
             } else {
                 checkBox.setEnabled(true);
@@ -954,16 +973,17 @@ public class Deliver_Activity extends AppCompatActivity {
 
                 if (expandedList.getIs_scaned().equals("0")) {
                     checkBox.setChecked(false);
+                    imgEditBoxNoPickup.setEnabled(true);
                     //expandedList.setIs_scaned("0");
-                    imgEditBoxNoPickup.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            Animation animation = AnimationUtils.loadAnimation(context, R.anim.alpha);
-                            imgEditBoxNoPickup.startAnimation(animation);
-
-                            showDialogBox(expandedList.getBox_no(), expandedList.getConsignment(), expandedList.getDelivery_no(), expandedList.getPlan_seq(), listPosition, expandedList, expandedListPosition);
-                        }
-                    });
+//                    imgEditBoxNoPickup.setOnClickListener(new View.OnClickListener() {
+//                        @Override
+//                        public void onClick(View view) {
+//                            Animation animation = AnimationUtils.loadAnimation(context, R.anim.alpha);
+//                            imgEditBoxNoPickup.startAnimation(animation);
+//
+//                            showDialogBox(expandedList.getBox_no(), expandedList.getConsignment(), expandedList.getDelivery_no(), expandedList.getPlan_seq(), listPosition, expandedList, expandedListPosition);
+//                        }
+//                    });
 
                 }
             } else {
@@ -981,29 +1001,6 @@ public class Deliver_Activity extends AppCompatActivity {
                 checkBox.setEnabled(false);
                 checkBox.setButtonDrawable(R.drawable.ic_check_box_disable);
             }
-
-            checkBox.setOnClickListener(v -> {
-                if (((CheckBox) v).isChecked()) {
-                    if (!expandedList.getIs_scaned().equals("2")) {
-                        expandedList.setIs_scaned("1");
-                        imgEditBoxNoPickup.setClickable(false);
-                    }
-                } else {
-                    if (!expandedList.getIs_scaned().equals("2")) {
-                        expandedList.setIs_scaned("0");
-                    }
-                    imgEditBoxNoPickup.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            Animation animation = AnimationUtils.loadAnimation(context, R.anim.alpha);
-                            imgEditBoxNoPickup.startAnimation(animation);
-
-                            showDialogBox(expandedList.getBox_no(), expandedList.getConsignment(), expandedList.getDelivery_no(), expandedList.getPlan_seq(), listPosition, expandedList, expandedListPosition);
-                        }
-                    });
-                }
-
-            });
 
 
 //            if (expandedList.getIs_scaned().equals("1")) {
@@ -1028,19 +1025,44 @@ public class Deliver_Activity extends AppCompatActivity {
 //                checkBox.setButtonDrawable(R.drawable.ic_indeterminate_check_box_black_24dp);
 //            }
 
-            if (!checkBox.isChecked()) {
-                imgEditBoxNoPickup.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        Animation animation = AnimationUtils.loadAnimation(context, R.anim.alpha);
-                        imgEditBoxNoPickup.startAnimation(animation);
+            checkBox.setOnClickListener(v -> {
+                if (((CheckBox) v).isChecked()) {
+                    Log.d("Afkljsdf", "getChildView: check");
+                    // if (!expandedList.getIs_scaned().equals("2")) {
+                    imgEditBoxNoPickup.setEnabled(false);
+                    expandedList.setIs_scaned("1");
 
-                        showDialogBox(expandedList.getBox_no(), expandedList.getConsignment(), expandedList.getDelivery_no(), expandedList.getPlan_seq(), listPosition, expandedList, expandedListPosition);
-                    }
-                });
-            } else {
+                    // }
+                } else {
 
-            }
+                    Log.d("Afkljsdf", "getChildView:uncheck ");
+                    //if (!expandedList.getIs_scaned().equals("2")) {
+                    imgEditBoxNoPickup.setEnabled(true);
+                    expandedList.setIs_scaned("0");
+
+                    //}
+
+
+//                    imgEditBoxNoPickup.setOnClickListener(new View.OnClickListener() {
+//                        @Override
+//                        public void onClick(View view) {
+//                            Animation animation = AnimationUtils.loadAnimation(context, R.anim.alpha);
+//                            imgEditBoxNoPickup.startAnimation(animation);
+//
+//                            showDialogBox(expandedList.getBox_no(), expandedList.getConsignment(), expandedList.getDelivery_no(), expandedList.getPlan_seq(), listPosition, expandedList, expandedListPosition);
+//                        }
+//                    });
+                }
+
+            });
+
+            imgEditBoxNoPickup.setOnClickListener(v -> {
+                Animation animation = AnimationUtils.loadAnimation(context, R.anim.alpha);
+                imgEditBoxNoPickup.startAnimation(animation);
+
+               // showDialogBox(expandedList.getBox_no(), expandedList.getConsignment(), expandedList.getDelivery_no(), expandedList.getPlan_seq(), listPosition, expandedList, expandedListPosition);
+                showDialogBox(expandedList);
+            });
 
 
             return convertView;
@@ -1386,7 +1408,7 @@ public class Deliver_Activity extends AppCompatActivity {
 
         }
 
-        private void showDialogBox(final String box_no, final String consignment_no, final String delivery_no, final String plan_seq, int position, DeliverExpand_Model picking2, int pos) {
+        private void showDialogBox(DeliverExpand_Model picking) {
 
 
             final SharedPreferences data_intent = getSharedPreferences("DATA_INTENT", Context.MODE_PRIVATE);
@@ -1417,12 +1439,12 @@ public class Deliver_Activity extends AppCompatActivity {
             imgNewPick03 = popupInputDialogView.findViewById(R.id.imgNewPick03);
             imgDeletePick03 = popupInputDialogView.findViewById(R.id.imgDeletePick03);
 
-            tvConsignment_Dialog.setText("Cons.No: " + consignment_no);
-            tv_BoxNo_Dialog.setText("BoxNo: " + box_no);
+            tvConsignment_Dialog.setText("Cons.No: " + picking.getConsignment());
+            tv_BoxNo_Dialog.setText("BoxNo: " + picking.getBox_no());
 
-            DeliverExpand_Model picking = (DeliverExpand_Model) getChild(position, pos);
+           // DeliverExpand_Model picking = (DeliverExpand_Model) getChild(position, pos);
 
-            Log.d("Asfjklassdf", "showDialogBox: " + picking.getPicture1() + ">" + picking.getPicture2() + ">" + picking.getPicture3());
+           // Log.d("Asfjklassdf", "showDialogBox: " + picking.getPicture1() + ">" + picking.getPicture2() + ">" + picking.getPicture3());
 
             List<String> categories = new ArrayList<>();
             categories.add("File");
@@ -1504,7 +1526,7 @@ public class Deliver_Activity extends AppCompatActivity {
 
 
                     alertDialog.dismiss();
-                    expandableListView.expandGroup(position);
+                   // expandableListView.expandGroup(position);
                 }
             });
 
@@ -1539,7 +1561,7 @@ public class Deliver_Activity extends AppCompatActivity {
                                 if (!path.equals("")) {
                                     cv.put("picture1", path);
                                     Temp1.add(path);
-                                    //  picking.setPicture1(path);
+                                    picking.setPicture1(path);
 
                                 }
                                 break;
@@ -1547,14 +1569,14 @@ public class Deliver_Activity extends AppCompatActivity {
                                 if (!path.equals("")) {
                                     cv.put("picture2", path);
                                     Temp2.add(path);
-                                    //  picking.setPicture2(path);
+                                    picking.setPicture2(path);
                                 }
                                 break;
                             case 2:
                                 if (!path.equals("")) {
                                     cv.put("picture3", path);
                                     Temp3.add(path);
-                                    //   picking.setPicture3(path);
+                                    picking.setPicture3(path);
                                 }
                                 break;
                         }
@@ -1638,10 +1660,10 @@ public class Deliver_Activity extends AppCompatActivity {
                     public void onClick(View view) {
                         Animation animation = AnimationUtils.loadAnimation(context, R.anim.alpha);
                         imgNewPick01.startAnimation(animation);
-                        data_intent.edit().putString("box_no", box_no).apply();
-                        data_intent.edit().putString("consignment_no", consignment_no).apply();
-                        data_intent.edit().putString("delivery_no", delivery_no).apply();
-                        data_intent.edit().putString("plan_seq", plan_seq).apply();
+                        data_intent.edit().putString("box_no", picking.getBox_no()).apply();
+                        data_intent.edit().putString("consignment_no", picking.getConsignment()).apply();
+                        data_intent.edit().putString("delivery_no", picking.getDelivery_no()).apply();
+                        data_intent.edit().putString("plan_seq", picking.getPlan_seq()).apply();
 
                         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
                         if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
@@ -1681,8 +1703,8 @@ public class Deliver_Activity extends AppCompatActivity {
                                         ContentValues cv = new ContentValues();
                                         cv.putNull("picture1");
                                         cv.put("modified_date", getdate());
-                                        databaseHelper.db().update("Plan", cv, "delivery_no= '" + delivery_no + "' and plan_seq = '" + plan_seq + "' and activity_type = 'UNLOAD' and " +
-                                                " consignment_no = '" + consignment_no + "' and box_no = '" + box_no + "' and trash = '0'", null);
+                                        databaseHelper.db().update("Plan", cv, "delivery_no= '" + picking.getDelivery_no() + "' and plan_seq = '" + picking.getPlan_seq() + "' and activity_type = 'UNLOAD' and " +
+                                                " consignment_no = '" + picking.getConsignment() + "' and box_no = '" + picking.getBox_no() + "' and trash = '0'", null);
 
                                         databaseHelper.db().delete("image", "name_img=?", new String[]{picture1});
 
@@ -1751,10 +1773,10 @@ public class Deliver_Activity extends AppCompatActivity {
                     public void onClick(View view) {
                         Animation animation = AnimationUtils.loadAnimation(context, R.anim.alpha);
                         imgNewPick02.startAnimation(animation);
-                        data_intent.edit().putString("box_no", box_no).apply();
-                        data_intent.edit().putString("consignment_no", consignment_no).apply();
-                        data_intent.edit().putString("delivery_no", delivery_no).apply();
-                        data_intent.edit().putString("plan_seq", plan_seq).apply();
+                        data_intent.edit().putString("box_no", picking.getBox_no()).apply();
+                        data_intent.edit().putString("consignment_no", picking.getConsignment()).apply();
+                        data_intent.edit().putString("delivery_no", picking.getDelivery_no()).apply();
+                        data_intent.edit().putString("plan_seq", picking.getPlan_seq()).apply();
 
                         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
                         if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
@@ -1795,8 +1817,8 @@ public class Deliver_Activity extends AppCompatActivity {
                                         ContentValues cv = new ContentValues();
                                         cv.putNull("picture2");
                                         cv.put("modified_date", getdate());
-                                        databaseHelper.db().update("Plan", cv, "delivery_no= '" + delivery_no + "' and plan_seq = '" + plan_seq + "' and activity_type = 'UNLOAD' and " +
-                                                " consignment_no = '" + consignment_no + "' and box_no = '" + box_no + "' and trash = '0'", null);
+                                        databaseHelper.db().update("Plan", cv, "delivery_no= '" + picking.getDelivery_no() + "' and plan_seq = '" + picking.getPlan_seq() + "' and activity_type = 'UNLOAD' and " +
+                                                " consignment_no = '" + picking.getConsignment() + "' and box_no = '" + picking.getBox_no() + "' and trash = '0'", null);
 
                                         databaseHelper.db().delete("image", "name_img=?", new String[]{picture2});
 
@@ -1866,10 +1888,10 @@ public class Deliver_Activity extends AppCompatActivity {
                     public void onClick(View view) {
                         Animation animation = AnimationUtils.loadAnimation(context, R.anim.alpha);
                         imgNewPick03.startAnimation(animation);
-                        data_intent.edit().putString("box_no", box_no).apply();
-                        data_intent.edit().putString("consignment_no", consignment_no).apply();
-                        data_intent.edit().putString("delivery_no", delivery_no).apply();
-                        data_intent.edit().putString("plan_seq", plan_seq).apply();
+                        data_intent.edit().putString("box_no", picking.getBox_no()).apply();
+                        data_intent.edit().putString("consignment_no", picking.getConsignment()).apply();
+                        data_intent.edit().putString("delivery_no", picking.getDelivery_no()).apply();
+                        data_intent.edit().putString("plan_seq", picking.getPlan_seq()).apply();
 
                         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
                         if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
@@ -1909,8 +1931,8 @@ public class Deliver_Activity extends AppCompatActivity {
                                         ContentValues cv = new ContentValues();
                                         cv.putNull("picture3");
                                         cv.put("modified_date", getdate());
-                                        databaseHelper.db().update("Plan", cv, "delivery_no= '" + delivery_no + "' and plan_seq = '" + plan_seq + "' and activity_type = 'UNLOAD' and " +
-                                                " consignment_no = '" + consignment_no + "' and box_no = '" + box_no + "' and trash = '0'", null);
+                                        databaseHelper.db().update("Plan", cv, "delivery_no= '" + picking.getDelivery_no() + "' and plan_seq = '" + picking.getPlan_seq() + "' and activity_type = 'UNLOAD' and " +
+                                                " consignment_no = '" + picking.getConsignment() + "' and box_no = '" + picking.getBox_no() + "' and trash = '0'", null);
 
                                         databaseHelper.db().delete("image", "name_img=?", new String[]{picture3});
 
@@ -1948,10 +1970,10 @@ public class Deliver_Activity extends AppCompatActivity {
                 @Override
                 public void onClick(View view) {
 
-                    data_intent.edit().putString("box_no", box_no).apply();
-                    data_intent.edit().putString("consignment_no", consignment_no).apply();
-                    data_intent.edit().putString("delivery_no", delivery_no).apply();
-                    data_intent.edit().putString("plan_seq", plan_seq).apply();
+                    data_intent.edit().putString("box_no", picking.getBox_no()).apply();
+                    data_intent.edit().putString("consignment_no", picking.getConsignment()).apply();
+                    data_intent.edit().putString("delivery_no", picking.getDelivery_no()).apply();
+                    data_intent.edit().putString("plan_seq", picking.getPlan_seq()).apply();
 
                     Animation animation = AnimationUtils.loadAnimation(context, R.anim.alpha);
                     imgCommentPick_01.startAnimation(animation);
@@ -1980,10 +2002,10 @@ public class Deliver_Activity extends AppCompatActivity {
                 @Override
                 public void onClick(View view) {
 
-                    data_intent.edit().putString("box_no", box_no).apply();
-                    data_intent.edit().putString("consignment_no", consignment_no).apply();
-                    data_intent.edit().putString("delivery_no", delivery_no).apply();
-                    data_intent.edit().putString("plan_seq", plan_seq).apply();
+                    data_intent.edit().putString("box_no", picking.getBox_no()).apply();
+                    data_intent.edit().putString("consignment_no", picking.getConsignment()).apply();
+                    data_intent.edit().putString("delivery_no", picking.getDelivery_no()).apply();
+                    data_intent.edit().putString("plan_seq", picking.getPlan_seq()).apply();
 
                     Animation animation = AnimationUtils.loadAnimation(context, R.anim.alpha);
                     imgCommentPick_02.startAnimation(animation);
@@ -2011,10 +2033,10 @@ public class Deliver_Activity extends AppCompatActivity {
                 @Override
                 public void onClick(View view) {
 
-                    data_intent.edit().putString("box_no", box_no).apply();
-                    data_intent.edit().putString("consignment_no", consignment_no).apply();
-                    data_intent.edit().putString("delivery_no", delivery_no).apply();
-                    data_intent.edit().putString("plan_seq", plan_seq).apply();
+                    data_intent.edit().putString("box_no", picking.getBox_no()).apply();
+                    data_intent.edit().putString("consignment_no", picking.getConsignment()).apply();
+                    data_intent.edit().putString("delivery_no", picking.getDelivery_no()).apply();
+                    data_intent.edit().putString("plan_seq", picking.getPlan_seq()).apply();
 
                     Animation animation = AnimationUtils.loadAnimation(context, R.anim.alpha);
                     imgCommentPick_03.startAnimation(animation);
