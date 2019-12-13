@@ -72,6 +72,7 @@ import ws.epod.Adapter.DialogConsAdapter;
 import ws.epod.Helper.ConnectionDetector;
 import ws.epod.Helper.DatabaseHelper;
 import ws.epod.Helper.NarisBaseValue;
+import ws.epod.ObjectClass.SQLiteModel.DeliverExpand_Model;
 import ws.epod.ObjectClass.SQLiteModel.Dialog_Cons_Detail_Model;
 import ws.epod.ObjectClass.SQLiteModel.PickingUpEexpand_Model;
 import ws.epod.ObjectClass.SQLiteModel.PickingUp_Model;
@@ -999,6 +1000,21 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
                     .get(expandedListPosition);
         }
 
+        private void updateChill(String key, int position, PickingUpEexpand_Model model, int positionGroup) {
+            this.expandableListDetail.get(key)
+                    .get(position);
+
+            ArrayList<PickingUpEexpand_Model> expand_models = this.expandableListDetail.get(key);
+            expand_models.set(position, model);
+
+            this.expandableListDetail.put(key, expand_models);
+
+            notifyDataSetChanged();
+            expandableListView.expandGroup(positionGroup);
+
+
+        }
+
         @Override
         public long getChildId(int listPosition, int expandedListPosition) {
             return expandedListPosition;
@@ -1034,21 +1050,22 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
 
             Log.d("aassas", "getChildView: " + listPosition + ">" + expandedListPosition + ">" + expandedList.getIs_scaned() + " into>" + expandedList.getInto());
 
+            if (!checkBox.isChecked() && !expandedList.getIs_scaned().equals("1")) {
+                imgEditBoxNoPickup.setEnabled(true);
+            } else {
+                imgEditBoxNoPickup.setEnabled(false);
+            }
+
+            if (expandedList.getIs_scaned().equals("0")) {
+                imgEditBoxNoPickup.setEnabled(true);
+            }
+
+
             if (expandedList.getIs_scaned().equals("2")) {
                 checkBox.setChecked(true);
                 imgEditBoxNoPickup.setEnabled(true);
                 checkBox.setEnabled(false);
                 checkBox.setButtonDrawable(R.drawable.ic_indeterminate_check_box_black_24dp);
-                imgEditBoxNoPickup.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        Animation animation = AnimationUtils.loadAnimation(context, R.anim.alpha);
-                        imgEditBoxNoPickup.startAnimation(animation);
-
-                        showDialogBox(expandedList.getBox_no(), expandedList.getConsignment(), expandedList.getDelivery_no(), expandedList.getPlan_seq(), listPosition, expandedList,
-                                expandedList.getComment(), expandedList.getPicture1(), expandedList.getPicture2(), expandedList.getPicture3());
-                    }
-                });
 
             } else {
                 checkBox.setEnabled(true);
@@ -1057,21 +1074,9 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
 
 
             if (expandedList.getInto().equals("0")) {
-
                 if (expandedList.getIs_scaned().equals("0")) {
                     checkBox.setChecked(false);
-                    //expandedList.setIs_scaned("0");
-                    imgEditBoxNoPickup.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            Animation animation = AnimationUtils.loadAnimation(context, R.anim.alpha);
-                            imgEditBoxNoPickup.startAnimation(animation);
-
-                            showDialogBox(expandedList.getBox_no(), expandedList.getConsignment(), expandedList.getDelivery_no(), expandedList.getPlan_seq(), listPosition, expandedList,
-                                    expandedList.getComment(), expandedList.getPicture1(), expandedList.getPicture2(), expandedList.getPicture3());
-                        }
-                    });
-
+                    imgEditBoxNoPickup.setEnabled(true);
                 }
             } else {
                 expandedList.setIs_scaned("1");
@@ -1090,73 +1095,26 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
 
             checkBox.setOnClickListener(v -> {
                 if (((CheckBox) v).isChecked()) {
-                    if (!expandedList.getIs_scaned().equals("2")) {
-                        expandedList.setIs_scaned("1");
-                        imgEditBoxNoPickup.setClickable(false);
-                    }
-                } else {
-                    if (!expandedList.getIs_scaned().equals("2")) {
-                        expandedList.setIs_scaned("0");
-                    }
-                    imgEditBoxNoPickup.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            Animation animation = AnimationUtils.loadAnimation(context, R.anim.alpha);
-                            imgEditBoxNoPickup.startAnimation(animation);
+                    imgEditBoxNoPickup.setEnabled(false);
+                    expandedList.setIs_scaned("1");
 
-                            showDialogBox(expandedList.getBox_no(), expandedList.getConsignment(), expandedList.getDelivery_no(), expandedList.getPlan_seq(), listPosition, expandedList,
-                                    expandedList.getComment(), expandedList.getPicture1(), expandedList.getPicture2(), expandedList.getPicture3());
-                        }
-                    });
+                } else {
+
+                    imgEditBoxNoPickup.setEnabled(true);
+                    expandedList.setIs_scaned("0");
+
                 }
 
             });
 
 
-//            checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-//                @Override
-//                public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-//                    Log.d("aassas", "onCheckedChanged: " + b);
-//                    if (b) {
-//                        if (!expandedList.getIs_scaned().equals("2")) {
-//                            expandedList.setIs_scaned("1");
-//                            imgEditBoxNoPickup.setClickable(false);
-//                        }
-//
-//
-//                    } else {
-//                        if (!expandedList.getIs_scaned().equals("2")) {
-//                            expandedList.setIs_scaned("0");
-//                        }
-//                        imgEditBoxNoPickup.setOnClickListener(new View.OnClickListener() {
-//                            @Override
-//                            public void onClick(View view) {
-//                                Animation animation = AnimationUtils.loadAnimation(context, R.anim.alpha);
-//                                imgEditBoxNoPickup.startAnimation(animation);
-//
-//                                showDialogBox(expandedList.getBox_no(), expandedList.getConsignment(), expandedList.getDelivery_no(), expandedList.getPlan_seq(), expandedListPosition);
-//                            }
-//                        });
-//                    }
-//
-//                }
-//            });
+            imgEditBoxNoPickup.setOnClickListener(v -> {
+                Animation animation = AnimationUtils.loadAnimation(context, R.anim.alpha);
+                imgEditBoxNoPickup.startAnimation(animation);
 
-
-            if (!checkBox.isChecked()) {
-                imgEditBoxNoPickup.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        Animation animation = AnimationUtils.loadAnimation(context, R.anim.alpha);
-                        imgEditBoxNoPickup.startAnimation(animation);
-
-                        showDialogBox(expandedList.getBox_no(), expandedList.getConsignment(), expandedList.getDelivery_no(), expandedList.getPlan_seq(), listPosition, expandedList,
-                                expandedList.getComment(), expandedList.getPicture1(), expandedList.getPicture2(), expandedList.getPicture3());
-                    }
-                });
-            } else {
-
-            }
+                // showDialogBox(expandedList.getBox_no(), expandedList.getConsignment(), expandedList.getDelivery_no(), expandedList.getPlan_seq(), listPosition, expandedList, expandedListPosition);
+                showDialogBox(expandedList, listPosition, expandedListPosition);
+            });
 
 
             return convertView;
@@ -1514,9 +1472,9 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
 
         }
 
-        private void showDialogBox(final String box_no, final String consignment_no, final String delivery_no, final String plan_seq, int position, PickingUpEexpand_Model picking
-                , String comment_set, String picture1_set, String picture2_set, String picture3_set) {
+        private void showDialogBox(PickingUpEexpand_Model picking1, int positionGroup, int positionChill) {
 
+            PickingUpEexpand_Model picking = (PickingUpEexpand_Model) getChild(positionGroup, positionChill);
 
             final SharedPreferences data_intent = getSharedPreferences("DATA_INTENT", Context.MODE_PRIVATE);
             TextView tvConsignment_Dialog, tv_BoxNo_Dialog;
@@ -1547,8 +1505,8 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
             TextView textView32 = popupInputDialogView.findViewById(R.id.textView32);
             TextView textView33 = popupInputDialogView.findViewById(R.id.textView33);
 
-            tvConsignment_Dialog.setText(getApplicationContext().getString(R.string.consignment2) + ": " + consignment_no);
-            tv_BoxNo_Dialog.setText(getApplicationContext().getString(R.string.box_no) + ": " + box_no);
+            tvConsignment_Dialog.setText(getApplicationContext().getString(R.string.consignment2) + ": " + picking.getConsignment());
+            tv_BoxNo_Dialog.setText(getApplicationContext().getString(R.string.box_no) + ": " + picking.getBox_no());
             textView32.setText(getApplicationContext().getString(R.string.reason) + ":");
             textView33.setText(getApplicationContext().getString(R.string.picture) + ":");
 
@@ -1567,12 +1525,6 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
             adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
             MaterialSpinner spinner = popupInputDialogView.findViewById(R.id.spinner);
             spinner.setAdapter(adapter);
-
-//            if (lastComment != null) {
-//                int spinnerPosition = adapter.getPosition(lastComment);
-//                spinner.setSelection(spinnerPosition + 1);
-
-            Log.d("Sdfsdfwgersg", "showDialogBox: " + picture1_set + ">" + picture2_set + ">" + picture3_set);
 
             if (!picking.getComment().equals("")) {
                 int spinnerPosition = adapter.getPosition(picking.getComment());
@@ -1643,7 +1595,7 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
 
 
                     alertDialog.dismiss();
-                    expandableListView.expandGroup(position);
+                    //                   expandableListView.expandGroup(position);
                 }
             });
 
@@ -1730,9 +1682,9 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
 //                        }
 //                    }
 //
-//
+                    updateChill(picking.getConsignment(), positionChill, picking, positionGroup);
                     //                  getSQLite();
-                    expandableListView.setAdapter(expandableListAdapter);
+//                    expandableListView.setAdapter(expandableListAdapter);
 //                    expandableListView.smoothScrollToPosition(positionGroup);
 //                    expandableListView.expandGroup(positionGroup);
                     alertDialog.dismiss();
@@ -1767,7 +1719,7 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
 
             if (!picture1.equals("")) {
                 try {
-
+                    arrayNameImage[0] = picking.getPicture1();
                     picTemp1.add(picture1);
                     File file = new File("/storage/emulated/0/Android/data/ws.epod/files/Pictures/" + picture1);
                     Bitmap myBitmap = BitmapFactory.decodeFile(file.getAbsolutePath());
@@ -1785,10 +1737,10 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
                     public void onClick(View view) {
                         Animation animation = AnimationUtils.loadAnimation(context, R.anim.alpha);
                         imgNewPick01.startAnimation(animation);
-                        data_intent.edit().putString("box_no", box_no).apply();
-                        data_intent.edit().putString("consignment_no", consignment_no).apply();
-                        data_intent.edit().putString("delivery_no", delivery_no).apply();
-                        data_intent.edit().putString("plan_seq", plan_seq).apply();
+                        data_intent.edit().putString("box_no", picking.getBox_no()).apply();
+                        data_intent.edit().putString("consignment_no", picking.getConsignment()).apply();
+                        data_intent.edit().putString("delivery_no", picking.getDelivery_no()).apply();
+                        data_intent.edit().putString("plan_seq", picking.getPlan_seq()).apply();
 
                         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
                         if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
@@ -1860,6 +1812,7 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
 
             } else {
                 picTemp1.add("");
+                arrayNameImage[0] = "";
             }
 
 //                } while (cursor.moveToNext());
@@ -1890,6 +1843,7 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
 
             if (!picture2.equals("")) {
                 picTemp2.add(picture2);
+                arrayNameImage[1] = picking.getPicture2();
                 File file = new File("/storage/emulated/0/Android/data/ws.epod/files/Pictures/" + picture2);
                 Bitmap myBitmap = BitmapFactory.decodeFile(file.getAbsolutePath());
                 imgCommentPick_02.setImageBitmap(myBitmap);
@@ -1903,10 +1857,10 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
                     public void onClick(View view) {
                         Animation animation = AnimationUtils.loadAnimation(context, R.anim.alpha);
                         imgNewPick02.startAnimation(animation);
-                        data_intent.edit().putString("box_no", box_no).apply();
-                        data_intent.edit().putString("consignment_no", consignment_no).apply();
-                        data_intent.edit().putString("delivery_no", delivery_no).apply();
-                        data_intent.edit().putString("plan_seq", plan_seq).apply();
+                        data_intent.edit().putString("box_no", picking.getBox_no()).apply();
+                        data_intent.edit().putString("consignment_no", picking.getConsignment()).apply();
+                        data_intent.edit().putString("delivery_no", picking.getDelivery_no()).apply();
+                        data_intent.edit().putString("plan_seq", picking.getPlan_seq()).apply();
 
                         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
                         if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
@@ -1947,8 +1901,8 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
                                         ContentValues cv = new ContentValues();
                                         cv.put("picture2", "");
                                         cv.put("modified_date", getdate());
-                                        databaseHelper.db().update("Plan", cv, "delivery_no= '" + delivery_no + "' and plan_seq = '" + plan_seq + "' and activity_type = 'LOAD' and " +
-                                                " consignment_no = '" + consignment_no + "' and box_no = '" + box_no + "' and trash = '0'", null);
+                                        databaseHelper.db().update("Plan", cv, "delivery_no= '" + picking.getDelivery_no() + "' and plan_seq = '" + picking.getPlan_seq() + "' and activity_type = 'LOAD' and " +
+                                                " consignment_no = '" + picking.getConsignment() + "' and box_no = '" + picking.getBox_no() + "' and trash = '0'", null);
 
                                         databaseHelper.db().delete("image", "name_img=?", new String[]{picture2});
 
@@ -1975,6 +1929,7 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
 
             } else {
                 picTemp2.add("");
+                arrayNameImage[1] = "";
             }
 
 //                } while (cursor02.moveToNext());
@@ -2003,6 +1958,7 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
 
             if (!picture3.equals("")) {
                 picTemp3.add(picture3);
+                arrayNameImage[2] = picking.getPicture3();
                 File file = new File("/storage/emulated/0/Android/data/ws.epod/files/Pictures/" + picture3);
                 Bitmap myBitmap = BitmapFactory.decodeFile(file.getAbsolutePath());
                 imgCommentPick_03.setImageBitmap(myBitmap);
@@ -2016,10 +1972,10 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
                     public void onClick(View view) {
                         Animation animation = AnimationUtils.loadAnimation(context, R.anim.alpha);
                         imgNewPick03.startAnimation(animation);
-                        data_intent.edit().putString("box_no", box_no).apply();
-                        data_intent.edit().putString("consignment_no", consignment_no).apply();
-                        data_intent.edit().putString("delivery_no", delivery_no).apply();
-                        data_intent.edit().putString("plan_seq", plan_seq).apply();
+                        data_intent.edit().putString("box_no", picking.getBox_no()).apply();
+                        data_intent.edit().putString("consignment_no", picking.getConsignment()).apply();
+                        data_intent.edit().putString("delivery_no", picking.getDelivery_no()).apply();
+                        data_intent.edit().putString("plan_seq", picking.getPlan_seq()).apply();
 
                         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
                         if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
@@ -2059,8 +2015,8 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
                                         ContentValues cv = new ContentValues();
                                         cv.put("picture3", "");
                                         cv.put("modified_date", getdate());
-                                        databaseHelper.db().update("Plan", cv, "delivery_no= '" + delivery_no + "' and plan_seq = '" + plan_seq + "' and activity_type = 'LOAD' and " +
-                                                " consignment_no = '" + consignment_no + "' and box_no = '" + box_no + "' and trash = '0'", null);
+                                        databaseHelper.db().update("Plan", cv, "delivery_no= '" + picking.getDelivery_no() + "' and plan_seq = '" + picking.getPlan_seq() + "' and activity_type = 'LOAD' and " +
+                                                " consignment_no = '" + picking.getConsignment() + "' and box_no = '" + picking.getBox_no() + "' and trash = '0'", null);
 
                                         databaseHelper.db().delete("image", "name_img=?", new String[]{picture3});
                                         //  databaseHelper.db().delete("image", "name_img=" + picture3, null);
@@ -2088,6 +2044,7 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
 
             } else {
                 picTemp3.add("");
+                arrayNameImage[2] = "";
 
             }
 //
@@ -2099,10 +2056,10 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
                 @Override
                 public void onClick(View view) {
 
-                    data_intent.edit().putString("box_no", box_no).apply();
-                    data_intent.edit().putString("consignment_no", consignment_no).apply();
-                    data_intent.edit().putString("delivery_no", delivery_no).apply();
-                    data_intent.edit().putString("plan_seq", plan_seq).apply();
+                    data_intent.edit().putString("box_no", picking.getBox_no()).apply();
+                    data_intent.edit().putString("consignment_no", picking.getConsignment()).apply();
+                    data_intent.edit().putString("delivery_no", picking.getDelivery_no()).apply();
+                    data_intent.edit().putString("plan_seq", picking.getPlan_seq()).apply();
 
                     Animation animation = AnimationUtils.loadAnimation(context, R.anim.alpha);
                     imgCommentPick_01.startAnimation(animation);
@@ -2132,10 +2089,10 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
                 @Override
                 public void onClick(View view) {
 
-                    data_intent.edit().putString("box_no", box_no).apply();
-                    data_intent.edit().putString("consignment_no", consignment_no).apply();
-                    data_intent.edit().putString("delivery_no", delivery_no).apply();
-                    data_intent.edit().putString("plan_seq", plan_seq).apply();
+                    data_intent.edit().putString("box_no", picking.getBox_no()).apply();
+                    data_intent.edit().putString("consignment_no", picking.getConsignment()).apply();
+                    data_intent.edit().putString("delivery_no", picking.getDelivery_no()).apply();
+                    data_intent.edit().putString("plan_seq", picking.getPlan_seq()).apply();
 
                     Animation animation = AnimationUtils.loadAnimation(context, R.anim.alpha);
                     imgCommentPick_02.startAnimation(animation);
@@ -2164,10 +2121,10 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
                 @Override
                 public void onClick(View view) {
 
-                    data_intent.edit().putString("box_no", box_no).apply();
-                    data_intent.edit().putString("consignment_no", consignment_no).apply();
-                    data_intent.edit().putString("delivery_no", delivery_no).apply();
-                    data_intent.edit().putString("plan_seq", plan_seq).apply();
+                    data_intent.edit().putString("box_no", picking.getBox_no()).apply();
+                    data_intent.edit().putString("consignment_no", picking.getConsignment()).apply();
+                    data_intent.edit().putString("delivery_no", picking.getDelivery_no()).apply();
+                    data_intent.edit().putString("plan_seq", picking.getPlan_seq()).apply();
 
                     Animation animation = AnimationUtils.loadAnimation(context, R.anim.alpha);
                     imgCommentPick_03.startAnimation(animation);

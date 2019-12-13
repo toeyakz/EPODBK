@@ -896,6 +896,22 @@ public class Deliver_Activity extends AppCompatActivity {
             return this.expandableListDetail.get(this.list.get(listPosition).getConsignment_no())
                     .get(expandedListPosition);
 
+
+        }
+
+        private void updateChill(String key, int position, DeliverExpand_Model model, int positionGroup) {
+            this.expandableListDetail.get(key)
+                    .get(position);
+
+            ArrayList<DeliverExpand_Model> expand_models = this.expandableListDetail.get(key);
+            expand_models.set(position, model);
+
+            this.expandableListDetail.put(key, expand_models);
+
+            notifyDataSetChanged();
+            expandableListView.expandGroup(positionGroup);
+
+
         }
 
         @Override
@@ -907,6 +923,7 @@ public class Deliver_Activity extends AppCompatActivity {
         public View getChildView(int listPosition, final int expandedListPosition,
                                  boolean isLastChild, View convertView, ViewGroup parent) {
             final DeliverExpand_Model expandedList = (DeliverExpand_Model) getChild(listPosition, expandedListPosition);
+
             if (convertView == null) {
                 LayoutInflater layoutInflater = (LayoutInflater) this.context
                         .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -932,15 +949,6 @@ public class Deliver_Activity extends AppCompatActivity {
 
             if (!checkBox.isChecked() && !expandedList.getIs_scaned().equals("1")) {
                 imgEditBoxNoPickup.setEnabled(true);
-//                imgEditBoxNoPickup.setOnClickListener(new View.OnClickListener() {
-//                    @Override
-//                    public void onClick(View view) {
-//                        Animation animation = AnimationUtils.loadAnimation(context, R.anim.alpha);
-//                        imgEditBoxNoPickup.startAnimation(animation);
-//
-//                        showDialogBox(expandedList.getBox_no(), expandedList.getConsignment(), expandedList.getDelivery_no(), expandedList.getPlan_seq(), listPosition, expandedList, expandedListPosition);
-//                    }
-//                });
             } else {
                 imgEditBoxNoPickup.setEnabled(false);
             }
@@ -954,15 +962,6 @@ public class Deliver_Activity extends AppCompatActivity {
                 imgEditBoxNoPickup.setEnabled(true);
                 checkBox.setEnabled(false);
                 checkBox.setButtonDrawable(R.drawable.ic_indeterminate_check_box_black_24dp);
-//                imgEditBoxNoPickup.setOnClickListener(new View.OnClickListener() {
-//                    @Override
-//                    public void onClick(View view) {
-//                        Animation animation = AnimationUtils.loadAnimation(context, R.anim.alpha);
-//                        imgEditBoxNoPickup.startAnimation(animation);
-//
-//                        showDialogBox(expandedList.getBox_no(), expandedList.getConsignment(), expandedList.getDelivery_no(), expandedList.getPlan_seq(), listPosition, expandedList, expandedListPosition);
-//                    }
-//                });
 
             } else {
                 checkBox.setEnabled(true);
@@ -970,20 +969,9 @@ public class Deliver_Activity extends AppCompatActivity {
             }
 
             if (expandedList.getInto().equals("0")) {
-
                 if (expandedList.getIs_scaned().equals("0")) {
                     checkBox.setChecked(false);
                     imgEditBoxNoPickup.setEnabled(true);
-                    //expandedList.setIs_scaned("0");
-//                    imgEditBoxNoPickup.setOnClickListener(new View.OnClickListener() {
-//                        @Override
-//                        public void onClick(View view) {
-//                            Animation animation = AnimationUtils.loadAnimation(context, R.anim.alpha);
-//                            imgEditBoxNoPickup.startAnimation(animation);
-//
-//                            showDialogBox(expandedList.getBox_no(), expandedList.getConsignment(), expandedList.getDelivery_no(), expandedList.getPlan_seq(), listPosition, expandedList, expandedListPosition);
-//                        }
-//                    });
 
                 }
             } else {
@@ -1003,55 +991,16 @@ public class Deliver_Activity extends AppCompatActivity {
             }
 
 
-//            if (expandedList.getIs_scaned().equals("1")) {
-//                checkBox.setChecked(true);
-//                checkBox.setEnabled(false);
-//                checkBox.setButtonDrawable(R.drawable.ic_check_box_disable);
-//            } else if (expandedList.getIs_scaned().equals("0")) {
-//                checkBox.setChecked(false);
-//                imgEditBoxNoPickup.setOnClickListener(new View.OnClickListener() {
-//                    @Override
-//                    public void onClick(View view) {
-//                        Animation animation = AnimationUtils.loadAnimation(context, R.anim.alpha);
-//                        imgEditBoxNoPickup.startAnimation(animation);
-//
-//                        showDialogBox(expandedList.getBox_no(), expandedList.getConsignment(), expandedList.getDelivery_no(), expandedList.getPlan_seq(), expandedListPosition);
-//                    }
-//                });
-//
-//            } else if (expandedList.getIs_scaned().equals("2")) {
-////                imgEditBoxNoPickup.setEnabled(false);
-////                checkBox.setEnabled(false);
-//                checkBox.setButtonDrawable(R.drawable.ic_indeterminate_check_box_black_24dp);
-//            }
-
             checkBox.setOnClickListener(v -> {
                 if (((CheckBox) v).isChecked()) {
-                    Log.d("Afkljsdf", "getChildView: check");
-                    // if (!expandedList.getIs_scaned().equals("2")) {
                     imgEditBoxNoPickup.setEnabled(false);
                     expandedList.setIs_scaned("1");
 
-                    // }
+
                 } else {
 
-                    Log.d("Afkljsdf", "getChildView:uncheck ");
-                    //if (!expandedList.getIs_scaned().equals("2")) {
                     imgEditBoxNoPickup.setEnabled(true);
                     expandedList.setIs_scaned("0");
-
-                    //}
-
-
-//                    imgEditBoxNoPickup.setOnClickListener(new View.OnClickListener() {
-//                        @Override
-//                        public void onClick(View view) {
-//                            Animation animation = AnimationUtils.loadAnimation(context, R.anim.alpha);
-//                            imgEditBoxNoPickup.startAnimation(animation);
-//
-//                            showDialogBox(expandedList.getBox_no(), expandedList.getConsignment(), expandedList.getDelivery_no(), expandedList.getPlan_seq(), listPosition, expandedList, expandedListPosition);
-//                        }
-//                    });
                 }
 
             });
@@ -1060,8 +1009,8 @@ public class Deliver_Activity extends AppCompatActivity {
                 Animation animation = AnimationUtils.loadAnimation(context, R.anim.alpha);
                 imgEditBoxNoPickup.startAnimation(animation);
 
-               // showDialogBox(expandedList.getBox_no(), expandedList.getConsignment(), expandedList.getDelivery_no(), expandedList.getPlan_seq(), listPosition, expandedList, expandedListPosition);
-                showDialogBox(expandedList);
+                // showDialogBox(expandedList.getBox_no(), expandedList.getConsignment(), expandedList.getDelivery_no(), expandedList.getPlan_seq(), listPosition, expandedList, expandedListPosition);
+                showDialogBox(expandedList, listPosition, expandedListPosition);
             });
 
 
@@ -1408,8 +1357,9 @@ public class Deliver_Activity extends AppCompatActivity {
 
         }
 
-        private void showDialogBox(DeliverExpand_Model picking) {
+        private void showDialogBox(DeliverExpand_Model picking1, int positionGroup, int positionChill) {
 
+            DeliverExpand_Model picking = (DeliverExpand_Model) getChild(positionGroup, positionChill);
 
             final SharedPreferences data_intent = getSharedPreferences("DATA_INTENT", Context.MODE_PRIVATE);
             TextView tvConsignment_Dialog, tv_BoxNo_Dialog;
@@ -1442,9 +1392,9 @@ public class Deliver_Activity extends AppCompatActivity {
             tvConsignment_Dialog.setText("Cons.No: " + picking.getConsignment());
             tv_BoxNo_Dialog.setText("BoxNo: " + picking.getBox_no());
 
-           // DeliverExpand_Model picking = (DeliverExpand_Model) getChild(position, pos);
+            // DeliverExpand_Model picking = (DeliverExpand_Model) getChild(position, pos);
 
-           // Log.d("Asfjklassdf", "showDialogBox: " + picking.getPicture1() + ">" + picking.getPicture2() + ">" + picking.getPicture3());
+            Log.d("Asfjklassdf", "showDialogBox: " + picking.getPicture1() + ">" + picking.getPicture2() + ">" + picking.getPicture3());
 
             List<String> categories = new ArrayList<>();
             categories.add("File");
@@ -1526,7 +1476,7 @@ public class Deliver_Activity extends AppCompatActivity {
 
 
                     alertDialog.dismiss();
-                   // expandableListView.expandGroup(position);
+                    // expandableListView.expandGroup(position);
                 }
             });
 
@@ -1613,8 +1563,9 @@ public class Deliver_Activity extends AppCompatActivity {
 //                        }
 //                    }
 
+                    updateChill(picking.getConsignment(), positionChill, picking, positionGroup);
 
-                    expandableListView.setAdapter(expandableListAdapter);
+                    //                   expandableListView.setAdapter(expandableListAdapter);
 
 
 //                    getSQLite();
@@ -1643,9 +1594,12 @@ public class Deliver_Activity extends AppCompatActivity {
 //                    }
             //edtComment_PICK.setText(comment);
 
+            Log.d("dffgsd", "showDialogBox:getPicture: " + picking.getPicture1() + ">" + picking.getPicture2() + ">" + picking.getPicture3() + "\n" + picture1 + ">" + picture2 + ">" + picture3);
+
             picture1 = picking.getPicture1();
 
             if (!picture1.equals("")) {
+                arrayNameImage[0] = picking.getPicture1();
                 picTemp1.add(picture1);
                 File file = new File("/storage/emulated/0/Android/data/ws.epod/files/Pictures/" + picture1);
                 Bitmap myBitmap = BitmapFactory.decodeFile(file.getAbsolutePath());
@@ -1731,6 +1685,7 @@ public class Deliver_Activity extends AppCompatActivity {
 
             } else {
                 picTemp1.add("");
+                arrayNameImage[0] = "";
             }
 
 
@@ -1759,6 +1714,7 @@ public class Deliver_Activity extends AppCompatActivity {
             picture2 = picking.getPicture2();
 
             if (!picture2.equals("")) {
+                arrayNameImage[1] = picking.getPicture2();
                 picTemp2.add(picture2);
                 File file = new File("/storage/emulated/0/Android/data/ws.epod/files/Pictures/" + picture2);
                 Bitmap myBitmap = BitmapFactory.decodeFile(file.getAbsolutePath());
@@ -1845,6 +1801,7 @@ public class Deliver_Activity extends AppCompatActivity {
 
             } else {
                 picTemp2.add("");
+                arrayNameImage[1] = "";
             }
 
 
@@ -1874,6 +1831,7 @@ public class Deliver_Activity extends AppCompatActivity {
             picture3 = picking.getPicture3();
 
             if (!picture3.equals("")) {
+                arrayNameImage[2] = picking.getPicture3();
                 picTemp3.add(picture3);
                 File file = new File("/storage/emulated/0/Android/data/ws.epod/files/Pictures/" + picture3);
                 Bitmap myBitmap = BitmapFactory.decodeFile(file.getAbsolutePath());
@@ -1959,8 +1917,10 @@ public class Deliver_Activity extends AppCompatActivity {
 
             } else {
                 picTemp3.add("");
+                arrayNameImage[2] = "";
             }
 
+            Log.d("dffgsd", "showDialogBox:getPicture2: " + picking.getPicture1() + ">" + picking.getPicture2() + ">" + picking.getPicture3() + "\n" + picture1 + ">" + picture2 + ">" + picture3);
 
 //                } while (cursor.moveToNext());
 //
