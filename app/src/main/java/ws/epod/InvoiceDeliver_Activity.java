@@ -934,6 +934,10 @@ public class InvoiceDeliver_Activity extends AppCompatActivity {
         EditText edtComment_PICK = popupInputDialogView.findViewById(R.id.edtComment_PICK);
         Button btnSaveComent_PICK = popupInputDialogView.findViewById(R.id.btnSaveComent_PICK);
 
+        TextView textView32 = popupInputDialogView.findViewById(R.id.textView32);
+
+        textView32.setText(getApplicationContext().getString(R.string.reason)+":");
+
         edtComment_PICK.setText(lastComment);
 
         List<String> categories = new ArrayList<>();

@@ -230,7 +230,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="left"
-            android:text="@string/picking_up"
+            android:text="@string/pickup"
             android:textColor="#fff"
             android:textSize="20sp"
             android:textStyle="bold"

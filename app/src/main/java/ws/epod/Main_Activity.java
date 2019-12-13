@@ -43,7 +43,7 @@ import ws.epod.ObjectClass.Var;
 public class Main_Activity extends LocalizationActivity {
 
     private Toolbar toolbar;
-    private TextView tvMain_truck, tvMain_user_driver, tvMain_name_driver, tvMain_date_bar, tvMain_planSeq, tvMain_cusName, tvMain_address, tvMain_appoint;
+    private TextView tvMain_truck, tvMain_user_driver, tvMain_name_driver, tvMain_date_bar, tvMain_planSeq, tvMain_cusName, tvMain_address, tvMain_appoint, headerTxt_Main;
     private ImageView imgBack_Job_Main;
     private RecyclerView rvMain;
     ArrayList<MenuObject> list = new ArrayList<>();
@@ -65,6 +65,7 @@ public class Main_Activity extends LocalizationActivity {
     @Override
     public void onResume() {
         super.onResume();
+        headerTxt_Main.setText(getApplicationContext().getString(R.string.job_operation));
         stopService(new Intent(getApplicationContext(), BackgroundService.class));
         getSQLite();
         initView();
@@ -100,6 +101,7 @@ public class Main_Activity extends LocalizationActivity {
         getDate = sdf.format(Calendar.getInstance().getTime());
 
         imgBack_Job_Main = findViewById(R.id.imgBack_Job_Main);
+        headerTxt_Main = findViewById(R.id.headerTxt_Main);
         imgBack_Job_Main.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick( View view ) {

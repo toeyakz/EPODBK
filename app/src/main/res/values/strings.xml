@@ -45,7 +45,6 @@
     <string name="cannot_retrieve_user_data">Cannot retrieve user data from within the device.</string>
     <string name="job">Job</string>
     <string name="title_activity_maps">Map</string>
-    <string name="job_operation">Job Operation</string>
     <string name="picking_up">Picking Up</string>
     <string name="deliver">Deliver</string>
     <string name="delivery_no">Delivery No.</string>
@@ -100,6 +99,8 @@
     <string name="search">SEARCH</string>
     <string name="to">to</string>
     <string name="select">Select</string>
+    <string name="sync_data">Syncing data..</string>
+    <string name="job_operation">Job Operation</string>
 
 
 </resources>

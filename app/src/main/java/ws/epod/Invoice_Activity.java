@@ -1005,7 +1005,9 @@ public class Invoice_Activity extends AppCompatActivity {
         ImageView imgClose_dialog = popupInputDialogView.findViewById(R.id.imgClose_dialog);
         EditText edtComment_PICK = popupInputDialogView.findViewById(R.id.edtComment_PICK);
         Button btnSaveComent_PICK = popupInputDialogView.findViewById(R.id.btnSaveComent_PICK);
-//        Spinner spinner = popupInputDialogView.findViewById(R.id.spinnerTariffCalculator);
+        TextView textView32 = popupInputDialogView.findViewById(R.id.textView32);
+
+        textView32.setText(getApplicationContext().getString(R.string.reason)+":");
 
         edtComment_PICK.setText(lastComment);
 

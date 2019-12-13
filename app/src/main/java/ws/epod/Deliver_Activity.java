@@ -1389,10 +1389,13 @@ public class Deliver_Activity extends AppCompatActivity {
             imgCommentPick_03 = popupInputDialogView.findViewById(R.id.imgCommentPick_03);
             imgNewPick03 = popupInputDialogView.findViewById(R.id.imgNewPick03);
             imgDeletePick03 = popupInputDialogView.findViewById(R.id.imgDeletePick03);
+            TextView textView32 = popupInputDialogView.findViewById(R.id.textView32);
+            TextView textView33 = popupInputDialogView.findViewById(R.id.textView33);
 
-            tvConsignment_Dialog.setText("Cons.No: " + picking.getConsignment());
-            tv_BoxNo_Dialog.setText("BoxNo: " + picking.getBox_no());
-
+            tvConsignment_Dialog.setText(getApplicationContext().getString(R.string.consignment2) + ": " + picking.getConsignment());
+            tv_BoxNo_Dialog.setText(getApplicationContext().getString(R.string.box_no) + ": " + picking.getBox_no());
+            textView32.setText(getApplicationContext().getString(R.string.reason) + ":");
+            textView33.setText(getApplicationContext().getString(R.string.picture) + ":");
             // DeliverExpand_Model picking = (DeliverExpand_Model) getChild(position, pos);
 
             Log.d("Asfjklassdf", "showDialogBox: " + picking.getPicture1() + ">" + picking.getPicture2() + ">" + picking.getPicture3());

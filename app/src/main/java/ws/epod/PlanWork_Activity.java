@@ -491,7 +491,7 @@ public class PlanWork_Activity extends AppCompatActivity {
             super.onPreExecute();
             progressDialog = new ProgressDialog(PlanWork_Activity.this);
             progressDialog.setCancelable(false);
-            progressDialog.setMessage("Syncing data..");
+            progressDialog.setMessage(getApplicationContext().getString(R.string.sync_data));
             progressDialog.show();
 
         }
@@ -923,7 +923,7 @@ public class PlanWork_Activity extends AppCompatActivity {
             super.onPreExecute();
             pd = new ProgressDialog(PlanWork_Activity.this);
             pd.setCancelable(false);
-            pd.setMessage("Syncing data..");
+            pd.setMessage(getApplicationContext().getString(R.string.sync_data));
             pd.show();
 
         }

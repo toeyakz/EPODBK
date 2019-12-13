@@ -1298,6 +1298,9 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
             TextView pick_dialog_pay_type_credit = popupInputDialogView2.findViewById(R.id.tv_dialog_pay_type_credit);
             TextView pick_summary = popupInputDialogView2.findViewById(R.id.tv_summary);
             TextView tv_dialog_thb = popupInputDialogView2.findViewById(R.id.tv_dialog_thb);
+            TextView tv3363 = popupInputDialogView2.findViewById(R.id.tv3363);
+            TextView tv3364 = popupInputDialogView2.findViewById(R.id.tv3364);
+            TextView tv3365 = popupInputDialogView2.findViewById(R.id.tv3365);
             ImageView pick_dialog_img_credit = popupInputDialogView2.findViewById(R.id.dialog_img_credit);
             SegmentedButtonGroup segmentedButtonGroup = popupInputDialogView2.findViewById(R.id.buttonGroup_vectorDrawable);
             rvDialogCons = popupInputDialogView2.findViewById(R.id.rvDialogCons);
@@ -1307,6 +1310,9 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
 
             tvConsignment_con_dialog.setText("Cons.No: " + consignment);
             pick_summary.setText(box_total + " Boxs\n" + global_total + " Unit(Global)");
+            tv3363.setText(getApplicationContext().getString(R.string.address)+" : ");
+            tv3364.setText(getApplicationContext().getString(R.string.pay_type)+" : ");
+            tv3365.setText(getApplicationContext().getString(R.string.summary)+" : ");
 
             if (!station_address.equals("")) {
                 pick_dialog_station_address.setText(station_address);

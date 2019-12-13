@@ -46,7 +46,6 @@
     <string name="cannot_retrieve_user_data">ไม่สามารถดึงข้อมูลผู้ใช้จากในเครื่องได้</string>
     <string name="job">งาน</string>
     <string name="title_activity_maps">แมพ</string>
-    <string name="job_operation">การดำเนินงาน</string>
     <string name="picking_up">กำลังรับสินค้า</string>
     <string name="deliver">ส่งสินค้า</string>
     <string name="delivery_no">เลขที่งาน</string>
@@ -95,4 +94,6 @@
     <string name="search">ค้นหา</string>
     <string name="to">ถึง</string>
     <string name="select">เลือกเหตุผล</string>
+    <string name="sync_data">กำลังซิงค์ข้อมูล..</string>
+    <string name="job_operation">การดำเนินงาน</string>
 </resources>
