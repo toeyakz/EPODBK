@@ -79,6 +79,7 @@ import ws.epod.ObjectClass.SQLiteModel.DeliverExpand_Model;
 import ws.epod.ObjectClass.SQLiteModel.Deliver_Model;
 import ws.epod.ObjectClass.SQLiteModel.Dialog_Cons_Detail_Model;
 import ws.epod.ObjectClass.SQLiteModel.PickingUpEexpand_Model;
+import ws.epod.ObjectClass.SQLiteModel.Reason_model;
 
 public class Deliver_Activity extends AppCompatActivity {
 
@@ -1406,7 +1407,28 @@ public class Deliver_Activity extends AppCompatActivity {
             categories.add("Refactor");
             categories.add("Build");
 
-            ArrayAdapter<String> adapter = new ArrayAdapter<>(getApplicationContext(), android.R.layout.simple_spinner_item, categories);
+
+            ArrayList<Reason_model> reasonModels = new ArrayList<>();
+            ArrayList<String> valueSpinner = new ArrayList<>();
+
+            String sql_expand = "select name from reason";
+            Cursor cursor_expand = databaseHelper.selectDB(sql_expand);
+
+            cursor_expand.moveToFirst();
+            if (cursor_expand.getCount() > 0) {
+                do {
+                    String name = cursor_expand.getString(cursor_expand.getColumnIndex("name"));
+                    reasonModels.add(new Reason_model("", name));
+
+                } while (cursor_expand.moveToNext());
+            }
+
+            for (int i = 0; i < reasonModels.size(); i++) {
+                valueSpinner.add(reasonModels.get(i).getName());
+            }
+
+
+            ArrayAdapter<String> adapter = new ArrayAdapter<>(getApplicationContext(), android.R.layout.simple_spinner_item, valueSpinner);
             adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
             MaterialSpinner spinner = popupInputDialogView.findViewById(R.id.spinner);
             spinner.setAdapter(adapter);

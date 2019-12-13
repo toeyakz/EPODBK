@@ -76,6 +76,7 @@ import ws.epod.ObjectClass.SQLiteModel.DeliverExpand_Model;
 import ws.epod.ObjectClass.SQLiteModel.Dialog_Cons_Detail_Model;
 import ws.epod.ObjectClass.SQLiteModel.PickingUpEexpand_Model;
 import ws.epod.ObjectClass.SQLiteModel.PickingUp_Model;
+import ws.epod.ObjectClass.SQLiteModel.Reason_model;
 import ws.epod.ObjectClass.SQLiteModel.Sign_Model;
 
 public class PinkingUpMaster_Activity extends AppCompatActivity {
@@ -1511,17 +1512,26 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
             textView33.setText(getApplicationContext().getString(R.string.picture) + ":");
 
 
-            List<String> categories = new ArrayList<>();
-            categories.add("File");
-            categories.add("Edit");
-            categories.add("View");
-            categories.add("Navigate");
-            categories.add("Code");
-            categories.add("Analyze");
-            categories.add("Refactor");
-            categories.add("Build");
+            ArrayList<Reason_model> reasonModels = new ArrayList<>();
+            ArrayList<String> valueSpinner = new ArrayList<>();
 
-            ArrayAdapter<String> adapter = new ArrayAdapter<>(getApplicationContext(), android.R.layout.simple_spinner_item, categories);
+            String sql_expand = "select name from reason";
+            Cursor cursor_expand = databaseHelper.selectDB(sql_expand);
+
+            cursor_expand.moveToFirst();
+            if (cursor_expand.getCount() > 0) {
+                do {
+                    String name = cursor_expand.getString(cursor_expand.getColumnIndex("name"));
+                    reasonModels.add(new Reason_model("", name));
+
+                } while (cursor_expand.moveToNext());
+            }
+
+            for (int i = 0; i < reasonModels.size(); i++) {
+                valueSpinner.add(reasonModels.get(i).getName());
+            }
+
+            ArrayAdapter<String> adapter = new ArrayAdapter<>(getApplicationContext(), android.R.layout.simple_spinner_item, valueSpinner);
             adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
             MaterialSpinner spinner = popupInputDialogView.findViewById(R.id.spinner);
             spinner.setAdapter(adapter);
@@ -1529,7 +1539,6 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
             if (!picking.getComment().equals("")) {
                 int spinnerPosition = adapter.getPosition(picking.getComment());
                 spinner.setSelection(spinnerPosition + 1);
-                Log.d("ASDfasdhjfasdf", "showDialogBox: " + picking.getComment());
 
             }
 

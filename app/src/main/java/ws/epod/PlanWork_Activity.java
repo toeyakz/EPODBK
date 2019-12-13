@@ -132,7 +132,7 @@ public class PlanWork_Activity extends AppCompatActivity {
     }
 
     @Override
-    protected void onCreate( Bundle savedInstanceState ) {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_plan_work_);
@@ -195,7 +195,7 @@ public class PlanWork_Activity extends AppCompatActivity {
         }
 
         @SuppressLint("RestrictedApi")
-        public void onScrollStateChanged( RecyclerView recyclerView, int newState ) {
+        public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
             switch (newState) {
                 case RecyclerView.SCROLL_STATE_IDLE:
                     Log.d("Asfas5f", "The RecyclerView is not scrolling");
@@ -216,18 +216,18 @@ public class PlanWork_Activity extends AppCompatActivity {
 
         }
 
-        public void onScrolled( RecyclerView recyclerView, int dx, int dy ) {
-            if ( dx > 0 ) {
+        public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+            if (dx > 0) {
                 System.out.println("Scrolled Right");
-            } else if ( dx < 0 ) {
+            } else if (dx < 0) {
                 System.out.println("Scrolled Left");
             } else {
                 System.out.println("No Horizontal Scrolled");
             }
 
-            if ( dy > 0 ) {
+            if (dy > 0) {
                 System.out.println("Scrolled Downwards");
-            } else if ( dy < 0 ) {
+            } else if (dy < 0) {
                 System.out.println("Scrolled Upwards");
             } else {
                 System.out.println("No Vertical Scrolled");
@@ -250,11 +250,11 @@ public class PlanWork_Activity extends AppCompatActivity {
 
         String CurrentLang = Locale.getDefault().getLanguage();
 
-        if ( CurrentLang.equals("en") ) {
+        if (CurrentLang.equals("en")) {
             String pattern = "EEEE, dd MMMM yyyy";
             SimpleDateFormat sdf = new SimpleDateFormat(pattern, new Locale("en", "th"));
             tvPlan_date_bar.setText(sdf.format(Calendar.getInstance().getTime()));
-        } else if ( CurrentLang.equals("th") ) {
+        } else if (CurrentLang.equals("th")) {
             String pattern = "EEEE, dd MMMM yyyy";
             SimpleDateFormat sdf = new SimpleDateFormat(pattern, new Locale("th", "th"));
             tvPlan_date_bar.setText(sdf.format(Calendar.getInstance().getTime()));
@@ -262,7 +262,7 @@ public class PlanWork_Activity extends AppCompatActivity {
 
         bt_refesh.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick( View view ) {
+            public void onClick(View view) {
 
                 Animation animation = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.alpha);
                 bt_refesh.startAnimation(animation);
@@ -273,8 +273,8 @@ public class PlanWork_Activity extends AppCompatActivity {
         });
 //     fabButtontvFilterStatus
         fabSearch.setOnClickListener(view -> {
-            if ( layoutToday.getVisibility() == View.VISIBLE && layoutFilterDate.getVisibility()
-                    == View.VISIBLE ) {
+            if (layoutToday.getVisibility() == View.VISIBLE && layoutFilterDate.getVisibility()
+                    == View.VISIBLE) {
                 hideAll();
 
             } else {
@@ -340,12 +340,12 @@ public class PlanWork_Activity extends AppCompatActivity {
             Animation animation = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.alpha);
             edtFromDate.startAnimation(animation);
             Calendar calendar = Calendar.getInstance(Locale.getDefault());
-            DatePickerDialog datePickerDialog = new DatePickerDialog(this, ( datePicker, i, i1, i2 ) -> {
+            DatePickerDialog datePickerDialog = new DatePickerDialog(this, (datePicker, i, i1, i2) -> {
                 Calendar newDate = Calendar.getInstance();
                 newDate.set(i, i1, i2);
                 edtFromDate.setText(dateFormatter.format(newDate.getTime()));
                 edtFromDate.setSelection(edtFromDate.getText().length());
-                if ( !edtFromDate.getText().toString().trim().equals("") ) {
+                if (!edtFromDate.getText().toString().trim().equals("")) {
                     textView18.setVisibility(View.GONE);
                 }
             }, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH));
@@ -356,12 +356,12 @@ public class PlanWork_Activity extends AppCompatActivity {
             Animation animation = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.alpha);
             edtToDate.startAnimation(animation);
             Calendar calendar = Calendar.getInstance(Locale.getDefault());
-            DatePickerDialog datePickerDialog = new DatePickerDialog(this, ( datePicker, i, i1, i2 ) -> {
+            DatePickerDialog datePickerDialog = new DatePickerDialog(this, (datePicker, i, i1, i2) -> {
                 Calendar newDate = Calendar.getInstance();
                 newDate.set(i, i1, i2);
                 edtToDate.setText(dateFormatter.format(newDate.getTime()));
                 edtToDate.setSelection(edtToDate.getText().length());
-                if ( !edtToDate.getText().toString().trim().equals("") ) {
+                if (!edtToDate.getText().toString().trim().equals("")) {
                     textView18.setVisibility(View.GONE);
                 }
             }, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH));
@@ -375,10 +375,10 @@ public class PlanWork_Activity extends AppCompatActivity {
             String FilterFromDate = edtFromDate.getText().toString().trim();
             String FilterToDate = edtToDate.getText().toString().trim();
 
-            if ( FilterFromDate.equals("") ) {
+            if (FilterFromDate.equals("")) {
                 textView18.setText("Please select from date.");
                 textView18.setVisibility(View.VISIBLE);
-            } else if ( FilterToDate.equals("") ) {
+            } else if (FilterToDate.equals("")) {
                 textView18.setText("Please select to date.");
                 textView18.setVisibility(View.VISIBLE);
             } else {
@@ -427,7 +427,7 @@ public class PlanWork_Activity extends AppCompatActivity {
         // new LoadWork().execute();
         getDataFromSQLite("", "", "");
         tvFilterStatus.setText("Filter by: Today");
-        if ( NarisBaseValue.firstlogin == 0 ) {
+        if (NarisBaseValue.firstlogin == 0) {
             new UploadWork2ND().execute();
             NarisBaseValue.firstlogin = 1;
         }
@@ -440,7 +440,7 @@ public class PlanWork_Activity extends AppCompatActivity {
     public class SendPostRequest extends AsyncTask<String, Void, String> {
 
         @Override
-        protected String doInBackground( String... params ) {
+        protected String doInBackground(String... params) {
 
             String postData = "";
 
@@ -468,7 +468,7 @@ public class PlanWork_Activity extends AppCompatActivity {
             } catch (Exception e) {
                 e.printStackTrace();
             } finally {
-                if ( httpConnection != null ) {
+                if (httpConnection != null) {
                     httpConnection.disconnect();
                 }
             }
@@ -476,7 +476,7 @@ public class PlanWork_Activity extends AppCompatActivity {
         }
 
         @Override
-        protected void onPostExecute( String result ) {
+        protected void onPostExecute(String result) {
             super.onPostExecute(result);
         }
     }
@@ -497,7 +497,7 @@ public class PlanWork_Activity extends AppCompatActivity {
         }
 
         @Override
-        protected String doInBackground( String... strings ) {
+        protected String doInBackground(String... strings) {
 
             JSONObject Root = new JSONObject();
             JSONObject picture1 = new JSONObject();
@@ -525,7 +525,7 @@ public class PlanWork_Activity extends AppCompatActivity {
                 Log.d("UploadWorkLog", "doInBackground: " + cursor.getCount());
                 int i = 0;
                 cursor.moveToFirst();
-                if ( cursor.getCount() > 0 ) {
+                if (cursor.getCount() > 0) {
                     do {
 
                         JSONObject contact = new JSONObject();
@@ -590,13 +590,13 @@ public class PlanWork_Activity extends AppCompatActivity {
 
                     Call<ResponseBody> call = apiInterface.uploadwork(Var.UserLogin.driver_id, body);
                     Response<ResponseBody> response = call.execute();
-                    if ( response.code() == 200 ) {
+                    if (response.code() == 200) {
                         String responseRecieved = response.body().string();
-                        if ( responseRecieved != null ) {
-                            if ( !responseRecieved.equals("") ) {
+                        if (responseRecieved != null) {
+                            if (!responseRecieved.equals("")) {
                                 JSONArray jsonArray = new JSONArray(responseRecieved);
 
-                                if ( jsonArray.getJSONObject(0).getString("status").equals("Y") ) {
+                                if (jsonArray.getJSONObject(0).getString("status").equals("Y")) {
 //
                                     for (int pic = 0; pic < jsonArray.getJSONObject(0).getJSONArray("returnId").length(); pic++) {
 
@@ -618,10 +618,10 @@ public class PlanWork_Activity extends AppCompatActivity {
 
                                     int j = 0;
                                     cursor_getPicture.moveToFirst();
-                                    if ( cursor_getPicture.getCount() > 0 ) {
+                                    if (cursor_getPicture.getCount() > 0) {
                                         do {
 
-                                            if ( !cursor_getPicture.getString(cursor_getPicture.getColumnIndex("picture1")).equals("") ) {
+                                            if (!cursor_getPicture.getString(cursor_getPicture.getColumnIndex("picture1")).equals("")) {
 
                                                 File file = new File("/storage/emulated/0/Android/data/ws.epod/files/Pictures/" + cursor_getPicture.getString(cursor_getPicture.getColumnIndex("picture1")));
                                                 Bitmap myBitmap = BitmapFactory.decodeFile(file.getAbsolutePath());
@@ -639,7 +639,7 @@ public class PlanWork_Activity extends AppCompatActivity {
 
                                             }
 
-                                            if ( !cursor_getPicture.getString(cursor_getPicture.getColumnIndex("picture2")).equals("") ) {
+                                            if (!cursor_getPicture.getString(cursor_getPicture.getColumnIndex("picture2")).equals("")) {
 
                                                 File file = new File("/storage/emulated/0/Android/data/ws.epod/files/Pictures/" + cursor_getPicture.getString(cursor_getPicture.getColumnIndex("picture2")));
                                                 Bitmap myBitmap = BitmapFactory.decodeFile(file.getAbsolutePath());
@@ -657,7 +657,7 @@ public class PlanWork_Activity extends AppCompatActivity {
 
                                             }
 
-                                            if ( !cursor_getPicture.getString(cursor_getPicture.getColumnIndex("picture3")).equals("") ) {
+                                            if (!cursor_getPicture.getString(cursor_getPicture.getColumnIndex("picture3")).equals("")) {
 
                                                 File file = new File("/storage/emulated/0/Android/data/ws.epod/files/Pictures/" + cursor_getPicture.getString(cursor_getPicture.getColumnIndex("picture3")));
                                                 Bitmap myBitmap = BitmapFactory.decodeFile(file.getAbsolutePath());
@@ -681,18 +681,18 @@ public class PlanWork_Activity extends AppCompatActivity {
                                         UploadImage data = new UploadImage(uploadImage);
 
 
-                                        if ( picture1 != null ) {
+                                        if (picture1 != null) {
 
                                             Call<ResponseBody> callImg = apiInterface.uploadPicture(data);
 
                                             Response<ResponseBody> responseImg = callImg.execute();
-                                            if ( responseImg.code() == 200 ) {
+                                            if (responseImg.code() == 200) {
                                                 String responseRecievedImg = responseImg.body().string();
-                                                if ( responseRecievedImg != null ) {
-                                                    if ( !responseRecievedImg.equals("") ) {
+                                                if (responseRecievedImg != null) {
+                                                    if (!responseRecievedImg.equals("")) {
                                                         JSONArray jsonImg = new JSONArray(responseRecievedImg);
 
-                                                        if ( jsonImg.getJSONObject(0).getString("status").equals("Y") ) {
+                                                        if (jsonImg.getJSONObject(0).getString("status").equals("Y")) {
 
                                                             for (int pic = 0; pic < jsonImg.getJSONObject(0).getJSONArray("img").length(); pic++) {
 
@@ -740,7 +740,7 @@ public class PlanWork_Activity extends AppCompatActivity {
         }
 
         @Override
-        protected void onPostExecute( String s ) {
+        protected void onPostExecute(String s) {
             super.onPostExecute(s);
 
             String mess = "";
@@ -759,7 +759,7 @@ public class PlanWork_Activity extends AppCompatActivity {
                             .setAction("Action", null).show();
                     break;
             }
-            if ( planWorkAdapter != null ) {
+            if (planWorkAdapter != null) {
                 planWorkAdapter.notifyDataSetChanged();
             }
 
@@ -772,7 +772,7 @@ public class PlanWork_Activity extends AppCompatActivity {
         int IsSuccess = 1;
 
         @Override
-        protected String doInBackground( String... strings ) {
+        protected String doInBackground(String... strings) {
 
             try {
 
@@ -782,7 +782,7 @@ public class PlanWork_Activity extends AppCompatActivity {
                 String sql_getMaxModifild_date = "select MAX(modified_date) as max_modified_date from Plan ";
                 Cursor cursor_etMaxModifild_date = databaseHelper.selectDB(sql_getMaxModifild_date);
                 cursor_etMaxModifild_date.moveToFirst();
-                if ( cursor_etMaxModifild_date.getCount() > 0 ) {
+                if (cursor_etMaxModifild_date.getCount() > 0) {
                     do {
                         max_modified_date = cursor_etMaxModifild_date.getString(cursor_etMaxModifild_date.getColumnIndex("max_modified_date"));
 
@@ -804,10 +804,10 @@ public class PlanWork_Activity extends AppCompatActivity {
 
                 Call<ResponseBody> call = apiInterface.downloadWork(Var.UserLogin.driver_vehicle_id, Var.UserLogin.driver_id, Var.UserLogin.driver_serial, getDate, "");
                 Response<ResponseBody> response = call.execute();
-                if ( response.code() == 200 ) {
+                if (response.code() == 200) {
                     String responseRecieved = response.body().string();
-                    if ( responseRecieved != null ) {
-                        if ( !responseRecieved.equals("") ) {
+                    if (responseRecieved != null) {
+                        if (!responseRecieved.equals("")) {
                             Log.d("getPlanLog", "doInBackground: " + responseRecieved);
 
                             JSONArray jsonArray = new JSONArray(responseRecieved);
@@ -818,7 +818,7 @@ public class PlanWork_Activity extends AppCompatActivity {
 //                            }
 
 
-                            if ( narisv.INSERT_AS_SQL("Plan", jsonArray, "") ) {
+                            if (narisv.INSERT_AS_SQL("Plan", jsonArray, "")) {
                                 Log.d("PlanWorkLOG", "SAVED INVOICE HEADER");
 
                                 String url_consign = Var.WEBSERVICE2 + "func=getConsignment&vehicle_id=" + Var.UserLogin.driver_vehicle_id;
@@ -827,13 +827,31 @@ public class PlanWork_Activity extends AppCompatActivity {
 
                                 Call<ResponseBody> callCons = apiInterface.downloadConsignment(Var.UserLogin.driver_vehicle_id, "");
                                 Response<ResponseBody> responseCons = callCons.execute();
-                                if ( responseCons.code() == 200 ) {
+                                if (responseCons.code() == 200) {
                                     String responseRecievedCons = responseCons.body().string();
-                                    if ( responseRecieved != null ) {
-                                        if ( !responseRecieved.equals("") ) {
+                                    if (responseRecieved != null) {
+                                        if (!responseRecieved.equals("")) {
                                             JSONArray jsonArrayCons = new JSONArray(responseRecievedCons);
-                                            if ( narisv.INSERT_AS_SQL("consignment", jsonArrayCons, "") ) {
+                                            if (narisv.INSERT_AS_SQL("consignment", jsonArrayCons, "")) {
                                                 Log.d("PlanWorkLOG", "SAVED Consignment.");
+
+                                                Call<ResponseBody> reaSon = apiInterface.reason();
+                                                Response<ResponseBody> responseReason = reaSon.execute();
+                                                if (responseReason.code() == 200) {
+                                                    String recievedReason = responseReason.body().string();
+                                                    if (recievedReason != null) {
+                                                        if (!responseRecieved.equals("")) {
+                                                            JSONArray jsonArrayReason = new JSONArray(recievedReason);
+                                                            if (narisv.INSERT_AS_SQL("reason", jsonArrayReason, "")) {
+                                                                Log.d("PlanWorkLOG", "SAVED reason.");
+                                                            } else {
+                                                                Log.d("PlanWorkLOG", "FAIL save reason.");
+                                                            }
+                                                        }
+                                                    }
+                                                }
+
+
                                             } else {
                                                 Log.d("PlanWorkLOG", "FAIL save consignment.");
                                             }
@@ -852,7 +870,8 @@ public class PlanWork_Activity extends AppCompatActivity {
                     }
                 }
 
-            } catch (Exception e) {
+            } catch (
+                    Exception e) {
                 e.printStackTrace();
             }
 
@@ -860,7 +879,7 @@ public class PlanWork_Activity extends AppCompatActivity {
         }
 
         @Override
-        protected void onPostExecute( String s ) {
+        protected void onPostExecute(String s) {
             super.onPostExecute(s);
 
             firstSync = true;
@@ -871,12 +890,12 @@ public class PlanWork_Activity extends AppCompatActivity {
                     mess = "Synced";
                     tvFilterStatus.setText("Filter by: Today");
                     getDataFromSQLite("", "", "");
-                    if ( progressDialog.isShowing() ) {
+                    if (progressDialog.isShowing()) {
                         progressDialog.dismiss();
                     }
                     Snackbar.make(viewFab, mess, Snackbar.LENGTH_LONG)
                             .setAction("Action", null).show();
-                    if ( planWorkAdapter != null ) {
+                    if (planWorkAdapter != null) {
                         planWorkAdapter.notifyDataSetChanged();
                     }
                     break;
@@ -884,7 +903,7 @@ public class PlanWork_Activity extends AppCompatActivity {
                     mess = "Sync error!!";
                     Snackbar.make(viewFab, mess, Snackbar.LENGTH_LONG)
                             .setAction("Action", null).show();
-                    if ( planWorkAdapter != null ) {
+                    if (planWorkAdapter != null) {
                         planWorkAdapter.notifyDataSetChanged();
                     }
                     break;
@@ -911,7 +930,7 @@ public class PlanWork_Activity extends AppCompatActivity {
 
         @SuppressLint("WrongThread")
         @Override
-        protected String doInBackground( String... strings ) {
+        protected String doInBackground(String... strings) {
 
 
             JSONObject Root = new JSONObject();
@@ -939,7 +958,7 @@ public class PlanWork_Activity extends AppCompatActivity {
                 Log.d("UploadWorkLog", "doInBackground: " + cursor.getCount());
                 int i = 0;
                 cursor.moveToFirst();
-                if ( cursor.getCount() > 0 ) {
+                if (cursor.getCount() > 0) {
                     do {
 
                         JSONObject contact = new JSONObject();
@@ -1001,7 +1020,7 @@ public class PlanWork_Activity extends AppCompatActivity {
                     Log.d("UploadWorkLog", "doInBackground: " + Root.toString());
 
                     JSONArray fa = narisv.SendAndGetJson_reJsonArray(Root, url);
-                    if ( fa.getJSONObject(0).getString("status").equals("Y") ) {
+                    if (fa.getJSONObject(0).getString("status").equals("Y")) {
 
 
                         for (int pic = 0; pic < fa.getJSONObject(0).getJSONArray("returnId").length(); pic++) {
@@ -1030,13 +1049,13 @@ public class PlanWork_Activity extends AppCompatActivity {
                         Log.d("sdgwsdgwe", "doInBackground: --" + cursor_getPicture.getCount());
                         int j = 0;
                         cursor_getPicture.moveToFirst();
-                        if ( cursor_getPicture.getCount() > 0 ) {
+                        if (cursor_getPicture.getCount() > 0) {
                             do {
                                 JSONObject contactPic1 = new JSONObject();
 
                                 //Log.d("sdgwsdgwe", "doInBackground: picture1--" + cursor_getPicture.getString(cursor_getPicture.getColumnIndex("picture1")));
 
-                                if ( !cursor_getPicture.getString(cursor_getPicture.getColumnIndex("picture1")).equals("") ) {
+                                if (!cursor_getPicture.getString(cursor_getPicture.getColumnIndex("picture1")).equals("")) {
 
                                     Log.d("AfWEIUGHMWENFNW", "doInBackground: --" + contactPic1.toString());
 
@@ -1058,7 +1077,7 @@ public class PlanWork_Activity extends AppCompatActivity {
 
                                 }
 
-                                if ( !cursor_getPicture.getString(cursor_getPicture.getColumnIndex("picture2")).equals("") ) {
+                                if (!cursor_getPicture.getString(cursor_getPicture.getColumnIndex("picture2")).equals("")) {
 
                                     contactPic1 = new JSONObject();
 
@@ -1080,7 +1099,7 @@ public class PlanWork_Activity extends AppCompatActivity {
 
                                 }
 
-                                if ( !cursor_getPicture.getString(cursor_getPicture.getColumnIndex("picture3")).equals("") ) {
+                                if (!cursor_getPicture.getString(cursor_getPicture.getColumnIndex("picture3")).equals("")) {
 
                                     contactPic1 = new JSONObject();
 
@@ -1110,9 +1129,9 @@ public class PlanWork_Activity extends AppCompatActivity {
                             Log.d("dataLog", "doInBackground: " + picture1);
 
 
-                            if ( picture1 != null ) {
+                            if (picture1 != null) {
                                 JSONArray sendPic1 = narisv.sendImageBase64(picture1, urlPic1);
-                                if ( sendPic1.getJSONObject(0).getString("status").equals("Y") ) {
+                                if (sendPic1.getJSONObject(0).getString("status").equals("Y")) {
 
                                     for (int pic = 0; pic < sendPic1.getJSONObject(0).getJSONArray("img").length(); pic++) {
 
@@ -1152,7 +1171,7 @@ public class PlanWork_Activity extends AppCompatActivity {
         }
 
         @Override
-        protected void onPostExecute( String s ) {
+        protected void onPostExecute(String s) {
             super.onPostExecute(s);
 
 
@@ -1173,7 +1192,7 @@ public class PlanWork_Activity extends AppCompatActivity {
             }
             Snackbar.make(rvPlanWork, mess, Snackbar.LENGTH_LONG)
                     .setAction("Action", null).show();
-            if ( planWorkAdapter != null ) {
+            if (planWorkAdapter != null) {
                 planWorkAdapter.notifyDataSetChanged();
             }
         }
@@ -1185,7 +1204,7 @@ public class PlanWork_Activity extends AppCompatActivity {
 
 
         @Override
-        protected String doInBackground( String... strings ) {
+        protected String doInBackground(String... strings) {
 
             try {
 
@@ -1195,7 +1214,7 @@ public class PlanWork_Activity extends AppCompatActivity {
                 String sql_getMaxModifild_date = "select MAX(modified_date) as max_modified_date from Plan ";
                 Cursor cursor_etMaxModifild_date = databaseHelper.selectDB(sql_getMaxModifild_date);
                 cursor_etMaxModifild_date.moveToFirst();
-                if ( cursor_etMaxModifild_date.getCount() > 0 ) {
+                if (cursor_etMaxModifild_date.getCount() > 0) {
                     do {
                         max_modified_date = cursor_etMaxModifild_date.getString(cursor_etMaxModifild_date.getColumnIndex("max_modified_date"));
 
@@ -1224,17 +1243,20 @@ public class PlanWork_Activity extends AppCompatActivity {
 
                 }
 
-                if ( narisv.INSERT_AS_SQL("Plan", GETJSON, "") ) {
+                if (narisv.INSERT_AS_SQL("Plan", GETJSON, "")) {
                     Log.d("PlanWorkLOG", "SAVED INVOICE HEADER");
 
                     String url_consign = Var.WEBSERVICE2 + "func=getConsignment&vehicle_id=" + Var.UserLogin.driver_vehicle_id;
                     JSONArray GETJSON_CONSIGN = narisv.getJsonFromUrl_reJsonArray(url_consign);
 
-                    if ( narisv.INSERT_AS_SQL("consignment", GETJSON_CONSIGN, "") ) {
+                    if (narisv.INSERT_AS_SQL("consignment", GETJSON_CONSIGN, "")) {
                         Log.d("PlanWorkLOG", "SAVED Consignment.");
+
                     } else {
                         Log.d("PlanWorkLOG", "FAIL save consignment.");
                     }
+
+
                     IsSuccess = 1;
                 } else {
                     Log.d("PlanWorkLOG", "FAIL");
@@ -1250,7 +1272,7 @@ public class PlanWork_Activity extends AppCompatActivity {
         }
 
         @Override
-        protected void onPostExecute( String s ) {
+        protected void onPostExecute(String s) {
             super.onPostExecute(s);
 
             firstSync = true;
@@ -1274,17 +1296,17 @@ public class PlanWork_Activity extends AppCompatActivity {
         }
 
         @Override
-        protected void onProgressUpdate( String... values ) {
+        protected void onProgressUpdate(String... values) {
             super.onProgressUpdate(values);
         }
 
 
     }
 
-    public void getDataFromSQLite( String today, String dateBegin, String dateEnd ) {
+    public void getDataFromSQLite(String today, String dateBegin, String dateEnd) {
 
         String sql = "";
-        if ( !dateBegin.equals("") && !dateEnd.equals("") ) {
+        if (!dateBegin.equals("") && !dateEnd.equals("")) {
             sql = "select pl.delivery_no\n" +
                     ", pl.delivery_date\n" +
                     ", count(DISTINCT pl.plan_seq) as plan_seq\n" +
@@ -1307,7 +1329,7 @@ public class PlanWork_Activity extends AppCompatActivity {
                     "where (pl.delivery_date between '" + dateBegin + "' and '" + dateEnd + "') \n" +
                     "group by pl.delivery_no\n" +
                     "order by pl.delivery_date asc, pl.delivery_no";
-        } else if ( !today.equals("") ) {
+        } else if (!today.equals("")) {
             sql = "select pl.delivery_no\n" +
                     ", pl.delivery_date\n" +
                     ", count(DISTINCT pl.plan_seq) as plan_seq\n" +
@@ -1391,7 +1413,7 @@ public class PlanWork_Activity extends AppCompatActivity {
 
         cursor.moveToFirst();
         do {
-            if ( cursor.getCount() > 0 ) {
+            if (cursor.getCount() > 0) {
                 String delivery_date = cursor.getString(cursor.getColumnIndex("delivery_date"));
                 String delivery_no = cursor.getString(cursor.getColumnIndex("delivery_no"));
                 int plan_seq = cursor.getInt(cursor.getColumnIndex("plan_seq"));
@@ -1411,8 +1433,8 @@ public class PlanWork_Activity extends AppCompatActivity {
         dateArray.clear();
         dateArray.addAll(hs);
 
-        Collections.sort(dateArray, ( s, t1 ) -> {
-            if ( s == null || t1 == null )
+        Collections.sort(dateArray, (s, t1) -> {
+            if (s == null || t1 == null)
                 return 0;
             return s.compareTo(t1);
 
@@ -1424,7 +1446,7 @@ public class PlanWork_Activity extends AppCompatActivity {
             for (Plan_model planModel : studentArrayList) {
 
                 String mDate = planModel.getDelivery_date();
-                if ( dateArray.get(i).equals(mDate) ) {
+                if (dateArray.get(i).equals(mDate)) {
                     item.add(planModel);
                 }
 
@@ -1441,7 +1463,7 @@ public class PlanWork_Activity extends AppCompatActivity {
 
     }
 
-    public static String dateNewFormat( String pattern ) {
+    public static String dateNewFormat(String pattern) {
         String pattern2 = "dd/MM/yyyy";
         SimpleDateFormat spf = new SimpleDateFormat("yyyy-MM-dd");
         Date newDate = null;
@@ -1463,7 +1485,7 @@ public class PlanWork_Activity extends AppCompatActivity {
             int IsSuccess = 0;
 
             @Override
-            protected String doInBackground( String... strings ) {
+            protected String doInBackground(String... strings) {
 
                 try {
                     String url = "http://wisasoft.com:8997/EPOD_MSM/EPOD_MSMMOBILE/jsonDump.php";
@@ -1472,7 +1494,7 @@ public class PlanWork_Activity extends AppCompatActivity {
                     JSONArray re_json = narisv.getJsonFromUrl_reJsonArray(url);
                     Log.d("dumpData", re_json.toString());
 
-                    if ( narisv.INSERT_AS_SQL("Plan", re_json, "") ) {
+                    if (narisv.INSERT_AS_SQL("Plan", re_json, "")) {
                         Log.d("dumpData", "INSERT JSON SUCCESS");
 
                         Var.PlanObject.truck_license = re_json.getJSONObject(0).getString("truck_license");
@@ -1508,9 +1530,9 @@ public class PlanWork_Activity extends AppCompatActivity {
             }
 
             @Override
-            protected void onPostExecute( String s ) {
+            protected void onPostExecute(String s) {
                 super.onPostExecute(s);
-                if ( IsSuccess == 1 ) {
+                if (IsSuccess == 1) {
 
                 }
             }
@@ -1535,20 +1557,20 @@ public class PlanWork_Activity extends AppCompatActivity {
         }
 
         @Override
-        protected String doInBackground( String... params ) {
+        protected String doInBackground(String... params) {
             try {
                 String username = Var.UserLogin.driver_user;
                 String serial = Var.UserLogin.driver_serial;
 
                 Call<ResponseBody> call = apiInterface.logout(username, serial);
                 Response<ResponseBody> response = call.execute();
-                if ( response.code() == 200 ) {
+                if (response.code() == 200) {
                     String responseRecieved = response.body().string();
-                    if ( responseRecieved != null ) {
-                        if ( !responseRecieved.equals("") ) {
+                    if (responseRecieved != null) {
+                        if (!responseRecieved.equals("")) {
                             JSONArray jsonArray = new JSONArray(responseRecieved);
 
-                            if ( jsonArray.getJSONObject(0).getString("status").equals("Y") ) { // success
+                            if (jsonArray.getJSONObject(0).getString("status").equals("Y")) { // success
                                 Log.d("IsLog", "01");
                                 IsSuccess = 1;
 
@@ -1571,25 +1593,26 @@ public class PlanWork_Activity extends AppCompatActivity {
         }
 
         @Override
-        protected void onProgressUpdate( String... values ) {
+        protected void onProgressUpdate(String... values) {
             super.onProgressUpdate(values);
         }
 
         @Override
-        protected void onPostExecute( String s ) {
+        protected void onPostExecute(String s) {
             super.onPostExecute(s);
 
 
-            if ( IsSuccess == 1 ) {
+            if (IsSuccess == 1) {
                 finish();
             }
         }
+
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if ( pd != null && pd.isShowing() ) {
+        if (pd != null && pd.isShowing()) {
             pd.cancel();
         }
     }
@@ -1602,14 +1625,14 @@ public class PlanWork_Activity extends AppCompatActivity {
     }
 
     @Override
-    public boolean onCreateOptionsMenu( Menu menu ) {
+    public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.munu_main, menu);
         return super.onCreateOptionsMenu(menu);
     }
 
     @Override
-    public boolean onOptionsItemSelected( MenuItem item ) {
+    public boolean onOptionsItemSelected(MenuItem item) {
 
         switch (item.getItemId()) {
             case R.id.logout_menu:
@@ -1617,20 +1640,20 @@ public class PlanWork_Activity extends AppCompatActivity {
 
                 Log.d("NARISLOG", "Logout Alert..");
 
-                if ( netCon.isConnectingToInternet() ) {
+                if (netCon.isConnectingToInternet()) {
                     AlertDialog alert = new AlertDialog.Builder(PlanWork_Activity.this).create();
                     alert.setTitle(R.string.doyouwanttologout);
                     alert.setMessage(getString(R.string.confirm_logout));
                     alert.setButton(getString(R.string.logout), new DialogInterface.OnClickListener() {
                         @Override
-                        public void onClick( DialogInterface dialog, int which ) {
+                        public void onClick(DialogInterface dialog, int which) {
                             new Logout().execute();
                             Log.d("NARISLOG", "Logout confirm..");
                         }
                     });
                     alert.setButton2(getString(R.string.cancel), new DialogInterface.OnClickListener() {
                         @Override
-                        public void onClick( DialogInterface dialog, int which ) {
+                        public void onClick(DialogInterface dialog, int which) {
 
                         }
                     });
@@ -1639,14 +1662,14 @@ public class PlanWork_Activity extends AppCompatActivity {
 
                     Log.d("status_login", "isLogin => " + Var.UserLogin.driver_status_login);
 
-                    if ( Var.UserLogin.driver_status_login.equals("1") ) {
+                    if (Var.UserLogin.driver_status_login.equals("1")) {
 
                         AlertDialog alert = new AlertDialog.Builder(PlanWork_Activity.this).create();
                         alert.setTitle(R.string.doyouwanttologout);
                         alert.setMessage(getString(R.string.confirm_logout));
                         alert.setButton(getString(R.string.logout), new DialogInterface.OnClickListener() {
                             @Override
-                            public void onClick( DialogInterface dialog, int which ) {
+                            public void onClick(DialogInterface dialog, int which) {
 
                                 //update status login
                                 ContentValues cv = new ContentValues();
@@ -1665,7 +1688,7 @@ public class PlanWork_Activity extends AppCompatActivity {
                         });
                         alert.setButton2(getString(R.string.cancel), new DialogInterface.OnClickListener() {
                             @Override
-                            public void onClick( DialogInterface dialog, int which ) {
+                            public void onClick(DialogInterface dialog, int which) {
 
                             }
                         });

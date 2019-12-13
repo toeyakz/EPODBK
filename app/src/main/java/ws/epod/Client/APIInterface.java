@@ -43,4 +43,41 @@ public interface APIInterface {
     Call<ResponseBody> logout( @Query("user") String user,
                                @Query("serial") String serial );
 
+    @POST("/TMS_MSM/services/service.php?func=getReason")
+    Call<ResponseBody> reason();
+
+
+
+//    @POST("/services/service.php?func=login")
+//    Call<List<Login>> login( @Query("user") String username, @Query("pass") String password, @Query("serial") String serial );
+//
+//    @POST("/services/service.php?func=login")
+//    Call<ResponseBody> login2nd( @Query("user") String username, @Query("pass") String password, @Query("serial") String serial );
+//
+//    @POST("/services/service.php?func=setPlan")
+//    Call<ResponseBody> uploadwork( @Query("driver_id") String driver_id,
+//                                   @Body RequestBody body );
+//
+//    @POST("/services/service.php?func=setImg")
+//    Call<ResponseBody> uploadPicture( @Body UploadImage root );
+//
+//    @POST("/services/service.php?func=getPlan")
+//    Call<ResponseBody> downloadWork( @Query("vehicle_id") String vehicle_id,
+//                                     @Query("driver_id") String driver_id,
+//                                     @Query("serial") String serial,
+//                                     @Query("phone_date") String phone_date,
+//                                     @Query("date") String date );
+//
+//    @POST("/services/service.php?func=getConsignment2")
+//    Call<ResponseBody> downloadConsignment( @Query("vehicle_id") String vehicle_id,
+//                                            @Query("date") String date );
+//
+//    @POST("/services/service.php?func=logout")
+//    Call<ResponseBody> logout( @Query("user") String user,
+//                               @Query("serial") String serial );
+//
+//    @POST("/services/service.php?func=getReason")
+//    Call<ResponseBody> reason();
+
+
 }

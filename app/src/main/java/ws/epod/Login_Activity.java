@@ -373,7 +373,7 @@ public class Login_Activity extends AppCompatActivity {
 
                 int IsSuccess = 0;
 
-               // Call<ResponseBody> call = apiInterface.login2nd(user, pass, serail);
+                //Call<ResponseBody> call = apiInterface.login2nd(user, pass, serail);
                 Call<ResponseBody> call = apiInterface.login2nd(user, pass, "c49ac656");
                 try {
                     Response<ResponseBody> response = call.execute();
@@ -668,6 +668,9 @@ public class Login_Activity extends AppCompatActivity {
         sql = "CREATE TABLE IF NOT EXISTS  login (username TEXT(255,0),pass TEXT(255,0),serial TEXT(255,0),driver_id TEXT(255,0)" +
                 ",driver_fname TEXT(255,0),driver_lname TEXT(255,0),vehicle_id TEXT(255,0),vehicle_name TEXT(255,0),status_login TEXT(255,0)" +
                 ",driver_brand TEXT(255,0), modified_date TEXT(255,0),primary key(driver_id));";
+        databaseHelper.execDB(sql);
+
+        sql = "CREATE TABLE IF NOT EXISTS reason (id TEXT(255,0), name TEXT(255,0) , UNIQUE(id));";
         databaseHelper.execDB(sql);
 
 
