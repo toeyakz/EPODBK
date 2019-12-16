@@ -67,7 +67,7 @@
         android:layout_marginTop="8dp"
         android:layout_marginEnd="18dp"
         android:layout_marginBottom="8dp"
-        android:src="@drawable/edit_pencil"
+        android:src="@drawable/edit"
         app:layout_constraintBottom_toTopOf="@+id/comCheck"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />

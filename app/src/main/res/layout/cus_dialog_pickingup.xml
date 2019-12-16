@@ -77,11 +77,12 @@
 
             <ImageView
                 android:id="@+id/imgCommentPick_01"
-                android:layout_width="100dp"
-                android:layout_height="100dp"
+                android:layout_width="64dp"
+                android:layout_height="64dp"
                 android:layout_gravity="center"
                 android:scaleType="centerCrop"
-                app:srcCompat="@mipmap/add_photo"/>
+                android:tint="#C7C7C7"
+                app:srcCompat="@drawable/photo"/>
 
             <ImageView
                 android:id="@+id/imgNewPick01"
@@ -117,11 +118,12 @@
 
             <ImageView
                 android:id="@+id/imgCommentPick_02"
-                android:layout_width="101dp"
-                android:layout_height="102dp"
+                android:layout_width="64dp"
+                android:layout_height="64dp"
                 android:layout_gravity="center"
                 android:scaleType="centerCrop"
-                app:srcCompat="@mipmap/add_photo" />
+                android:tint="#C7C7C7"
+                app:srcCompat="@drawable/photo" />
 
             <ImageView
                 android:id="@+id/imgNewPick02"
@@ -155,11 +157,12 @@
 
             <ImageView
                 android:id="@+id/imgCommentPick_03"
-                android:layout_width="100dp"
-                android:layout_height="100dp"
+                android:layout_width="64dp"
+                android:layout_height="64dp"
                 android:layout_gravity="center"
                 android:scaleType="centerCrop"
-                app:srcCompat="@mipmap/add_photo" />
+                android:tint="#C7C7C7"
+                app:srcCompat="@drawable/photo" />
 
             <ImageView
                 android:id="@+id/imgNewPick03"

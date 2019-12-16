@@ -28,8 +28,7 @@
                 android:layout_height="44dp"
                 android:layout_gravity="center"
                 android:layout_weight="1"
-                android:src="@drawable/delivery_truck"
-                android:tint="#ffffff" />
+                android:src="@drawable/ic_boxxx"/>
         </LinearLayout>
 
         <LinearLayout

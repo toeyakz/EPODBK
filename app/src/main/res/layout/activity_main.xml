@@ -61,7 +61,7 @@
             android:layout_height="15dp"
             android:layout_marginStart="32dp"
             android:layout_marginTop="8dp"
-            android:src="@drawable/ic_date_range_black_24dp"
+            android:src="@drawable/calendar"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/tvMain_address" />
 
@@ -71,7 +71,7 @@
             android:layout_height="16dp"
             android:layout_marginStart="32dp"
             android:layout_marginTop="5dp"
-            android:src="@drawable/ic_location_on_black_24dp"
+            android:src="@drawable/send"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/tvMain_cusName" />
 

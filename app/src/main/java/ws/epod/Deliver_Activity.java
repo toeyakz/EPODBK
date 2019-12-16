@@ -9,11 +9,14 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.graphics.Typeface;
+import android.location.Location;
+import android.location.LocationManager;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Environment;
@@ -21,6 +24,7 @@ import android.os.Handler;
 import android.provider.MediaStore;
 
 import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -102,11 +106,11 @@ public class Deliver_Activity extends AppCompatActivity {
     private static final int IMAGE_02 = 1889;
     private static final int IMAGE_03 = 1890;
 
-    ImageView imgBack_Deliver, imgClose_dialog, imgCommentPick_01, imgNewPick01, imgDeletePick01, imgCommentPick_02, imgNewPick02, imgDeletePick02, imgCommentPick_03, imgNewPick03, imgDeletePick03, imageView8, imgCameraScan;
+    ImageView imgBack_Deliver, imgSave_dialog_Deli, imgClose_dialog, imgCommentPick_01, imgNewPick01, imgDeletePick01, imgCommentPick_02, imgNewPick02, imgDeletePick02, imgCommentPick_03, imgNewPick03, imgDeletePick03, imageView8, imgCameraScan;
 
     EditText edtComment_PICK, edtFineWaybillPick;
 
-    TextView btnEnterWaybillNo, imgSave_dialog_Deli, bnCloseJobDeliver;
+    TextView btnEnterWaybillNo, bnCloseJobDeliver;
 
     String INPUT_WAY = "PLUS";
     String SWICH_EXPAND = "ON";
@@ -147,6 +151,8 @@ public class Deliver_Activity extends AppCompatActivity {
     Animation showLayout, hideLayout;
     LinearLayout layoutJobHome, layoutJobToday;
 
+    private LocationManager client;
+
     @Override
     protected void onResume() {
         super.onResume();
@@ -171,6 +177,7 @@ public class Deliver_Activity extends AppCompatActivity {
         arrayNameImage[0] = "";
         arrayNameImage[1] = "";
         arrayNameImage[2] = "";
+
 
         qrScan = new IntentIntegrator(this);
 
@@ -298,10 +305,18 @@ public class Deliver_Activity extends AppCompatActivity {
                                                         expandableListAdapter.getChildrenCount(i);
                                                         for (int j = 0; j < expandableListAdapter.getChildrenCount(i); j++) {
                                                             final DeliverExpand_Model expandedList = (DeliverExpand_Model) expandableListAdapter.getChild(i, j);
+
+                                                            Log.d("ASfasdjhfk", "doInBackground: " + expandedList.getConsignment() + "box : " + expandedList.getBox_no() + " status: " +
+                                                                    expandedList.getIs_scaned() + " date: " + expandedList.getTime_begin()+ "lat: "+ expandedList.getActual_lat()+ "lon: "+
+                                                                    expandedList.getActual_lon());
 ////
                                                             ContentValues cv = new ContentValues();
 
                                                             cv.put("is_scaned", expandedList.getIs_scaned());
+                                                            cv.put("actual_lat", expandedList.getActual_lat());
+                                                            cv.put("actual_lon", expandedList.getActual_lon());
+                                                            cv.put("time_begin", expandedList.getTime_begin());
+
                                                             if (expandedList.getPicture1() != null) {
                                                                 cv.put("picture1", expandedList.getPicture1());
                                                             }
@@ -428,6 +443,9 @@ public class Deliver_Activity extends AppCompatActivity {
                                 lastPosition = i;
 
                                 ((DeliverExpand_Model) expandableListAdapter.getChild(i, j)).setIs_scaned("1");
+                                ((DeliverExpand_Model) expandableListAdapter.getChild(i, j)).setTime_begin(getdate());
+                                ((DeliverExpand_Model) expandableListAdapter.getChild(i, j)).setActual_lat(getlat());
+                                ((DeliverExpand_Model) expandableListAdapter.getChild(i, j)).setActual_lon(getlon());
                                 Toast.makeText(Deliver_Activity.this, "Checked.", Toast.LENGTH_SHORT).show();
                                 expandableListView.setAdapter(expandableListAdapter);
                                 expandableListView.expandGroup(i);
@@ -449,6 +467,9 @@ public class Deliver_Activity extends AppCompatActivity {
                                 lastPosition = i;
 
                                 ((DeliverExpand_Model) expandableListAdapter.getChild(i, j)).setIs_scaned("0");
+                                ((DeliverExpand_Model) expandableListAdapter.getChild(i, j)).setTime_begin("");
+                                ((DeliverExpand_Model) expandableListAdapter.getChild(i, j)).setActual_lat("");
+                                ((DeliverExpand_Model) expandableListAdapter.getChild(i, j)).setActual_lon("");
                                 Toast.makeText(Deliver_Activity.this, "Un Check.", Toast.LENGTH_SHORT).show();
                                 expandableListView.setAdapter(expandableListAdapter);
                                 expandableListView.expandGroup(i);
@@ -466,6 +487,42 @@ public class Deliver_Activity extends AppCompatActivity {
         });
 
 
+    }
+
+    private String getlat() {
+        String stringLatitude = "";
+        String stringLongitude = "";
+
+        client = (LocationManager) getApplicationContext().getSystemService(Context.LOCATION_SERVICE);
+
+        if ( ContextCompat.checkSelfPermission( this, android.Manifest.permission.ACCESS_COARSE_LOCATION ) != PackageManager.PERMISSION_GRANTED ) {
+        }
+        Location location = client.getLastKnownLocation(client.NETWORK_PROVIDER);
+
+        double latitude = location.getLatitude();
+        double longitude = location.getLongitude();
+
+        stringLatitude = String.valueOf(latitude);
+        stringLongitude = String.valueOf(longitude);
+        return stringLatitude;
+    }
+
+    private String getlon() {
+        String stringLatitude = "";
+        String stringLongitude = "";
+
+        client = (LocationManager) getApplicationContext().getSystemService(Context.LOCATION_SERVICE);
+
+        if ( ContextCompat.checkSelfPermission( this, android.Manifest.permission.ACCESS_COARSE_LOCATION ) != PackageManager.PERMISSION_GRANTED ) {
+        }
+        Location location = client.getLastKnownLocation(client.NETWORK_PROVIDER);
+
+        double latitude = location.getLatitude();
+        double longitude = location.getLongitude();
+
+        stringLatitude = String.valueOf(latitude);
+        stringLongitude = String.valueOf(longitude);
+        return stringLongitude;
     }
 
     private String getdate() {
@@ -977,6 +1034,9 @@ public class Deliver_Activity extends AppCompatActivity {
                 }
             } else {
                 expandedList.setIs_scaned("1");
+                expandedList.setTime_begin(getdate());
+                expandedList.setActual_lat(getlat());
+                expandedList.setActual_lon(getlon());
                 if (expandedList.getIs_scaned().equals("1")) {
                     checkBox.setChecked(true);
                     checkBox.setEnabled(false);
@@ -996,12 +1056,18 @@ public class Deliver_Activity extends AppCompatActivity {
                 if (((CheckBox) v).isChecked()) {
                     imgEditBoxNoPickup.setEnabled(false);
                     expandedList.setIs_scaned("1");
+                    expandedList.setTime_begin(getdate());
+                    expandedList.setActual_lat(getlat());
+                    expandedList.setActual_lon(getlon());
 
 
                 } else {
 
                     imgEditBoxNoPickup.setEnabled(true);
                     expandedList.setIs_scaned("0");
+                    expandedList.setTime_begin("");
+                    expandedList.setActual_lat("");
+                    expandedList.setActual_lon("");
                 }
 
             });
@@ -1056,7 +1122,7 @@ public class Deliver_Activity extends AppCompatActivity {
 
             ImageView imageView9 = convertView.findViewById(R.id.imageView9);
             TextView textView24 = convertView.findViewById(R.id.textView24);
-            TextView pick_pay_type = convertView.findViewById(R.id.pick_pay_type);
+            ImageView pick_pay_type = convertView.findViewById(R.id.pick_pay_type);
             TextView textView25 = convertView.findViewById(R.id.textView25);
             TextView tv_Global_cancel = convertView.findViewById(R.id.tv_Global_cancel);
 
@@ -1179,7 +1245,7 @@ public class Deliver_Activity extends AppCompatActivity {
             tvConsignment_con_dialog = popupInputDialogView2.findViewById(R.id.tvConsignment_con_dialog);
 
             TextView pick_dialog_station_address = popupInputDialogView2.findViewById(R.id.tv_dialog_station_address);
-            TextView pick_dialog_pay_type = popupInputDialogView2.findViewById(R.id.pick_dialog_pay_type);
+            ImageView pick_dialog_pay_type = popupInputDialogView2.findViewById(R.id.pick_dialog_pay_type);
             TextView pick_dialog_pay_type_credit = popupInputDialogView2.findViewById(R.id.tv_dialog_pay_type_credit);
             TextView pick_summary = popupInputDialogView2.findViewById(R.id.tv_summary);
             TextView tv_dialog_thb = popupInputDialogView2.findViewById(R.id.tv_dialog_thb);
@@ -1565,12 +1631,18 @@ public class Deliver_Activity extends AppCompatActivity {
 
                         picking.setComment(commentOfspinner);
                         picking.setIs_scaned("2");
+                        picking.setTime_begin(getdate());
+                        picking.setActual_lat(getlat());
+                        picking.setActual_lon(getlon());
                     } else {
                         cv.put("comment", "");
                         cv.put("is_scaned", "0");
 
                         picking.setComment("");
                         picking.setIs_scaned("0");
+                        picking.setTime_begin("");
+                        picking.setActual_lat("");
+                        picking.setActual_lon("");
                     }
 
 //                    cv.put("modified_date", getdate());

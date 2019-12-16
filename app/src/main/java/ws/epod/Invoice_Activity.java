@@ -73,7 +73,8 @@ public class Invoice_Activity extends AppCompatActivity {
     int positionScll = 0;
 
 
-    TextView sign, tvNoData, tvUseComment;
+    TextView tvNoData, tvUseComment;
+    ImageView sign;
 
     View popupInputDialogView = null;
     AlertDialog alertDialog;

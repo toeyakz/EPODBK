@@ -14,6 +14,9 @@ public class DeliverExpand_Model {
     private String picture1 = "";
     private String picture2 = "";
     private String picture3 = "";
+    private String time_begin = "";
+    private String actual_lat = "";
+    private String actual_lon = "";
 
 
     public DeliverExpand_Model( String box_no, String waybil_no, String is_scaned, String row_number, String consignment, String delivery_no, String plan_seq, String comment
@@ -31,6 +34,30 @@ public class DeliverExpand_Model {
         this.picture3 = picture3;
     }
 
+
+    public String getTime_begin() {
+        return time_begin;
+    }
+
+    public void setTime_begin(String time_begin) {
+        this.time_begin = time_begin;
+    }
+
+    public String getActual_lat() {
+        return actual_lat;
+    }
+
+    public void setActual_lat(String actual_lat) {
+        this.actual_lat = actual_lat;
+    }
+
+    public String getActual_lon() {
+        return actual_lon;
+    }
+
+    public void setActual_lon(String actual_lon) {
+        this.actual_lon = actual_lon;
+    }
 
     public String getComment() {
         return comment;

@@ -120,10 +120,11 @@
 
                 <ImageView
                     android:id="@+id/dialog_img_credit"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
                     android:paddingTop="5dp"
-                    android:src="@drawable/ic_credit_card_black_24dp" />
+                    android:layout_gravity="bottom"
+                    android:src="@drawable/credit" />
 
                 <TextView
                     android:id="@+id/tv_dialog_pay_type_credit"
@@ -137,20 +138,13 @@
                     android:paddingRight="2dp"
                     android:text="Credit" />
 
-                <TextView
+                <ImageView
                     android:id="@+id/pick_dialog_pay_type"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:layout_marginEnd="8dp"
-                    android:background="#FF0000"
-                    android:paddingStart="2dp"
-                    android:paddingLeft="2dp"
-                    android:paddingEnd="2dp"
-                    android:paddingRight="2dp"
-                    android:text="Cash"
-                    android:textColor="#fff"
-                    android:visibility="gone" />
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@drawable/cash"
+                    android:layout_gravity="bottom"
+                    android:visibility="gone"/>
 
                 <TextView
                     android:id="@+id/tv_dialog_thb"

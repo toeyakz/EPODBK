@@ -55,6 +55,8 @@ public class JobAdapter extends RecyclerView.Adapter<JobAdapter.ViewHolder> {
         viewHolder.tvCustomer_name_Job.setText(list.get(i).getStation_name());
         viewHolder.tvStation_address_job.setText(list.get(i).getStation_address());
         viewHolder.tvPlan_seq_Job.setText(String.valueOf(list.get(i).getPlan_seq()) + ".");
+        viewHolder.textView20.setText(context.getString(R.string.appoint) + ": ");
+        viewHolder.textView17.setText(context.getString(R.string.address) + ": ");
 
         Log.d("sfasef24", "onBindViewHolder: " + list.get(i).getPlan_seq());
 
@@ -139,7 +141,7 @@ public class JobAdapter extends RecyclerView.Adapter<JobAdapter.ViewHolder> {
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
 
-        TextView tvCustomer_name_Job, tvStation_address_job, tvPlan_in_Job, tvPlan_seq_Job, tvStatusJob;
+        TextView tvCustomer_name_Job, tvStation_address_job, tvPlan_in_Job, tvPlan_seq_Job, tvStatusJob, textView20, textView17;
 
         public ViewHolder(View itemView) {
             super(itemView);
@@ -149,6 +151,8 @@ public class JobAdapter extends RecyclerView.Adapter<JobAdapter.ViewHolder> {
             tvPlan_seq_Job = itemView.findViewById(R.id.tvPlan_seq_Job);
             tvPlan_in_Job = itemView.findViewById(R.id.tvPlan_in_Job);
             tvStatusJob = itemView.findViewById(R.id.tvStatusJob);
+            textView20 = itemView.findViewById(R.id.textView20);
+            textView17 = itemView.findViewById(R.id.textView17);
 
         }
     }

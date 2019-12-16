@@ -1,5 +1,6 @@
 package ws.epod;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -9,11 +10,14 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.graphics.Typeface;
+import android.location.Location;
+import android.location.LocationManager;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Environment;
@@ -21,6 +25,8 @@ import android.os.Handler;
 import android.provider.MediaStore;
 
 import androidx.annotation.Nullable;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -100,7 +106,7 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
     HashMap<String, ArrayList<PickingUpEexpand_Model>> expandableListDetail;
 
     ImageView imgClose_dialog, imgCommentPick_01, imgCommentPick_02, imgCommentPick_03, imgBack_test,
-            imgNewPick01, imgDeletePick01, imgNewPick02, imgDeletePick02, imgNewPick03, imgDeletePick03, imageView8, imgCameraScan, imgDetailConsignNo;
+            imgNewPick01, imgDeletePick01, imgNewPick02, imgDeletePick02, imgNewPick03, imgDeletePick03, imageView8, imgCameraScan, savePickingUp;
     EditText edtComment_PICK, edtFineWaybillPick;
     Button btnSaveComent_PICK;
 
@@ -108,7 +114,7 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
     AlertDialog alertDialog;
     AlertDialog alertDialog2;
 
-    TextView bnCloseJobPick, btnEnterWaybillNo, savePickingUp;
+    TextView bnCloseJobPick, btnEnterWaybillNo;
 
     String INPUT_WAY = "PLUS";
     String SWICH_EXPAND = "OFF";
@@ -146,7 +152,7 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
     LinearLayout layoutJobHome, layoutJobToday;
 
     int arrayIsScan = 0;
-
+    private LocationManager client;
 
     @Override
     protected void onResume() {
@@ -290,9 +296,18 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
                                                         for (int j = 0; j < expandableListAdapter.getChildrenCount(i); j++) {
                                                             final PickingUpEexpand_Model expandedList = (PickingUpEexpand_Model) expandableListAdapter.getChild(i, j);
 
+                                                            Log.d("ASfasdjhfk", "doInBackground: " + expandedList.getConsignment() + "box : " + expandedList.getBox_no() + " status: " +
+                                                                    expandedList.getIs_scaned() + " date: " + expandedList.getTime_begin()+ "lat: "+ expandedList.getActual_lat()+ "lon: "+
+                                                                    expandedList.getActual_lon());
+
+
+
                                                             ContentValues cv = new ContentValues();
                                                             ContentValues cv2 = new ContentValues();
                                                             cv.put("is_scaned", expandedList.getIs_scaned());
+                                                            cv.put("actual_lat", expandedList.getActual_lat());
+                                                            cv.put("actual_lon", expandedList.getActual_lon());
+                                                            cv.put("time_begin", expandedList.getTime_begin());
                                                             if (expandedList.getPicture1() != null) {
                                                                 cv.put("picture1", expandedList.getPicture1());
                                                                 cv2.put("name_img", expandedList.getPicture1());
@@ -423,6 +438,9 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
                                 lastPosition = i;
 
                                 ((PickingUpEexpand_Model) expandableListAdapter.getChild(i, j)).setIs_scaned("1");
+                                ((PickingUpEexpand_Model) expandableListAdapter.getChild(i, j)).setTime_begin(getdate());
+                                ((PickingUpEexpand_Model) expandableListAdapter.getChild(i, j)).setActual_lat(getlat());
+                                ((PickingUpEexpand_Model) expandableListAdapter.getChild(i, j)).setActual_lon(getlon());
 
                                 Toast.makeText(PinkingUpMaster_Activity.this, "Checked.", Toast.LENGTH_SHORT).show();
                                 //getSQLite();
@@ -446,6 +464,9 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
 
                                 lastPosition = i;
                                 ((PickingUpEexpand_Model) expandableListAdapter.getChild(i, j)).setIs_scaned("0");
+                                ((PickingUpEexpand_Model) expandableListAdapter.getChild(i, j)).setTime_begin("");
+                                ((PickingUpEexpand_Model) expandableListAdapter.getChild(i, j)).setActual_lat("");
+                                ((PickingUpEexpand_Model) expandableListAdapter.getChild(i, j)).setActual_lon("");
                                 Toast.makeText(PinkingUpMaster_Activity.this, "Un Check.", Toast.LENGTH_SHORT).show();
 
                                 // getSQLite();
@@ -467,6 +488,42 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
         });
 
 
+    }
+
+    private String getlat() {
+        String stringLatitude = "";
+        String stringLongitude = "";
+
+        client = (LocationManager) getApplicationContext().getSystemService(Context.LOCATION_SERVICE);
+
+        if ( ContextCompat.checkSelfPermission( this, android.Manifest.permission.ACCESS_COARSE_LOCATION ) != PackageManager.PERMISSION_GRANTED ) {
+        }
+        Location location = client.getLastKnownLocation(client.NETWORK_PROVIDER);
+
+        double latitude = location.getLatitude();
+        double longitude = location.getLongitude();
+
+        stringLatitude = String.valueOf(latitude);
+        stringLongitude = String.valueOf(longitude);
+        return stringLatitude;
+    }
+
+    private String getlon() {
+        String stringLatitude = "";
+        String stringLongitude = "";
+
+        client = (LocationManager) getApplicationContext().getSystemService(Context.LOCATION_SERVICE);
+
+        if ( ContextCompat.checkSelfPermission( this, android.Manifest.permission.ACCESS_COARSE_LOCATION ) != PackageManager.PERMISSION_GRANTED ) {
+        }
+        Location location = client.getLastKnownLocation(client.NETWORK_PROVIDER);
+
+        double latitude = location.getLatitude();
+        double longitude = location.getLongitude();
+
+        stringLatitude = String.valueOf(latitude);
+        stringLongitude = String.valueOf(longitude);
+        return stringLongitude;
     }
 
     private String getdate() {
@@ -1081,6 +1138,10 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
                 }
             } else {
                 expandedList.setIs_scaned("1");
+                expandedList.setTime_begin(getdate());
+                expandedList.setActual_lon(getlat());
+                expandedList.setActual_lon(getlon());
+
                 if (expandedList.getIs_scaned().equals("1")) {
                     checkBox.setChecked(true);
                     checkBox.setEnabled(false);
@@ -1098,11 +1159,17 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
                 if (((CheckBox) v).isChecked()) {
                     imgEditBoxNoPickup.setEnabled(false);
                     expandedList.setIs_scaned("1");
+                    expandedList.setTime_begin(getdate());
+                    expandedList.setActual_lat(getlat());
+                    expandedList.setActual_lon(getlon());
 
                 } else {
 
                     imgEditBoxNoPickup.setEnabled(true);
                     expandedList.setIs_scaned("0");
+                    expandedList.setTime_begin("");
+                    expandedList.setActual_lat("");
+                    expandedList.setActual_lon("");
 
                 }
 
@@ -1165,7 +1232,7 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
 
             ImageView imageView9 = convertView.findViewById(R.id.imageView9);
             TextView textView24 = convertView.findViewById(R.id.textView24);
-            TextView pick_pay_type = convertView.findViewById(R.id.pick_pay_type);
+            ImageView pick_pay_type = convertView.findViewById(R.id.pick_pay_type);
             TextView textView25 = convertView.findViewById(R.id.textView25);
             TextView tv_Global_cancel = convertView.findViewById(R.id.tv_Global_cancel);
 
@@ -1294,7 +1361,7 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
             // mTabHost = popupInputDialogView2.findViewById(android.R.id.tabhost)
             tvConsignment_con_dialog = popupInputDialogView2.findViewById(R.id.tvConsignment_con_dialog);
             TextView pick_dialog_station_address = popupInputDialogView2.findViewById(R.id.tv_dialog_station_address);
-            TextView pick_dialog_pay_type = popupInputDialogView2.findViewById(R.id.pick_dialog_pay_type);
+            ImageView pick_dialog_pay_type = popupInputDialogView2.findViewById(R.id.pick_dialog_pay_type);
             TextView pick_dialog_pay_type_credit = popupInputDialogView2.findViewById(R.id.tv_dialog_pay_type_credit);
             TextView pick_summary = popupInputDialogView2.findViewById(R.id.tv_summary);
             TextView tv_dialog_thb = popupInputDialogView2.findViewById(R.id.tv_dialog_thb);
@@ -1310,9 +1377,9 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
 
             tvConsignment_con_dialog.setText("Cons.No: " + consignment);
             pick_summary.setText(box_total + " Boxs\n" + global_total + " Unit(Global)");
-            tv3363.setText(getApplicationContext().getString(R.string.address)+" : ");
-            tv3364.setText(getApplicationContext().getString(R.string.pay_type)+" : ");
-            tv3365.setText(getApplicationContext().getString(R.string.summary)+" : ");
+            tv3363.setText(getApplicationContext().getString(R.string.address) + " : ");
+            tv3364.setText(getApplicationContext().getString(R.string.pay_type) + " : ");
+            tv3365.setText(getApplicationContext().getString(R.string.summary) + " : ");
 
             if (!station_address.equals("")) {
                 pick_dialog_station_address.setText(station_address);
@@ -1672,6 +1739,9 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
                         cv.put("is_scaned", "2");
                         picking.setComment(commentOfspinner);
                         picking.setIs_scaned("2");
+                        picking.setTime_begin(getdate());
+                        picking.setActual_lat(getlat());
+                        picking.setActual_lon(getlon());
                         cv.put("comment", commentOfspinner);
                     } else {
                         cv.put("comment", "");
@@ -1679,6 +1749,9 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
 
                         picking.setComment("");
                         picking.setIs_scaned("0");
+                        picking.setTime_begin("");
+                        picking.setActual_lat("");
+                        picking.setActual_lon("");
                     }
 
 

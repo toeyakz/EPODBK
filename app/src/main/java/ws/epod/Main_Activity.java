@@ -195,7 +195,7 @@ public class Main_Activity extends LocalizationActivity {
         list = new ArrayList<>();
         if ( !consignment_no_pick.equals("0") ) {
             MenuObject mo = new MenuObject();
-            mo.IMAGE = R.drawable.box;
+            mo.IMAGE = R.drawable.ic_boxxx;
             mo.TEXT = "Picking Up";
             mo.CONSIGNMENT = consignment_no_pick;
             mo.BOXES = boxes_pick;
@@ -209,7 +209,7 @@ public class Main_Activity extends LocalizationActivity {
 
         if ( !consignment_no_deli.equals("0") ) {
             MenuObject mo2 = new MenuObject();
-            mo2.IMAGE = R.drawable.delivery_truck;
+            mo2.IMAGE = R.drawable.ic_delivery_truck1;
             mo2.TEXT = "Deliver";
             mo2.CONSIGNMENT = consignment_no_deli;
             mo2.BOXES = boxes_deli;
