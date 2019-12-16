@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">EPOD2ND</string>
+    <string name="app_name">EPOD</string>
     <string name="delivery_plan">Delivery Plan</string>
     <string name="login">Login</string>
     <string name="password">Password</string>

@@ -57,7 +57,7 @@ public class Signature_Activity extends AppCompatActivity {
     DatabaseHelper databaseHelper;
     NarisBaseValue narisv;
 
-    String getDate = "";
+   // String getDate = "";
 
 
     @Override
@@ -70,9 +70,9 @@ public class Signature_Activity extends AppCompatActivity {
         netCon = new ConnectionDetector(getApplicationContext());
         databaseHelper = new DatabaseHelper(getApplicationContext());
 
-        String pattern = "yyyy-MM-dd kk:mm:ss";
-        SimpleDateFormat sdf = new SimpleDateFormat(pattern, new Locale("en", "th"));
-        getDate = sdf.format(Calendar.getInstance().getTime());
+//        String pattern = "yyyy-MM-dd kk:mm:ss";
+//        SimpleDateFormat sdf = new SimpleDateFormat(pattern, new Locale("en", "th"));
+//        getDate = sdf.format(Calendar.getInstance().getTime());
 
         save_button = findViewById(R.id.save_button);
         clear_button = findViewById(R.id.clear_button);
@@ -135,6 +135,16 @@ public class Signature_Activity extends AppCompatActivity {
         }
     }
 
+    private String getdate() {
+
+        String temp = "";
+        String pattern = "yyyy-MM-dd kk:mm:ss";
+        SimpleDateFormat sdf = new SimpleDateFormat(pattern, new Locale("en", "th"));
+        temp = sdf.format(Calendar.getInstance().getTime());
+
+        return temp;
+    }
+
     public boolean addJpgSignatureToGallery(Bitmap signature) {
         boolean result = false;
         try {
@@ -178,7 +188,9 @@ public class Signature_Activity extends AppCompatActivity {
                     jsonInsertPicSign.put("invoice_no", arrayList.get(i).getDeli_note_no());
                     jsonInsertPicSign.put("status_load", arrayList.get(i).getStatus());
                     jsonInsertPicSign.put("pic_sign_load", image.getName());
-                    jsonInsertPicSign.put("date_sign_load", getDate);
+                    jsonInsertPicSign.put("date_sign_load", getdate());
+                    jsonInsertPicSign.put("status_upload_invoice", "0");
+
 
 
                     if (!arrayList.get(i).getComment().equals("")) {
@@ -210,6 +222,11 @@ public class Signature_Activity extends AppCompatActivity {
                             Log.d("PlanWorkLOG", "FAIL save Pic_sign.");
                         }
                     }
+
+                    ContentValues cv2 = new ContentValues();
+                    cv2.put("name_img", image.getName());
+                    cv2.put("status_img", "0");
+                    databaseHelper.db().insert("image_invoice", null, cv2);
 
 
                 } catch (JSONException e) {

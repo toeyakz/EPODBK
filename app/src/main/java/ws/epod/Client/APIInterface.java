@@ -24,6 +24,8 @@ public interface APIInterface {
     @POST("/TMS_MSM/services/service.php?func=setPlan")
     Call<ResponseBody> uploadwork( @Query("driver_id") String driver_id,
                                    @Body RequestBody body );
+    @POST("/TMS_MSM/services/service.php?func=setInvoice")
+    Call<ResponseBody> uploadInvoice(@Body RequestBody body );
 
     @POST("/TMS_MSM/services/service.php?func=setImg")
     Call<ResponseBody> uploadPicture( @Body UploadImage root );

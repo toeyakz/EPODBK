@@ -54,7 +54,7 @@ public class Signature_Deliver_Activity extends AppCompatActivity {
     private DatabaseHelper databaseHelper;
     private NarisBaseValue narisv;
 
-    String getDate = "";
+   // String getDate = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,9 +65,9 @@ public class Signature_Deliver_Activity extends AppCompatActivity {
         netCon = new ConnectionDetector(getApplicationContext());
         databaseHelper = new DatabaseHelper(getApplicationContext());
 
-        String pattern = "yyyy-MM-dd kk:mm:ss";
-        SimpleDateFormat sdf = new SimpleDateFormat(pattern, new Locale("en", "th"));
-        getDate = sdf.format(Calendar.getInstance().getTime());
+//        String pattern = "yyyy-MM-dd kk:mm:ss";
+//        SimpleDateFormat sdf = new SimpleDateFormat(pattern, new Locale("en", "th"));
+//        getDate = sdf.format(Calendar.getInstance().getTime());
 
         save_button = findViewById(R.id.save_button);
         clear_button = findViewById(R.id.clear_button);
@@ -127,6 +127,16 @@ public class Signature_Deliver_Activity extends AppCompatActivity {
         }
     }
 
+    private String getdate() {
+
+        String temp = "";
+        String pattern = "yyyy-MM-dd kk:mm:ss";
+        SimpleDateFormat sdf = new SimpleDateFormat(pattern, new Locale("en", "th"));
+        temp = sdf.format(Calendar.getInstance().getTime());
+
+        return temp;
+    }
+
     public boolean addJpgSignatureToGallery(Bitmap signature) {
         boolean result = false;
         try {
@@ -168,7 +178,8 @@ public class Signature_Deliver_Activity extends AppCompatActivity {
                     jsonInsertPicSign.put("invoice_no", arrayList.get(i).getDeli_note_no());
                     jsonInsertPicSign.put("status_unload", arrayList.get(i).getStatus());
                     jsonInsertPicSign.put("pic_sign_unload", image.getName());
-                    jsonInsertPicSign.put("date_sign_unload", getDate);
+                    jsonInsertPicSign.put("date_sign_unload", getdate());
+                    jsonInsertPicSign.put("status_upload_invoice", "0");
 
                     if (!arrayList.get(i).getComment().equals("")) {
                         jsonInsertComment.put("consignment_no", arrayList.get(i).getConsignment_no());
@@ -198,6 +209,11 @@ public class Signature_Deliver_Activity extends AppCompatActivity {
                         Log.d("PlanWorkLOG", "FAIL save Pic_sign.");
                     }
 
+
+                    ContentValues cv2 = new ContentValues();
+                    cv2.put("name_img", image.getName());
+                    cv2.put("status_img", "0");
+                    databaseHelper.db().insert("image_invoice", null, cv2);
 
                 } catch (JSONException e) {
                     e.printStackTrace();

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">EPOD2ND</string>
+    <string name="app_name">EPOD</string>
     <string name="delivery_plan">แผนการจัดส่ง</string>
     <string name="login">เข้าสู่ระบบ</string>
     <string name="password">รหัสผ่าน</string>

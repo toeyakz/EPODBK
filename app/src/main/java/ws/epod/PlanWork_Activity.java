@@ -9,6 +9,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.database.Cursor;
+import android.database.SQLException;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
@@ -481,8 +482,83 @@ public class PlanWork_Activity extends AppCompatActivity {
         }
     }
 
-    public class UploadWork2ND extends AsyncTask<String, String, String> {
 
+    public class uploadInvoice extends AsyncTask<String, String, String> {
+        int IsSuccess = 1;
+
+        @Override
+        protected String doInBackground(String... strings) {
+
+            JSONObject Root = new JSONObject();
+            Log.d("statusUploadInvoice", "doInBackground: 1");
+            try {
+                String sql = "select id, (select delivery_no from plan) as delivery_no, order_no, consignment_no, invoice_no, pic_sign_load, pic_sign_unload, date_sign_load, date_sign_unload from pic_sign";
+                Cursor cursor = databaseHelper.selectDB(sql);
+                JSONArray ContactArray = new JSONArray();
+
+                int i = 0;
+                cursor.moveToFirst();
+                if (cursor != null) {
+                    if (cursor.getCount() > 0) {
+                        do {
+
+                            JSONObject contact = new JSONObject();
+
+                            contact.put("id", cursor.getString(cursor.getColumnIndex("id")));
+                            contact.put("vehicle_id", Var.UserLogin.driver_vehicle_id);
+                            contact.put("delivery_no", cursor.getString(cursor.getColumnIndex("delivery_no")));
+                            contact.put("order_no", cursor.getString(cursor.getColumnIndex("order_no")));
+                            contact.put("consignment_no", cursor.getString(cursor.getColumnIndex("consignment_no")));
+                            contact.put("invoice_no", cursor.getString(cursor.getColumnIndex("invoice_no")));
+                            contact.put("pic_sign_load", cursor.getString(cursor.getColumnIndex("pic_sign_load")));
+                            contact.put("pic_sign_unload", cursor.getString(cursor.getColumnIndex("pic_sign_unload")));
+                            contact.put("date_sign_load", cursor.getString(cursor.getColumnIndex("date_sign_load")));
+                            contact.put("date_sign_unload", cursor.getString(cursor.getColumnIndex("date_sign_unload")));
+
+                            ContactArray.put(i, contact);
+                            i++;
+
+                        } while (cursor.moveToNext());
+
+                        Root.put("data", ContactArray);
+                        Log.d("statusUploadInvoice", "doInBackground: " + Root.toString());
+
+                        String rootToString = Root.toString();
+                        RequestBody body = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), rootToString);
+
+//                        Call<ResponseBody> call = apiInterface.uploadInvoice(body);
+//                        Response<ResponseBody> response = call.execute();
+//                        if (response.code() == 200) {
+//                            String received = response.body().string();
+//                            if (received != null) {
+//                                if (!received.equals("")) {
+//                                    JSONArray jsonArray = new JSONArray(received);
+//                                    if (jsonArray.getJSONObject(0).getString("status").equals("Y")) {
+//
+//
+//
+//                                        IsSuccess = 1;
+//                                    } else {
+//                                        IsSuccess = 0;
+//                                    }
+//                                }
+//
+//                            }
+//                        }
+
+
+                    }
+                }
+
+            } catch (Exception e) {
+                Log.d("statusUploadInvoice", "doInBackground: " + e.getMessage());
+            }
+            return null;
+        }
+    }
+
+
+    public class UploadWork2ND extends AsyncTask<String, String, String> {
 
         int IsSuccess = 1;
 
@@ -751,6 +827,7 @@ public class PlanWork_Activity extends AppCompatActivity {
                             .setAction("Action", null).show();
                     break;
                 case 1:
+                    new uploadInvoice().execute();
                     new DownloadWork().execute();
                     break;
                 case 2:
@@ -767,6 +844,27 @@ public class PlanWork_Activity extends AppCompatActivity {
         }
     }
 
+    private void deleteJobAndImage() {
+        try {
+            String myTable = " Plan ";
+            String sql = "DELETE FROM" + myTable + "WHERE delivery_date <= date('now','-7 day')";
+            databaseHelper.db().execSQL(sql);
+
+            File file = new File("/storage/emulated/0/Android/data/ws.epod/files/Pictures/");
+            Calendar time = Calendar.getInstance();
+            time.add(Calendar.DAY_OF_YEAR, -7);
+            Date lastModified = new Date(file.lastModified());
+            if (lastModified.before(time.getTime())) {
+                //  file.delete();
+            }
+
+
+        } catch (SQLException e) {
+            // Log.d("sdfjkhasd", "deleteJobAndImage: "+e);
+        }
+
+    }
+
     public class DownloadWork extends AsyncTask<String, String, String> {
 
         int IsSuccess = 1;
@@ -776,8 +874,11 @@ public class PlanWork_Activity extends AppCompatActivity {
 
             try {
 
-                String max_modified_date = "";
+                //ลบงานหลัง 7 วัน
+                deleteJobAndImage();
 
+
+                String max_modified_date = "";
 
                 String sql_getMaxModifild_date = "select MAX(modified_date) as max_modified_date from Plan ";
                 Cursor cursor_etMaxModifild_date = databaseHelper.selectDB(sql_getMaxModifild_date);
@@ -802,7 +903,7 @@ public class PlanWork_Activity extends AppCompatActivity {
 //                Log.d("PlanWorkLOG", url);
                 // JSONArray GETJSON = narisv.getJsonFromUrl_reJsonArray(url);
 
-                Call<ResponseBody> call = apiInterface.downloadWork(Var.UserLogin.driver_vehicle_id, Var.UserLogin.driver_id, Var.UserLogin.driver_serial, getDate, "");
+                Call<ResponseBody> call = apiInterface.downloadWork(Var.UserLogin.driver_vehicle_id, Var.UserLogin.driver_id, Var.UserLogin.driver_serial, getDate, max_modified_date);
                 Response<ResponseBody> response = call.execute();
                 if (response.code() == 200) {
                     String responseRecieved = response.body().string();
