@@ -306,7 +306,7 @@ public class Invoice_Activity extends AppCompatActivity {
             for (int i = 0; i < invAdapter.getItemCount(); i++) {
                 Sign_Model sign_model = invAdapter.list.get(i);
 
-                if (!sign_model.getStatus().equals("")) {
+                if (!sign_model.getStatus().equals("") && sign_model.getSignature().equals("")) {
                     signObjectClasses.add(new Sign_Model(sign_model.getConsignment_no(), sign_model.getDeli_note_no(), sign_model.getStatus()
                             , sign_model.getSignature(), sign_model.getOrder_no(), sign_model.getDelivery_no(), sign_model.getComment()));
                 }
@@ -903,6 +903,7 @@ public class Invoice_Activity extends AppCompatActivity {
 
                                     databaseHelper.db().delete("pic_sign", "order_no = ? and pic_sign_load <> ? ", new String[]{order_no, "''"});
                                     databaseHelper.db().delete("comment_invoice", "order_no = ? and comment <> ?", new String[]{order_no, "''"});
+                                    databaseHelper.db().delete("image_invoice", "name_img = ?", new String[]{signature});
 
                                     File file = new File("/storage/emulated/0/Android/data/ws.epod/files/Signature/" + signature);
                                     file.delete();

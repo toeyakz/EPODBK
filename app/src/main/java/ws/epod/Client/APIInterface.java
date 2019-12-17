@@ -28,6 +28,9 @@ public interface APIInterface {
     @POST("/TMS_MSM/services/service.php?func=setInvoice")
     Call<ResponseBody> uploadInvoice(@Body RequestBody body );
 
+    @POST("/TMS_MSM/services/service.php?func=setComment")
+    Call<ResponseBody> uploadComment(@Body RequestBody body );
+
     @POST("/TMS_MSM/services/service.php?func=setImgInvoice")
     Call<ResponseBody> uploadPicture( @Body UploadImage root );
 

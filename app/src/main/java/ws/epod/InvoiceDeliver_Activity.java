@@ -41,6 +41,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -290,7 +291,7 @@ public class InvoiceDeliver_Activity extends AppCompatActivity {
             for (int i = 0; i < invAdapter.getItemCount(); i++) {
                 Sign_Model sign_model = invAdapter.list.get(i);
 
-                if (!sign_model.getStatus().equals("")) {
+                if (!sign_model.getStatus().equals("") && sign_model.getSignature().equals("")) {
                     signObjectClasses.add(new Sign_Model(sign_model.getConsignment_no(), sign_model.getDeli_note_no(), sign_model.getStatus()
                             , sign_model.getSignature(), sign_model.getOrder_no(), sign_model.getDelivery_no(), sign_model.getComment()));
                 }
@@ -798,7 +799,7 @@ public class InvoiceDeliver_Activity extends AppCompatActivity {
             holder.imageView11.setOnClickListener(view -> {
                 Animation animation = AnimationUtils.loadAnimation(context, R.anim.alpha);
                 holder.imageView11.startAnimation(animation);
-                showDialogCancel(list.get(position).getConsignment_no(), list.get(position).getDeli_note_no(), list.get(position).getOrder_no());
+                showDialogCancel(list.get(position).getConsignment_no(), list.get(position).getDeli_note_no(), list.get(position).getOrder_no(), list.get(position).getSignature(), position);
             });
 
 
@@ -867,7 +868,7 @@ public class InvoiceDeliver_Activity extends AppCompatActivity {
 
     }
 
-    private void showDialogCancel(String cons, String deli_note, String order_no) {
+    private void showDialogCancel(String cons, String deli_note, String order_no, String signature, int position) {
         final AlertDialog.Builder alertbox = new AlertDialog.Builder(this);
         alertbox.setTitle(getString(R.string.alert));
         alertbox.setMessage("Cancel ?");
@@ -890,6 +891,11 @@ public class InvoiceDeliver_Activity extends AppCompatActivity {
 
                                     databaseHelper.db().delete("pic_sign", "order_no = ? and pic_sign_unload <> ? ", new String[]{order_no, "''"});
                                     databaseHelper.db().delete("comment_invoice", "order_no = ? and comment_deliver <> ?", new String[]{order_no, "''"});
+                                    databaseHelper.db().delete("image_invoice", "name_img = ?", new String[]{signature});
+
+                                    File file = new File("/storage/emulated/0/Android/data/ws.epod/files/Signature/" + signature);
+                                    file.delete();
+
                                 } catch (Exception e) {
 
                                 }
@@ -902,6 +908,7 @@ public class InvoiceDeliver_Activity extends AppCompatActivity {
                                 super.onPostExecute(aVoid);
                                 //invAdapter.notifyDataSetChanged();
                                 setView();
+                                rvInv.scrollToPosition(position);
                             }
                         }.execute();
 

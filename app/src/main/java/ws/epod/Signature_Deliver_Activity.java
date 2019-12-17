@@ -55,7 +55,7 @@ public class Signature_Deliver_Activity extends AppCompatActivity {
     private DatabaseHelper databaseHelper;
     private NarisBaseValue narisv;
 
-   // String getDate = "";
+    // String getDate = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -191,11 +191,12 @@ public class Signature_Deliver_Activity extends AppCompatActivity {
                         jsonInsertComment.put("comment_deliver", arrayList.get(i).getComment());
                         jsonInsertComment.put("status_unload", arrayList.get(i).getStatus());
                         jsonInsertComment.put("delivery_no", arrayList.get(i).getDelivery_no());
+                        jsonInsertComment.put("status_upload_comment", "0");
                     }
 
                     ContentValues cv = new ContentValues();
                     cv.put("status_order_no", arrayList.get(i).getStatus());
-                    databaseHelper.db().update("Plan", cv, "consignment_no= '" + arrayList.get(i).getConsignment_no() + "' and order_no='"+arrayList.get(i).getOrder_no()+"'" +
+                    databaseHelper.db().update("Plan", cv, "consignment_no= '" + arrayList.get(i).getConsignment_no() + "' and order_no='" + arrayList.get(i).getOrder_no() + "'" +
                             " and activity_type = 'UNLOAD' and trash = '0'", null);
 
 
@@ -228,7 +229,7 @@ public class Signature_Deliver_Activity extends AppCompatActivity {
             sharedPrefs.edit().clear();
 
 
-            // saveBitmapToJPG(signature, image);
+            saveBitmapToJPG(signature, image);
 
 
         } catch (IOException e) {

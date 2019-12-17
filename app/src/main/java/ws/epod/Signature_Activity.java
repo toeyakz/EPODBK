@@ -58,7 +58,7 @@ public class Signature_Activity extends AppCompatActivity {
     DatabaseHelper databaseHelper;
     NarisBaseValue narisv;
 
-   // String getDate = "";
+    // String getDate = "";
 
 
     @Override
@@ -150,16 +150,13 @@ public class Signature_Activity extends AppCompatActivity {
     public boolean addJpgSignatureToGallery(Bitmap signature) {
         boolean result = false;
         try {
-//            ArrayList<String> consignment_no = null;
-//            ArrayList<String> order_no = null;
-//            ArrayList<String> invoice_no = null;
-            //  ArrayList<SignObjectClass> list = (ArrayList<SignObjectClass>) getIntent().getSerializableExtra("signObjectClasses");
 
             SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
             Gson gson = new Gson();
             String json = sharedPrefs.getString("MyObject", "");
             Type type = new TypeToken<ArrayList<Sign_Model>>() {
             }.getType();
+
             ArrayList<Sign_Model> arrayList = gson.fromJson(json, type);
 
             String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
@@ -171,19 +168,17 @@ public class Signature_Activity extends AppCompatActivity {
                     storageDir
             );
 
+
+
             for (int i = 0; i < arrayList.size(); i++) {
-
-
                 Log.d("Asfjshdflkasdfasd", "addJpgSignatureToGallery: " + arrayList.get(i).getOrder_no() + " > " + arrayList.get(i).getStatus() + " comment:" + arrayList.get(i).getComment());
 
-
-                JSONObject jsonInsertPicSign = new JSONObject();
-                JSONArray jsonArrayInsertPicSign = new JSONArray();
-
-                JSONObject jsonInsertComment = new JSONObject();
-                JSONArray jsonArrayInsertComment = new JSONArray();
-
                 try {
+
+                    JSONObject jsonInsertPicSign = new JSONObject();
+                    JSONArray jsonArrayInsertPicSign = new JSONArray();
+                    JSONObject jsonInsertComment = new JSONObject();
+                    JSONArray jsonArrayInsertComment = new JSONArray();
 
                     jsonInsertPicSign.put("consignment_no", arrayList.get(i).getConsignment_no());
                     jsonInsertPicSign.put("order_no", arrayList.get(i).getOrder_no());
@@ -193,8 +188,6 @@ public class Signature_Activity extends AppCompatActivity {
                     jsonInsertPicSign.put("date_sign_load", getdate());
                     jsonInsertPicSign.put("status_upload_invoice", "0");
 
-
-
                     if (!arrayList.get(i).getComment().equals("")) {
                         jsonInsertComment.put("consignment_no", arrayList.get(i).getConsignment_no());
                         jsonInsertComment.put("order_no", arrayList.get(i).getOrder_no());
@@ -202,6 +195,7 @@ public class Signature_Activity extends AppCompatActivity {
                         jsonInsertComment.put("comment", arrayList.get(i).getComment());
                         jsonInsertComment.put("status_load", arrayList.get(i).getStatus());
                         jsonInsertComment.put("delivery_no", arrayList.get(i).getDelivery_no());
+                        jsonInsertComment.put("status_upload_comment","0");
                     }
 
                     //อัพเดต status ตาราง consignment
@@ -210,8 +204,12 @@ public class Signature_Activity extends AppCompatActivity {
                     databaseHelper.db().update("Plan", cv, "consignment_no= '" + arrayList.get(i).getConsignment_no() + "' and order_no='" + arrayList.get(i).getOrder_no() + "'" +
                             " and activity_type = 'LOAD' and trash = '0'", null);
 
+
                     jsonArrayInsertPicSign.put(jsonInsertPicSign);
                     jsonArrayInsertComment.put(jsonInsertComment);
+                    Log.d("sfdasdfasdf", "addJpgSignatureToGallery: "+jsonArrayInsertComment.toString());
+
+
                     if (!arrayList.get(i).getStatus().equals("0")) {
                         if (narisv.INSERT_AS_SQL("pic_sign", jsonArrayInsertPicSign, "")) {
                             Log.d("PlanWorkLOG", "SAVED Pic_sign.");

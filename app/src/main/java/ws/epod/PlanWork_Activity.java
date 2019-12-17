@@ -495,10 +495,11 @@ public class PlanWork_Activity extends AppCompatActivity {
         protected String doInBackground(String... strings) {
 
             JSONObject Root = new JSONObject();
+            JSONObject RootCM = new JSONObject();
             ArrayList<UploadImageInvoice.Data2> uploadImage = new ArrayList<>();
             Log.d("statusUploadInvoice", "doInBackground: 1");
             try {
-                String sql = "select id, (select delivery_no from plan) as delivery_no, order_no, consignment_no, invoice_no, pic_sign_load, pic_sign_unload, date_sign_load, date_sign_unload from pic_sign  ";
+                String sql = "select id, (select delivery_no from plan) as delivery_no, order_no, consignment_no, invoice_no, pic_sign_load, pic_sign_unload, date_sign_load, date_sign_unload from pic_sign where status_upload_invoice = '0' ";
                 Cursor cursor = databaseHelper.selectDB(sql);
                 JSONArray ContactArray = new JSONArray();
 
@@ -543,75 +544,144 @@ public class PlanWork_Activity extends AppCompatActivity {
                                         //อัพเดตข้อมมูลหลังจาก upload แล้วเพื่อไม่ให้ข้อมูลซ้ำ
                                         for (int j = 0; j < jsonArray.getJSONObject(0).getJSONArray("data").length(); j++) {
                                             String json_data = jsonArray.getJSONObject(0).getJSONArray("data").getString(j);
-                                            ContentValues cv = new ContentValues();
-                                            cv.put("status_upload_invoice", "1");
-                                            databaseHelper.db().update("pic_sign", cv, "id= '" + json_data + "'", null);
+
+                                            //เปิดทีหลัง
+//                                            ContentValues cv = new ContentValues();
+//                                            cv.put("status_upload_invoice", "1");
+//                                            databaseHelper.db().update("pic_sign", cv, "id= '" + json_data + "'", null);
                                         }
 
-                                        String sql_getPicture = "select ifnull((select id from image_invoice),'') as id" +
-                                                ", ifnull((select name_img from image_invoice),'') as img " +
-                                                " from pic_sign where pic_sign_load  in (select name_img from image_invoice) or pic_sign_unload in (select name_img from image_invoice)";
+                                        //upload image *********************************************
+                                        String sql_getPicture = "select ii.id, ii.name_img from image_invoice ii where (ii.name_img in (select ps1.pic_sign_load from pic_sign ps1) or ii.name_img in (select ps2.pic_sign_unload from pic_sign ps2)) and  ii.status_img = '0'";
                                         Cursor cursor_getPicture = databaseHelper.selectDB(sql_getPicture);
 
-                                        int n = 0;
                                         cursor_getPicture.moveToFirst();
-                                        if (cursor_getPicture.getCount() > 0) {
-                                            do {
+                                        if (cursor_getPicture != null) {
+                                            if (cursor_getPicture.getCount() > 0) {
+                                                do {
 
-                                               String id = cursor_getPicture.getString(cursor_getPicture.getColumnIndex("id"));
-                                               String img = cursor_getPicture.getString(cursor_getPicture.getColumnIndex("img"));
-                                                if (!img.equals("")) {
+                                                    String id = cursor_getPicture.getString(cursor_getPicture.getColumnIndex("id"));
+                                                    String img = cursor_getPicture.getString(cursor_getPicture.getColumnIndex("name_img"));
 
-                                                    File file = new File("/storage/emulated/0/Android/data/ws.epod/files/Signature/" + img);
-                                                    Bitmap myBitmap = BitmapFactory.decodeFile(file.getAbsolutePath());
+                                                    Log.d("Asfkjsaioosdf", "doInBackground: L0 " + img);
 
-                                                    ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-                                                    myBitmap.compress(Bitmap.CompressFormat.JPEG, 70, byteArrayOutputStream);
-                                                    byte[] byteArrayImage = byteArrayOutputStream.toByteArray();
-                                                    encodedImageInvoice = Base64.encodeToString(byteArrayImage, Base64.DEFAULT);
+                                                    if (!img.equals("")) {
 
-                                                    UploadImageInvoice.Data2 data = new UploadImageInvoice.Data2(id, img, "data:image/jpeg;base64," + encodedImageInvoice);
-                                                    uploadImage.add(data);
+                                                        File file = new File("/storage/emulated/0/Android/data/ws.epod/files/Signature/" + img);
+                                                        Bitmap myBitmap = BitmapFactory.decodeFile(file.getAbsolutePath());
 
+                                                        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+                                                        myBitmap.compress(Bitmap.CompressFormat.JPEG, 70, byteArrayOutputStream);
+                                                        byte[] byteArrayImage = byteArrayOutputStream.toByteArray();
+                                                        encodedImageInvoice = Base64.encodeToString(byteArrayImage, Base64.DEFAULT);
+
+                                                        UploadImageInvoice.Data2 data = new UploadImageInvoice.Data2(id, img, "data:image/jpeg;base64," + encodedImageInvoice);
+                                                        uploadImage.add(data);
+
+                                                    }
+
+                                                } while (cursor_getPicture.moveToNext());
+
+                                                UploadImageInvoice data = new UploadImageInvoice(uploadImage);
+
+
+                                                Call<ResponseBody> callImg = apiInterface.uploadPictureInvoice(data);
+
+                                                Response<ResponseBody> responseImg = callImg.execute();
+                                                if (responseImg.code() == 200) {
+                                                    String responseRecievedImg = responseImg.body().string();
+                                                    if (responseRecievedImg != null) {
+                                                        if (!responseRecievedImg.equals("")) {
+                                                            JSONArray jsonImg = new JSONArray(responseRecievedImg);
+
+                                                            if (jsonImg.getJSONObject(0).getString("status").equals("Y")) {
+
+                                                                for (int pic = 0; pic < jsonImg.getJSONObject(0).getJSONArray("img").length(); pic++) {
+
+                                                                    String json_data = jsonImg.getJSONObject(0).getJSONArray("img").getString(pic);
+                                                                    Log.d("TRD", "TRD_1: " + json_data);
+
+                                                                    ContentValues cv = new ContentValues();
+                                                                    cv.put("status_img", "1");
+                                                                    databaseHelper.db().update("image_invoice", cv, "name_img= '" + json_data + "'", null);
+
+                                                                }
+
+                                                            } else {
+                                                                Log.d("TRD", "TRD_1: Fail");
+                                                            }
+
+                                                        }
+                                                    }
+                                                }//code 200
+
+                                            }
+                                        }//cursor_getPicture != null
+                                        else {
+                                            Log.d("Asfkjsaioosdf", "cursor_getPicture: null");
+                                        }
+
+
+                                        //upload comment *********************************************
+                                        String commentSQL = "select id, (select delivery_no from plan) as delivery_no, order_no, consignment_no, invoice_no, comment, comment_deliver from comment_invoice where status_upload_comment = '0'";
+                                        Cursor cursorCM = databaseHelper.selectDB(commentSQL);
+                                        JSONArray ContactCM = new JSONArray();
+
+                                        int cm = 0;
+                                        cursorCM.moveToFirst();
+                                        if (cursorCM != null) {
+                                            if (cursorCM.getCount() > 0) {
+                                                do {
+                                                    JSONObject contact2 = new JSONObject();
+
+                                                    contact2.put("id", cursorCM.getString(cursorCM.getColumnIndex("id")));
+                                                    contact2.put("vehicle_id", Var.UserLogin.driver_vehicle_id);
+                                                    contact2.put("delivery_no", cursorCM.getString(cursorCM.getColumnIndex("delivery_no")));
+                                                    contact2.put("order_no", cursorCM.getString(cursorCM.getColumnIndex("order_no")));
+                                                    contact2.put("consignment_no", cursorCM.getString(cursorCM.getColumnIndex("consignment_no")));
+                                                    contact2.put("invoice_no", cursorCM.getString(cursorCM.getColumnIndex("invoice_no")));
+                                                    contact2.put("comment_sign_load", cursorCM.getString(cursorCM.getColumnIndex("comment")));
+                                                    contact2.put("comment_sign_unload", cursorCM.getString(cursorCM.getColumnIndex("comment_deliver")));
+
+                                                    ContactCM.put(cm, contact2);
+                                                    cm++;
+
+                                                }while (cursorCM.moveToNext());
+
+                                                RootCM.put("data", ContactCM);
+                                                Log.d("lksioasj", "doInBackground: " + RootCM.toString());
+                                                String rootToStringCM = RootCM.toString();
+                                                RequestBody bodyCM = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), rootToStringCM);
+
+                                                Call<ResponseBody> callCM = apiInterface.uploadComment(bodyCM);
+                                                Response<ResponseBody> responseCM = callCM.execute();
+                                                if (responseCM.code() == 200) {
+                                                    String responseRecievedCM = responseCM.body().string();
+                                                    if (responseRecievedCM != null) {
+                                                        if (!responseRecievedCM.equals("")) {
+                                                            JSONArray jsonCM = new JSONArray(responseRecievedCM);
+
+                                                            if (jsonCM.getJSONObject(0).getString("status").equals("Y")) {
+
+                                                                for (int b = 0; b < jsonArray.getJSONObject(0).getJSONArray("data").length(); b++) {
+                                                                    String json_data = jsonArray.getJSONObject(0).getJSONArray("data").getString(b);
+
+                                                                    Log.d("lksioasj", "doInBackground: "+json_data);
+
+                                                                    ContentValues cv = new ContentValues();
+                                                                    cv.put("status_upload_comment", "1");
+                                                                    databaseHelper.db().update("comment_invoice", cv, "id= '" + json_data + "'", null);
+                                                                }
+
+                                                            } else {
+
+                                                            }
+
+                                                        }
+                                                    }
                                                 }
 
-                                            } while (cursor_getPicture.moveToNext());
-
-                                            UploadImageInvoice data = new UploadImageInvoice(uploadImage);
-
-
-
-//                                            Call<ResponseBody> callImg = apiInterface.uploadPictureInvoice(data);
-//
-//                                            Response<ResponseBody> responseImg = callImg.execute();
-//                                            if (responseImg.code() == 200) {
-//                                                String responseRecievedImg = responseImg.body().string();
-//                                                if (responseRecievedImg != null) {
-//                                                    if (!responseRecievedImg.equals("")) {
-//                                                        JSONArray jsonImg = new JSONArray(responseRecievedImg);
-//
-//                                                        if (jsonImg.getJSONObject(0).getString("status").equals("Y")) {
-//
-//                                                            for (int pic = 0; pic < jsonImg.getJSONObject(0).getJSONArray("img").length(); pic++) {
-//
-//                                                                String json_data = jsonImg.getJSONObject(0).getJSONArray("img").getString(pic);
-//                                                                Log.d("TRD", "TRD_1: " + json_data);
-//
-//                                                                // เปิดทีหลัง
-////                                        ContentValues cv = new ContentValues();
-////                                        cv.put("status_img", "1");
-////                                        databaseHelper.db().update("image", cv, "name_img= '" + json_data + "'", null);
-//
-//                                                            }
-//
-//                                                        } else {
-//                                                            Log.d("TRD", "TRD_1: Fail");
-//                                                        }
-//
-//                                                    }
-//                                                }
-//                                            }//code 200
-
+                                            }
                                         }
 
 
@@ -934,7 +1004,7 @@ public class PlanWork_Activity extends AppCompatActivity {
             time.add(Calendar.DAY_OF_YEAR, -7);
             Date lastModified = new Date(file.lastModified());
             if (lastModified.before(time.getTime())) {
-                //  file.delete();
+                  file.delete();
             }
 
 
