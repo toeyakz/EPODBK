@@ -68,6 +68,7 @@ import ws.epod.Helper.ConnectionDetector;
 import ws.epod.Helper.DatabaseHelper;
 import ws.epod.Helper.DirectionsJSONParser;
 import ws.epod.Helper.NarisBaseValue;
+import ws.epod.ObjectClass.LanguageClass;
 import ws.epod.ObjectClass.SQLiteModel.JobList_Model;
 import ws.epod.ObjectClass.SQLiteModel.RouteMap_Model;
 
@@ -99,6 +100,7 @@ public class DropPoint_Activity extends AppCompatActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        LanguageClass.setLanguage(getApplicationContext());
         setContentView(R.layout.activity_drop_point_);
 
         narisv = new NarisBaseValue(getApplicationContext());

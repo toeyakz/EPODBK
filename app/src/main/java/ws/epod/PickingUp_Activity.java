@@ -15,6 +15,7 @@ import java.util.HashMap;
 import ws.epod.Helper.ConnectionDetector;
 import ws.epod.Helper.DatabaseHelper;
 import ws.epod.Helper.NarisBaseValue;
+import ws.epod.ObjectClass.LanguageClass;
 import ws.epod.ObjectClass.SQLiteModel.PickingUpEexpand_Model;
 import ws.epod.ObjectClass.SQLiteModel.PickingUp_Model;
 
@@ -35,6 +36,7 @@ public class PickingUp_Activity extends AppCompatActivity {
     @Override
     protected void onCreate( Bundle savedInstanceState ) {
         super.onCreate(savedInstanceState);
+        LanguageClass.setLanguage(getApplicationContext());
         setContentView(R.layout.activity_picking_up_);
 
         narisv = new NarisBaseValue(PickingUp_Activity.this);

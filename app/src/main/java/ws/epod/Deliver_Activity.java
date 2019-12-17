@@ -79,6 +79,7 @@ import ws.epod.Adapter.DialogConsAdapter;
 import ws.epod.Helper.ConnectionDetector;
 import ws.epod.Helper.DatabaseHelper;
 import ws.epod.Helper.NarisBaseValue;
+import ws.epod.ObjectClass.LanguageClass;
 import ws.epod.ObjectClass.SQLiteModel.DeliverExpand_Model;
 import ws.epod.ObjectClass.SQLiteModel.Deliver_Model;
 import ws.epod.ObjectClass.SQLiteModel.Dialog_Cons_Detail_Model;
@@ -168,6 +169,7 @@ public class Deliver_Activity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        LanguageClass.setLanguage(getApplicationContext());
         setContentView(R.layout.activity_deliver_);
 
         narisv = new NarisBaseValue(Deliver_Activity.this);

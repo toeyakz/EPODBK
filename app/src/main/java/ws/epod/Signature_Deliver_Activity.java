@@ -41,6 +41,7 @@ import java.util.Locale;
 import ws.epod.Helper.ConnectionDetector;
 import ws.epod.Helper.DatabaseHelper;
 import ws.epod.Helper.NarisBaseValue;
+import ws.epod.ObjectClass.LanguageClass;
 import ws.epod.ObjectClass.SQLiteModel.Sign_Model;
 
 public class Signature_Deliver_Activity extends AppCompatActivity {
@@ -59,6 +60,8 @@ public class Signature_Deliver_Activity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        verifyStoragePermissions(this);
+        LanguageClass.setLanguage(getApplicationContext());
         setContentView(R.layout.activity_signature__deliver_);
 
         narisv = new NarisBaseValue(Signature_Deliver_Activity.this);

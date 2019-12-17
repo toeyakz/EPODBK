@@ -45,6 +45,7 @@ import fr.ganfra.materialspinner.MaterialSpinner;
 import ws.epod.Helper.ConnectionDetector;
 import ws.epod.Helper.DatabaseHelper;
 import ws.epod.Helper.NarisBaseValue;
+import ws.epod.ObjectClass.LanguageClass;
 import ws.epod.ObjectClass.SQLiteModel.Reason_model;
 import ws.epod.ObjectClass.SQLiteModel.Sign_Model;
 import ws.epod.ObjectClass.SQLiteModel.Sign_i_Model;
@@ -94,60 +95,6 @@ public class Invoice_Activity extends AppCompatActivity {
         super.onResume();
 
         setView();
-//        if (alertDialog != null) {
-//            if (alertDialog.isShowing()) {
-//                SharedPreferences user_data = getSharedPreferences("DATA_DETAIL_PICK", Context.MODE_PRIVATE);
-//                String delivery_no = user_data.getString("delivery_no", "");
-//                String plan_seq = user_data.getString("plan_seq", "");
-//
-//                String sql = "select cm.deli_note_no\n" +
-//                        ", cm.consignment_no\n" +
-//                        ", cm.status \n" +
-//                        ", pn.order_no\n" +
-//                        ", pn.delivery_no\n" +
-//                        "from consignment cm\n" +
-//                        "inner join Plan pn on pn.consignment_no = cm.consignment_no\n" +
-//                        "left join pic_sign ps on ps.consignment_no = cm.consignment_no\n" +
-//                        "where pn.delivery_no = '" + delivery_no + "'  and pn.plan_seq = '" + plan_seq + "' and cm.status <> '0' and ps.pic_sign_load IS NULL  " +
-//                        "GROUP BY cm.consignment_no";
-//                Cursor cursor = databaseHelper.selectDB(sql);
-//                Log.d("isMapRoute", "total line " + cursor.getCount());
-//
-//                ArrayList<Sign_i_Model> sign_models = new ArrayList<>();
-//                cursor.moveToFirst();
-//                do {
-//                    if (cursor.getCount() > 0) {
-//
-//                        String deli_note_no = cursor.getString(cursor.getColumnIndex("deli_note_no"));
-//                        String consignment = cursor.getString(cursor.getColumnIndex("consignment_no"));
-//                        String status = cursor.getString(cursor.getColumnIndex("status"));
-//                        String delivery_no1 = cursor.getString(cursor.getColumnIndex("delivery_no"));
-//                        String order_no = cursor.getString(cursor.getColumnIndex("order_no"));
-//
-//                        sign_models.add(new Sign_i_Model(consignment, deli_note_no, status, delivery_no1, order_no));
-//
-//                    }
-//                } while (cursor.moveToNext());
-//
-//                if (sign_models.toString().equals("[]")) {
-//                    tvNoData.setVisibility(View.VISIBLE);
-//                    recyclerView.setVisibility(View.GONE);
-//                    selectAllBtn.setVisibility(View.GONE);
-//                    signIn.setVisibility(View.GONE);
-//                } else {
-//                    tvNoData.setVisibility(View.GONE);
-//                    recyclerView.setVisibility(View.VISIBLE);
-//                    selectAllBtn.setVisibility(View.VISIBLE);
-//                    signIn.setVisibility(View.VISIBLE);
-//                }
-//
-//                signAdapter = new SignAdapter(sign_models, this);
-//                if (signAdapter != null) {
-//                    recyclerView.setAdapter(signAdapter);
-//                }
-//
-//            }
-//        }
 
     }
 
@@ -155,6 +102,7 @@ public class Invoice_Activity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        LanguageClass.setLanguage(getApplicationContext());
         setContentView(R.layout.activity_invoid_);
 
         narisv = new NarisBaseValue(getApplicationContext());
@@ -516,12 +464,12 @@ public class Invoice_Activity extends AppCompatActivity {
 
         String sql = "select cm.deli_note_no  \n" +
                 ", cm.consignment_no  \n" +
-                ",ifnull((select ps4.status_load from pic_sign ps4 where ps4.order_no = pl.order_no ),'') as status  \n" +
                 ", pl.order_no  \n" +
                 ",(SELECT pl.delivery_no) AS delivery_no  \n" +
-                ",ifnull((select ci2.comment from comment_invoice ci2 where ci2.order_no = pl.order_no) ,'') as comment \n" +
+                ",ifnull((select ci2.comment from comment_invoice ci2 where ci2.order_no = pl.order_no) ,'') as comment" +
                 ", pl.activity_type \n" +
-                ",ifnull((select ps2.pic_sign_load from pic_sign ps2 where ps2.order_no = pl.order_no) ,'') as pic_sign_load  \n" +
+                ",ifnull((select ps2.pic_sign_load from pic_sign ps2 where ps2.order_no = pl.order_no) ,'') as pic_sign_load" +
+                ",ifnull((select ps2.status_load from pic_sign ps2 where ps2.order_no = pl.order_no) ,'') as status " +
                 ", pl.is_scaned\n" +
                 ", pl.waybill_no\n" +
                 "from Consignment cm  \n" +

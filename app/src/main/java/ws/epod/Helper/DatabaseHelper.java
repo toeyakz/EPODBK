@@ -20,7 +20,7 @@ public class DatabaseHelper extends SQLiteOpenHelper
 {
 
     private static String DATABASE_NAME = Var.dbname;
-    private static final int DATABASE_VERSION = 1;
+    private static final int DATABASE_VERSION = 2;
 
 
     /*Unlock Exemple*/

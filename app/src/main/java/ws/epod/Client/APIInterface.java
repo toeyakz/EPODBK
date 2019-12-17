@@ -12,6 +12,7 @@ import retrofit2.http.POST;
 import retrofit2.http.Query;
 import ws.epod.Client.Structors.Login;
 import ws.epod.Client.Structors.UploadImage;
+import ws.epod.Client.Structors.UploadImageInvoice;
 
 public interface APIInterface {
 
@@ -27,8 +28,11 @@ public interface APIInterface {
     @POST("/TMS_MSM/services/service.php?func=setInvoice")
     Call<ResponseBody> uploadInvoice(@Body RequestBody body );
 
-    @POST("/TMS_MSM/services/service.php?func=setImg")
+    @POST("/TMS_MSM/services/service.php?func=setImgInvoice")
     Call<ResponseBody> uploadPicture( @Body UploadImage root );
+
+    @POST("/TMS_MSM/services/service.php?func=setImg")
+    Call<ResponseBody> uploadPictureInvoice( @Body UploadImageInvoice root );
 
     @POST("/TMS_MSM/services/service.php?func=getPlan")
     Call<ResponseBody> downloadWork( @Query("vehicle_id") String vehicle_id,

@@ -48,6 +48,7 @@ import fr.ganfra.materialspinner.MaterialSpinner;
 import ws.epod.Helper.ConnectionDetector;
 import ws.epod.Helper.DatabaseHelper;
 import ws.epod.Helper.NarisBaseValue;
+import ws.epod.ObjectClass.LanguageClass;
 import ws.epod.ObjectClass.SQLiteModel.Reason_model;
 import ws.epod.ObjectClass.SQLiteModel.Sign_Model;
 import ws.epod.ObjectClass.SQLiteModel.Sign_i_Model;
@@ -98,6 +99,7 @@ public class InvoiceDeliver_Activity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        LanguageClass.setLanguage(getApplicationContext());
         setContentView(R.layout.activity_invoice_deliver_);
 
         narisv = new NarisBaseValue(getApplicationContext());

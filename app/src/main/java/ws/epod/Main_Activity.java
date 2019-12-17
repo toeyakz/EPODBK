@@ -37,6 +37,7 @@ import ws.epod.Helper.ConnectionDetector;
 import ws.epod.Helper.DatabaseHelper;
 import ws.epod.Helper.NarisBaseValue;
 import ws.epod.ObjectClass.BackgroundService;
+import ws.epod.ObjectClass.LanguageClass;
 import ws.epod.ObjectClass.MenuObject;
 import ws.epod.ObjectClass.Var;
 
@@ -89,6 +90,7 @@ public class Main_Activity extends LocalizationActivity {
     @Override
     public void onCreate( Bundle savedInstanceState ) {
         super.onCreate(savedInstanceState);
+        LanguageClass.setLanguage(getApplicationContext());
         setContentView(R.layout.activity_main);
 
 

@@ -654,8 +654,8 @@ public class Login_Activity extends AppCompatActivity {
         databaseHelper.execDB(sql);
 
         sql = "CREATE TABLE IF NOT EXISTS pic_sign (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, consignment_no TEXT(255,0), order_no TEXT(255,0), invoice_no TEXT(255,0)" +
-                ",pic_sign_load TEXT(255,0), pic_sign_unload TEXT(255,0), date_sign_load TEXT(255,0), date_sign_unload TEXT(255,0), delivery_no TEXT(255,0)" +
-                ", status_load TEXT(255,0), status_unload TEXT(255,0), status_upload_invoice TEXT(255,0), UNIQUE(id));";
+                ",pic_sign_load TEXT(255,0),pic_sign_unload TEXT(255,0),date_sign_load TEXT(255,0),date_sign_unload TEXT(255,0), delivery_no TEXT(255,0)" +
+                ",status_load TEXT(255,0),status_unload TEXT(255,0),status_upload_invoice TEXT(255,0), UNIQUE(id));";
         databaseHelper.execDB(sql);
 
         sql = "CREATE TABLE IF NOT EXISTS comment_invoice (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, consignment_no TEXT(255,0), order_no TEXT(255,0), invoice_no TEXT(255,0)" +
