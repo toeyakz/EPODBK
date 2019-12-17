@@ -314,23 +314,7 @@ public class Login_Activity extends AppCompatActivity {
     }
 
     private void showAndHidePassword() {
-        if ( edtPassword.getText().toString().length() > 0 ) {
-            show_pass_btn.setVisibility(View.VISIBLE);
-            show_pass_btn.setOnClickListener(view -> {
-                if ( edtPassword.getTransformationMethod().equals(PasswordTransformationMethod.getInstance()) ) {
-                    ( (ImageView) ( view ) ).setImageResource(R.drawable.ic_visibility_off_black_24dp);
-                    edtPassword.setTransformationMethod(HideReturnsTransformationMethod.getInstance());
-                    edtPassword.setSelection(edtPassword.getText().length());
-                } else {
-                    ( (ImageView) ( view ) ).setImageResource(R.drawable.ic_remove_red_eye_black_24dp);
-                    edtPassword.setTransformationMethod(PasswordTransformationMethod.getInstance());
-                    edtPassword.setSelection(edtPassword.getText().length());
-                }
-            });
 
-        } else {
-            show_pass_btn.setVisibility(View.GONE);
-        }
         edtPassword.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged( CharSequence charSequence, int i, int i1, int i2 ) {
@@ -346,8 +330,29 @@ public class Login_Activity extends AppCompatActivity {
 
             @Override
             public void afterTextChanged( Editable editable ) {
+                if ( edtPassword.getText().toString().length() > 0 ) {
+                    show_pass_btn.setVisibility(View.VISIBLE);
+
+                    show_pass_btn.setOnClickListener(view -> {
+                        Log.d("sdfkj", "showAndHidePassword: ");
+                        if ( edtPassword.getTransformationMethod().equals(PasswordTransformationMethod.getInstance()) ) {
+                            ( (ImageView) ( view ) ).setImageResource(R.drawable.ic_visibility_off_black_24dp);
+                            edtPassword.setTransformationMethod(HideReturnsTransformationMethod.getInstance());
+                            edtPassword.setSelection(edtPassword.getText().length());
+                        } else {
+                            ( (ImageView) ( view ) ).setImageResource(R.drawable.ic_remove_red_eye_black_24dp);
+                            edtPassword.setTransformationMethod(PasswordTransformationMethod.getInstance());
+                            edtPassword.setSelection(edtPassword.getText().length());
+                        }
+                    });
+
+                } else {
+                    show_pass_btn.setVisibility(View.GONE);
+                }
             }
         });
+
+
     }
 
     @SuppressLint("StaticFieldLeak")
