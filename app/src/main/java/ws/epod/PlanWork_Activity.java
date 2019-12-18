@@ -183,13 +183,13 @@ public class PlanWork_Activity extends AppCompatActivity {
         showLayout = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.show_layout);
         hideLayout = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.hide_layout);
 
-        handler = new android.os.Handler();
-        runnable = new Runnable() {
-            public void run() {
-                startService(new Intent(getApplicationContext(), BackgroundService.class));
-            }
-        };
-        handler.postDelayed(runnable, 20000);
+//        handler = new android.os.Handler();
+//        runnable = new Runnable() {
+//            public void run() {
+//                startService(new Intent(getApplicationContext(), BackgroundService.class));
+//            }
+//        };
+//        handler.postDelayed(runnable, 20000);
 
         inialView();
         getDataFromSQLite("", "", "");
@@ -1589,7 +1589,7 @@ public class PlanWork_Activity extends AppCompatActivity {
                     "and pl.order_no in (select order_no from pic_sign where pic_sign_unload <> '')) as finish " +
                     "from Plan pl\n" +
                     "inner join consignment cm on cm.consignment_no = pl.consignment_no\n" +
-                    "where (pl.delivery_date between '" + dateBegin + "' and '" + dateEnd + "') and and pl.trash = '0'" +
+                    "where (pl.delivery_date between '" + dateBegin + "' and '" + dateEnd + "') and pl.trash = '0'" +
                     "group by pl.delivery_no\n" +
                     "order by pl.delivery_date asc, pl.delivery_no";
         } else if (!today.equals("")) {

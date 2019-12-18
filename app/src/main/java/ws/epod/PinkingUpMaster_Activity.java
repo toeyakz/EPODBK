@@ -54,6 +54,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.addisonelliott.segmentedbutton.SegmentedButtonGroup;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
@@ -80,6 +83,8 @@ import ws.epod.Helper.ConnectionDetector;
 import ws.epod.Helper.DatabaseHelper;
 import ws.epod.Helper.NarisBaseValue;
 import ws.epod.ObjectClass.LanguageClass;
+
+import ws.epod.ObjectClass.LocationTrack;
 import ws.epod.ObjectClass.SQLiteModel.DeliverExpand_Model;
 import ws.epod.ObjectClass.SQLiteModel.Dialog_Cons_Detail_Model;
 import ws.epod.ObjectClass.SQLiteModel.PickingUpEexpand_Model;
@@ -123,6 +128,8 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
     int lastPosition = 0;
     String lastData = "";
 
+    private FusedLocationProviderClient client;
+
 
     String picture1 = "";
     String picture2 = "";
@@ -147,6 +154,8 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
 
     private int ch_list = 0;
 
+    LocationTrack locationTrack;
+
     private IntentIntegrator qrScan;
 
     FloatingActionButton fabHome, fabJobHome, fabJobToday;
@@ -154,7 +163,7 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
     LinearLayout layoutJobHome, layoutJobToday;
 
     int arrayIsScan = 0;
-    private LocationManager client;
+    //private LocationManager client;
 
     @Override
     protected void onResume() {
@@ -190,6 +199,8 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
 
         qrScan = new IntentIntegrator(this);
 
+        locationTrack = new LocationTrack(PinkingUpMaster_Activity.this);
+
 
         imageView8 = findViewById(R.id.imageView8);
         savePickingUp = findViewById(R.id.savePickingUp);
@@ -213,6 +224,8 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
 
         getSQLite();
         onClickFab();
+
+//        Log.d("Sdghjdfg", "onCreate: "+ getLat ());
 
         bnCloseJobPick.setOnClickListener(view -> {
             Animation animation = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.alpha);
@@ -493,40 +506,52 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
 
     }
 
+
+
+
+
+
+
+
+
+
+
     private String getlat() {
-        String stringLatitude = "";
-        String stringLongitude = "";
 
-        client = (LocationManager) getApplicationContext().getSystemService(Context.LOCATION_SERVICE);
+        String lat = "";
+        if (locationTrack.canGetLocation()) {
 
-        if ( ContextCompat.checkSelfPermission( this, android.Manifest.permission.ACCESS_COARSE_LOCATION ) != PackageManager.PERMISSION_GRANTED ) {
+
+            double longitude = locationTrack.getLongitude();
+            double latitude = locationTrack.getLatitude();
+            lat = String.valueOf(latitude);
+
+            //  Toast.makeText(getApplicationContext(), "Longitude:" + Double.toString(longitude) + "\nLatitude:" + Double.toString(latitude), Toast.LENGTH_SHORT).show();
+        } else {
+
+            locationTrack.showSettingsAlert();
         }
-        Location location = client.getLastKnownLocation(client.NETWORK_PROVIDER);
 
-        double latitude = location.getLatitude();
-        double longitude = location.getLongitude();
-
-        stringLatitude = String.valueOf(latitude);
-        stringLongitude = String.valueOf(longitude);
-        return stringLatitude;
+        return lat;
     }
 
     private String getlon() {
-        String stringLatitude = "";
-        String stringLongitude = "";
 
-        client = (LocationManager) getApplicationContext().getSystemService(Context.LOCATION_SERVICE);
+        String lon = "";
+        if (locationTrack.canGetLocation()) {
 
-        if ( ContextCompat.checkSelfPermission( this, android.Manifest.permission.ACCESS_COARSE_LOCATION ) != PackageManager.PERMISSION_GRANTED ) {
+
+            double longitude = locationTrack.getLongitude();
+            double latitude = locationTrack.getLatitude();
+            lon = String.valueOf(longitude);
+
+            //  Toast.makeText(getApplicationContext(), "Longitude:" + Double.toString(longitude) + "\nLatitude:" + Double.toString(latitude), Toast.LENGTH_SHORT).show();
+        } else {
+
+            locationTrack.showSettingsAlert();
         }
-        Location location = client.getLastKnownLocation(client.NETWORK_PROVIDER);
 
-        double latitude = location.getLatitude();
-        double longitude = location.getLongitude();
-
-        stringLatitude = String.valueOf(latitude);
-        stringLongitude = String.valueOf(longitude);
-        return stringLongitude;
+        return lon;
     }
 
     private String getdate() {
@@ -1085,7 +1110,8 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
         public View getChildView(final int listPosition, final int expandedListPosition,
                                  boolean isLastChild, View convertView, ViewGroup parent) {
             final PickingUpEexpand_Model expandedList = (PickingUpEexpand_Model) getChild(listPosition, expandedListPosition);
-
+            Log.d("aassas", "getChildView: " + listPosition + ">" + expandedListPosition + ">" + expandedList.getIs_scaned() + " into>" + expandedList.getInto());
+            LanguageClass.setLanguage(getApplicationContext());
 
             if (convertView == null) {
                 LayoutInflater layoutInflater = (LayoutInflater) this.context
@@ -1109,7 +1135,10 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
             box_no.setText(context.getString(R.string.box_no) + ": " + expandedList.getBox_no());
             waybill_no.setText(context.getString(R.string.waybill_no) + ": " + expandedList.getWaybil_no());
 
-            Log.d("aassas", "getChildView: " + listPosition + ">" + expandedListPosition + ">" + expandedList.getIs_scaned() + " into>" + expandedList.getInto());
+           // Log.d("aassas", "getChildView: " + listPosition + ">" + expandedListPosition + ">" + expandedList.getIs_scaned() + " into>" + expandedList.getInto());
+
+            checkBox.setEnabled(false);
+
 
             if (!checkBox.isChecked() && !expandedList.getIs_scaned().equals("1")) {
                 imgEditBoxNoPickup.setEnabled(true);
@@ -1125,16 +1154,22 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
             if (expandedList.getIs_scaned().equals("2")) {
                 checkBox.setChecked(true);
                 imgEditBoxNoPickup.setEnabled(true);
-                checkBox.setEnabled(false);
+              //  checkBox.setEnabled(false);
                 checkBox.setButtonDrawable(R.drawable.ic_indeterminate_check_box_black_24dp);
 
             } else {
-                checkBox.setEnabled(true);
+              //  checkBox.setEnabled(true);
                 checkBox.setButtonDrawable(R.drawable.custom_checkbox);
             }
 
+            if (expandedList.getIs_scaned().equals("1")) {
+                checkBox.setChecked(true);
+                //  checkBox.setEnabled(false);
+                //     checkBox.setButtonDrawable(R.drawable.ic_check_box_disable);
+            }
 
             if (expandedList.getInto().equals("0")) {
+                expandedList.setIs_scaned("0");
                 if (expandedList.getIs_scaned().equals("0")) {
                     checkBox.setChecked(false);
                     imgEditBoxNoPickup.setEnabled(true);
@@ -1142,41 +1177,39 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
             } else {
                 expandedList.setIs_scaned("1");
                 expandedList.setTime_begin(getdate());
+
+               // Log.d("sdgfjkashdfsdf", "getChildView: "+ LocationLatLon.getLastLocation());
                 expandedList.setActual_lon(getlat());
                 expandedList.setActual_lon(getlon());
 
                 if (expandedList.getIs_scaned().equals("1")) {
                     checkBox.setChecked(true);
-                    checkBox.setEnabled(false);
-                    checkBox.setButtonDrawable(R.drawable.ic_check_box_disable);
+                  //  checkBox.setEnabled(false);
+      //              checkBox.setButtonDrawable(R.drawable.ic_check_box_disable);
                 }
             }
 
-            if (expandedList.getIs_scaned().equals("1")) {
-                checkBox.setChecked(true);
-                checkBox.setEnabled(false);
-                checkBox.setButtonDrawable(R.drawable.ic_check_box_disable);
-            }
 
-            checkBox.setOnClickListener(v -> {
-                if (((CheckBox) v).isChecked()) {
-                    imgEditBoxNoPickup.setEnabled(false);
-                    expandedList.setIs_scaned("1");
-                    expandedList.setTime_begin(getdate());
-                    expandedList.setActual_lat(getlat());
-                    expandedList.setActual_lon(getlon());
 
-                } else {
-
-                    imgEditBoxNoPickup.setEnabled(true);
-                    expandedList.setIs_scaned("0");
-                    expandedList.setTime_begin("");
-                    expandedList.setActual_lat("");
-                    expandedList.setActual_lon("");
-
-                }
-
-            });
+//            checkBox.setOnClickListener(v -> {
+//                if (((CheckBox) v).isChecked()) {
+//                    imgEditBoxNoPickup.setEnabled(false);
+//                    expandedList.setIs_scaned("1");
+//                    expandedList.setTime_begin(getdate());
+//                    expandedList.setActual_lat(getlat());
+//                    expandedList.setActual_lon(getlon());
+//
+//                } else {
+//
+//                    imgEditBoxNoPickup.setEnabled(true);
+//                    expandedList.setIs_scaned("0");
+//                    expandedList.setTime_begin("");
+//                    expandedList.setActual_lat("");
+//                    expandedList.setActual_lon("");
+//
+//                }
+//
+//            });
 
 
             imgEditBoxNoPickup.setOnClickListener(v -> {
@@ -1219,6 +1252,7 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
                                  View convertView, ViewGroup parent) {
 
             final PickingUp_Model listTitle = (PickingUp_Model) getGroup(listPosition);
+            LanguageClass.setLanguage(getApplicationContext());
 
 
             Log.d("sfwagvSDv", "getGroupView: " + (listPosition + 1));

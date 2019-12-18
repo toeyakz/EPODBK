@@ -80,6 +80,7 @@ import ws.epod.Helper.ConnectionDetector;
 import ws.epod.Helper.DatabaseHelper;
 import ws.epod.Helper.NarisBaseValue;
 import ws.epod.ObjectClass.LanguageClass;
+import ws.epod.ObjectClass.LocationTrack;
 import ws.epod.ObjectClass.SQLiteModel.DeliverExpand_Model;
 import ws.epod.ObjectClass.SQLiteModel.Deliver_Model;
 import ws.epod.ObjectClass.SQLiteModel.Dialog_Cons_Detail_Model;
@@ -152,6 +153,8 @@ public class Deliver_Activity extends AppCompatActivity {
     Animation showLayout, hideLayout;
     LinearLayout layoutJobHome, layoutJobToday;
 
+    LocationTrack locationTrack;
+
     private LocationManager client;
 
     @Override
@@ -182,6 +185,7 @@ public class Deliver_Activity extends AppCompatActivity {
 
 
         qrScan = new IntentIntegrator(this);
+        locationTrack = new LocationTrack(Deliver_Activity.this);
 
 
         imgBack_Deliver = findViewById(R.id.imgBack_Deliver);
@@ -492,39 +496,41 @@ public class Deliver_Activity extends AppCompatActivity {
     }
 
     private String getlat() {
-        String stringLatitude = "";
-        String stringLongitude = "";
 
-        client = (LocationManager) getApplicationContext().getSystemService(Context.LOCATION_SERVICE);
+        String lat = "";
+        if (locationTrack.canGetLocation()) {
 
-        if ( ContextCompat.checkSelfPermission( this, android.Manifest.permission.ACCESS_COARSE_LOCATION ) != PackageManager.PERMISSION_GRANTED ) {
+
+            double longitude = locationTrack.getLongitude();
+            double latitude = locationTrack.getLatitude();
+            lat = String.valueOf(latitude);
+
+            //  Toast.makeText(getApplicationContext(), "Longitude:" + Double.toString(longitude) + "\nLatitude:" + Double.toString(latitude), Toast.LENGTH_SHORT).show();
+        } else {
+
+            locationTrack.showSettingsAlert();
         }
-        Location location = client.getLastKnownLocation(client.NETWORK_PROVIDER);
 
-        double latitude = location.getLatitude();
-        double longitude = location.getLongitude();
-
-        stringLatitude = String.valueOf(latitude);
-        stringLongitude = String.valueOf(longitude);
-        return stringLatitude;
+        return lat;
     }
 
     private String getlon() {
-        String stringLatitude = "";
-        String stringLongitude = "";
 
-        client = (LocationManager) getApplicationContext().getSystemService(Context.LOCATION_SERVICE);
+        String lon = "";
+        if (locationTrack.canGetLocation()) {
 
-        if ( ContextCompat.checkSelfPermission( this, android.Manifest.permission.ACCESS_COARSE_LOCATION ) != PackageManager.PERMISSION_GRANTED ) {
+
+            double longitude = locationTrack.getLongitude();
+            double latitude = locationTrack.getLatitude();
+            lon = String.valueOf(longitude);
+
+            //  Toast.makeText(getApplicationContext(), "Longitude:" + Double.toString(longitude) + "\nLatitude:" + Double.toString(latitude), Toast.LENGTH_SHORT).show();
+        } else {
+
+            locationTrack.showSettingsAlert();
         }
-        Location location = client.getLastKnownLocation(client.NETWORK_PROVIDER);
 
-        double latitude = location.getLatitude();
-        double longitude = location.getLongitude();
-
-        stringLatitude = String.valueOf(latitude);
-        stringLongitude = String.valueOf(longitude);
-        return stringLongitude;
+        return lon;
     }
 
     private String getdate() {

@@ -5,6 +5,7 @@ public class JobList_Model {
     public String station_address = "";
     public int plan_seq = 0;
     public String plan_in = "";
+    public String plan_out = "";
     public double station_lat;
     public double station_lon;
     public String pick = "";
@@ -14,12 +15,13 @@ public class JobList_Model {
     public String delivery_no = "";
 
 
-    public JobList_Model( String station_name, String station_address, int plan_seq, String plan_in, double station_lat, double station_lon,
+    public JobList_Model( String station_name, String station_address, int plan_seq, String plan_in, String plan_out , double station_lat, double station_lon,
                           String pick, String pickUp, String deli, String delivery, String delivery_no ) {
         this.station_name = station_name;
         this.station_address = station_address;
         this.plan_seq = plan_seq;
         this.plan_in = plan_in;
+        this.plan_out = plan_out;
         this.station_lat = station_lat;
         this.station_lon = station_lon;
         this.pick = pick;
@@ -27,6 +29,14 @@ public class JobList_Model {
         this.deli = deli;
         this.delivery = delivery;
         this.delivery_no = delivery_no;
+    }
+
+    public String getPlan_out() {
+        return plan_out;
+    }
+
+    public void setPlan_out(String plan_out) {
+        this.plan_out = plan_out;
     }
 
     public String getDelivery_no() {

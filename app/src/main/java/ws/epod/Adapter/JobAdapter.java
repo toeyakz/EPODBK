@@ -55,18 +55,34 @@ public class JobAdapter extends RecyclerView.Adapter<JobAdapter.ViewHolder> {
         viewHolder.tvCustomer_name_Job.setText(list.get(i).getStation_name());
         viewHolder.tvStation_address_job.setText(list.get(i).getStation_address());
         viewHolder.tvPlan_seq_Job.setText(String.valueOf(list.get(i).getPlan_seq()) + ".");
-        viewHolder.textView20.setText(context.getString(R.string.appoint) + ": ");
+        // viewHolder.textView20.setText(context.getString(R.string.appoint) + ": ");
         viewHolder.textView17.setText(context.getString(R.string.address) + ": ");
 
         Log.d("sfasef24", "onBindViewHolder: " + list.get(i).getPlan_seq());
 
 
-        if (!list.get(i).getPlan_in().equals("")) {
-            String plan_in = dateNewFormat(list.get(i).getPlan_in());
-            viewHolder.tvPlan_in_Job.setText(plan_in);
+        String plan_out = dateNewFormat(list.get(i).getPlan_out());
+        if (i == 0) {
+            viewHolder.textView20.setText(context.getString(R.string.appoint) + ": ");
+            viewHolder.tvPlan_in_Job.setText(plan_out);
         } else {
-            viewHolder.tvPlan_in_Job.setText("");
+            viewHolder.textView20.setText(context.getString(R.string.appoint) + ": ");
+            if (!list.get(i).getPlan_in().equals("")) {
+                String plan_in = dateNewFormat(list.get(i).getPlan_in());
+                viewHolder.tvPlan_in_Job.setText(plan_in);
+            }
+
         }
+
+
+//        if (!list.get(i).getPlan_in().equals("")) {
+//            String plan_in = dateNewFormat(list.get(i).getPlan_in());
+//            viewHolder.tvPlan_in_Job.setText(plan_in);
+//        } else {
+//            viewHolder.tvPlan_in_Job.setText("");
+//        }
+
+
         viewHolder.tvStatusJob.setText(context.getString(R.string.pickup) + " (" + list.get(i).getPickUp() + "/" + list.get(i).getPick() + ") | " + context.getString(R.string.deliver) +
                 " (" + list.get(i).getDelivery() + "/" + list.get(i).getDeli() + ")");
 
@@ -116,18 +132,22 @@ public class JobAdapter extends RecyclerView.Adapter<JobAdapter.ViewHolder> {
             @Override
             public void onClick(View view) {
 
-                Log.d("checkLatlon", list.get(i).getStation_lat() + ", " + list.get(i).getStation_lon());
-                //Toast.makeText(context, "" + list.get(i).getCustomer_name(), Toast.LENGTH_SHORT).show();
-                Intent intent = new Intent(context, Main_Activity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                intent.putExtra("plan_seq", list.get(i).getPlan_seq());
-                intent.putExtra("station_name", list.get(i).getStation_name());
-                intent.putExtra("station_address", list.get(i).getStation_address());
-                intent.putExtra("delivery_no", list.get(i).getDelivery_no());
-                intent.putExtra("plan_in", list.get(i).getPlan_in());
+                if (!list.get(i).getPick().equals("0") || !list.get(i).getPickUp().equals("0")
+                        || !list.get(i).getDeli().equals("0") || !list.get(i).getDelivery().equals("0")) {
 
-                Log.d("asdfasllaaa", "onClick: " + list.get(i).getPlan_seq() + "==> " + list.get(i).getDelivery_no());
-                context.startActivity(intent);
+                    Intent intent = new Intent(context, Main_Activity.class);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    intent.putExtra("plan_seq", list.get(i).getPlan_seq());
+                    intent.putExtra("station_name", list.get(i).getStation_name());
+                    intent.putExtra("station_address", list.get(i).getStation_address());
+                    intent.putExtra("delivery_no", list.get(i).getDelivery_no());
+                    intent.putExtra("plan_in", list.get(i).getPlan_in());
+                    context.startActivity(intent);
+                } else {
+                    Toast.makeText(context, "Can't start Page.", Toast.LENGTH_SHORT).show();
+                }
+
+
             }
         });
 

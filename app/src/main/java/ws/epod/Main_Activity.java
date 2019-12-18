@@ -67,7 +67,7 @@ public class Main_Activity extends LocalizationActivity {
     public void onResume() {
         super.onResume();
         headerTxt_Main.setText(getApplicationContext().getString(R.string.job_operation));
-        stopService(new Intent(getApplicationContext(), BackgroundService.class));
+       // stopService(new Intent(getApplicationContext(), BackgroundService.class));
         getSQLite();
         initView();
         addMenu();
@@ -76,7 +76,7 @@ public class Main_Activity extends LocalizationActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        startService(new Intent(getApplicationContext(),BackgroundService.class));
+       // startService(new Intent(getApplicationContext(),BackgroundService.class));
 
     }
 

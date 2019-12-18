@@ -147,7 +147,7 @@ public class DropPoint_Activity extends AppCompatActivity {
 
         String delivery_date = getIntent().getExtras().getString("delivery_date");
         String delivery_no = getIntent().getExtras().getString("delivery_no");
-        String sql = "select pl.station_name, pl.station_address, pl.plan_seq, pl.plan_in, pl.delivery_no, pl.station_lat, pl.station_lon \n" +
+        String sql = "select pl.station_name, pl.station_address, pl.plan_seq, pl.plan_in, plan_out, pl.delivery_no, pl.station_lat, pl.station_lon \n" +
                 ", (select count( pl2.box_no) from Plan pl2 where pl2.activity_type = 'LOAD' and pl2.delivery_no = pl.delivery_no and pl2.station_code = pl.station_code and pl2.trash = pl.trash) as pick \n" +
                 ", (select count( pl2.box_no) from Plan pl2 where pl2.activity_type = 'LOAD' and pl2.is_scaned <> '0'and pl2.delivery_no = pl.delivery_no and pl2.station_code = pl.station_code and pl2.trash = pl.trash\n" +
                 "and pl2.order_no in (select order_no from pic_sign where pic_sign_load <> '')) as pickUp \n" +
@@ -167,6 +167,7 @@ public class DropPoint_Activity extends AppCompatActivity {
                 String station_name = cursor.getString(cursor.getColumnIndex("station_name"));
                 String station_address = cursor.getString(cursor.getColumnIndex("station_address"));
                 String plan_in = cursor.getString(cursor.getColumnIndex("plan_in"));
+                String plan_out = cursor.getString(cursor.getColumnIndex("plan_out"));
                 int plan_seq = cursor.getInt(cursor.getColumnIndex("plan_seq"));
                 double station_lat = cursor.getDouble(cursor.getColumnIndex("station_lat"));
                 double station_lon = cursor.getDouble(cursor.getColumnIndex("station_lon"));
@@ -175,7 +176,7 @@ public class DropPoint_Activity extends AppCompatActivity {
                 String deli = cursor.getString(cursor.getColumnIndex("deli"));
                 String delivery = cursor.getString(cursor.getColumnIndex("delivery"));
 
-                jobList_models.add(new JobList_Model(station_name, station_address, plan_seq, plan_in, station_lat, station_lon, pick, pickUp, deli, delivery, delivery_no));
+                jobList_models.add(new JobList_Model(station_name, station_address, plan_seq, plan_in, plan_out, station_lat, station_lon, pick, pickUp, deli, delivery, delivery_no));
             }
 
         } while (cursor.moveToNext());
