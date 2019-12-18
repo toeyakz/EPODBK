@@ -655,7 +655,7 @@ public class Login_Activity extends AppCompatActivity {
                 ", inactive TEXT(255,0), status TEXT(255,0), activity_type TEXT(255,0), UNIQUE(id));";
         databaseHelper.execDB(sql);
 
-        sql = "CREATE TABLE IF NOT EXISTS image (name_img TEXT(255,0), status_img TEXT(255,0));";
+        sql = "CREATE TABLE IF NOT EXISTS image (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,name_img TEXT(255,0), status_img TEXT(255,0), UNIQUE(id));";
         databaseHelper.execDB(sql);
 
         sql = "CREATE TABLE IF NOT EXISTS pic_sign (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, consignment_no TEXT(255,0), order_no TEXT(255,0), invoice_no TEXT(255,0)" +

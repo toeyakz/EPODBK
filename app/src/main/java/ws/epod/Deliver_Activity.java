@@ -155,6 +155,8 @@ public class Deliver_Activity extends AppCompatActivity {
 
     LocationTrack locationTrack;
 
+    boolean isc = false;
+
     private LocationManager client;
 
     @Override
@@ -323,34 +325,34 @@ public class Deliver_Activity extends AppCompatActivity {
                                                             cv.put("actual_lon", expandedList.getActual_lon());
                                                             cv.put("time_begin", expandedList.getTime_begin());
 
-                                                            if (expandedList.getPicture1() != null) {
+                                                            if (!expandedList.getPicture1().equals("")) {
                                                                 cv.put("picture1", expandedList.getPicture1());
                                                             }
-                                                            if (expandedList.getPicture2() != null) {
+                                                            if (!expandedList.getPicture2().equals("")) {
                                                                 cv.put("picture2", expandedList.getPicture2());
                                                             }
-                                                            if (expandedList.getPicture3() != null) {
+                                                            if (!expandedList.getPicture3().equals("")) {
                                                                 cv.put("picture3", expandedList.getPicture3());
                                                             }
-                                                            if (expandedList.getComment() != null) {
+                                                            if (!expandedList.getComment().equals("")) {
                                                                 cv.put("comment", expandedList.getComment());
                                                             }
                                                             cv.put("modified_date", getdate());
                                                             databaseHelper.db().update("Plan", cv, "delivery_no= '" + expandedList.getDelivery_no() + "' and plan_seq = '" + expandedList.getPlan_seq() + "' and activity_type = 'UNLOAD' and " +
                                                                     " consignment_no = '" + expandedList.getConsignment() + "' and box_no = '" + expandedList.getBox_no() + "' and trash = '0'", null);
 
-                                                            ContentValues cv2 = new ContentValues();
-                                                            if (expandedList.getPicture1() != null) {
-                                                                cv2.put("name_img", expandedList.getPicture1());
+                                                            if (!expandedList.getPicture1().equals("")) {
+                                                                String sql = "INSERT or replace INTO image (name_img, status_img) VALUES('" + expandedList.getPicture1() + "','0')";
+                                                                databaseHelper.db().execSQL(sql);
                                                             }
-                                                            if (expandedList.getPicture2() != null) {
-                                                                cv2.put("name_img", expandedList.getPicture2());
+                                                            if (!expandedList.getPicture2().equals("")) {
+                                                                String sql = "INSERT or replace INTO image (name_img, status_img) VALUES('" + expandedList.getPicture2() + "','0')";
+                                                                databaseHelper.db().execSQL(sql);
                                                             }
-                                                            if (expandedList.getPicture3() != null) {
-                                                                cv2.put("name_img", expandedList.getPicture3());
+                                                            if (!expandedList.getPicture3().equals("")) {
+                                                                String sql = "INSERT or replace INTO image (name_img, status_img) VALUES('" + expandedList.getPicture3() + "','0')";
+                                                                databaseHelper.db().execSQL(sql);
                                                             }
-                                                            cv2.put("status_img", "0");
-                                                            databaseHelper.db().insert("image", null, cv2);
 
                                                             lastExpandedPosition = i;
                                                             IsSuccess = 1;
@@ -452,6 +454,7 @@ public class Deliver_Activity extends AppCompatActivity {
                                 ((DeliverExpand_Model) expandableListAdapter.getChild(i, j)).setTime_begin(getdate());
                                 ((DeliverExpand_Model) expandableListAdapter.getChild(i, j)).setActual_lat(getlat());
                                 ((DeliverExpand_Model) expandableListAdapter.getChild(i, j)).setActual_lon(getlon());
+                                isc = false;
                                 Toast.makeText(Deliver_Activity.this, "Checked.", Toast.LENGTH_SHORT).show();
                                 expandableListView.setAdapter(expandableListAdapter);
                                 expandableListView.expandGroup(i);
@@ -476,6 +479,7 @@ public class Deliver_Activity extends AppCompatActivity {
                                 ((DeliverExpand_Model) expandableListAdapter.getChild(i, j)).setTime_begin("");
                                 ((DeliverExpand_Model) expandableListAdapter.getChild(i, j)).setActual_lat("");
                                 ((DeliverExpand_Model) expandableListAdapter.getChild(i, j)).setActual_lon("");
+                                isc = false;
                                 Toast.makeText(Deliver_Activity.this, "Un Check.", Toast.LENGTH_SHORT).show();
                                 expandableListView.setAdapter(expandableListAdapter);
                                 expandableListView.expandGroup(i);
@@ -777,6 +781,12 @@ public class Deliver_Activity extends AppCompatActivity {
                                 lastPosition = i;
 
                                 ((DeliverExpand_Model) expandableListAdapter.getChild(i, j)).setInto("1");
+                                ((DeliverExpand_Model) expandableListAdapter.getChild(i, j)).setTime_begin(getdate());
+                                ((DeliverExpand_Model) expandableListAdapter.getChild(i, j)).setActual_lat(getlat());
+                                ((DeliverExpand_Model) expandableListAdapter.getChild(i, j)).setActual_lon(getlon());
+                                isc = true;
+
+
                                 Toast.makeText(Deliver_Activity.this, "Checked.", Toast.LENGTH_SHORT).show();
                                 expandableListView.setAdapter(expandableListAdapter);
                                 expandableListView.expandGroup(i);
@@ -799,6 +809,11 @@ public class Deliver_Activity extends AppCompatActivity {
                                 lastPosition = i;
 
                                 ((DeliverExpand_Model) expandableListAdapter.getChild(i, j)).setInto("0");
+                                ((PickingUpEexpand_Model) expandableListAdapter.getChild(i, j)).setTime_begin("");
+                                ((PickingUpEexpand_Model) expandableListAdapter.getChild(i, j)).setActual_lat("");
+                                ((PickingUpEexpand_Model) expandableListAdapter.getChild(i, j)).setActual_lon("");
+                                isc = true;
+
                                 Toast.makeText(Deliver_Activity.this, "Un Check.", Toast.LENGTH_SHORT).show();
                                 expandableListView.setAdapter(expandableListAdapter);
                                 expandableListView.expandGroup(i);
