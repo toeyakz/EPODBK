@@ -9,55 +9,79 @@
     <RelativeLayout
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:layout_above="@+id/buttons_container"
-        android:id="@+id/signature_pad_container">
-
-        <FrameLayout
-            android:layout_width="fill_parent"
-            android:layout_height="1dp"
-            android:background="@android:color/darker_gray"
-            android:layout_marginBottom="8dp"
-            android:layout_above="@+id/signature_pad_description" />
-
-        <TextView
-            android:id="@+id/signature_pad_description"
-            android:layout_width="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:layout_height="wrap_content"
-            android:textColor="@android:color/darker_gray"
-            android:layout_marginBottom="16dp"
-            android:layout_alignParentBottom="true"
-            android:text="agreement" />
+        android:layout_above="@+id/saassaasas">
 
         <com.github.gcacace.signaturepad.views.SignaturePad
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
             android:id="@+id/signature_pad" />
+
+        <ImageView
+            android:id="@+id/showImageSig"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:visibility="gone"/>
+
     </RelativeLayout>
 
     <LinearLayout
-        android:id="@+id/buttons_container"
-        android:paddingTop="16dp"
-        android:layout_width="fill_parent"
+        android:id="@+id/saassaasas"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
+        android:orientation="vertical"
         android:layout_alignParentBottom="true">
 
-        <Button
-            android:id="@+id/clear_button"
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_height="wrap_content"
-            android:text="clear pad"
-            android:enabled="false" />
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
 
-        <Button
-            android:id="@+id/save_button"
-            android:layout_width="0dp"
-            android:layout_weight="1"
+            <ImageView
+                android:id="@+id/imgTakePhoto"
+                android:layout_width="34dp"
+                android:layout_height="34dp"
+                android:layout_marginStart="16dp"
+                android:src="@drawable/ic_camera_alt_black_24dp"
+                android:tint="#000000"
+                signature:layout_constraintBottom_toBottomOf="parent"
+                signature:layout_constraintStart_toStartOf="parent"
+                signature:layout_constraintTop_toTopOf="parent" />
+
+            <ImageView
+                android:id="@+id/clear_button"
+                android:layout_width="34dp"
+                android:layout_height="34dp"
+                android:layout_marginEnd="16dp"
+                android:src="@drawable/ic_delete_forever_black_24dp"
+                android:tint="#000000"
+                signature:layout_constraintBottom_toBottomOf="parent"
+                signature:layout_constraintEnd_toEndOf="parent"
+                signature:layout_constraintTop_toTopOf="parent" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <LinearLayout
+            android:id="@+id/buttons_container"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="save signature"
-            android:enabled="false" />
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/cancel_back"
+                android:layout_width="match_parent"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:text="@string/cancel" />
+
+            <Button
+                android:id="@+id/save_button"
+                android:layout_width="match_parent"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:text="@string/save"
+                android:enabled="false" />
+        </LinearLayout>
+
     </LinearLayout>
+
+
 
 </RelativeLayout>

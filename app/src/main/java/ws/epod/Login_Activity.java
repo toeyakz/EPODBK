@@ -157,6 +157,16 @@ public class Login_Activity extends AppCompatActivity {
             }
         }.execute();
 
+//        SharedPreferences login_data = getSharedPreferences("LOGIN", Context.MODE_PRIVATE);
+//        String status_login= login_data.getString("status_login", null);
+//        if(status_login!= null){
+//            if(status_login.equals("1")){
+//                Intent intent= new Intent(getApplicationContext(), PlanWork_Activity.class);
+//                startActivity(intent);
+//            }
+//        }
+
+//        isLogin();
 
     }
 
@@ -311,6 +321,18 @@ public class Login_Activity extends AppCompatActivity {
 
         showAndHidePassword();
 
+    }
+
+    private void isLogin(){
+        SharedPreferences login_data = getSharedPreferences("LOGIN", Context.MODE_PRIVATE);
+        String status_login= login_data.getString("status_login", null);
+        if(login_data != null){
+            if(status_login.equals("1")){
+                Intent intent = new Intent(getApplicationContext(), PlanWork_Activity.class);
+                startActivity(intent);
+            }
+
+        }
     }
 
     private void showAndHidePassword() {
@@ -470,6 +492,8 @@ public class Login_Activity extends AppCompatActivity {
                 super.onPostExecute(IsSuccess);
 
                 if ( IsSuccess == 1 ) {
+
+
 
                     SharedPreferences login_get = getSharedPreferences("LOGIN", Context.MODE_PRIVATE);
                     Var.UserLogin.driver_id = login_get.getString("driver_id", "");
@@ -670,9 +694,9 @@ public class Login_Activity extends AppCompatActivity {
         sql = "CREATE TABLE IF NOT EXISTS Var (Var TEXT NOT NULL,Value TEXT,Value2 TEXT,MODIFIED_DATE TEXT,PRIMARY KEY(Var));";
         databaseHelper.execDB(sql);
 
-        sql = "CREATE TABLE IF NOT EXISTS  login (username TEXT(255,0),pass TEXT(255,0),serial TEXT(255,0),driver_id TEXT(255,0)" +
+        sql = "CREATE TABLE IF NOT EXISTS  login (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,username TEXT(255,0),pass TEXT(255,0),serial TEXT(255,0),driver_id TEXT(255,0)" +
                 ",driver_fname TEXT(255,0),driver_lname TEXT(255,0),vehicle_id TEXT(255,0),vehicle_name TEXT(255,0),status_login TEXT(255,0)" +
-                ",driver_brand TEXT(255,0), modified_date TEXT(255,0),primary key(driver_id));";
+                ",driver_brand TEXT(255,0), modified_date TEXT(255,0), UNIQUE(id));";
         databaseHelper.execDB(sql);
 
         sql = "CREATE TABLE IF NOT EXISTS reason (id TEXT(255,0), name TEXT(255,0) , UNIQUE(id));";
@@ -747,8 +771,6 @@ public class Login_Activity extends AppCompatActivity {
                     if ( narisv.INSERT_AS_SQL("login", re_json, "") ) {
                         Log.d("NARISLOG", "INSERT JSON SUCCESS");
 
-                        String sql = "INSERT OR REPLACE into login (driver_brand) values('" + android.os.Build.BRAND + "')";
-                        databaseHelper.execDB(sql);
 
                         Var.UserLogin.driver_id = re_json.getJSONObject(0).getString("driver_id");
                         Var.UserLogin.driver_user = re_json.getJSONObject(0).getString("username");

@@ -1,22 +1,32 @@
 package ws.epod;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
+import androidx.core.content.FileProvider;
 
 import android.Manifest;
 import android.app.Activity;
 import android.content.ContentValues;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Matrix;
+import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.github.gcacace.signaturepad.views.SignaturePad;
@@ -27,7 +37,9 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -48,12 +60,18 @@ public class Signature_Deliver_Activity extends AppCompatActivity {
 
     private static final int REQUEST_EXTERNAL_STORAGE = 1;
     private static String[] PERMISSIONS_STORAGE = {Manifest.permission.WRITE_EXTERNAL_STORAGE};
-    Button clear_button, save_button;
+    Button save_button, cancel_back;
     SignaturePad signature_pad;
+    ImageView clear_button, imgTakePhoto, showImageSig;
 
     private ConnectionDetector netCon;
     private DatabaseHelper databaseHelper;
     private NarisBaseValue narisv;
+
+    String currentPhotoPath;
+    Uri imageUri;
+    private boolean isSignatured = false;
+    ArrayList<String> listImg = new ArrayList<>();
 
     // String getDate = "";
 
@@ -75,6 +93,45 @@ public class Signature_Deliver_Activity extends AppCompatActivity {
         save_button = findViewById(R.id.save_button);
         clear_button = findViewById(R.id.clear_button);
         signature_pad = findViewById(R.id.signature_pad);
+        cancel_back = findViewById(R.id.cancel_back);
+        imgTakePhoto = findViewById(R.id.imgTakePhoto);
+        showImageSig = findViewById(R.id.showImageSig);
+
+        cancel_back.setOnClickListener(v -> {
+            finish();
+        });
+
+        imgTakePhoto.setOnClickListener(v -> {
+            Animation animation = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.alpha);
+            imgTakePhoto.startAnimation(animation);
+
+            if (listImg != null) {
+                for (int i = 0; i < listImg.size(); i++) {
+                    File file = new File("/storage/emulated/0/Android/data/ws.epod/files/Signature/" + listImg.get(i));
+                    file.delete();
+                }
+            }
+
+            Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+            signature_pad.clear();
+            if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
+                File photoFile = null;
+                try {
+                    photoFile = createImageFile();
+                } catch (IOException ex) {
+                }
+                if (photoFile != null) {
+                    Uri photoURI = FileProvider.getUriForFile(this,
+                            BuildConfig.APPLICATION_ID + ".provider",
+                            photoFile);
+                    takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
+                    startActivityForResult(takePictureIntent, 01);
+                }
+            }
+
+
+        });
+
 
         signature_pad.setOnSignedListener(new SignaturePad.OnSignedListener() {
             @Override
@@ -85,13 +142,14 @@ public class Signature_Deliver_Activity extends AppCompatActivity {
             @Override
             public void onSigned() {
                 save_button.setEnabled(true);
-                clear_button.setEnabled(true);
+                listImg = new ArrayList<>();
+                isSignatured = true;
             }
 
             @Override
             public void onClear() {
                 save_button.setEnabled(false);
-                clear_button.setEnabled(false);
+                isSignatured = false;
             }
         });
 
@@ -99,6 +157,19 @@ public class Signature_Deliver_Activity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 signature_pad.clear();
+
+                if (listImg != null) {
+                    for (int i = 0; i < listImg.size(); i++) {
+                        File file = new File("/storage/emulated/0/Android/data/ws.epod/files/Signature/" + listImg.get(i));
+                        file.delete();
+                    }
+
+                    showImageSig.setImageBitmap(null);
+                    showImageSig.setVisibility(View.GONE);
+                    signature_pad.setVisibility(View.VISIBLE);
+                }
+
+
             }
         });
 
@@ -114,6 +185,83 @@ public class Signature_Deliver_Activity extends AppCompatActivity {
                 }
             }
         });
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (resultCode == Activity.RESULT_OK) {
+
+            imageUri = Uri.parse(currentPhotoPath);
+            final File file = new File(imageUri.getPath());
+
+
+            try {
+                ResizeImages(currentPhotoPath);
+                Bitmap myBitmap = BitmapFactory.decodeFile(imageUri.getPath());
+                if (imageUri.getPath() != null) {
+                    listImg = new ArrayList<>();
+                    listImg.add(file.getName());
+                    signature_pad.setVisibility(View.GONE);
+                    showImageSig.setVisibility(View.VISIBLE);
+                    showImageSig.setImageBitmap(myBitmap);
+                    save_button.setEnabled(true);
+
+                } else {
+
+                }
+
+                //  Log.d("getPatha", "onActivityResult: " + imageUri.getPath() + "=>01" + file.getPath() + "=>02" + file.getName());
+
+
+            } catch (FileNotFoundException e) {
+                return;
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+    }
+
+    private void ResizeImages(String sPath) throws IOException {
+
+        Bitmap photo = BitmapFactory.decodeFile(sPath);
+        // photo = Bitmap.createScaledBitmap(photo, 300, 300, false);
+
+        int width = photo.getWidth();
+        int height = photo.getHeight();
+
+        Matrix matrix = new Matrix();
+        matrix.postRotate(90);
+
+        Bitmap resizedBitmap = Bitmap.createBitmap(photo, 0, 0, width, height, matrix, true);
+
+        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+        resizedBitmap.compress(Bitmap.CompressFormat.JPEG, 40, bytes);
+
+        File file = new File(sPath);
+        FileOutputStream fo = new FileOutputStream(file);
+        fo.write(bytes.toByteArray());
+        fo.close();
+
+    }
+
+
+    private File createImageFile() throws IOException {
+        // Create an image file name
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        String imageFileName = "EPOD_" + timeStamp + "_";
+        File storageDir = getExternalFilesDir("Signature");
+        File image = File.createTempFile(
+                imageFileName,  /* prefix */
+                ".jpg",         /* suffix */
+                storageDir      /* directory */
+        );
+
+        // Save a file: path for use with ACTION_VIEW intents
+        currentPhotoPath = image.getAbsolutePath();
+        return image;
     }
 
     @Override
@@ -155,14 +303,14 @@ public class Signature_Deliver_Activity extends AppCompatActivity {
             }.getType();
             ArrayList<Sign_Model> arrayList = gson.fromJson(json, type);
 
-            String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-            String imageFileName = "EPOD_" + timeStamp + "_";
-            File storageDir = getExternalFilesDir("Signature");
-            File image = File.createTempFile(
-                    imageFileName,
-                    ".jpg",
-                    storageDir
-            );
+//            String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+//            String imageFileName = "EPOD_" + timeStamp + "_";
+//            File storageDir = getExternalFilesDir("Signature");
+//            File image = File.createTempFile(
+//                    imageFileName,
+//                    ".jpg",
+//                    storageDir
+//            );
 
             for (int i = 0; i < arrayList.size(); i++) {
 
@@ -180,9 +328,40 @@ public class Signature_Deliver_Activity extends AppCompatActivity {
                     jsonInsertPicSign.put("order_no", arrayList.get(i).getOrder_no());
                     jsonInsertPicSign.put("invoice_no", arrayList.get(i).getDeli_note_no());
                     jsonInsertPicSign.put("status_unload", arrayList.get(i).getStatus());
-                    jsonInsertPicSign.put("pic_sign_unload", image.getName());
                     jsonInsertPicSign.put("date_sign_unload", getdate());
                     jsonInsertPicSign.put("status_upload_invoice", "0");
+                    if (listImg != null) {
+                        for (int i1 = 0; i1 < listImg.size(); i1++) {
+                            jsonInsertPicSign.put("pic_sign_unload", listImg.get(i));
+                        }
+                    }
+                    String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+                    String imageFileName = "EPOD_" + timeStamp + "_";
+                    File storageDir = getExternalFilesDir("Signature");
+                    File image = File.createTempFile(
+                            imageFileName,
+                            ".jpg",
+                            storageDir
+                    );
+                    if (isSignatured) {
+                        jsonInsertPicSign.put("pic_sign_unload", image.getName());
+                        saveBitmapToJPG(signature, image);
+                    }
+
+                    ContentValues cv2 = new ContentValues();
+                    if (listImg != null) {
+                        for (int i1 = 0; i1 < listImg.size(); i1++) {
+                            cv2.put("name_img", listImg.get(i));
+                        }
+                    } else {
+                        if (image != null) {
+                            cv2.put("name_img", image.getName());
+                        }
+
+                    }
+                    cv2.put("status_img", "0");
+                    databaseHelper.db().insert("image_invoice", null, cv2);
+
 
                     if (!arrayList.get(i).getComment().equals("")) {
                         jsonInsertComment.put("consignment_no", arrayList.get(i).getConsignment_no());
@@ -214,11 +393,6 @@ public class Signature_Deliver_Activity extends AppCompatActivity {
                     }
 
 
-                    ContentValues cv2 = new ContentValues();
-                    cv2.put("name_img", image.getName());
-                    cv2.put("status_img", "0");
-                    databaseHelper.db().insert("image_invoice", null, cv2);
-
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -229,7 +403,7 @@ public class Signature_Deliver_Activity extends AppCompatActivity {
             sharedPrefs.edit().clear();
 
 
-            saveBitmapToJPG(signature, image);
+            // saveBitmapToJPG(signature, image);
 
 
         } catch (IOException e) {

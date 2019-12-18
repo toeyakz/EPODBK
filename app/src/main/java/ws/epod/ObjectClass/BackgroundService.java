@@ -4,6 +4,7 @@ import android.app.Service;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -107,130 +108,130 @@ public class BackgroundService extends Service {
         super.onDestroy();
     }
 
-    private void UpLoadWork() {
-
-        new AsyncTask<Void, Integer, Integer>() {
-
-            @Override
-            protected Integer doInBackground(Void... voids) {
-
-                int IsSuccess = 1;
-
-                JSONObject Root = new JSONObject();
-                String url = Var.WEBSERVICE2 + "func=setPlan&driver_id=" + Var.UserLogin.driver_id;
-                try {
-
-                    String sql = "select * from Plan where is_scaned <> '0'";
-                    Cursor cursor = databaseHelper.selectDB(sql);
-
-                    JSONArray ContactArray = new JSONArray();
-
-
-                    Log.d("UploadWorkLog", "doInBackground: " + cursor.getCount());
-                    int i = 0;
-                    cursor.moveToFirst();
-                    if (cursor.getCount() > 0) {
-                        do {
-
-                            JSONObject contact = new JSONObject();
-
-                            try {
-                                contact.put("id", cursor.getString(cursor.getColumnIndex("id")));
-                                contact.put("delivery_date", cursor.getString(cursor.getColumnIndex("delivery_date")));
-                                contact.put("vehicle_name", cursor.getString(cursor.getColumnIndex("vehicle_name")));
-                                contact.put("blackbox", cursor.getString(cursor.getColumnIndex("blackbox")));
-                                contact.put("delivery_no", cursor.getString(cursor.getColumnIndex("delivery_no")));
-                                contact.put("plan_seq", cursor.getString(cursor.getColumnIndex("plan_seq")));
-                                contact.put("station_code", cursor.getString(cursor.getColumnIndex("station_code")));
-                                contact.put("station_name", cursor.getString(cursor.getColumnIndex("station_name")));
-                                contact.put("station_address", cursor.getString(cursor.getColumnIndex("station_address")));
-                                contact.put("station_lat", cursor.getString(cursor.getColumnIndex("station_lat")));
-                                contact.put("station_lon", cursor.getString(cursor.getColumnIndex("station_lon")));
-                                contact.put("station_area", cursor.getString(cursor.getColumnIndex("station_area")));
-                                contact.put("plan_in", cursor.getString(cursor.getColumnIndex("plan_in")));
-                                contact.put("plan_out", cursor.getString(cursor.getColumnIndex("plan_out")));
-                                contact.put("consignment_no", cursor.getString(cursor.getColumnIndex("consignment_no")));
-                                contact.put("order_no", cursor.getString(cursor.getColumnIndex("order_no")));
-                                contact.put("activity_type", cursor.getString(cursor.getColumnIndex("activity_type")));
-                                contact.put("box_no", cursor.getString(cursor.getColumnIndex("box_no")));
-                                contact.put("waybill_no", cursor.getString(cursor.getColumnIndex("waybill_no")));
-                                contact.put("weight", cursor.getString(cursor.getColumnIndex("weight")));
-                                contact.put("actual_seq", cursor.getString(cursor.getColumnIndex("actual_seq")));
-                                contact.put("actual_lat", cursor.getString(cursor.getColumnIndex("actual_lat")));
-                                contact.put("actual_lon", cursor.getString(cursor.getColumnIndex("actual_lon")));
-                                contact.put("time_actual_in", cursor.getString(cursor.getColumnIndex("time_actual_in")));
-                                contact.put("time_actual_out", cursor.getString(cursor.getColumnIndex("time_actual_out")));
-                                contact.put("time_begin", cursor.getString(cursor.getColumnIndex("time_begin")));
-                                contact.put("time_end", cursor.getString(cursor.getColumnIndex("time_end")));
-                                contact.put("signature", cursor.getString(cursor.getColumnIndex("signature")));
-                                contact.put("is_scanned", cursor.getString(cursor.getColumnIndex("is_scaned")));
-                                contact.put("comment", cursor.getString(cursor.getColumnIndex("comment")));
-                                contact.put("picture1", cursor.getString(cursor.getColumnIndex("picture1")));
-                                contact.put("picture2", cursor.getString(cursor.getColumnIndex("picture2")));
-                                contact.put("picture3", cursor.getString(cursor.getColumnIndex("picture3")));
-                                contact.put("driver_code", cursor.getString(cursor.getColumnIndex("driver_code")));
-                                contact.put("driver_name", cursor.getString(cursor.getColumnIndex("driver_name")));
-                                contact.put("modified_date", cursor.getString(cursor.getColumnIndex("modified_date")));
-                                contact.put("trash", cursor.getString(cursor.getColumnIndex("trash")));
-
-                                ContactArray.put(i, contact);
-                                i++;
-
-                            } catch (JSONException e) {
-                                e.printStackTrace();
-                            }
-
-
-                        } while (cursor.moveToNext());
-
-                        Root.put("data", ContactArray);
-
-                        JSONArray fa = narisv.SendAndGetJson_reJsonArray(Root, url);
-                        if (fa.getJSONObject(0).getString("status").equals("Y")) {
-
-
-//                            File f = new File(Environment.getExternalStorageDirectory()
-//                                    + "/ContactDetail.txt");
-//                            FileOutputStream fos = new FileOutputStream(f, true);
-//                            PrintStream ps = new PrintStream(fos);
-//                            ps.append(Root.toString());
-
-                            IsSuccess = 1;
-                        } else {
-                            IsSuccess = 0;
-                        }
-
-                    } else {
-                        //new LoadWork().execute();
-                        IsSuccess = 1;
-                    }
-
-                } catch (Exception e) {
-                    IsSuccess = 0;
-                    e.printStackTrace();
-                }
-
-
-                return IsSuccess;
-            }
-
-            @Override
-            protected void onPostExecute(Integer result) {
-                super.onPostExecute(result);
-
-                switch (result) {
-                    case 1:
-                        //new LoadWork().execute();
-                        break;
-                    case 0:
-
-                        break;
-                }
-
-
-            }
-        }.execute();
-    }
+//    private void UpLoadWork() {
+//
+//        new AsyncTask<Void, Integer, Integer>() {
+//
+//            @Override
+//            protected Integer doInBackground(Void... voids) {
+//
+//                int IsSuccess = 1;
+//
+//                JSONObject Root = new JSONObject();
+//                String url = Var.WEBSERVICE2 + "func=setPlan&driver_id=" + Var.UserLogin.driver_id;
+//                try {
+//
+//                    String sql = "select * from Plan where is_scaned <> '0'";
+//                    Cursor cursor = databaseHelper.selectDB(sql);
+//
+//                    JSONArray ContactArray = new JSONArray();
+//
+//
+//                    Log.d("UploadWorkLog", "doInBackground: " + cursor.getCount());
+//                    int i = 0;
+//                    cursor.moveToFirst();
+//                    if (cursor.getCount() > 0) {
+//                        do {
+//
+//                            JSONObject contact = new JSONObject();
+//
+//                            try {
+//                                contact.put("id", cursor.getString(cursor.getColumnIndex("id")));
+//                                contact.put("delivery_date", cursor.getString(cursor.getColumnIndex("delivery_date")));
+//                                contact.put("vehicle_name", cursor.getString(cursor.getColumnIndex("vehicle_name")));
+//                                contact.put("blackbox", cursor.getString(cursor.getColumnIndex("blackbox")));
+//                                contact.put("delivery_no", cursor.getString(cursor.getColumnIndex("delivery_no")));
+//                                contact.put("plan_seq", cursor.getString(cursor.getColumnIndex("plan_seq")));
+//                                contact.put("station_code", cursor.getString(cursor.getColumnIndex("station_code")));
+//                                contact.put("station_name", cursor.getString(cursor.getColumnIndex("station_name")));
+//                                contact.put("station_address", cursor.getString(cursor.getColumnIndex("station_address")));
+//                                contact.put("station_lat", cursor.getString(cursor.getColumnIndex("station_lat")));
+//                                contact.put("station_lon", cursor.getString(cursor.getColumnIndex("station_lon")));
+//                                contact.put("station_area", cursor.getString(cursor.getColumnIndex("station_area")));
+//                                contact.put("plan_in", cursor.getString(cursor.getColumnIndex("plan_in")));
+//                                contact.put("plan_out", cursor.getString(cursor.getColumnIndex("plan_out")));
+//                                contact.put("consignment_no", cursor.getString(cursor.getColumnIndex("consignment_no")));
+//                                contact.put("order_no", cursor.getString(cursor.getColumnIndex("order_no")));
+//                                contact.put("activity_type", cursor.getString(cursor.getColumnIndex("activity_type")));
+//                                contact.put("box_no", cursor.getString(cursor.getColumnIndex("box_no")));
+//                                contact.put("waybill_no", cursor.getString(cursor.getColumnIndex("waybill_no")));
+//                                contact.put("weight", cursor.getString(cursor.getColumnIndex("weight")));
+//                                contact.put("actual_seq", cursor.getString(cursor.getColumnIndex("actual_seq")));
+//                                contact.put("actual_lat", cursor.getString(cursor.getColumnIndex("actual_lat")));
+//                                contact.put("actual_lon", cursor.getString(cursor.getColumnIndex("actual_lon")));
+//                                contact.put("time_actual_in", cursor.getString(cursor.getColumnIndex("time_actual_in")));
+//                                contact.put("time_actual_out", cursor.getString(cursor.getColumnIndex("time_actual_out")));
+//                                contact.put("time_begin", cursor.getString(cursor.getColumnIndex("time_begin")));
+//                                contact.put("time_end", cursor.getString(cursor.getColumnIndex("time_end")));
+//                                contact.put("signature", cursor.getString(cursor.getColumnIndex("signature")));
+//                                contact.put("is_scanned", cursor.getString(cursor.getColumnIndex("is_scaned")));
+//                                contact.put("comment", cursor.getString(cursor.getColumnIndex("comment")));
+//                                contact.put("picture1", cursor.getString(cursor.getColumnIndex("picture1")));
+//                                contact.put("picture2", cursor.getString(cursor.getColumnIndex("picture2")));
+//                                contact.put("picture3", cursor.getString(cursor.getColumnIndex("picture3")));
+//                                contact.put("driver_code", cursor.getString(cursor.getColumnIndex("driver_code")));
+//                                contact.put("driver_name", cursor.getString(cursor.getColumnIndex("driver_name")));
+//                                contact.put("modified_date", cursor.getString(cursor.getColumnIndex("modified_date")));
+//                                contact.put("trash", cursor.getString(cursor.getColumnIndex("trash")));
+//
+//                                ContactArray.put(i, contact);
+//                                i++;
+//
+//                            } catch (JSONException e) {
+//                                e.printStackTrace();
+//                            }
+//
+//
+//                        } while (cursor.moveToNext());
+//
+//                        Root.put("data", ContactArray);
+//
+//                        JSONArray fa = narisv.SendAndGetJson_reJsonArray(Root, url);
+//                        if (fa.getJSONObject(0).getString("status").equals("Y")) {
+//
+//
+////                            File f = new File(Environment.getExternalStorageDirectory()
+////                                    + "/ContactDetail.txt");
+////                            FileOutputStream fos = new FileOutputStream(f, true);
+////                            PrintStream ps = new PrintStream(fos);
+////                            ps.append(Root.toString());
+//
+//                            IsSuccess = 1;
+//                        } else {
+//                            IsSuccess = 0;
+//                        }
+//
+//                    } else {
+//                        //new LoadWork().execute();
+//                        IsSuccess = 1;
+//                    }
+//
+//                } catch (Exception e) {
+//                    IsSuccess = 0;
+//                    e.printStackTrace();
+//                }
+//
+//
+//                return IsSuccess;
+//            }
+//
+//            @Override
+//            protected void onPostExecute(Integer result) {
+//                super.onPostExecute(result);
+//
+//                switch (result) {
+//                    case 1:
+//                        //new LoadWork().execute();
+//                        break;
+//                    case 0:
+//
+//                        break;
+//                }
+//
+//
+//            }
+//        }.execute();
+//    }
 
     public class UpLoadWork extends AsyncTask<String, String, String> {
 
@@ -249,9 +250,20 @@ public class BackgroundService extends Service {
             JSONObject Root = new JSONObject();
             JSONObject picture1 = new JSONObject();
             ArrayList<UploadImage.Data> uploadImage = new ArrayList<>();
+            SharedPreferences login_get = getSharedPreferences("LOGIN", Context.MODE_PRIVATE);
+            String driver_id = login_get.getString("driver_id", "");
+            String driver_user = login_get.getString("username", "");
+            String driver_pass = login_get.getString("pass", "");
+            String driver_serial = login_get.getString("serial", "");
+            String driver_brand = login_get.getString("driver_brand", "");
+            String driver_truck_license = login_get.getString("vehicle_name", "");
+            String driver_fname = login_get.getString("driver_fname", "");
+            String driver_lname = login_get.getString("driver_lname", "");
+            String driver_vehicle_id = login_get.getString("vehicle_id", "");
+            String driver_status_login = login_get.getString("status_login", "");
 
             String id_plan = "";
-            String url = Var.WEBSERVICE2 + "func=setPlan&driver_id=" + Var.UserLogin.driver_id;
+            String url = Var.WEBSERVICE2 + "func=setPlan&driver_id=" + driver_id;
             String urlPic1 = "http://www.wisasoft.com:8997/TMS_MSM/resources/function/php/service.php?func=setImg";
             try {
 
@@ -335,6 +347,7 @@ public class BackgroundService extends Service {
 
                     String rootToString = Root.toString();
                     RequestBody body = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), rootToString);
+
 
                     Call<ResponseBody> call = apiInterface.uploadwork(Var.UserLogin.driver_id, body);
                     Response<ResponseBody> response = call.execute();

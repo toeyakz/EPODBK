@@ -80,6 +80,7 @@ import ws.epod.Adapter.PlanSection;
 import ws.epod.Adapter.PlanWorkAdapter;
 import ws.epod.Client.APIClient;
 import ws.epod.Client.APIInterface;
+import ws.epod.Client.Structors.Login;
 import ws.epod.Client.Structors.UploadImage;
 import ws.epod.Client.Structors.UploadImageInvoice;
 import ws.epod.Helper.DatabaseHelper;
@@ -429,10 +430,26 @@ public class PlanWork_Activity extends AppCompatActivity {
         //fabSearch.startAnimation(showButton);
     }
 
+    private void isLogin(){
+        SharedPreferences login_data = getSharedPreferences("LOGIN", Context.MODE_PRIVATE);
+        String status_login= login_data.getString("status_login", null);
+        if(status_login!= null){
+            if(status_login.equals("0")){
+                Intent intent= new Intent(getApplicationContext(), Login_Activity.class);
+                startActivity(intent);
+            }
+        }
+    }
+
 
     @Override
     public void onResume() {
-        super.onResume();
+
+
+
+       // isLogin();
+
+
 
         //createCustomAnimation();
 
@@ -445,7 +462,7 @@ public class PlanWork_Activity extends AppCompatActivity {
         }
 
 
-
+        super.onResume();
 
 
         //new getPlanWork().execute();
@@ -1895,6 +1912,10 @@ public class PlanWork_Activity extends AppCompatActivity {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             new Logout().execute();
+                            SharedPreferences login_data = getSharedPreferences("LOGIN", Context.MODE_PRIVATE);
+                            SharedPreferences.Editor editor = login_data.edit();
+                            editor.clear();
+                            editor.commit();
                             Log.d("NARISLOG", "Logout confirm..");
                         }
                     });
@@ -1923,11 +1944,17 @@ public class PlanWork_Activity extends AppCompatActivity {
                                 cv.put("status_login", "0");
                                 databaseHelper.db().update("login", cv, "driver_id= '" + Var.UserLogin.driver_id + "'", null);
 
+                                SharedPreferences login_data = getSharedPreferences("LOGIN", Context.MODE_PRIVATE);
+                                SharedPreferences.Editor editor = login_data.edit();
+                                editor.clear();
+                                editor.commit();
+
                                 //select to view status login
                                 String sql = "select * from login where username = '" + Var.UserLogin.driver_user + "' and pass = '" + Var.UserLogin.driver_pass + "' ";
                                 Cursor c = databaseHelper.selectDB(sql);
                                 c.moveToFirst();
                                 Log.d("status_login", "Logged out ==> " + c.getString(c.getColumnIndex("status_login")));
+
 
                                 finish();
 

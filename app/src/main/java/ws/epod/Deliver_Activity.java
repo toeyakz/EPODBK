@@ -809,9 +809,9 @@ public class Deliver_Activity extends AppCompatActivity {
                                 lastPosition = i;
 
                                 ((DeliverExpand_Model) expandableListAdapter.getChild(i, j)).setInto("0");
-                                ((PickingUpEexpand_Model) expandableListAdapter.getChild(i, j)).setTime_begin("");
-                                ((PickingUpEexpand_Model) expandableListAdapter.getChild(i, j)).setActual_lat("");
-                                ((PickingUpEexpand_Model) expandableListAdapter.getChild(i, j)).setActual_lon("");
+                                ((DeliverExpand_Model) expandableListAdapter.getChild(i, j)).setTime_begin("");
+                                ((DeliverExpand_Model) expandableListAdapter.getChild(i, j)).setActual_lat("");
+                                ((DeliverExpand_Model) expandableListAdapter.getChild(i, j)).setActual_lon("");
                                 isc = true;
 
                                 Toast.makeText(Deliver_Activity.this, "Un Check.", Toast.LENGTH_SHORT).show();
@@ -1023,6 +1023,7 @@ public class Deliver_Activity extends AppCompatActivity {
 
             Log.d("sdfgjhkasdfuiol", "getChildView: " + expandedList.getIs_scaned());
 
+            checkBox.setEnabled(false);
 
             tvExpand_Count.setText(String.valueOf((expandedListPosition + 1)));
             box_no.setText("BoxNo. " + expandedList.getBox_no());
@@ -1041,59 +1042,69 @@ public class Deliver_Activity extends AppCompatActivity {
             if (expandedList.getIs_scaned().equals("2")) {
                 checkBox.setChecked(true);
                 imgEditBoxNoPickup.setEnabled(true);
-                checkBox.setEnabled(false);
+               // checkBox.setEnabled(false);
                 checkBox.setButtonDrawable(R.drawable.ic_indeterminate_check_box_black_24dp);
 
             } else {
-                checkBox.setEnabled(true);
+              //  checkBox.setEnabled(true);
                 checkBox.setButtonDrawable(R.drawable.custom_checkbox);
             }
 
-            if (expandedList.getInto().equals("0")) {
-                if (expandedList.getIs_scaned().equals("0")) {
-                    checkBox.setChecked(false);
-                    imgEditBoxNoPickup.setEnabled(true);
-
-                }
-            } else {
-                expandedList.setIs_scaned("1");
-                expandedList.setTime_begin(getdate());
-                expandedList.setActual_lat(getlat());
-                expandedList.setActual_lon(getlon());
-                if (expandedList.getIs_scaned().equals("1")) {
-                    checkBox.setChecked(true);
-                    checkBox.setEnabled(false);
-                    checkBox.setButtonDrawable(R.drawable.ic_check_box_disable);
-                }
-            }
-
-
             if (expandedList.getIs_scaned().equals("1")) {
                 checkBox.setChecked(true);
-                checkBox.setEnabled(false);
-                checkBox.setButtonDrawable(R.drawable.ic_check_box_disable);
+
+            }
+
+            if (isc) {
+                if (expandedList.getInto().equals("0")) {
+                    expandedList.setIs_scaned("0");
+                    if (expandedList.getIs_scaned().equals("0")) {
+                        checkBox.setChecked(false);
+                        imgEditBoxNoPickup.setEnabled(true);
+                        isc = false;
+                    }
+                } else {
+                    expandedList.setIs_scaned("1");
+                    expandedList.setTime_begin(getdate());
+
+                    // Log.d("sdgfjkashdfsdf", "getChildView: "+ LocationLatLon.getLastLocation());
+                    expandedList.setActual_lon(getlat());
+                    expandedList.setActual_lon(getlon());
+
+                    if (expandedList.getIs_scaned().equals("1")) {
+                        checkBox.setChecked(true);
+                        isc = false;
+                        //  checkBox.setEnabled(false);
+                        //              checkBox.setButtonDrawable(R.drawable.ic_check_box_disable);
+                    }
+                }
+            } else {
+
             }
 
 
-            checkBox.setOnClickListener(v -> {
-                if (((CheckBox) v).isChecked()) {
-                    imgEditBoxNoPickup.setEnabled(false);
-                    expandedList.setIs_scaned("1");
-                    expandedList.setTime_begin(getdate());
-                    expandedList.setActual_lat(getlat());
-                    expandedList.setActual_lon(getlon());
 
 
-                } else {
 
-                    imgEditBoxNoPickup.setEnabled(true);
-                    expandedList.setIs_scaned("0");
-                    expandedList.setTime_begin("");
-                    expandedList.setActual_lat("");
-                    expandedList.setActual_lon("");
-                }
-
-            });
+//            checkBox.setOnClickListener(v -> {
+//                if (((CheckBox) v).isChecked()) {
+//                    imgEditBoxNoPickup.setEnabled(false);
+//                    expandedList.setIs_scaned("1");
+//                    expandedList.setTime_begin(getdate());
+//                    expandedList.setActual_lat(getlat());
+//                    expandedList.setActual_lon(getlon());
+//
+//
+//                } else {
+//
+//                    imgEditBoxNoPickup.setEnabled(true);
+//                    expandedList.setIs_scaned("0");
+//                    expandedList.setTime_begin("");
+//                    expandedList.setActual_lat("");
+//                    expandedList.setActual_lon("");
+//                }
+//
+//            });
 
             imgEditBoxNoPickup.setOnClickListener(v -> {
                 Animation animation = AnimationUtils.loadAnimation(context, R.anim.alpha);
@@ -2181,7 +2192,7 @@ public class Deliver_Activity extends AppCompatActivity {
         // Create an image file name
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
         String imageFileName = "EPOD_" + timeStamp + "_";
-        File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        File storageDir = getExternalFilesDir("Pictures");
         File image = File.createTempFile(
                 imageFileName,  /* prefix */
                 ".jpg",         /* suffix */
