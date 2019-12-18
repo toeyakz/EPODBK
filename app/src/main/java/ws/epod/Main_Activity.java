@@ -76,7 +76,7 @@ public class Main_Activity extends LocalizationActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        //startService(new Intent(getApplicationContext(),BackgroundService.class));
+        startService(new Intent(getApplicationContext(),BackgroundService.class));
 
     }
 

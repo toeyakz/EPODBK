@@ -7,6 +7,7 @@ import android.app.ProgressDialog;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.SQLException;
@@ -84,6 +85,7 @@ import ws.epod.Client.Structors.UploadImageInvoice;
 import ws.epod.Helper.DatabaseHelper;
 import ws.epod.Helper.NarisBaseValue;
 import ws.epod.Helper.ConnectionDetector;
+import ws.epod.ObjectClass.BackgroundService;
 import ws.epod.ObjectClass.LanguageClass;
 import ws.epod.ObjectClass.SQLiteModel.Plan_model;
 import ws.epod.ObjectClass.Var;
@@ -123,6 +125,7 @@ public class PlanWork_Activity extends AppCompatActivity {
 
 
     ProgressDialog progressDialog;
+
 
     FloatingActionButton fabSearch, fabToday, fabFilterDate, bt_refesh;
     LinearLayout layoutToday, layoutFilterDate;
@@ -180,16 +183,17 @@ public class PlanWork_Activity extends AppCompatActivity {
         showLayout = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.show_layout);
         hideLayout = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.hide_layout);
 
-
-//        handler = new android.os.Handler();
-//        runnable = new Runnable() {
-//            public void run() {
-//                startService(new Intent(getApplicationContext(),BackgroundService.class));
-//            }
-//        };
-//        handler.postDelayed(runnable, 10000);
+        handler = new android.os.Handler();
+        runnable = new Runnable() {
+            public void run() {
+                startService(new Intent(getApplicationContext(), BackgroundService.class));
+            }
+        };
+        handler.postDelayed(runnable, 20000);
 
         inialView();
+        getDataFromSQLite("", "", "");
+       // new UploadWork2ND().execute();
         //new UpLoadWork().execute();
 
     }
@@ -274,6 +278,8 @@ public class PlanWork_Activity extends AppCompatActivity {
                 bt_refesh.startAnimation(animation);
                 hideAll();
                 new UploadWork2ND().execute();
+                getDataFromSQLite("","","");
+              //  rvPlanWork.setAdapter(sectionAdapter);
 
             }
         });
@@ -439,6 +445,9 @@ public class PlanWork_Activity extends AppCompatActivity {
         }
 
 
+
+
+
         //new getPlanWork().execute();
     }
 
@@ -546,9 +555,9 @@ public class PlanWork_Activity extends AppCompatActivity {
                                             String json_data = jsonArray.getJSONObject(0).getJSONArray("data").getString(j);
 
                                             //เปิดทีหลัง
-//                                            ContentValues cv = new ContentValues();
-//                                            cv.put("status_upload_invoice", "1");
-//                                            databaseHelper.db().update("pic_sign", cv, "id= '" + json_data + "'", null);
+                                            ContentValues cv = new ContentValues();
+                                            cv.put("status_upload_invoice", "1");
+                                            databaseHelper.db().update("pic_sign", cv, "id= '" + json_data + "'", null);
                                         }
 
                                         //upload image *********************************************
@@ -646,7 +655,7 @@ public class PlanWork_Activity extends AppCompatActivity {
                                                     ContactCM.put(cm, contact2);
                                                     cm++;
 
-                                                }while (cursorCM.moveToNext());
+                                                } while (cursorCM.moveToNext());
 
                                                 RootCM.put("data", ContactCM);
                                                 Log.d("lksioasj", "doInBackground: " + RootCM.toString());
@@ -666,7 +675,7 @@ public class PlanWork_Activity extends AppCompatActivity {
                                                                 for (int b = 0; b < jsonArray.getJSONObject(0).getJSONArray("data").length(); b++) {
                                                                     String json_data = jsonArray.getJSONObject(0).getJSONArray("data").getString(b);
 
-                                                                    Log.d("lksioasj", "doInBackground: "+json_data);
+                                                                    Log.d("lksioasj", "doInBackground: " + json_data);
 
                                                                     ContentValues cv = new ContentValues();
                                                                     cv.put("status_upload_comment", "1");
@@ -732,7 +741,7 @@ public class PlanWork_Activity extends AppCompatActivity {
 //            String urlPic1 = "http://www.wisasoft.com:8997/TMS_MSM/resources/function/php/service.php?func=setImg";
             try {
 
-                String sql = "select * from Plan where is_scaned <> '0' and status_upload= '0'";
+                String sql = "select * from Plan where is_scaned <> '0' and status_upload= '0' and trash = '0' ";
                 Cursor cursor = databaseHelper.selectDB(sql);
 
                 JSONArray ContactArray = new JSONArray();
@@ -824,11 +833,11 @@ public class PlanWork_Activity extends AppCompatActivity {
 //
                                     for (int pic = 0; pic < jsonArray.getJSONObject(0).getJSONArray("returnId").length(); pic++) {
 
-//                                        String json_data = jsonArray.getJSONObject(0).getJSONArray("returnId").getString(pic);
+                                        String json_data = jsonArray.getJSONObject(0).getJSONArray("returnId").getString(pic);
                                         //เปิดดทีหลัง
-//                                        ContentValues cv = new ContentValues();
-//                                        cv.put("status_upload", "1");
-//                                        databaseHelper.db().update("Plan", cv, "id= '" + json_data + "'", null);
+                                        ContentValues cv = new ContentValues();
+                                        cv.put("status_upload", "1");
+                                        databaseHelper.db().update("Plan", cv, "id= '" + json_data + "'", null);
 
                                     }
 
@@ -925,9 +934,9 @@ public class PlanWork_Activity extends AppCompatActivity {
                                                                 Log.d("sdfsdf", "TRD_1: " + json_data);
 
                                                                 // เปิดทีหลัง
-//                                        ContentValues cv = new ContentValues();
-//                                        cv.put("status_img", "1");
-//                                        databaseHelper.db().update("image", cv, "name_img= '" + json_data + "'", null);
+                                                                ContentValues cv = new ContentValues();
+                                                                cv.put("status_img", "1");
+                                                                databaseHelper.db().update("image", cv, "name_img= '" + json_data + "'", null);
 
                                                             }
 
@@ -1004,7 +1013,7 @@ public class PlanWork_Activity extends AppCompatActivity {
             time.add(Calendar.DAY_OF_YEAR, -7);
             Date lastModified = new Date(file.lastModified());
             if (lastModified.before(time.getTime())) {
-                  file.delete();
+                file.delete();
             }
 
 
@@ -1094,6 +1103,7 @@ public class PlanWork_Activity extends AppCompatActivity {
                                                             JSONArray jsonArrayReason = new JSONArray(recievedReason);
                                                             if (narisv.INSERT_AS_SQL("reason", jsonArrayReason, "")) {
                                                                 Log.d("PlanWorkLOG", "SAVED reason.");
+
                                                             } else {
                                                                 Log.d("PlanWorkLOG", "FAIL save reason.");
                                                             }
@@ -1133,7 +1143,7 @@ public class PlanWork_Activity extends AppCompatActivity {
             super.onPostExecute(s);
 
             firstSync = true;
-
+            getDataFromSQLite("", "", "");
             String mess = "";
             switch (IsSuccess) {
                 case 1:
@@ -1145,17 +1155,20 @@ public class PlanWork_Activity extends AppCompatActivity {
                     }
                     Snackbar.make(viewFab, mess, Snackbar.LENGTH_LONG)
                             .setAction("Action", null).show();
-                    if (planWorkAdapter != null) {
-                        planWorkAdapter.notifyDataSetChanged();
-                    }
+               //     if (sectionAdapter != null) {
+
+                       // rvPlanWork.setAdapter(sectionAdapter);
+                       // planWorkAdapter.notifyDataSetChanged();
+                 //   }
                     break;
                 case 2:
                     mess = "Sync error!!";
                     Snackbar.make(viewFab, mess, Snackbar.LENGTH_LONG)
                             .setAction("Action", null).show();
-                    if (planWorkAdapter != null) {
-                        planWorkAdapter.notifyDataSetChanged();
-                    }
+
+                       // rvPlanWork.setAdapter(sectionAdapter);
+                       //// planWorkAdapter.notifyDataSetChanged();
+
                     break;
             }
 
@@ -1553,7 +1566,7 @@ public class PlanWork_Activity extends AppCompatActivity {
 
     }
 
-    public void getDataFromSQLite(String today, String dateBegin, String dateEnd) {
+    private void getDataFromSQLite(String today, String dateBegin, String dateEnd) {
 
         String sql = "";
         if (!dateBegin.equals("") && !dateEnd.equals("")) {
@@ -1576,7 +1589,7 @@ public class PlanWork_Activity extends AppCompatActivity {
                     "and pl.order_no in (select order_no from pic_sign where pic_sign_unload <> '')) as finish " +
                     "from Plan pl\n" +
                     "inner join consignment cm on cm.consignment_no = pl.consignment_no\n" +
-                    "where (pl.delivery_date between '" + dateBegin + "' and '" + dateEnd + "') \n" +
+                    "where (pl.delivery_date between '" + dateBegin + "' and '" + dateEnd + "') and and pl.trash = '0'" +
                     "group by pl.delivery_no\n" +
                     "order by pl.delivery_date asc, pl.delivery_no";
         } else if (!today.equals("")) {
@@ -1599,63 +1612,37 @@ public class PlanWork_Activity extends AppCompatActivity {
                     "and pl.order_no in (select order_no from pic_sign where pic_sign_unload <> '')) as finish " +
                     "from Plan pl\n" +
                     "inner join consignment cm on cm.consignment_no = pl.consignment_no\n" +
-                    "where pl.delivery_date >= '" + today + "'\n" +
+                    "where pl.delivery_date >= '" + today + "' and pl.trash = '0'" +
                     "group by pl.delivery_no\n" +
                     "order by pl.delivery_date asc, pl.delivery_no";
         } else {
-            sql = "select pl.delivery_no\n" +
-                    ", pl.delivery_date\n" +
-                    ", count(DISTINCT pl.plan_seq) as plan_seq\n" +
-                    ", (select count(DISTINCT pl2.consignment_no)\n" +
-                    "        from Plan pl2\n" +
-                    "        inner join consignment cm2 on cm2.consignment_no = pl2.consignment_no\n" +
-                    "        where pl2.delivery_no = pl.delivery_no and pl2.activity_type = 'LOAD' and pl2.consignment_no = cm2.consignment_no  and cm2.trash = '0') as pick\n" +
-                    ", (select count(DISTINCT pl2.consignment_no)\n" +
-                    "        from Plan pl2\n" +
-                    "        inner join consignment cm2 on cm2.consignment_no = pl2.consignment_no\n" +
-                    "        where pl2.delivery_no = pl.delivery_no  and pl2.activity_type = 'UNLOAD' and pl2.consignment_no = cm2.consignment_no and cm2.trash = '0') as deli\n" +
-                    "\n" +
+            sql = "select pl.delivery_no \n" +
+                    ", pl.delivery_date \n" +
+                    ", count(DISTINCT pl.plan_seq) as plan_seq \n" +
                     ", (select count(DISTINCT pl2.consignment_no) \n" +
                     "from Plan pl2 \n" +
                     "inner join consignment cm2 on cm2.consignment_no = pl2.consignment_no \n" +
-                    "where pl2.delivery_no = pl.delivery_no and pl2.activity_type = 'UNLOAD' and pl2.consignment_no = cm2.consignment_no and cm2.trash = '0' \n" +
-                    "and pl.order_no in (select order_no from pic_sign where pic_sign_unload <> '')) as finish " +
-                    "from Plan pl\n" +
-                    "inner join consignment cm on cm.consignment_no = pl.consignment_no\n" +
-                    "where pl.delivery_date >= date('now')\n" +
-                    "group by pl.delivery_no\n" +
+                    "where pl2.delivery_no = pl.delivery_no and pl2.activity_type = 'LOAD' and pl2.consignment_no = cm2.consignment_no  and cm2.trash = '0') as pick \n" +
+                    ", (select count(DISTINCT pl2.consignment_no) \n" +
+                    "from Plan pl2 \n" +
+                    "inner join consignment cm2 on cm2.consignment_no = pl2.consignment_no \n" +
+                    "where pl2.delivery_no = pl.delivery_no  and pl2.activity_type = 'UNLOAD' and pl2.consignment_no = cm2.consignment_no and cm2.trash = '0') as deli \n" +
+                    ", (select count(DISTINCT pl2.consignment_no)  \n" +
+                    "from Plan pl2  \n" +
+                    "inner join consignment cm2 on cm2.consignment_no = pl2.consignment_no  \n" +
+                    "where pl2.delivery_no = pl.delivery_no and pl2.activity_type = 'UNLOAD' and pl2.consignment_no = cm2.consignment_no and cm2.trash = '0'  and pl2.trash = '0'\n" +
+                    "and pl.order_no in (select order_no from pic_sign where pic_sign_unload <> '')) as finish  \n" +
+                    "from Plan pl \n" +
+                    "inner join consignment cm on cm.consignment_no = pl.consignment_no \n" +
+                    "where pl.delivery_date >= date('now') and pl.trash = '0'\n" +
+                    "group by pl.delivery_no \n" +
                     "order by pl.delivery_date asc, pl.delivery_no";
         }
 
 
-        //ทำต่อ 5/11/2562
-//        select pl.delivery_no
-//                , pl.delivery_date
-//                , count(DISTINCT pl.plan_seq) as plan_seq
-//, (select count(DISTINCT pl2.consignment_no)
-//        from Plan pl2
-//        inner join consignment cm2 on cm2.consignment_no = pl2.consignment_no
-//        where pl2.delivery_no = pl.delivery_no and pl2.activity_type = 'LOAD' and pl2.consignment_no = cm2.consignment_no and cm2.activity_type = 'LOAD' and cm2.trash = '0') as pick
-//, (select count(DISTINCT pl2.consignment_no)
-//        from Plan pl2
-//        inner join consignment cm2 on cm2.consignment_no = pl2.consignment_no
-//        where pl2.delivery_no = pl.delivery_no and cm2.activity_type = 'UNLOAD' and pl2.activity_type = 'UNLOAD' and pl2.consignment_no = cm2.consignment_no and cm2.trash = '0') as dili
-//
-//, (select count(DISTINCT pl2.consignment_no)
-//        from Plan pl2
-//        inner join consignment cm2 on cm2.consignment_no = pl2.consignment_no
-//        where pl2.delivery_no = pl.delivery_no  and pl2.activity_type = 'UNLOAD' and pl2.consignment_no = cm2.consignment_no and cm2.trash = '0'
-//        and (select count(cm3.deli_note_no) from consignment cm3 where cm3.status <> '0' and pl2.consignment_no = cm3.consignment_no)) as finnish
-//
-//        from Plan pl
-//        inner join consignment cm on cm.consignment_no = pl.consignment_no
-//        where pl.delivery_no = 'J201910000053'
-//        group by pl.delivery_no
-//        order by pl.delivery_date desc, pl.delivery_no
-
         ArrayList<Plan_model> studentArrayList = new ArrayList<>();
         ArrayList<String> dateArray = new ArrayList<>();
-        SectionedRecyclerViewAdapter sectionAdapter = new SectionedRecyclerViewAdapter();
+        SectionedRecyclerViewAdapter sectionAdapter  = new SectionedRecyclerViewAdapter();
 
         Cursor cursor = databaseHelper.selectDB(sql);
 
@@ -1664,6 +1651,8 @@ public class PlanWork_Activity extends AppCompatActivity {
         cursor.moveToFirst();
         do {
             if (cursor.getCount() > 0) {
+
+
                 String delivery_date = cursor.getString(cursor.getColumnIndex("delivery_date"));
                 String delivery_no = cursor.getString(cursor.getColumnIndex("delivery_no"));
                 int plan_seq = cursor.getInt(cursor.getColumnIndex("plan_seq"));
@@ -1671,11 +1660,14 @@ public class PlanWork_Activity extends AppCompatActivity {
                 String deli = cursor.getString(cursor.getColumnIndex("deli"));
                 String finish = cursor.getString(cursor.getColumnIndex("finish"));
 
+                Log.d("fsjkdfaois", "getDataFromSQLite: "+delivery_no);
+
                 dateArray.add(delivery_date);
                 studentArrayList.add(new Plan_model(delivery_date, delivery_no, plan_seq, pick, deli, finish));
             }
 
         } while (cursor.moveToNext());
+
 
         //ตัดวันที่ซ้ำออก
         HashSet hs = new HashSet();
@@ -1702,6 +1694,11 @@ public class PlanWork_Activity extends AppCompatActivity {
 
             }
 
+            for (int k = 0; k < item.size(); k++){
+              //  Log.d("fsjkdfaois", "getDataFromSQLite: "+item.get(k).getDelivery_no());
+            }
+
+
             sectionAdapter.addSection(new PlanSection(dateNewFormat(dateArray.get(i)), item, getApplicationContext()));
         }
 
@@ -1709,7 +1706,7 @@ public class PlanWork_Activity extends AppCompatActivity {
         //planWorkAdapter = new PlanWorkAdapter(studentArrayList, getApplicationContext());
 
         rvPlanWork.setAdapter(sectionAdapter);
-        cursor.close();
+       // cursor.close();
 
     }
 

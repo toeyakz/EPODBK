@@ -9,7 +9,7 @@ import java.util.ArrayList;
  */
 public class Var {
     public static String dbname = "EPOD_DB.db";
-    //public static String dbname = Environment.getExternalStorageDirectory().getPath()+"/EPOD/EPOD_DB.db";
+   // public static String dbname = Environment.getExternalStorageDirectory().getPath()+"/EPOD/EPOD_DB.db";
     public static String appfolder = Environment.getExternalStorageDirectory() + "/ILS";
     public static String folderimg = Environment.getExternalStorageDirectory() + "/ILS/img";
     public static String googleMapapi = "AIzaSyBpT35QdMbx2NuZY3l1R2XiznmmcICdBz8";

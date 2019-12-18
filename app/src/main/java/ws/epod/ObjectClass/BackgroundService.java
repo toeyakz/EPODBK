@@ -10,6 +10,7 @@ import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Environment;
 import android.os.IBinder;
+
 import androidx.annotation.Nullable;
 
 import android.util.Base64;
@@ -62,11 +63,11 @@ public class BackgroundService extends Service {
     //invoice
     String encodedImageInvoice;
 
-    int delay = ( 1 * 60 ) * 1000;
+    int delay = (1 * 60) * 1000;
 
     @Nullable
     @Override
-    public IBinder onBind( Intent intent ) {
+    public IBinder onBind(Intent intent) {
         return null;
     }
 
@@ -76,7 +77,7 @@ public class BackgroundService extends Service {
     }
 
     @Override
-    public int onStartCommand( Intent intent, int flags, int startId ) {
+    public int onStartCommand(Intent intent, int flags, int startId) {
 
 
         narisv = new NarisBaseValue(getApplicationContext());
@@ -111,7 +112,7 @@ public class BackgroundService extends Service {
         new AsyncTask<Void, Integer, Integer>() {
 
             @Override
-            protected Integer doInBackground( Void... voids ) {
+            protected Integer doInBackground(Void... voids) {
 
                 int IsSuccess = 1;
 
@@ -128,7 +129,7 @@ public class BackgroundService extends Service {
                     Log.d("UploadWorkLog", "doInBackground: " + cursor.getCount());
                     int i = 0;
                     cursor.moveToFirst();
-                    if ( cursor.getCount() > 0 ) {
+                    if (cursor.getCount() > 0) {
                         do {
 
                             JSONObject contact = new JSONObject();
@@ -185,7 +186,7 @@ public class BackgroundService extends Service {
                         Root.put("data", ContactArray);
 
                         JSONArray fa = narisv.SendAndGetJson_reJsonArray(Root, url);
-                        if ( fa.getJSONObject(0).getString("status").equals("Y") ) {
+                        if (fa.getJSONObject(0).getString("status").equals("Y")) {
 
 
 //                            File f = new File(Environment.getExternalStorageDirectory()
@@ -214,7 +215,7 @@ public class BackgroundService extends Service {
             }
 
             @Override
-            protected void onPostExecute( Integer result ) {
+            protected void onPostExecute(Integer result) {
                 super.onPostExecute(result);
 
                 switch (result) {
@@ -243,7 +244,7 @@ public class BackgroundService extends Service {
         }
 
         @Override
-        protected String doInBackground( String... strings ) {
+        protected String doInBackground(String... strings) {
 
             JSONObject Root = new JSONObject();
             JSONObject picture1 = new JSONObject();
@@ -271,7 +272,7 @@ public class BackgroundService extends Service {
                 Log.d("UploadWorkLog", "doInBackground: " + cursor.getCount());
                 int i = 0;
                 cursor.moveToFirst();
-                if ( cursor.getCount() > 0 ) {
+                if (cursor.getCount() > 0) {
                     do {
 
                         JSONObject contact = new JSONObject();
@@ -337,24 +338,24 @@ public class BackgroundService extends Service {
 
                     Call<ResponseBody> call = apiInterface.uploadwork(Var.UserLogin.driver_id, body);
                     Response<ResponseBody> response = call.execute();
-                    if ( response.code() == 200 ) {
+                    if (response.code() == 200) {
                         String responseRecieved = response.body().string();
-                        if ( responseRecieved != null ) {
-                            if ( !responseRecieved.equals("") ) {
+                        if (responseRecieved != null) {
+                            if (!responseRecieved.equals("")) {
                                 JSONArray jsonArray = new JSONArray(responseRecieved);
 
 
                                 Log.d("LogBackground", "doInBackground: " + jsonArray.getJSONObject(0).getString("status"));
 
-                                if ( jsonArray.getJSONObject(0).getString("status").equals("Y") ) {
+                                if (jsonArray.getJSONObject(0).getString("status").equals("Y")) {
 //
                                     for (int pic = 0; pic < jsonArray.getJSONObject(0).getJSONArray("returnId").length(); pic++) {
 
-//                                        String json_data = jsonArray.getJSONObject(0).getJSONArray("returnId").getString(pic);
+                                        String json_data = jsonArray.getJSONObject(0).getJSONArray("returnId").getString(pic);
                                         //เปิดดทีหลัง
-//                                        ContentValues cv = new ContentValues();
-//                                        cv.put("status_upload", "1");
-//                                        databaseHelper.db().update("Plan", cv, "id= '" + json_data + "'", null);
+                                        ContentValues cv = new ContentValues();
+                                        cv.put("status_upload", "1");
+                                        databaseHelper.db().update("Plan", cv, "id= '" + json_data + "'", null);
 
                                     }
 
@@ -368,10 +369,10 @@ public class BackgroundService extends Service {
 
                                     int j = 0;
                                     cursor_getPicture.moveToFirst();
-                                    if ( cursor_getPicture.getCount() > 0 ) {
+                                    if (cursor_getPicture.getCount() > 0) {
                                         do {
 
-                                            if ( !cursor_getPicture.getString(cursor_getPicture.getColumnIndex("picture1")).equals("") ) {
+                                            if (!cursor_getPicture.getString(cursor_getPicture.getColumnIndex("picture1")).equals("")) {
 
                                                 File file = new File("/storage/emulated/0/Android/data/ws.epod/files/Pictures/" + cursor_getPicture.getString(cursor_getPicture.getColumnIndex("picture1")));
                                                 Bitmap myBitmap = BitmapFactory.decodeFile(file.getAbsolutePath());
@@ -389,7 +390,7 @@ public class BackgroundService extends Service {
 
                                             }
 //
-                                            if ( !cursor_getPicture.getString(cursor_getPicture.getColumnIndex("picture2")).equals("") ) {
+                                            if (!cursor_getPicture.getString(cursor_getPicture.getColumnIndex("picture2")).equals("")) {
 
                                                 File file = new File("/storage/emulated/0/Android/data/ws.epod/files/Pictures/" + cursor_getPicture.getString(cursor_getPicture.getColumnIndex("picture2")));
                                                 Bitmap myBitmap = BitmapFactory.decodeFile(file.getAbsolutePath());
@@ -407,7 +408,7 @@ public class BackgroundService extends Service {
 
                                             }
 
-                                            if ( !cursor_getPicture.getString(cursor_getPicture.getColumnIndex("picture3")).equals("") ) {
+                                            if (!cursor_getPicture.getString(cursor_getPicture.getColumnIndex("picture3")).equals("")) {
 
                                                 File file = new File("/storage/emulated/0/Android/data/ws.epod/files/Pictures/" + cursor_getPicture.getString(cursor_getPicture.getColumnIndex("picture3")));
                                                 Bitmap myBitmap = BitmapFactory.decodeFile(file.getAbsolutePath());
@@ -431,18 +432,18 @@ public class BackgroundService extends Service {
                                         UploadImage data = new UploadImage(uploadImage);
 
 
-                                        if ( picture1 != null ) {
+                                        if (picture1 != null) {
 
                                             Call<ResponseBody> callImg = apiInterface.uploadPicture(data);
 
                                             Response<ResponseBody> responseImg = callImg.execute();
-                                            if ( responseImg.code() == 200 ) {
+                                            if (responseImg.code() == 200) {
                                                 String responseRecievedImg = responseImg.body().string();
-                                                if ( responseRecievedImg != null ) {
-                                                    if ( !responseRecievedImg.equals("") ) {
+                                                if (responseRecievedImg != null) {
+                                                    if (!responseRecievedImg.equals("")) {
                                                         JSONArray jsonImg = new JSONArray(responseRecievedImg);
 
-                                                        if ( jsonImg.getJSONObject(0).getString("status").equals("Y") ) {
+                                                        if (jsonImg.getJSONObject(0).getString("status").equals("Y")) {
 
                                                             for (int pic = 0; pic < jsonImg.getJSONObject(0).getJSONArray("img").length(); pic++) {
 
@@ -450,9 +451,9 @@ public class BackgroundService extends Service {
                                                                 Log.d("TRD", "TRD_1: " + json_data);
 
                                                                 // เปิดทีหลัง
-//                                        ContentValues cv = new ContentValues();
-//                                        cv.put("status_img", "1");
-//                                        databaseHelper.db().update("image", cv, "name_img= '" + json_data + "'", null);
+                                                                ContentValues cv = new ContentValues();
+                                                                cv.put("status_img", "1");
+                                                                databaseHelper.db().update("image", cv, "name_img= '" + json_data + "'", null);
 
                                                             }
 
@@ -490,7 +491,7 @@ public class BackgroundService extends Service {
         }
 
         @Override
-        protected void onPostExecute( String s ) {
+        protected void onPostExecute(String s) {
             super.onPostExecute(s);
             switch (IsSuccess) {
                 case -1:
@@ -512,7 +513,7 @@ public class BackgroundService extends Service {
             int IsSuccess = 1;
 
             @Override
-            protected String doInBackground( String... strings ) {
+            protected String doInBackground(String... strings) {
 
                 try {
 
@@ -522,7 +523,7 @@ public class BackgroundService extends Service {
                     String sql_getMaxModifild_date = "select MAX(modified_date) as max_modified_date from Plan ";
                     Cursor cursor_etMaxModifild_date = databaseHelper.selectDB(sql_getMaxModifild_date);
                     cursor_etMaxModifild_date.moveToFirst();
-                    if ( cursor_etMaxModifild_date.getCount() > 0 ) {
+                    if (cursor_etMaxModifild_date.getCount() > 0) {
                         do {
                             max_modified_date = cursor_etMaxModifild_date.getString(cursor_etMaxModifild_date.getColumnIndex("max_modified_date"));
 
@@ -544,10 +545,10 @@ public class BackgroundService extends Service {
 
                     Call<ResponseBody> call = apiInterface.downloadWork(Var.UserLogin.driver_vehicle_id, Var.UserLogin.driver_id, Var.UserLogin.driver_serial, getDate, "");
                     Response<ResponseBody> response = call.execute();
-                    if ( response.code() == 200 ) {
+                    if (response.code() == 200) {
                         String responseRecieved = response.body().string();
-                        if ( responseRecieved != null ) {
-                            if ( !responseRecieved.equals("") ) {
+                        if (responseRecieved != null) {
+                            if (!responseRecieved.equals("")) {
                                 Log.d("getPlanLog", "doInBackground: " + responseRecieved);
 
                                 JSONArray jsonArray = new JSONArray(responseRecieved);
@@ -558,7 +559,7 @@ public class BackgroundService extends Service {
 //                            }
 
 
-                                if ( narisv.INSERT_AS_SQL("Plan", jsonArray, "") ) {
+                                if (narisv.INSERT_AS_SQL("Plan", jsonArray, "")) {
                                     Log.d("PlanWorkLOG", "SAVED INVOICE HEADER");
 
                                     String url_consign = Var.WEBSERVICE2 + "func=getConsignment&vehicle_id=" + Var.UserLogin.driver_vehicle_id;
@@ -567,12 +568,12 @@ public class BackgroundService extends Service {
 
                                     Call<ResponseBody> callCons = apiInterface.downloadConsignment(Var.UserLogin.driver_vehicle_id, "");
                                     Response<ResponseBody> responseCons = callCons.execute();
-                                    if ( responseCons.code() == 200 ) {
+                                    if (responseCons.code() == 200) {
                                         String responseRecievedCons = responseCons.body().string();
-                                        if ( responseRecieved != null ) {
-                                            if ( !responseRecieved.equals("") ) {
+                                        if (responseRecieved != null) {
+                                            if (!responseRecieved.equals("")) {
                                                 JSONArray jsonArrayCons = new JSONArray(responseRecievedCons);
-                                                if ( narisv.INSERT_AS_SQL("consignment", jsonArrayCons, "") ) {
+                                                if (narisv.INSERT_AS_SQL("consignment", jsonArrayCons, "")) {
                                                     Log.d("PlanWorkLOG", "SAVED Consignment.");
                                                 } else {
                                                     Log.d("PlanWorkLOG", "FAIL save consignment.");
@@ -600,11 +601,10 @@ public class BackgroundService extends Service {
             }
 
             @Override
-            protected void onPostExecute( String s ) {
+            protected void onPostExecute(String s) {
                 super.onPostExecute(s);
                 Log.d("LogBackground", "onPostExecute: Yes");
                 handler.postDelayed(runnable, delay);
-
 
 
             }
@@ -620,7 +620,7 @@ public class BackgroundService extends Service {
                 JSONObject Root = new JSONObject();
                 JSONObject RootCM = new JSONObject();
                 ArrayList<UploadImageInvoice.Data2> uploadImage = new ArrayList<>();
-                Log.d("statusUploadInvoice", "doInBackground: 1");
+                Log.d("bgServiceInvoice", "doInBackground: 1");
                 try {
                     String sql = "select id, (select delivery_no from plan) as delivery_no, order_no, consignment_no, invoice_no, pic_sign_load, pic_sign_unload, date_sign_load, date_sign_unload from pic_sign where status_upload_invoice = '0' ";
                     Cursor cursor = databaseHelper.selectDB(sql);
@@ -651,7 +651,7 @@ public class BackgroundService extends Service {
                             } while (cursor.moveToNext());
 
                             Root.put("data", ContactArray);
-                            Log.d("statusUploadInvoice", "doInBackground: " + Root.toString());
+                            Log.d("bgServiceInvoice", "doInBackground: " + Root.toString());
 
                             String rootToString = Root.toString();
                             RequestBody body = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), rootToString);
@@ -669,9 +669,9 @@ public class BackgroundService extends Service {
                                                 String json_data = jsonArray.getJSONObject(0).getJSONArray("data").getString(j);
 
                                                 //เปิดทีหลัง
-//                                            ContentValues cv = new ContentValues();
-//                                            cv.put("status_upload_invoice", "1");
-//                                            databaseHelper.db().update("pic_sign", cv, "id= '" + json_data + "'", null);
+                                                ContentValues cv = new ContentValues();
+                                                cv.put("status_upload_invoice", "1");
+                                                databaseHelper.db().update("pic_sign", cv, "id= '" + json_data + "'", null);
                                             }
 
                                             //upload image *********************************************
@@ -686,7 +686,7 @@ public class BackgroundService extends Service {
                                                         String id = cursor_getPicture.getString(cursor_getPicture.getColumnIndex("id"));
                                                         String img = cursor_getPicture.getString(cursor_getPicture.getColumnIndex("name_img"));
 
-                                                        Log.d("Asfkjsaioosdf", "doInBackground: L0 " + img);
+                                                        Log.d("bgServiceInvoice", "doInBackground: L0 " + img);
 
                                                         if (!img.equals("")) {
 
@@ -722,7 +722,7 @@ public class BackgroundService extends Service {
                                                                     for (int pic = 0; pic < jsonImg.getJSONObject(0).getJSONArray("img").length(); pic++) {
 
                                                                         String json_data = jsonImg.getJSONObject(0).getJSONArray("img").getString(pic);
-                                                                        Log.d("TRD", "TRD_1: " + json_data);
+                                                                        Log.d("bgServiceInvoice", "TRD_1: " + json_data);
 
                                                                         ContentValues cv = new ContentValues();
                                                                         cv.put("status_img", "1");
@@ -731,7 +731,7 @@ public class BackgroundService extends Service {
                                                                     }
 
                                                                 } else {
-                                                                    Log.d("TRD", "TRD_1: Fail");
+                                                                    Log.d("bgServiceInvoice", "TRD_1: Fail");
                                                                 }
 
                                                             }
@@ -741,7 +741,7 @@ public class BackgroundService extends Service {
                                                 }
                                             }//cursor_getPicture != null
                                             else {
-                                                Log.d("Asfkjsaioosdf", "cursor_getPicture: null");
+                                                Log.d("bgServiceInvoice", "cursor_getPicture: null");
                                             }
 
 
@@ -769,10 +769,10 @@ public class BackgroundService extends Service {
                                                         ContactCM.put(cm, contact2);
                                                         cm++;
 
-                                                    }while (cursorCM.moveToNext());
+                                                    } while (cursorCM.moveToNext());
 
                                                     RootCM.put("data", ContactCM);
-                                                    Log.d("lksioasj", "doInBackground: " + RootCM.toString());
+                                                    Log.d("bgServiceInvoice", "doInBackground: " + RootCM.toString());
                                                     String rootToStringCM = RootCM.toString();
                                                     RequestBody bodyCM = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), rootToStringCM);
 
@@ -789,7 +789,7 @@ public class BackgroundService extends Service {
                                                                     for (int b = 0; b < jsonArray.getJSONObject(0).getJSONArray("data").length(); b++) {
                                                                         String json_data = jsonArray.getJSONObject(0).getJSONArray("data").getString(b);
 
-                                                                        Log.d("lksioasj", "doInBackground: "+json_data);
+                                                                        Log.d("bgServiceInvoice", "doInBackground: " + json_data);
 
                                                                         ContentValues cv = new ContentValues();
                                                                         cv.put("status_upload_comment", "1");
@@ -822,7 +822,7 @@ public class BackgroundService extends Service {
                     }
 
                 } catch (Exception e) {
-                    Log.d("statusUploadInvoice", "catch :" + e.getMessage());
+                    Log.d("bgServiceInvoice", "catch :" + e.getMessage());
                 }
                 return null;
             }
