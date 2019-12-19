@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:background="#E4E4E4"
+    android:background="#F2F2F7"
     android:layout_height="wrap_content">
 
     <ImageView
@@ -26,6 +26,7 @@
         android:layout_marginTop="8dp"
         android:layout_marginEnd="16dp"
         android:text="Con.No: 8203115610"
+        android:textColor="#696969"
         app:layout_constraintEnd_toStartOf="@+id/imgDetailConsignNo"
         app:layout_constraintStart_toEndOf="@+id/textView26"
         app:layout_constraintTop_toTopOf="parent" />
@@ -59,6 +60,7 @@
         android:layout_marginStart="12dp"
         android:layout_marginEnd="16dp"
         android:text="Box (0 | 10)"
+        android:textColor="#696969"
         app:layout_constraintEnd_toStartOf="@+id/imgDetailConsignNo"
         app:layout_constraintStart_toEndOf="@+id/textView26"
         app:layout_constraintTop_toBottomOf="@+id/tvPickUp_Consignment" />
@@ -94,6 +96,7 @@
         android:layout_marginTop="3dp"
         android:layout_marginBottom="5dp"
         android:text="@string/credit"
+        android:textColor="#696969"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toEndOf="@+id/imageView9"
         app:layout_constraintTop_toBottomOf="@+id/tvPickUp_global" />

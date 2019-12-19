@@ -12,6 +12,7 @@ import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Typeface;
 import android.net.Uri;
@@ -311,6 +312,7 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
                                                             cv.put("actual_lat", expandedList.getActual_lat());
                                                             cv.put("actual_lon", expandedList.getActual_lon());
                                                             cv.put("time_begin", expandedList.getTime_begin());
+                                                            cv.put("status_upload", "0");
                                                             if (!expandedList.getPicture1().equals("")) {
                                                                 cv.put("picture1", expandedList.getPicture1());
                                                             }
@@ -330,15 +332,15 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
 
 
                                                             if (!expandedList.getPicture1().equals("")) {
-                                                                String sql = "INSERT or replace INTO image (name_img, status_img) VALUES('" + expandedList.getPicture1() + "','0')";
+                                                                String sql = "INSERT INTO image (name_img, status_img) VALUES('" + expandedList.getPicture1() + "','0')";
                                                                 databaseHelper.db().execSQL(sql);
                                                             }
                                                             if (!expandedList.getPicture2().equals("")) {
-                                                                String sql = "INSERT or replace INTO image (name_img, status_img) VALUES('" + expandedList.getPicture2() + "','0')";
+                                                                String sql = "INSERT INTO image (name_img, status_img) VALUES('" + expandedList.getPicture2() + "','0')";
                                                                 databaseHelper.db().execSQL(sql);
                                                             }
                                                             if (!expandedList.getPicture3().equals("")) {
-                                                                String sql = "INSERT or replace INTO image (name_img, status_img) VALUES('" + expandedList.getPicture3() + "','0')";
+                                                                String sql = "INSERT INTO image (name_img, status_img) VALUES('" + expandedList.getPicture3() + "','0')";
                                                                 databaseHelper.db().execSQL(sql);
                                                             }
                                                           //  databaseHelper.db().insert("image", null, cv2);
@@ -807,6 +809,7 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
                 if (INPUT_WAY.equals("PLUS")) {
                     for (int i = 0; i < expandableListAdapter.getGroupCount(); i++) {
                         // expandableListView.expandGroup(i);
+                        final PickingUp_Model listTitle = (PickingUp_Model) expandableListAdapter.getGroup(i);
                         for (int j = 0; j < expandableListAdapter.getChildrenCount(i); j++) {
                             final PickingUpEexpand_Model expandedList = (PickingUpEexpand_Model) expandableListAdapter.getChild(i, j);
                             Log.d("ASdgfjksdzfgsdf", "onActivityResult: " + getScanText);
@@ -824,7 +827,40 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
                                 ((PickingUpEexpand_Model) expandableListAdapter.getChild(i, j)).setTime_begin(getdate());
                                 ((PickingUpEexpand_Model) expandableListAdapter.getChild(i, j)).setActual_lat(getlat());
                                 ((PickingUpEexpand_Model) expandableListAdapter.getChild(i, j)).setActual_lon(getlon());
-                                isc = true;
+
+//                                int c = 0;
+//                                c++;
+//
+//                                ((PickingUp_Model) expandableListAdapter.getGroup(i)).setBox_checked(String.valueOf(c));
+//                                isc = true;
+//
+//                                int count;
+//
+//                                if(!expandedList.getIs_scaned().equals("0")){
+//                                    count = expandedList.getIs_scaned().length();
+//                                    listTitle.setBox_checked(""+count);
+//
+//                                }
+
+
+
+//                                if(expandedList.getb){
+//
+//                                }
+
+
+//                                if(!listTitle.getBox_checked().equals("0")){
+//                                    consignment.setTextColor(Color.parseColor("#1D781F"));
+//                                    box.setTextColor(Color.parseColor("#1D781F"));
+//                                    tvPickUp_global.setTextColor(Color.parseColor("#1D781F"));
+//                                    textView24.setTextColor(Color.parseColor("#1D781F"));
+//                                }else{
+//                                    consignment.setTextColor(Color.parseColor("#696969"));
+//                                    consignment.setTextColor(Color.parseColor("#696969"));
+//                                    box.setTextColor(Color.parseColor("#696969"));
+//                                    tvPickUp_global.setTextColor(Color.parseColor("#9C9C9C"));
+//                                    textView24.setTextColor(Color.parseColor("#696969"));
+//                                }
 
 
                                 Toast.makeText(PinkingUpMaster_Activity.this, "Checked.", Toast.LENGTH_SHORT).show();
@@ -835,7 +871,7 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
                                 expandableListView.smoothScrollToPosition(i);
                             } else {
 
-                                 Toast.makeText(PinkingUpMaster_Activity.this, "This Waybill No doesn't exist.", Toast.LENGTH_SHORT).show();
+                                // Toast.makeText(PinkingUpMaster_Activity.this, "This Waybill No doesn't exist.", Toast.LENGTH_SHORT).show();
                             }
 
                         }
@@ -844,6 +880,7 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
                 } else {
                     for (int i = 0; i < expandableListAdapter.getGroupCount(); i++) {
                         //expandableListView.expandGroup(i);
+                        final PickingUp_Model listTitle = (PickingUp_Model) expandableListAdapter.getGroup(i);
                         for (int j = 0; j < expandableListAdapter.getChildrenCount(i); j++) {
                             final PickingUpEexpand_Model expandedList = (PickingUpEexpand_Model) expandableListAdapter.getChild(i, j);
 
@@ -858,7 +895,20 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
                                 ((PickingUpEexpand_Model) expandableListAdapter.getChild(i, j)).setTime_begin("");
                                 ((PickingUpEexpand_Model) expandableListAdapter.getChild(i, j)).setActual_lat("");
                                 ((PickingUpEexpand_Model) expandableListAdapter.getChild(i, j)).setActual_lon("");
-                                isc = true;
+
+//                                int c = 0;
+//                                c--;
+//
+//                                ((PickingUp_Model) expandableListAdapter.getGroup(i)).setBox_checked(String.valueOf(c));
+//                                isc = true;
+//
+//                                int count;
+//
+//                                if(!expandedList.getIs_scaned().equals("0")){
+//                                    count = expandedList.getIs_scaned().length();
+//                                    listTitle.setBox_checked(""+count);
+//
+//                                }
 
 
                                 Toast.makeText(PinkingUpMaster_Activity.this, "Un Check.", Toast.LENGTH_SHORT).show();
@@ -869,7 +919,7 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
                                 expandableListView.smoothScrollToPosition(j);
                             } else {
                                 // expandableListView.expandGroup(i);
-                                  Toast.makeText(PinkingUpMaster_Activity.this, "This Waybill No doesn't exist.", Toast.LENGTH_SHORT).show();
+                                 // Toast.makeText(PinkingUpMaster_Activity.this, "This Waybill No doesn't exist.", Toast.LENGTH_SHORT).show();
                             }
 
                         }
@@ -1109,6 +1159,7 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
         public View getChildView(final int listPosition, final int expandedListPosition,
                                  boolean isLastChild, View convertView, ViewGroup parent) {
             final PickingUpEexpand_Model expandedList = (PickingUpEexpand_Model) getChild(listPosition, expandedListPosition);
+            final PickingUp_Model listTitle = (PickingUp_Model) getGroup(listPosition);
             Log.d("aassas", "getChildView: " + listPosition + ">" + expandedListPosition + ">" + expandedList.getIs_scaned() + " into>" + expandedList.getInto());
             LanguageClass.setLanguage(getApplicationContext());
 
@@ -1119,6 +1170,8 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
             }
 
             Log.d("qwegwegsdg", "getGroupView: " + (expandedListPosition + 1));
+
+
 
             final TextView box_no, waybill_no, tvExpand_Count;
             final ImageView imgEditBoxNoPickup;
@@ -1287,6 +1340,21 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
                 box.setText(context.getString(R.string.box) + " (" + listTitle.getBox_checked() + " | " + listTitle.getBox_total() + ")");
             } else {
                 box.setText(context.getString(R.string.boxes) + " (" + listTitle.getBox_checked() + " | " + listTitle.getBox_total() + ")");
+            }
+
+            if(listTitle.getBox_checked().equals(listTitle.getBox_total())){
+                consignment.setTextColor(Color.parseColor("#1D781F"));
+                box.setTextColor(Color.parseColor("#1D781F"));
+                tvPickUp_global.setTextColor(Color.parseColor("#1D781F"));
+                textView24.setTextColor(Color.parseColor("#1D781F"));
+                tvConGroupCountPick.setTextColor(Color.parseColor("#1D781F"));
+            }else{
+                consignment.setTextColor(Color.parseColor("#696969"));
+                consignment.setTextColor(Color.parseColor("#696969"));
+                box.setTextColor(Color.parseColor("#696969"));
+                tvPickUp_global.setTextColor(Color.parseColor("#9C9C9C"));
+                textView24.setTextColor(Color.parseColor("#696969"));
+                tvConGroupCountPick.setTextColor(Color.parseColor("#696969"));
             }
 
 

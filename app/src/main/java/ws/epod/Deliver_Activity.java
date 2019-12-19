@@ -12,6 +12,7 @@ import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Typeface;
 import android.location.LocationManager;
@@ -316,6 +317,7 @@ public class Deliver_Activity extends AppCompatActivity {
                                                             cv.put("actual_lat", expandedList.getActual_lat());
                                                             cv.put("actual_lon", expandedList.getActual_lon());
                                                             cv.put("time_begin", expandedList.getTime_begin());
+                                                            cv.put("status_upload", "0");
 
                                                             if (!expandedList.getPicture1().equals("")) {
                                                                 cv.put("picture1", expandedList.getPicture1());
@@ -334,15 +336,15 @@ public class Deliver_Activity extends AppCompatActivity {
                                                                     " consignment_no = '" + expandedList.getConsignment() + "' and box_no = '" + expandedList.getBox_no() + "' and trash = '0'", null);
 
                                                             if (!expandedList.getPicture1().equals("")) {
-                                                                String sql = "INSERT or replace INTO image (name_img, status_img) VALUES('" + expandedList.getPicture1() + "','0')";
+                                                                String sql = "INSERT INTO image (name_img, status_img) VALUES('" + expandedList.getPicture1() + "','0')";
                                                                 databaseHelper.db().execSQL(sql);
                                                             }
                                                             if (!expandedList.getPicture2().equals("")) {
-                                                                String sql = "INSERT or replace INTO image (name_img, status_img) VALUES('" + expandedList.getPicture2() + "','0')";
+                                                                String sql = "INSERT INTO image (name_img, status_img) VALUES('" + expandedList.getPicture2() + "','0')";
                                                                 databaseHelper.db().execSQL(sql);
                                                             }
                                                             if (!expandedList.getPicture3().equals("")) {
-                                                                String sql = "INSERT or replace INTO image (name_img, status_img) VALUES('" + expandedList.getPicture3() + "','0')";
+                                                                String sql = "INSERT INTO image (name_img, status_img) VALUES('" + expandedList.getPicture3() + "','0')";
                                                                 databaseHelper.db().execSQL(sql);
                                                             }
 
@@ -1163,6 +1165,22 @@ public class Deliver_Activity extends AppCompatActivity {
 
             TextView tvPickUp_global = convertView.findViewById(R.id.tvPickUp_global);
             TextView box = convertView.findViewById(R.id.tvPickingUp_Box);
+
+
+            if(!listTitle.getBox_checked().equals("0")){
+                consignment.setTextColor(Color.parseColor("#1D781F"));
+                box.setTextColor(Color.parseColor("#1D781F"));
+                tvPickUp_global.setTextColor(Color.parseColor("#1D781F"));
+                textView24.setTextColor(Color.parseColor("#1D781F"));
+                textView26.setTextColor(Color.parseColor("#1D781F"));
+            }else{
+                consignment.setTextColor(Color.parseColor("#696969"));
+                consignment.setTextColor(Color.parseColor("#696969"));
+                box.setTextColor(Color.parseColor("#696969"));
+                tvPickUp_global.setTextColor(Color.parseColor("#9C9C9C"));
+                textView24.setTextColor(Color.parseColor("#696969"));
+                textView26.setTextColor(Color.parseColor("#696969"));
+            }
 
             box.setText("Box (" + listTitle.getBox_checked() + " | " + listTitle.getBox_total() + ")");
 

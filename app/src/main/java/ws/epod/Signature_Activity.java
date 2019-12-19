@@ -10,17 +10,9 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.core.app.ActivityCompat;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.FileProvider;
-
 import android.graphics.Matrix;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
 import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 import android.util.Log;
@@ -30,6 +22,12 @@ import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.FileProvider;
 
 import com.github.gcacace.signaturepad.views.SignaturePad;
 import com.google.gson.Gson;
@@ -41,11 +39,9 @@ import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
 import java.lang.reflect.Type;
 import java.text.SimpleDateFormat;
@@ -58,7 +54,6 @@ import ws.epod.Helper.ConnectionDetector;
 import ws.epod.Helper.DatabaseHelper;
 import ws.epod.Helper.NarisBaseValue;
 import ws.epod.ObjectClass.LanguageClass;
-import ws.epod.ObjectClass.SQLiteModel.SignObjectClass;
 import ws.epod.ObjectClass.SQLiteModel.Sign_Model;
 
 public class Signature_Activity extends AppCompatActivity {
@@ -318,7 +313,21 @@ public class Signature_Activity extends AppCompatActivity {
             }.getType();
 
 
+            String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+            String imageFileName = "EPOD_" + timeStamp + "_";
+            File storageDir = getExternalFilesDir("Signature");
+            File image = File.createTempFile(
+                    imageFileName,
+                    ".jpg",
+                    storageDir
+            );
+
             ArrayList<Sign_Model> arrayList = gson.fromJson(json, type);
+
+            if (isSignatured) {
+
+                saveBitmapToJPG(signature, image);
+            }
 
 
             //Log.d("Asfjksdfho", "addJpgSignatureToGallery: 01" + image.getName());
@@ -340,38 +349,34 @@ public class Signature_Activity extends AppCompatActivity {
                     jsonInsertPicSign.put("status_load", arrayList.get(i).getStatus());
                     jsonInsertPicSign.put("date_sign_load", getdate());
                     jsonInsertPicSign.put("status_upload_invoice", "0");
-                    if (listImg != null) {
+                    if (listImg != null && listImg.size()>0) {
                         for (int i1 = 0; i1 < listImg.size(); i1++) {
                             jsonInsertPicSign.put("pic_sign_load", listImg.get(i));
                         }
                     }
-                    String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-                    String imageFileName = "EPOD_" + timeStamp + "_";
-                    File storageDir = getExternalFilesDir("Signature");
-                    File image = File.createTempFile(
-                            imageFileName,
-                            ".jpg",
-                            storageDir
-                    );
-                    if (isSignatured) {
-                        jsonInsertPicSign.put("pic_sign_load", image.getName());
-                        saveBitmapToJPG(signature, image);
+                    jsonInsertPicSign.put("pic_sign_load", image.getName());
+
+
+
+
+                   // ContentValues cv2 = new ContentValues();
+                    if (listImg != null && listImg.size()>0) {
+                       // for (int i1 = 0; i1 < listImg.size(); i1++) {
+                        //    cv2.put("name_img", listImg.get(i));
+                            String sql = "INSERT INTO image_invoice (name_img, status_img) VALUES('" + listImg.get(0) + "','0')";
+                            databaseHelper.db().execSQL(sql);
+                     //   }
+//                    } else {
+//                        if (image != null) {
+//                         //   cv2.put("name_img", image.getName());
+//
+                    }else{
+                        String sql = "INSERT INTO image_invoice (name_img, status_img) VALUES('" + image.getName() + "','0')";
+                        databaseHelper.db().execSQL(sql);
                     }
 
-
-                    ContentValues cv2 = new ContentValues();
-                    if (listImg != null) {
-                        for (int i1 = 0; i1 < listImg.size(); i1++) {
-                            cv2.put("name_img", listImg.get(i));
-                        }
-                    } else {
-                        if (image != null) {
-                            cv2.put("name_img", image.getName());
-                        }
-
-                    }
-                    cv2.put("status_img", "0");
-                    databaseHelper.db().insert("image_invoice", null, cv2);
+                   // cv2.put("status_img", "0");
+                   // databaseHelper.db().insert("image_invoice", null, cv2);
 
 
                     if (!arrayList.get(i).getComment().equals("")) {
