@@ -291,6 +291,7 @@ public class DropPoint_Activity extends AppCompatActivity {
                         .title(station_name)
                         .anchor(0.5f, 1));
 
+                mMap.setMyLocationEnabled(true);
 
                 mMap.setInfoWindowAdapter(new GoogleMap.InfoWindowAdapter() {
                     @Override
