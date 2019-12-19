@@ -359,6 +359,7 @@ public class Signature_Activity extends AppCompatActivity {
 
 
 
+
                    // ContentValues cv2 = new ContentValues();
                     if (listImg != null && listImg.size()>0) {
                        // for (int i1 = 0; i1 < listImg.size(); i1++) {
