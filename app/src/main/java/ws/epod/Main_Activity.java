@@ -1,27 +1,19 @@
 package ws.epod;
 
-import android.app.AlertDialog;
-import android.content.ContentValues;
 import android.content.Context;
-import android.content.DialogInterface;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
-
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.os.Bundle;
-
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.appcompat.widget.Toolbar;
-
 import android.util.Log;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import androidx.appcompat.widget.Toolbar;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.akexorcist.localizationactivity.ui.LocalizationActivity;
 
@@ -44,7 +36,8 @@ import ws.epod.ObjectClass.Var;
 public class Main_Activity extends LocalizationActivity {
 
     private Toolbar toolbar;
-    private TextView tvMain_truck, tvMain_user_driver, tvMain_name_driver, tvMain_date_bar, tvMain_planSeq, tvMain_cusName, tvMain_address, tvMain_appoint, headerTxt_Main;
+    private TextView tvMain_truck, tvMain_user_driver, tvMain_name_driver, tvMain_date_bar, tvMain_planSeq, tvMain_cusName, tvMain_address
+            , tvMain_appoint, headerTxt_Main, textView8, textView10;
     private ImageView imgBack_Job_Main;
     private RecyclerView rvMain;
     ArrayList<MenuObject> list = new ArrayList<>();
@@ -287,6 +280,7 @@ public class Main_Activity extends LocalizationActivity {
         String station_name = getIntent().getExtras().getString("station_name");
         String station_address = getIntent().getExtras().getString("station_address");
         String plan_in = getIntent().getExtras().getString("plan_in");
+        String planIn = getIntent().getExtras().getString("plan_in");
         String delivery_no = getIntent().getExtras().getString("delivery_no");
 
         SharedPreferences data_detail_pick = getSharedPreferences("DATA_DETAIL_PICK", Context.MODE_PRIVATE);
@@ -310,6 +304,11 @@ public class Main_Activity extends LocalizationActivity {
         tvMain_cusName = findViewById(R.id.tvMain_cusName);
         tvMain_address = findViewById(R.id.tvMain_address);
         tvMain_appoint = findViewById(R.id.tvMain_appoint);
+        textView10 = findViewById(R.id.textView10);
+        textView8 = findViewById(R.id.textView8);
+
+        textView8.setText(getApplicationContext().getString(R.string.address)+": ");
+        textView10.setText(getApplicationContext().getString(R.string.appoint)+": ");
 
         tvMain_truck.setText(" : " + Var.UserLogin.driver_truck_license);
         tvMain_user_driver.setText(" : " + Var.UserLogin.driver_user);

@@ -1,7 +1,5 @@
 package ws.epod.Client;
 
-import org.json.JSONObject;
-
 import java.util.List;
 
 import okhttp3.RequestBody;
@@ -17,10 +15,10 @@ import ws.epod.Client.Structors.UploadImageInvoice;
 public interface APIInterface {
 
     @POST("/TMS_MSM/services/service.php?func=login")
-    Call<List<Login>> login( @Query("user") String username, @Query("pass") String password, @Query("serial") String serial );
+    Call<List<Login>> login(@Query("user") String username, @Query("pass") String password, @Query("serial") String serial );
 
     @POST("/TMS_MSM/services/service.php?func=login")
-    Call<ResponseBody> login2nd( @Query("user") String username, @Query("pass") String password, @Query("serial") String serial );
+    Call<ResponseBody> login2nd(@Query("user") String username, @Query("pass") String password, @Query("serial") String serial );
 
     @POST("/TMS_MSM/services/service.php?func=setPlan")
     Call<ResponseBody> uploadwork( @Query("driver_id") String driver_id,
@@ -57,18 +55,29 @@ public interface APIInterface {
 
 
 
+    //********************************************************************************************
+    //ลิง๕์จริง
+
 //    @POST("/services/service.php?func=login")
-//    Call<List<Login>> login( @Query("user") String username, @Query("pass") String password, @Query("serial") String serial );
+//    Call<List<Login>> login(@Query("user") String username, @Query("pass") String password, @Query("serial") String serial );
 //
 //    @POST("/services/service.php?func=login")
-//    Call<ResponseBody> login2nd( @Query("user") String username, @Query("pass") String password, @Query("serial") String serial );
+//    Call<ResponseBody> login2nd(@Query("user") String username, @Query("pass") String password, @Query("serial") String serial );
 //
 //    @POST("/services/service.php?func=setPlan")
 //    Call<ResponseBody> uploadwork( @Query("driver_id") String driver_id,
 //                                   @Body RequestBody body );
+//    @POST("/services/service.php?func=setInvoice")
+//    Call<ResponseBody> uploadInvoice(@Body RequestBody body );
+//
+//    @POST("/services/service.php?func=setComment")
+//    Call<ResponseBody> uploadComment(@Body RequestBody body );
+//
+//    @POST("/services/service.php?func=setImgInvoice")
+//    Call<ResponseBody> uploadPicture(@Body UploadImage root );
 //
 //    @POST("/services/service.php?func=setImg")
-//    Call<ResponseBody> uploadPicture( @Body UploadImage root );
+//    Call<ResponseBody> uploadPictureInvoice( @Body UploadImageInvoice root );
 //
 //    @POST("/services/service.php?func=getPlan")
 //    Call<ResponseBody> downloadWork( @Query("vehicle_id") String vehicle_id,

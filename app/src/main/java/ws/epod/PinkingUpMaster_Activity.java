@@ -1,6 +1,5 @@
 package ws.epod;
 
-import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -10,37 +9,22 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Typeface;
-import android.location.Location;
-import android.location.LocationManager;
 import android.net.Uri;
 import android.os.AsyncTask;
-import android.os.Environment;
+import android.os.Bundle;
 import android.os.Handler;
 import android.provider.MediaStore;
-
-import androidx.annotation.Nullable;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
-import androidx.core.content.FileProvider;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
-import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.BaseExpandableListAdapter;
@@ -53,10 +37,14 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.FileProvider;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.addisonelliott.segmentedbutton.SegmentedButtonGroup;
 import com.google.android.gms.location.FusedLocationProviderClient;
-import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
@@ -73,7 +61,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Locale;
 
 import fr.ganfra.materialspinner.MaterialSpinner;
@@ -83,14 +70,11 @@ import ws.epod.Helper.ConnectionDetector;
 import ws.epod.Helper.DatabaseHelper;
 import ws.epod.Helper.NarisBaseValue;
 import ws.epod.ObjectClass.LanguageClass;
-
 import ws.epod.ObjectClass.LocationTrack;
-import ws.epod.ObjectClass.SQLiteModel.DeliverExpand_Model;
 import ws.epod.ObjectClass.SQLiteModel.Dialog_Cons_Detail_Model;
 import ws.epod.ObjectClass.SQLiteModel.PickingUpEexpand_Model;
 import ws.epod.ObjectClass.SQLiteModel.PickingUp_Model;
 import ws.epod.ObjectClass.SQLiteModel.Reason_model;
-import ws.epod.ObjectClass.SQLiteModel.Sign_Model;
 
 public class PinkingUpMaster_Activity extends AppCompatActivity {
 
@@ -476,7 +460,7 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
                                 expandableListView.expandGroup(i);
                                 //expandableListAdapter.notifyDataSetChanged();
                             } else {
-                                // Toast.makeText(PinkingUpMaster_Activity.this, "This Waybill No doesn't exist.", Toast.LENGTH_SHORT).show();
+                                 Toast.makeText(PinkingUpMaster_Activity.this, "This Waybill No doesn't exist.", Toast.LENGTH_SHORT).show();
                             }
 
                         }
@@ -503,7 +487,7 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
                                 expandableListView.expandGroup(i);
                                 // expandableListAdapter.notifyDataSetChanged();
                             } else {
-                                //  Toast.makeText(PinkingUpMaster_Activity.this, "This Waybill No doesn't exist.", Toast.LENGTH_SHORT).show();
+                                  Toast.makeText(PinkingUpMaster_Activity.this, "This Waybill No doesn't exist.", Toast.LENGTH_SHORT).show();
                             }
 
                         }
@@ -827,6 +811,7 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
                             final PickingUpEexpand_Model expandedList = (PickingUpEexpand_Model) expandableListAdapter.getChild(i, j);
                             Log.d("ASdgfjksdzfgsdf", "onActivityResult: " + getScanText);
 
+
                             if (getScanText.equals(expandedList.getWaybil_no())) {
 
                                 //expandableListView.expandGroup(i);
@@ -835,6 +820,7 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
 
                                 // ((PickingUpEexpand_Model) expandableListAdapter.getChild(i, j)).setIs_scaned("1");
                                 ((PickingUpEexpand_Model) expandableListAdapter.getChild(i, j)).setInto("1");
+                                ((PickingUpEexpand_Model) expandableListAdapter.getChild(i, j)).setIs_scaned("1");
                                 ((PickingUpEexpand_Model) expandableListAdapter.getChild(i, j)).setTime_begin(getdate());
                                 ((PickingUpEexpand_Model) expandableListAdapter.getChild(i, j)).setActual_lat(getlat());
                                 ((PickingUpEexpand_Model) expandableListAdapter.getChild(i, j)).setActual_lon(getlon());
@@ -849,7 +835,7 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
                                 expandableListView.smoothScrollToPosition(i);
                             } else {
 
-                                // Toast.makeText(PinkingUpMaster_Activity.this, "This Waybill No doesn't exist.", Toast.LENGTH_SHORT).show();
+                                 Toast.makeText(PinkingUpMaster_Activity.this, "This Waybill No doesn't exist.", Toast.LENGTH_SHORT).show();
                             }
 
                         }
@@ -868,6 +854,7 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
                                 lastPosition = i;
                                 //((PickingUpEexpand_Model) expandableListAdapter.getChild(i, j)).setIs_scaned("0");
                                 ((PickingUpEexpand_Model) expandableListAdapter.getChild(i, j)).setInto("0");
+                                ((PickingUpEexpand_Model) expandableListAdapter.getChild(i, j)).setIs_scaned("0");
                                 ((PickingUpEexpand_Model) expandableListAdapter.getChild(i, j)).setTime_begin("");
                                 ((PickingUpEexpand_Model) expandableListAdapter.getChild(i, j)).setActual_lat("");
                                 ((PickingUpEexpand_Model) expandableListAdapter.getChild(i, j)).setActual_lon("");
@@ -882,7 +869,7 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
                                 expandableListView.smoothScrollToPosition(j);
                             } else {
                                 // expandableListView.expandGroup(i);
-                                //  Toast.makeText(PinkingUpMaster_Activity.this, "This Waybill No doesn't exist.", Toast.LENGTH_SHORT).show();
+                                  Toast.makeText(PinkingUpMaster_Activity.this, "This Waybill No doesn't exist.", Toast.LENGTH_SHORT).show();
                             }
 
                         }
@@ -1290,7 +1277,6 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
             TextView textView25 = convertView.findViewById(R.id.textView25);
             TextView tv_Global_cancel = convertView.findViewById(R.id.tv_Global_cancel);
 
-
             consignment.setTypeface(null, Typeface.BOLD);
             consignment.setText(context.getString(R.string.consignment2) + ": " + listTitle.getConsignment());
             tvConGroupCountPick.setText(String.valueOf((listPosition + 1)));
@@ -1365,6 +1351,7 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
                 textView24.setVisibility(View.VISIBLE);
                 pick_pay_type.setVisibility(View.GONE);
                 textView25.setVisibility(View.GONE);
+                textView24.setText(listTitle.getPaytype());
 
             }
 
@@ -1430,7 +1417,7 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
             rvDialogCons.setLayoutManager(layoutManager);
 
             tvConsignment_con_dialog.setText("Cons.No: " + consignment);
-            pick_summary.setText(box_total + " Boxs\n" + global_total + " Unit(Global)");
+            pick_summary.setText(box_total + " Boxs\n" + global_total + " Global");
             tv3363.setText(getApplicationContext().getString(R.string.address) + " : ");
             tv3364.setText(getApplicationContext().getString(R.string.pay_type) + " : ");
             tv3365.setText(getApplicationContext().getString(R.string.summary) + " : ");
@@ -1455,6 +1442,7 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
                 pick_dialog_pay_type_credit.setVisibility(View.VISIBLE);
                 pick_dialog_pay_type.setVisibility(View.GONE);
                 tv_dialog_thb.setVisibility(View.GONE);
+                pick_dialog_pay_type_credit.setText(pay_type);
 
             }
 

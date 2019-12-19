@@ -1,17 +1,8 @@
 package ws.epod.Adapter;
 
-import android.app.AlertDialog;
-import android.content.ContentValues;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.location.Location;
 import android.location.LocationManager;
-import androidx.annotation.NonNull;
-import androidx.core.app.ActivityCompat;
-import androidx.recyclerview.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,20 +10,18 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.text.SimpleDateFormat;
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
+
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Locale;
 
 import ws.epod.Deliver_Activity;
 import ws.epod.Helper.ConnectionDetector;
 import ws.epod.Helper.DatabaseHelper;
 import ws.epod.Helper.NarisBaseValue;
 import ws.epod.ObjectClass.MenuObject;
-import ws.epod.R;
 import ws.epod.PinkingUpMaster_Activity;
-
-import static android.Manifest.permission.ACCESS_FINE_LOCATION;
+import ws.epod.R;
 
 public class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHolder> {
 
@@ -79,7 +68,7 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHolder> {
             viewHolder.tvBoxesMain.setText(list.get(i).BOXES + "•"+context.getString(R.string.boxes));
         }
 
-        viewHolder.textView4.setText(list.get(i).GLOBAL + "•"+context.getString(R.string.unit));
+        viewHolder.textView4.setText(list.get(i).GLOBAL + "•Global");
         viewHolder.icon.setImageResource(list.get(i).IMAGE);
 
         viewHolder.itemView.setOnClickListener(new View.OnClickListener() {

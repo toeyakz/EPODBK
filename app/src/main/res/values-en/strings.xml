@@ -97,4 +97,5 @@
     <string name="select">Select</string>
     <string name="sync_data">Syncing data..</string>
     <string name="job_operation">Job Operation</string>
+    <string name="station">Station</string>
 </resources>

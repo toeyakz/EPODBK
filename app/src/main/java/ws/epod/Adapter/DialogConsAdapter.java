@@ -1,6 +1,7 @@
 package ws.epod.Adapter;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,7 +13,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.ArrayList;
 
 import ws.epod.ObjectClass.SQLiteModel.Dialog_Cons_Detail_Model;
-import ws.epod.ObjectClass.SQLiteModel.JobList_Model;
 import ws.epod.R;
 
 public class DialogConsAdapter extends RecyclerView.Adapter<DialogConsAdapter.ViewHolder> {
@@ -45,8 +45,12 @@ public class DialogConsAdapter extends RecyclerView.Adapter<DialogConsAdapter.Vi
         }
 
         if( !list.get(position).getDetail_remarks().equals("")){
+            holder.textView14.setVisibility(View.VISIBLE);
+            holder.textView14.setTextColor(Color.RED);
             holder.textView14.setText("Remark: " + list.get(position).getDetail_remarks());
         }else{
+            holder.textView14.setVisibility(View.GONE);
+            holder.textView14.setTextColor(Color.RED);
             holder.textView14.setText("Remark: -");
         }
 

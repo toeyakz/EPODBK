@@ -9,28 +9,17 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.graphics.Typeface;
-import android.location.Location;
 import android.location.LocationManager;
 import android.net.Uri;
 import android.os.AsyncTask;
-import android.os.Environment;
+import android.os.Bundle;
 import android.os.Handler;
 import android.provider.MediaStore;
-
-import androidx.annotation.Nullable;
-import androidx.core.content.ContextCompat;
-import androidx.core.content.FileProvider;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
-import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -42,7 +31,6 @@ import android.widget.ArrayAdapter;
 import android.widget.BaseExpandableListAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ExpandableListView;
 import android.widget.ImageView;
@@ -52,9 +40,14 @@ import android.widget.TabWidget;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.FileProvider;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.addisonelliott.segmentedbutton.SegmentedButtonGroup;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.zxing.Result;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 
@@ -84,7 +77,6 @@ import ws.epod.ObjectClass.LocationTrack;
 import ws.epod.ObjectClass.SQLiteModel.DeliverExpand_Model;
 import ws.epod.ObjectClass.SQLiteModel.Deliver_Model;
 import ws.epod.ObjectClass.SQLiteModel.Dialog_Cons_Detail_Model;
-import ws.epod.ObjectClass.SQLiteModel.PickingUpEexpand_Model;
 import ws.epod.ObjectClass.SQLiteModel.Reason_model;
 
 public class Deliver_Activity extends AppCompatActivity {
@@ -781,6 +773,7 @@ public class Deliver_Activity extends AppCompatActivity {
                                 lastPosition = i;
 
                                 ((DeliverExpand_Model) expandableListAdapter.getChild(i, j)).setInto("1");
+                                ((DeliverExpand_Model) expandableListAdapter.getChild(i, j)).setIs_scaned("1");
                                 ((DeliverExpand_Model) expandableListAdapter.getChild(i, j)).setTime_begin(getdate());
                                 ((DeliverExpand_Model) expandableListAdapter.getChild(i, j)).setActual_lat(getlat());
                                 ((DeliverExpand_Model) expandableListAdapter.getChild(i, j)).setActual_lon(getlon());
@@ -809,6 +802,7 @@ public class Deliver_Activity extends AppCompatActivity {
                                 lastPosition = i;
 
                                 ((DeliverExpand_Model) expandableListAdapter.getChild(i, j)).setInto("0");
+                                ((DeliverExpand_Model) expandableListAdapter.getChild(i, j)).setIs_scaned("0");
                                 ((DeliverExpand_Model) expandableListAdapter.getChild(i, j)).setTime_begin("");
                                 ((DeliverExpand_Model) expandableListAdapter.getChild(i, j)).setActual_lat("");
                                 ((DeliverExpand_Model) expandableListAdapter.getChild(i, j)).setActual_lon("");
@@ -1230,6 +1224,7 @@ public class Deliver_Activity extends AppCompatActivity {
                 textView24.setVisibility(View.VISIBLE);
                 pick_pay_type.setVisibility(View.GONE);
                 textView25.setVisibility(View.GONE);
+                textView24.setText(listTitle.getPaytype());
             }
 
             imgDetailConsignNo.setOnClickListener(new View.OnClickListener() {
@@ -1314,6 +1309,7 @@ public class Deliver_Activity extends AppCompatActivity {
                 pick_dialog_pay_type_credit.setVisibility(View.VISIBLE);
                 pick_dialog_pay_type.setVisibility(View.GONE);
                 tv_dialog_thb.setVisibility(View.GONE);
+                pick_dialog_pay_type_credit.setText(pay_type);
             }
 
 

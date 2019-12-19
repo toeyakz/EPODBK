@@ -5,16 +5,15 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
-
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -141,7 +140,12 @@ public class JobAdapter extends RecyclerView.Adapter<JobAdapter.ViewHolder> {
                     intent.putExtra("station_name", list.get(i).getStation_name());
                     intent.putExtra("station_address", list.get(i).getStation_address());
                     intent.putExtra("delivery_no", list.get(i).getDelivery_no());
-                    intent.putExtra("plan_in", list.get(i).getPlan_in());
+
+                    if(i == 0 ){
+                        intent.putExtra("plan_in", list.get(i).getPlan_out());
+                    }else{
+                        intent.putExtra("plan_in", list.get(i).getPlan_in());
+                    }
                     context.startActivity(intent);
                 } else {
                     Toast.makeText(context, "Can't start Page.", Toast.LENGTH_SHORT).show();

@@ -162,7 +162,7 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginStart="10dp"
-                                android:text="@string/drop"
+                                android:text="@string/station"
                                 android:textSize="13sp" />
 
                             <TextView
