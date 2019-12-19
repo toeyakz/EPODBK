@@ -64,7 +64,7 @@ public class BackgroundService extends Service {
     //invoice
     String encodedImageInvoice;
 
-    int delay = (1 * 60) * 1000;
+    int delay = (1 * 60) * 5000;
 
     @Nullable
     @Override
@@ -90,7 +90,7 @@ public class BackgroundService extends Service {
         handler = new android.os.Handler();
         runnable = new Runnable() {
             public void run() {
-                Toast.makeText(getApplicationContext(), "Service created!", Toast.LENGTH_LONG).show();
+               // Toast.makeText(getApplicationContext(), "Service created!", Toast.LENGTH_LONG).show();
                 new UpLoadWork().execute();
 //                handler.postDelayed(runnable, 300000);
             }
@@ -104,7 +104,7 @@ public class BackgroundService extends Service {
     @Override
     public void onDestroy() {
         handler.removeCallbacks(runnable);
-        Toast.makeText(this, "Service stopped", Toast.LENGTH_LONG).show();
+       // Toast.makeText(this, "Service stopped", Toast.LENGTH_LONG).show();
         super.onDestroy();
     }
 
@@ -556,7 +556,7 @@ public class BackgroundService extends Service {
 //                Log.d("PlanWorkLOG", url);
                     // JSONArray GETJSON = narisv.getJsonFromUrl_reJsonArray(url);
 
-                    Call<ResponseBody> call = apiInterface.downloadWork(Var.UserLogin.driver_vehicle_id, Var.UserLogin.driver_id, Var.UserLogin.driver_serial, getDate, "");
+                    Call<ResponseBody> call = apiInterface.downloadWork(Var.UserLogin.driver_vehicle_id, Var.UserLogin.driver_id, Var.UserLogin.driver_serial, getDate, max_modified_date);
                     Response<ResponseBody> response = call.execute();
                     if (response.code() == 200) {
                         String responseRecieved = response.body().string();

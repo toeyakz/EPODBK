@@ -157,14 +157,25 @@ public class Login_Activity extends AppCompatActivity {
             }
         }.execute();
 
-//        SharedPreferences login_data = getSharedPreferences("LOGIN", Context.MODE_PRIVATE);
-//        String status_login= login_data.getString("status_login", null);
-//        if(status_login!= null){
-//            if(status_login.equals("1")){
-//                Intent intent= new Intent(getApplicationContext(), PlanWork_Activity.class);
-//                startActivity(intent);
-//            }
-//        }
+        SharedPreferences login_data = getSharedPreferences("LOGIN", Context.MODE_PRIVATE);
+        String status_login= login_data.getString("status_login", null);
+        if(status_login!= null){
+            if(status_login.equals("1")){
+
+                Var.UserLogin.driver_id = login_data.getString("driver_id", "");
+                Var.UserLogin.driver_user = login_data.getString("username", "");
+                Var.UserLogin.driver_pass = login_data.getString("pass", "");
+                Var.UserLogin.driver_serial = login_data.getString("serial", "");
+                Var.UserLogin.driver_brand = login_data.getString("driver_brand", "");
+                Var.UserLogin.driver_truck_license = login_data.getString("vehicle_name", "");
+                Var.UserLogin.driver_fname = login_data.getString("driver_fname", "");
+                Var.UserLogin.driver_lname = login_data.getString("driver_lname", "");
+                Var.UserLogin.driver_vehicle_id = login_data.getString("vehicle_id", "");
+                Var.UserLogin.driver_status_login = login_data.getString("status_login", "");
+                Intent intent= new Intent(getApplicationContext(), PlanWork_Activity.class);
+                startActivity(intent);
+            }
+        }
 
 //        isLogin();
 
@@ -507,7 +518,7 @@ public class Login_Activity extends AppCompatActivity {
                     Var.UserLogin.driver_vehicle_id = login_get.getString("vehicle_id", "");
                     Var.UserLogin.driver_status_login = login_get.getString("status_login", "");
 
-                    login_get.edit().clear();
+                   // login_get.edit().clear();
 
                     // Toast.makeText(Login_Activity.this, "Success !", Toast.LENGTH_SHORT).show();
                     Intent i = new Intent(Login_Activity.this, PlanWork_Activity.class);

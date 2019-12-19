@@ -431,23 +431,12 @@ public class PlanWork_Activity extends AppCompatActivity {
     }
 
     private void isLogin(){
-        SharedPreferences login_data = getSharedPreferences("LOGIN", Context.MODE_PRIVATE);
-        String status_login= login_data.getString("status_login", null);
-        if(status_login!= null){
-            if(status_login.equals("0")){
-                Intent intent= new Intent(getApplicationContext(), Login_Activity.class);
-                startActivity(intent);
-            }
-        }
+
     }
 
 
     @Override
     public void onResume() {
-
-
-
-       // isLogin();
 
 
 

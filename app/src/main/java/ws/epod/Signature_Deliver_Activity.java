@@ -98,6 +98,12 @@ public class Signature_Deliver_Activity extends AppCompatActivity {
         showImageSig = findViewById(R.id.showImageSig);
 
         cancel_back.setOnClickListener(v -> {
+            if (listImg != null) {
+                for (int i = 0; i < listImg.size(); i++) {
+                    File file = new File("/storage/emulated/0/Android/data/ws.epod/files/Signature/" + listImg.get(i));
+                    file.delete();
+                }
+            }
             finish();
         });
 
