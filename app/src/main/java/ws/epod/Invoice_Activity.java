@@ -39,6 +39,8 @@ import com.google.gson.Gson;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import fr.ganfra.materialspinner.MaterialSpinner;
@@ -607,8 +609,8 @@ public class Invoice_Activity extends AppCompatActivity {
         public void onBindViewHolder(@NonNull InvAdapter.ViewHolder holder, int position) {
 
             holder.textView15.setText(context.getString(R.string.order_no) + ": " + list.get(position).getOrder_no());
-            holder.textView21.setText(context.getString(R.string.consignment2)+": " + list.get(position).getConsignment_no());
-            holder.textView9.setText(context.getString(R.string.invoice_no)+": " + list.get(position).getDeli_note_no());
+            holder.textView21.setText(context.getString(R.string.consignment2) + ": " + list.get(position).getConsignment_no());
+            holder.textView9.setText(context.getString(R.string.invoice_no) + ": " + list.get(position).getDeli_note_no());
 
 
             if (!list.get(position).getSignature().equals("")) {
@@ -893,6 +895,7 @@ public class Invoice_Activity extends AppCompatActivity {
                                         int arg1) {
                         new AsyncTask<Void, Void, Void>() {
 
+                            @SuppressLint("WrongThread")
                             @Override
                             protected Void doInBackground(Void... voids) {
                                 try {
@@ -905,8 +908,6 @@ public class Invoice_Activity extends AppCompatActivity {
                                     databaseHelper.db().delete("comment_invoice", "order_no = ? and comment <> ?", new String[]{order_no, "''"});
                                     databaseHelper.db().delete("image_invoice", "name_img = ?", new String[]{signature});
 
-                                    File file = new File("/storage/emulated/0/Android/data/ws.epod/files/Signature/" + signature);
-                                    file.delete();
 
                                 } catch (Exception e) {
 
@@ -919,6 +920,8 @@ public class Invoice_Activity extends AppCompatActivity {
                             protected void onPostExecute(Void aVoid) {
                                 super.onPostExecute(aVoid);
                                 //invAdapter.notifyDataSetChanged();
+
+
                                 setView();
                                 rvInv.scrollToPosition(position);
                             }
@@ -957,7 +960,7 @@ public class Invoice_Activity extends AppCompatActivity {
         Button btnSaveComent_PICK = popupInputDialogView.findViewById(R.id.btnSaveComent_PICK);
         TextView textView32 = popupInputDialogView.findViewById(R.id.textView32);
 
-        textView32.setText(getApplicationContext().getString(R.string.reason)+":");
+        textView32.setText(getApplicationContext().getString(R.string.reason) + ":");
 
         edtComment_PICK.setText(lastComment);
 

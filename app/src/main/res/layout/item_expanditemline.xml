@@ -3,21 +3,46 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:background="#fff"
+    android:background="#F7F7F7"
+    android:layout_marginStart="10dp"
     android:layout_height="wrap_content">
+
+    <RelativeLayout
+        android:id="@+id/relativeLayout"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:visibility="invisible"
+        android:layout_marginStart="15dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <View
+            android:layout_width="1.5dp"
+            android:layout_height="match_parent"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="8.5dp"
+            android:background="#3f9c39" />
+
+        <View
+            android:id="@+id/view1"
+            android:layout_width="12dp"
+            android:layout_height="12dp"
+            android:layout_marginLeft="3dp"
+            android:background="@drawable/dotted" />
+    </RelativeLayout>
 
     <CheckBox
         android:id="@+id/cbExpand_isscaned"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="24dp"
         android:layout_marginTop="8dp"
         android:layout_marginBottom="8dp"
-        android:checked="false"
         android:layout_weight="1"
         android:button="@drawable/custom_checkbox"
+        android:checked="false"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/relativeLayout"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
@@ -74,7 +99,6 @@
         android:layout_marginTop="8dp"
         android:layout_marginBottom="8dp"
         android:text="1"
-        android:textColor="@color/colorPrimaryDark"
         android:textSize="16sp"
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"

@@ -454,6 +454,7 @@ public class InvoiceDeliver_Activity extends AppCompatActivity {
                 ", cm.consignment_no  \n" +
                 ", pl.plan_seq \n" +
                 ",ifnull((select ps4.status_load from pic_sign ps4 where ps4.order_no = pl.order_no ),'') as status  \n" +
+                ",ifnull((select ps2.status_delete from pic_sign ps2 where ps2.order_no = pl.order_no) ,'') as status_delete "+
                 ",ifnull((select ps4.status_unload from pic_sign ps4 where ps4.order_no = pl.order_no and ps4.pic_sign_unload <> '' ),'') as status_unload  \n" +
                 ", pl.order_no  \n" +
                 ",(SELECT pl.delivery_no) AS delivery_no  \n" +
@@ -893,8 +894,8 @@ public class InvoiceDeliver_Activity extends AppCompatActivity {
                                     databaseHelper.db().delete("comment_invoice", "order_no = ? and comment_deliver <> ?", new String[]{order_no, "''"});
                                     databaseHelper.db().delete("image_invoice", "name_img = ?", new String[]{signature});
 
-                                    File file = new File("/storage/emulated/0/Android/data/ws.epod/files/Signature/" + signature);
-                                    file.delete();
+//                                    File file = new File("/storage/emulated/0/Android/data/ws.epod/files/Signature/" + signature);
+//                                    file.delete();
 
                                 } catch (Exception e) {
 

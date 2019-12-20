@@ -10,6 +10,7 @@ public class Sign_Model {
     private String delivery_no = "";
     private String comment = "";
     private String into = "0";
+    private String status_delete = "";
 
     public Sign_Model(String consignment_no, String deli_note_no, String status, String signature, String order_no, String delivery_no, String comment) {
         this.consignment_no = consignment_no;
@@ -18,7 +19,15 @@ public class Sign_Model {
         this.signature = signature;
         this.order_no = order_no;
         this.delivery_no = delivery_no;
-        this.comment = comment;
+        this.comment = comment;;
+    }
+
+    public String getStatus_delete() {
+        return status_delete;
+    }
+
+    public void setStatus_delete(String status_delete) {
+        this.status_delete = status_delete;
     }
 
     public String getInto() {

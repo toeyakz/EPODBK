@@ -72,6 +72,8 @@ public class Signature_Deliver_Activity extends AppCompatActivity {
     Uri imageUri;
     private boolean isSignatured = false;
     ArrayList<String> listImg = new ArrayList<>();
+    String[] imgList = new String[2];
+
 
     // String getDate = "";
 
@@ -98,11 +100,12 @@ public class Signature_Deliver_Activity extends AppCompatActivity {
         showImageSig = findViewById(R.id.showImageSig);
 
         cancel_back.setOnClickListener(v -> {
-            if (listImg != null) {
-                for (int i = 0; i < listImg.size(); i++) {
-                    File file = new File("/storage/emulated/0/Android/data/ws.epod/files/Signature/" + listImg.get(i));
-                    file.delete();
-                }
+            if (imgList != null) {
+                //  for (int i = 0; i < listImg.size(); i++) {
+                File file = new File("/storage/emulated/0/Android/data/ws.epod/files/Signature/" + imgList[0]);
+                file.delete();
+                imgList = new String[2];
+                //  }
             }
             finish();
         });
@@ -111,11 +114,12 @@ public class Signature_Deliver_Activity extends AppCompatActivity {
             Animation animation = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.alpha);
             imgTakePhoto.startAnimation(animation);
 
-            if (listImg != null) {
-                for (int i = 0; i < listImg.size(); i++) {
-                    File file = new File("/storage/emulated/0/Android/data/ws.epod/files/Signature/" + listImg.get(i));
-                    file.delete();
-                }
+            if (imgList != null) {
+                //  for (int i = 0; i < listImg.size(); i++) {
+                File file = new File("/storage/emulated/0/Android/data/ws.epod/files/Signature/" + imgList[0]);
+                file.delete();
+                imgList = new String[2];
+                //  }
             }
 
             Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
@@ -148,7 +152,7 @@ public class Signature_Deliver_Activity extends AppCompatActivity {
             @Override
             public void onSigned() {
                 save_button.setEnabled(true);
-                listImg = new ArrayList<>();
+                imgList = new String[2];
                 isSignatured = true;
             }
 
@@ -164,11 +168,12 @@ public class Signature_Deliver_Activity extends AppCompatActivity {
             public void onClick(View view) {
                 signature_pad.clear();
 
-                if (listImg != null) {
-                    for (int i = 0; i < listImg.size(); i++) {
-                        File file = new File("/storage/emulated/0/Android/data/ws.epod/files/Signature/" + listImg.get(i));
-                        file.delete();
-                    }
+                if (imgList != null) {
+//                    for (int i = 0; i < listImg.size(); i++) {
+                    File file = new File("/storage/emulated/0/Android/data/ws.epod/files/Signature/" + imgList[0]);
+                    file.delete();
+                    imgList = new String[2];
+                    //  }
 
                     showImageSig.setImageBitmap(null);
                     showImageSig.setVisibility(View.GONE);
@@ -183,11 +188,27 @@ public class Signature_Deliver_Activity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Bitmap signatureBitmap = signature_pad.getSignatureBitmap();
-                if (addJpgSignatureToGallery(signatureBitmap)) {
-                    Toast.makeText(Signature_Deliver_Activity.this, "Signature saved into the Gallery", Toast.LENGTH_SHORT).show();
-                    finish();
+
+                Log.d("Asfjklasasdf", "onClick: " + imgList[0]);
+
+                if (imgList[0] != null) {
+                    if (takeImageFromcamera()) {
+                        Log.d("Asfjklasasdf", "onClick: ถ่ายรูป");
+                        Toast.makeText(Signature_Deliver_Activity.this, "Signature saved into the Gallery", Toast.LENGTH_SHORT).show();
+                        imgList = new String[2];
+                        finish();
+                    } else {
+                        Toast.makeText(Signature_Deliver_Activity.this, "Unable to store the signature", Toast.LENGTH_SHORT).show();
+                    }
+
                 } else {
-                    Toast.makeText(Signature_Deliver_Activity.this, "Unable to store the signature", Toast.LENGTH_SHORT).show();
+                    if (addJpgSignatureToGallery(signatureBitmap)) {
+                        Log.d("Asfjklasasdf", "onClick: เซ้็น");
+                        Toast.makeText(Signature_Deliver_Activity.this, "Signature saved into the Gallery", Toast.LENGTH_SHORT).show();
+                        finish();
+                    } else {
+                        Toast.makeText(Signature_Deliver_Activity.this, "Unable to store the signature", Toast.LENGTH_SHORT).show();
+                    }
                 }
             }
         });
@@ -209,6 +230,9 @@ public class Signature_Deliver_Activity extends AppCompatActivity {
                 if (imageUri.getPath() != null) {
                     listImg = new ArrayList<>();
                     listImg.add(file.getName());
+
+                    imgList[0] = file.getName();
+
                     signature_pad.setVisibility(View.GONE);
                     showImageSig.setVisibility(View.VISIBLE);
                     showImageSig.setImageBitmap(myBitmap);
@@ -294,29 +318,115 @@ public class Signature_Deliver_Activity extends AppCompatActivity {
         return temp;
     }
 
+    private boolean takeImageFromcamera() {
+        boolean result = false;
+
+        SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        Gson gson = new Gson();
+        String json = sharedPrefs.getString("DATA_SIGN_DELIVERY", "");
+        Type type = new TypeToken<ArrayList<Sign_Model>>() {
+        }.getType();
+
+        ArrayList<Sign_Model> arrayList = gson.fromJson(json, type);
+
+        for (int i = 0; i < arrayList.size(); i++) {
+            Log.d("Asfjshdflkasdfasd", "addJpgSignatureToGallery: " + arrayList.get(i).getOrder_no() + " > " + arrayList.get(i).getStatus() + " comment:" + arrayList.get(i).getComment());
+
+            try {
+
+                JSONObject jsonInsertPicSign = new JSONObject();
+                JSONArray jsonArrayInsertPicSign = new JSONArray();
+                JSONObject jsonInsertComment = new JSONObject();
+                JSONArray jsonArrayInsertComment = new JSONArray();
+
+                jsonInsertPicSign.put("consignment_no", arrayList.get(i).getConsignment_no());
+                jsonInsertPicSign.put("order_no", arrayList.get(i).getOrder_no());
+                jsonInsertPicSign.put("invoice_no", arrayList.get(i).getDeli_note_no());
+                jsonInsertPicSign.put("status_load", arrayList.get(i).getStatus());
+                jsonInsertPicSign.put("date_sign_unload", getdate());
+                jsonInsertPicSign.put("status_upload_invoice", "0");
+                jsonInsertPicSign.put("pic_sign_unload", imgList[0]);
+                jsonInsertPicSign.put("create_date", getdate());
+                jsonInsertPicSign.put("status_delete", "0");
+
+                String sql = "INSERT INTO image_invoice (name_img, status_img, create_date) VALUES('" + imgList[0] + "','0', '" + getdate() + "')";
+                databaseHelper.db().execSQL(sql);
+
+
+                if (!arrayList.get(i).getComment().equals("")) {
+                    jsonInsertComment.put("consignment_no", arrayList.get(i).getConsignment_no());
+                    jsonInsertComment.put("order_no", arrayList.get(i).getOrder_no());
+                    jsonInsertComment.put("invoice_no", arrayList.get(i).getDeli_note_no());
+                    jsonInsertComment.put("comment_deliver", arrayList.get(i).getComment());
+                    jsonInsertComment.put("status_load", arrayList.get(i).getStatus());
+                    jsonInsertComment.put("delivery_no", arrayList.get(i).getDelivery_no());
+                    jsonInsertComment.put("status_upload_comment", "0");
+                    jsonInsertComment.put("create_date", getdate());
+                }
+
+                //อัพเดต status ตาราง consignment
+                ContentValues cv = new ContentValues();
+                cv.put("status_order_no", arrayList.get(i).getStatus());
+                databaseHelper.db().update("Plan", cv, "consignment_no= '" + arrayList.get(i).getConsignment_no() + "' and order_no='" + arrayList.get(i).getOrder_no() + "'" +
+                        " and activity_type = 'UNLOAD' and trash = '0'", null);
+
+
+                jsonArrayInsertPicSign.put(jsonInsertPicSign);
+                jsonArrayInsertComment.put(jsonInsertComment);
+                Log.d("sfdasdfasdf", "addJpgSignatureToGallery: " + jsonArrayInsertComment.toString());
+
+
+                if (!arrayList.get(i).getStatus().equals("0")) {
+                    if (narisv.INSERT_AS_SQL("pic_sign", jsonArrayInsertPicSign, "")) {
+                        Log.d("PlanWorkLOG", "SAVED Pic_sign.");
+                        if (narisv.INSERT_AS_SQL("comment_invoice", jsonArrayInsertComment, "")) {
+                            Log.d("PlanWorkLOG", "SAVED Comment.");
+                        } else {
+                            Log.d("PlanWorkLOG", "FAIL save Comment.");
+                        }
+                    } else {
+                        Log.d("PlanWorkLOG", "FAIL save Pic_sign.");
+                    }
+                }
+
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+
+        }
+
+
+        sharedPrefs.edit().clear();
+        result = true;
+
+        return result;
+
+
+    }
+
     public boolean addJpgSignatureToGallery(Bitmap signature) {
         boolean result = false;
         try {
-//            ArrayList<String> consignment_no = null;
-//            ArrayList<String> order_no = null;
-//            ArrayList<String> invoice_no = null;
-            //  ArrayList<SignObjectClass> list = (ArrayList<SignObjectClass>) getIntent().getSerializableExtra("signObjectClasses");
-
             SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
             Gson gson = new Gson();
             String json = sharedPrefs.getString("DATA_SIGN_DELIVERY", "");
             Type type = new TypeToken<ArrayList<Sign_Model>>() {
             }.getType();
-            ArrayList<Sign_Model> arrayList = gson.fromJson(json, type);
 
-//            String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-//            String imageFileName = "EPOD_" + timeStamp + "_";
-//            File storageDir = getExternalFilesDir("Signature");
-//            File image = File.createTempFile(
-//                    imageFileName,
-//                    ".jpg",
-//                    storageDir
-//            );
+
+            String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+            String imageFileName = "EPOD_" + timeStamp + "_";
+            File storageDir = getExternalFilesDir("Signature");
+            File image = File.createTempFile(
+                    imageFileName,
+                    ".jpg",
+                    storageDir
+            );
+
+            ArrayList<Sign_Model> arrayList = gson.fromJson(json, type);
+            saveBitmapToJPG(signature, image);
 
             for (int i = 0; i < arrayList.size(); i++) {
 
@@ -336,37 +446,13 @@ public class Signature_Deliver_Activity extends AppCompatActivity {
                     jsonInsertPicSign.put("status_unload", arrayList.get(i).getStatus());
                     jsonInsertPicSign.put("date_sign_unload", getdate());
                     jsonInsertPicSign.put("status_upload_invoice", "0");
-                    if (listImg != null) {
-                        for (int i1 = 0; i1 < listImg.size(); i1++) {
-                            jsonInsertPicSign.put("pic_sign_unload", listImg.get(i));
-                        }
-                    }
-                    String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-                    String imageFileName = "EPOD_" + timeStamp + "_";
-                    File storageDir = getExternalFilesDir("Signature");
-                    File image = File.createTempFile(
-                            imageFileName,
-                            ".jpg",
-                            storageDir
-                    );
-                    if (isSignatured) {
-                        jsonInsertPicSign.put("pic_sign_unload", image.getName());
-                        saveBitmapToJPG(signature, image);
-                    }
+                    jsonInsertPicSign.put("pic_sign_unload", image.getName());
+                    jsonInsertPicSign.put("create_date", getdate());
+                    jsonInsertPicSign.put("status_delete", "0");
 
-                    ContentValues cv2 = new ContentValues();
-                    if (listImg != null) {
-                        for (int i1 = 0; i1 < listImg.size(); i1++) {
-                            cv2.put("name_img", listImg.get(i));
-                        }
-                    } else {
-                        if (image != null) {
-                            cv2.put("name_img", image.getName());
-                        }
+                    String sql = "INSERT INTO image_invoice (name_img, status_img, create_date) VALUES('" + imgList[0] + "','0', '" + getdate() + "')";
+                    databaseHelper.db().execSQL(sql);
 
-                    }
-                    cv2.put("status_img", "0");
-                    databaseHelper.db().insert("image_invoice", null, cv2);
 
 
                     if (!arrayList.get(i).getComment().equals("")) {
@@ -377,6 +463,7 @@ public class Signature_Deliver_Activity extends AppCompatActivity {
                         jsonInsertComment.put("status_unload", arrayList.get(i).getStatus());
                         jsonInsertComment.put("delivery_no", arrayList.get(i).getDelivery_no());
                         jsonInsertComment.put("status_upload_comment", "0");
+                        jsonInsertComment.put("create_date", getdate());
                     }
 
                     ContentValues cv = new ContentValues();

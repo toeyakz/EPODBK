@@ -185,7 +185,7 @@ public class PlanWork_Activity extends AppCompatActivity {
 
         inialView();
         getDataFromSQLite("", "", "");
-       // new UploadWork2ND().execute();
+        // new UploadWork2ND().execute();
         //new UpLoadWork().execute();
 
     }
@@ -270,8 +270,8 @@ public class PlanWork_Activity extends AppCompatActivity {
                 bt_refesh.startAnimation(animation);
                 hideAll();
                 new UploadWork2ND().execute();
-                getDataFromSQLite("","","");
-              //  rvPlanWork.setAdapter(sectionAdapter);
+                getDataFromSQLite("", "", "");
+                //  rvPlanWork.setAdapter(sectionAdapter);
 
             }
         });
@@ -421,14 +421,13 @@ public class PlanWork_Activity extends AppCompatActivity {
         //fabSearch.startAnimation(showButton);
     }
 
-    private void isLogin(){
+    private void isLogin() {
 
     }
 
 
     @Override
     public void onResume() {
-
 
 
         //createCustomAnimation();
@@ -505,7 +504,7 @@ public class PlanWork_Activity extends AppCompatActivity {
             ArrayList<UploadImageInvoice.Data2> uploadImage = new ArrayList<>();
             Log.d("statusUploadInvoice", "doInBackground: 1");
             try {
-                String sql = "select id, (select delivery_no from plan) as delivery_no, order_no, consignment_no, invoice_no, pic_sign_load, pic_sign_unload, date_sign_load, date_sign_unload from pic_sign where status_upload_invoice = '0' ";
+                String sql = "select id, (select delivery_no from plan) as delivery_no, order_no, consignment_no, invoice_no, pic_sign_load, pic_sign_unload, date_sign_load, date_sign_unload from pic_sign where status_upload_invoice = '0' and status_delete = '0' ";
                 Cursor cursor = databaseHelper.selectDB(sql);
                 JSONArray ContactArray = new JSONArray();
 
@@ -982,6 +981,7 @@ public class PlanWork_Activity extends AppCompatActivity {
                             .setAction("Action", null).show();
                     break;
                 case 1:
+                    deleteJobAndImage();
                     new uploadInvoice().execute();
                     new DownloadWork().execute();
                     break;
@@ -999,19 +999,102 @@ public class PlanWork_Activity extends AppCompatActivity {
         }
     }
 
+    //หาไฟล์ในโฟลเดอร์ Signature แล้วเก็บใส่ array
+    private ArrayList<String> getFileInFolder() {
+
+        ArrayList<String> tFileList = new ArrayList<>();
+        String extension = "";
+        File f = new File("/storage/emulated/0/Android/data/ws.epod/files/Signature/");
+        File[] files = f.listFiles();
+        if(files != null) {
+            for (int i = 0; i < files.length; i++) {
+
+                File file = files[i];
+                int ind = files[i].getPath().lastIndexOf('.');
+                if (ind > 0) {
+                    extension = files[i].getPath().substring(files[i].getPath().length() - 3);// this is the extension
+                    if (extension.equals("jpg")) {
+                        tFileList.add(file.getName());
+                    }
+                }
+            }
+        }
+
+        return tFileList;
+    }
+
+    //หาไฟล์ในโฟลเดอร์ Signature แล้วเก็บใส่ array
+    private ArrayList<String> getImgPictureInFolder() {
+
+        ArrayList<String> tFileList = new ArrayList<>();
+        String extension = "";
+        File f = new File("/storage/emulated/0/Android/data/ws.epod/files/Pictures/");
+        File[] files = f.listFiles();
+        if(files != null){
+        for (int i = 0; i < files.length; i++) {
+
+            File file = files[i];
+            int ind = files[i].getPath().lastIndexOf('.');
+            if (ind > 0) {
+                extension = files[i].getPath().substring(files[i].getPath().length() - 3);// this is the extension
+                if (extension.equals("jpg")) {
+                    tFileList.add(file.getName());
+                }
+            }
+        }
+    }
+        return tFileList;
+    }
+
     private void deleteJobAndImage() {
+
         try {
+
+            //ไล่ลบไฟล์ในโฟลเดอร์ Signature ที่มีอายุมากกว่า 7 วัน
+            for (int i = 0; i < getFileInFolder().size(); i++) {
+
+                File file = new File("/storage/emulated/0/Android/data/ws.epod/files/Signature/" + getFileInFolder().get(i));
+                Calendar time = Calendar.getInstance();
+                time.add(Calendar.DAY_OF_YEAR, -7);
+                Date lastModified = new Date(file.lastModified());
+                if (lastModified.before(time.getTime())) {
+                    file.delete();
+                }
+
+            }
+
+            //ไล่ลบไฟล์ในโฟลเดอร์ Pictures ที่มีอายุมากกว่า 7 วัน
+            for (int p = 0; p < getImgPictureInFolder().size(); p++) {
+
+                File file = new File("/storage/emulated/0/Android/data/ws.epod/files/Pictures/" + getImgPictureInFolder().get(p));
+                Calendar time = Calendar.getInstance();
+                time.add(Calendar.DAY_OF_YEAR, -7);
+                Date lastModified = new Date(file.lastModified());
+                if (lastModified.before(time.getTime())) {
+                    file.delete();
+                }
+
+            }
+
+            //ลบงานหลังจากผ่านไป 7 วัน
             String myTable = " Plan ";
             String sql = "DELETE FROM" + myTable + "WHERE delivery_date <= date('now','-7 day')";
             databaseHelper.db().execSQL(sql);
 
-            File file = new File("/storage/emulated/0/Android/data/ws.epod/files/Pictures/");
-            Calendar time = Calendar.getInstance();
-            time.add(Calendar.DAY_OF_YEAR, -7);
-            Date lastModified = new Date(file.lastModified());
-            if (lastModified.before(time.getTime())) {
-                file.delete();
-            }
+            //ลบลายเซ้นหลังจากผ่านไป 7 วัน
+            String invoice = " pic_sign ";
+            String sql_invoice = "DELETE FROM" + invoice + "WHERE create_date <= datetime('now','localtime', '-7 day')";
+            databaseHelper.db().execSQL(sql_invoice);
+
+            //ลบคอมมเ้นหลังจากผ่านไป 7 วัน
+            String comment = " comment_invoice ";
+            String sql_comment = "DELETE FROM" + comment + "WHERE create_date <= datetime('now','localtime', '-7 day')";
+            databaseHelper.db().execSQL(sql_comment);
+
+            //ลบรูปจากตาราง img_invoice หลังจากผ่านไป 7 วัน
+            String img_invoice = " image_invoice ";
+            String sql_img_invoice = "DELETE FROM" + img_invoice + "WHERE create_date <= datetime('now','localtime', '-7 day')";
+            databaseHelper.db().execSQL(sql_img_invoice);
 
 
         } catch (SQLException e) {
@@ -1030,7 +1113,6 @@ public class PlanWork_Activity extends AppCompatActivity {
             try {
 
                 //ลบงานหลัง 7 วัน
-                deleteJobAndImage();
 
 
                 String max_modified_date = "";
@@ -1152,19 +1234,19 @@ public class PlanWork_Activity extends AppCompatActivity {
                     }
                     Snackbar.make(viewFab, mess, Snackbar.LENGTH_LONG)
                             .setAction("Action", null).show();
-               //     if (sectionAdapter != null) {
+                    //     if (sectionAdapter != null) {
 
-                       // rvPlanWork.setAdapter(sectionAdapter);
-                       // planWorkAdapter.notifyDataSetChanged();
-                 //   }
+                    // rvPlanWork.setAdapter(sectionAdapter);
+                    // planWorkAdapter.notifyDataSetChanged();
+                    //   }
                     break;
                 case 2:
                     mess = "Sync error!!";
                     Snackbar.make(viewFab, mess, Snackbar.LENGTH_LONG)
                             .setAction("Action", null).show();
 
-                       // rvPlanWork.setAdapter(sectionAdapter);
-                       //// planWorkAdapter.notifyDataSetChanged();
+                    // rvPlanWork.setAdapter(sectionAdapter);
+                    //// planWorkAdapter.notifyDataSetChanged();
 
                     break;
             }
@@ -1639,7 +1721,7 @@ public class PlanWork_Activity extends AppCompatActivity {
 
         ArrayList<Plan_model> studentArrayList = new ArrayList<>();
         ArrayList<String> dateArray = new ArrayList<>();
-        SectionedRecyclerViewAdapter sectionAdapter  = new SectionedRecyclerViewAdapter();
+        SectionedRecyclerViewAdapter sectionAdapter = new SectionedRecyclerViewAdapter();
 
         Cursor cursor = databaseHelper.selectDB(sql);
 
@@ -1657,7 +1739,7 @@ public class PlanWork_Activity extends AppCompatActivity {
                 String deli = cursor.getString(cursor.getColumnIndex("deli"));
                 String finish = cursor.getString(cursor.getColumnIndex("finish"));
 
-                Log.d("fsjkdfaois", "getDataFromSQLite: "+delivery_no);
+                Log.d("fsjkdfaois", "getDataFromSQLite: " + delivery_no);
 
                 dateArray.add(delivery_date);
                 studentArrayList.add(new Plan_model(delivery_date, delivery_no, plan_seq, pick, deli, finish));
@@ -1691,8 +1773,8 @@ public class PlanWork_Activity extends AppCompatActivity {
 
             }
 
-            for (int k = 0; k < item.size(); k++){
-              //  Log.d("fsjkdfaois", "getDataFromSQLite: "+item.get(k).getDelivery_no());
+            for (int k = 0; k < item.size(); k++) {
+                //  Log.d("fsjkdfaois", "getDataFromSQLite: "+item.get(k).getDelivery_no());
             }
 
 
@@ -1703,7 +1785,7 @@ public class PlanWork_Activity extends AppCompatActivity {
         //planWorkAdapter = new PlanWorkAdapter(studentArrayList, getApplicationContext());
 
         rvPlanWork.setAdapter(sectionAdapter);
-       // cursor.close();
+        // cursor.close();
 
     }
 
@@ -1851,10 +1933,10 @@ public class PlanWork_Activity extends AppCompatActivity {
                 public void run() {
                     if (pd != null && pd.isShowing()) {
                         pd.cancel();
-                       // Toast.makeText(context, "", Toast.LENGTH_SHORT).show();
+                        // Toast.makeText(context, "", Toast.LENGTH_SHORT).show();
                     }
                 }
-            },5000);
+            }, 5000);
 
 
             if (IsSuccess == 1) {
