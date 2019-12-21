@@ -15,6 +15,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Typeface;
+import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -50,6 +51,9 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 
+import org.json.JSONArray;
+import org.w3c.dom.Text;
+
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -62,7 +66,9 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Locale;
+import java.util.function.LongBinaryOperator;
 
 import fr.ganfra.materialspinner.MaterialSpinner;
 import me.dm7.barcodescanner.zxing.ZXingScannerView;
@@ -138,6 +144,9 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
     DialogConsAdapter dialogConsAdapter;
 
     private int ch_list = 0;
+    boolean valueLoop;
+
+    int c = 0;
 
     LocationTrack locationTrack;
 
@@ -148,6 +157,7 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
     LinearLayout layoutJobHome, layoutJobToday;
 
     boolean isc = false;
+
 
     int arrayIsScan = 0;
     //private LocationManager client;
@@ -227,7 +237,7 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
                 Animation animation = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.alpha);
                 imgCameraScan.startAnimation(animation);
 
-
+                // valueLoop = true;
                 qrScan.initiateScan();
 //                scannerView = new ZXingScannerView(getApplicationContext());
 //                scannerView.setResultHandler(new ZXingScannerResultHandler());
@@ -343,7 +353,7 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
                                                                 String sql = "INSERT INTO image (name_img, status_img) VALUES('" + expandedList.getPicture3() + "','0')";
                                                                 databaseHelper.db().execSQL(sql);
                                                             }
-                                                          //  databaseHelper.db().insert("image", null, cv2);
+                                                            //  databaseHelper.db().insert("image", null, cv2);
 
 
                                                             lastExpandedPosition = i;
@@ -456,13 +466,19 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
                                 ((PickingUpEexpand_Model) expandableListAdapter.getChild(i, j)).setActual_lon(getlon());
                                 isc = false;
 
+                                c++;
+                                ((PickingUp_Model) expandableListAdapter.getGroup(i)).setBox_checked(String.valueOf(c));
+
                                 Toast.makeText(PinkingUpMaster_Activity.this, "Checked.", Toast.LENGTH_SHORT).show();
+
+
                                 //getSQLite();
                                 expandableListView.setAdapter(expandableListAdapter);
                                 expandableListView.expandGroup(i);
-                                //expandableListAdapter.notifyDataSetChanged();
+                                expandableListAdapter.notifyDataSetChanged();
+                                expandableListView.smoothScrollToPosition(i);
                             } else {
-                                 Toast.makeText(PinkingUpMaster_Activity.this, "This Waybill No doesn't exist.", Toast.LENGTH_SHORT).show();
+                                //  Toast.makeText(PinkingUpMaster_Activity.this, "This Waybill No doesn't exist.", Toast.LENGTH_SHORT).show();
                             }
 
                         }
@@ -484,12 +500,17 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
                                 isc = false;
                                 Toast.makeText(PinkingUpMaster_Activity.this, "Un Check.", Toast.LENGTH_SHORT).show();
 
+
+                                c--;
+                                ((PickingUp_Model) expandableListAdapter.getGroup(i)).setBox_checked(String.valueOf(c));
+
                                 // getSQLite();
                                 expandableListView.setAdapter(expandableListAdapter);
                                 expandableListView.expandGroup(i);
-                                // expandableListAdapter.notifyDataSetChanged();
+                                expandableListAdapter.notifyDataSetChanged();
+                                expandableListView.smoothScrollToPosition(i);
                             } else {
-                                  Toast.makeText(PinkingUpMaster_Activity.this, "This Waybill No doesn't exist.", Toast.LENGTH_SHORT).show();
+                                // Toast.makeText(PinkingUpMaster_Activity.this, "This Waybill No doesn't exist.", Toast.LENGTH_SHORT).show();
                             }
 
                         }
@@ -765,6 +786,26 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
         user_data.edit().clear();
     }
 
+    private void ToastScan(Bitmap bm, String v) {
+        LayoutInflater inflater = getLayoutInflater();
+        View view = inflater.inflate(R.layout.custom_toast_scan,
+                (ViewGroup) findViewById(R.id.mylayout));
+
+        Toast custToast = new Toast(this);
+        TextView tv = view.findViewById(R.id.textView1);
+        ImageView img  = view.findViewById(R.id.imageview);
+        if(bm != null){
+            Log.d("dsdg", "ToastScan: notnull");
+            img.setImageBitmap(bm);
+        }else{
+            //img.setImageBitmap(bm);
+            Log.d("dsdg", "ToastScan: null");
+        }
+        tv.setText(v);
+        custToast.setView(view);
+        custToast.show();
+    }
+
 
     private void ResizeImages(String sPath) throws IOException {
 
@@ -794,6 +835,8 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
+        // valueLoop = true;
+
 
         IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
         if (result != null) {
@@ -804,79 +847,92 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
                 getScanText = getScanText.trim();
 
                 // edtFineWaybillPick.setText(getScanText);
+                ArrayList<String> group = new ArrayList<>();
+                int roundLoop = 0;
 
 
+                int scrollTo = 0;
                 if (INPUT_WAY.equals("PLUS")) {
                     for (int i = 0; i < expandableListAdapter.getGroupCount(); i++) {
                         // expandableListView.expandGroup(i);
                         final PickingUp_Model listTitle = (PickingUp_Model) expandableListAdapter.getGroup(i);
+
                         for (int j = 0; j < expandableListAdapter.getChildrenCount(i); j++) {
                             final PickingUpEexpand_Model expandedList = (PickingUpEexpand_Model) expandableListAdapter.getChild(i, j);
-                            Log.d("ASdgfjksdzfgsdf", "onActivityResult: " + getScanText);
+                            group.add(expandedList.getWaybil_no());
+
+                            roundLoop++;
+
+                            Log.d("asjfsdijfh", "getChildrenCount: " + expandableListAdapter.getChildrenCount(i));
+
+                            if (((PickingUpEexpand_Model) expandableListAdapter.getChild(i, j)).getIs_scaned().equals("0")) {
+                                if (getScanText.equals(expandedList.getWaybil_no())) {
+
+                                    //  valueLoop++;
 
 
-                            if (getScanText.equals(expandedList.getWaybil_no())) {
+                                    //  scrollTo += ((PickingUp_Model) expandableListAdapter.getChildrenCount(i);
 
-                                //expandableListView.expandGroup(i);
+                                    //expandableListView.expandGroup(i);
 
-                                lastPosition = i;
+                                    Log.d("ASdgfjksdzfgsdf", "onActivityResult: " + getScanText);
+                                    lastPosition = i;
 
-                                // ((PickingUpEexpand_Model) expandableListAdapter.getChild(i, j)).setIs_scaned("1");
-                                ((PickingUpEexpand_Model) expandableListAdapter.getChild(i, j)).setInto("1");
-                                ((PickingUpEexpand_Model) expandableListAdapter.getChild(i, j)).setIs_scaned("1");
-                                ((PickingUpEexpand_Model) expandableListAdapter.getChild(i, j)).setTime_begin(getdate());
-                                ((PickingUpEexpand_Model) expandableListAdapter.getChild(i, j)).setActual_lat(getlat());
-                                ((PickingUpEexpand_Model) expandableListAdapter.getChild(i, j)).setActual_lon(getlon());
-
-//                                int c = 0;
-//                                c++;
-//
-//                                ((PickingUp_Model) expandableListAdapter.getGroup(i)).setBox_checked(String.valueOf(c));
-//                                isc = true;
-//
-//                                int count;
-//
-//                                if(!expandedList.getIs_scaned().equals("0")){
-//                                    count = expandedList.getIs_scaned().length();
-//                                    listTitle.setBox_checked(""+count);
-//
-//                                }
+                                    // ((PickingUpEexpand_Model) expandableListAdapter.getChild(i, j)).setIs_scaned("1");
+                                    //((PickingUpEexpand_Model) expandableListAdapter.getChild(i, j)).setInto("1");
+                                    ((PickingUpEexpand_Model) expandableListAdapter.getChild(i, j)).setIs_scaned("1");
+                                    ((PickingUpEexpand_Model) expandableListAdapter.getChild(i, j)).setTime_begin(getdate());
+                                    ((PickingUpEexpand_Model) expandableListAdapter.getChild(i, j)).setActual_lat(getlat());
+                                    ((PickingUpEexpand_Model) expandableListAdapter.getChild(i, j)).setActual_lon(getlon());
 
 
+                                    if (((PickingUp_Model) expandableListAdapter.getGroup(i)).getCount() >= 0) {
+                                        int count = ((PickingUp_Model) expandableListAdapter.getGroup(i)).getCount() + 1;
 
-//                                if(expandedList.getb){
-//
-//                                }
+                                        ((PickingUp_Model) expandableListAdapter.getGroup(i)).setCount(count);
+                                        valueLoop = false;
 
-
-//                                if(!listTitle.getBox_checked().equals("0")){
-//                                    consignment.setTextColor(Color.parseColor("#1D781F"));
-//                                    box.setTextColor(Color.parseColor("#1D781F"));
-//                                    tvPickUp_global.setTextColor(Color.parseColor("#1D781F"));
-//                                    textView24.setTextColor(Color.parseColor("#1D781F"));
-//                                }else{
-//                                    consignment.setTextColor(Color.parseColor("#696969"));
-//                                    consignment.setTextColor(Color.parseColor("#696969"));
-//                                    box.setTextColor(Color.parseColor("#696969"));
-//                                    tvPickUp_global.setTextColor(Color.parseColor("#9C9C9C"));
-//                                    textView24.setTextColor(Color.parseColor("#696969"));
-//                                }
+                                    }
 
 
-                                Toast.makeText(PinkingUpMaster_Activity.this, "Checked.", Toast.LENGTH_SHORT).show();
+                                    ((PickingUp_Model) expandableListAdapter.getGroup(i)).setBox_checked(String.valueOf(((PickingUp_Model) expandableListAdapter.getGroup(i)).getCount()));
 
-                                expandableListView.setAdapter(expandableListAdapter);
-                                expandableListView.expandGroup(i);
-                                expandableListAdapter.notifyDataSetChanged();
-                                expandableListView.smoothScrollToPosition(i);
+                                    Bitmap icon = BitmapFactory.decodeResource(getApplicationContext().getResources(),
+                                            R.drawable.ic_check_box_disable);
+                                    ToastScan(icon,"Checked.");
+                                    //Toast.makeText(PinkingUpMaster_Activity.this, "Checked.", Toast.LENGTH_SHORT).show();
+
+                                    expandableListView.setAdapter(expandableListAdapter);
+                                    expandableListView.expandGroup(i);
+                                    expandableListAdapter.notifyDataSetChanged();
+                                    expandableListView.smoothScrollToPositionFromTop(i, j);
+                                } else {
+
+                                    //Toast.makeText(PinkingUpMaster_Activity.this, "This Waybill No doesn't exist.", Toast.LENGTH_SHORT).show();
+                                }
                             } else {
+                                if (getScanText.equals(expandedList.getWaybil_no())) {
+                                    ToastScan(null,"Scanned.");
+                                }
 
-                                // Toast.makeText(PinkingUpMaster_Activity.this, "This Waybill No doesn't exist.", Toast.LENGTH_SHORT).show();
                             }
+
+//                            if(!getScanText.equals(expandedList.getWaybil_no())){
+//                                ToastScan("This Waybill No doesn't exist.");
+//                            }
 
                         }
 
                     }
+
+
+                    Log.d("Adfsdf", "onActivityResult: " + valueLoop);
+
+                    for (int m = 0; m <group.size(); m++){
+
+                    }
+
+
                 } else {
                     for (int i = 0; i < expandableListAdapter.getGroupCount(); i++) {
                         //expandableListView.expandGroup(i);
@@ -884,42 +940,43 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
                         for (int j = 0; j < expandableListAdapter.getChildrenCount(i); j++) {
                             final PickingUpEexpand_Model expandedList = (PickingUpEexpand_Model) expandableListAdapter.getChild(i, j);
 
-                            if (getScanText.equals(expandedList.getWaybil_no())) {
+
+                            if (!((PickingUpEexpand_Model) expandableListAdapter.getChild(i, j)).getIs_scaned().equals("0")) {
+                                if (getScanText.equals(expandedList.getWaybil_no())) {
 
 
-                                // expandableListView.expandGroup(i);
-                                lastPosition = i;
-                                //((PickingUpEexpand_Model) expandableListAdapter.getChild(i, j)).setIs_scaned("0");
-                                ((PickingUpEexpand_Model) expandableListAdapter.getChild(i, j)).setInto("0");
-                                ((PickingUpEexpand_Model) expandableListAdapter.getChild(i, j)).setIs_scaned("0");
-                                ((PickingUpEexpand_Model) expandableListAdapter.getChild(i, j)).setTime_begin("");
-                                ((PickingUpEexpand_Model) expandableListAdapter.getChild(i, j)).setActual_lat("");
-                                ((PickingUpEexpand_Model) expandableListAdapter.getChild(i, j)).setActual_lon("");
-
-//                                int c = 0;
-//                                c--;
-//
-//                                ((PickingUp_Model) expandableListAdapter.getGroup(i)).setBox_checked(String.valueOf(c));
-//                                isc = true;
-//
-//                                int count;
-//
-//                                if(!expandedList.getIs_scaned().equals("0")){
-//                                    count = expandedList.getIs_scaned().length();
-//                                    listTitle.setBox_checked(""+count);
-//
-//                                }
+                                    // expandableListView.expandGroup(i);
+                                    lastPosition = i;
+                                    //((PickingUpEexpand_Model) expandableListAdapter.getChild(i, j)).setIs_scaned("0");
+                                    // ((PickingUpEexpand_Model) expandableListAdapter.getChild(i, j)).setInto("0");
+                                    ((PickingUpEexpand_Model) expandableListAdapter.getChild(i, j)).setIs_scaned("0");
+                                    ((PickingUpEexpand_Model) expandableListAdapter.getChild(i, j)).setTime_begin("");
+                                    ((PickingUpEexpand_Model) expandableListAdapter.getChild(i, j)).setActual_lat("");
+                                    ((PickingUpEexpand_Model) expandableListAdapter.getChild(i, j)).setActual_lon("");
 
 
-                                Toast.makeText(PinkingUpMaster_Activity.this, "Un Check.", Toast.LENGTH_SHORT).show();
+                                    if (!((PickingUp_Model) expandableListAdapter.getGroup(i)).getBox_checked().equals("0")) {
+                                        int count = ((PickingUp_Model) expandableListAdapter.getGroup(i)).getCount() - 1;
 
-                                expandableListView.setAdapter(expandableListAdapter);
-                                expandableListView.expandGroup(i);
-                                expandableListAdapter.notifyDataSetChanged();
-                                expandableListView.smoothScrollToPosition(j);
+                                        ((PickingUp_Model) expandableListAdapter.getGroup(i)).setCount(count);
+                                    }
+
+
+                                    ((PickingUp_Model) expandableListAdapter.getGroup(i)).setBox_checked(String.valueOf(((PickingUp_Model) expandableListAdapter.getGroup(i)).getCount()));
+
+                                    Toast.makeText(PinkingUpMaster_Activity.this, "Un Check.", Toast.LENGTH_SHORT).show();
+
+                                    expandableListView.setAdapter(expandableListAdapter);
+                                    expandableListView.expandGroup(i);
+                                    expandableListAdapter.notifyDataSetChanged();
+                                    expandableListView.smoothScrollToPositionFromTop(i, j);
+                                } else {
+                                    // expandableListView.expandGroup(i);
+                                    // toastScan();
+                                    //Toast.makeText(PinkingUpMaster_Activity.this, "This Waybill No doesn't exist.", Toast.LENGTH_SHORT).show();
+                                }
                             } else {
-                                // expandableListView.expandGroup(i);
-                                 // Toast.makeText(PinkingUpMaster_Activity.this, "This Waybill No doesn't exist.", Toast.LENGTH_SHORT).show();
+                                //toastScan("Change the lower button to scan.");
                             }
 
                         }
@@ -1172,7 +1229,6 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
             Log.d("qwegwegsdg", "getGroupView: " + (expandedListPosition + 1));
 
 
-
             final TextView box_no, waybill_no, tvExpand_Count;
             final ImageView imgEditBoxNoPickup;
 
@@ -1191,61 +1247,71 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
 
             checkBox.setEnabled(false);
 
-
-            if (!checkBox.isChecked() && !expandedList.getIs_scaned().equals("1")) {
-                imgEditBoxNoPickup.setEnabled(true);
-            } else {
-                imgEditBoxNoPickup.setEnabled(false);
-            }
-
-            if (expandedList.getIs_scaned().equals("0")) {
-                imgEditBoxNoPickup.setEnabled(true);
-            }
-
-
-            if (expandedList.getIs_scaned().equals("2")) {
-                checkBox.setChecked(true);
-                imgEditBoxNoPickup.setEnabled(true);
-                //  checkBox.setEnabled(false);
-                checkBox.setButtonDrawable(R.drawable.ic_indeterminate_check_box_black_24dp);
-
-            } else {
-                //  checkBox.setEnabled(true);
-                checkBox.setButtonDrawable(R.drawable.custom_checkbox);
-            }
+            Log.d("logIsScanned", "waybill: " + expandedList.getWaybil_no() + " scn: " + expandedList.getIs_scaned());
 
             if (expandedList.getIs_scaned().equals("1")) {
                 checkBox.setChecked(true);
-                //  checkBox.setEnabled(false);
-                //     checkBox.setButtonDrawable(R.drawable.ic_check_box_disable);
+            } else if (expandedList.getIs_scaned().equals("2")) {
+                checkBox.setChecked(true);
+            } else if (expandedList.getIs_scaned().equals("0")) {
+                checkBox.setChecked(false);
             }
 
-            if (isc) {
-                if (expandedList.getInto().equals("0")) {
-                    expandedList.setIs_scaned("0");
-                    if (expandedList.getIs_scaned().equals("0")) {
-                        checkBox.setChecked(false);
-                        imgEditBoxNoPickup.setEnabled(true);
-                        isc = false;
-                    }
-                } else {
-                    expandedList.setIs_scaned("1");
-                    expandedList.setTime_begin(getdate());
 
-                    // Log.d("sdgfjkashdfsdf", "getChildView: "+ LocationLatLon.getLastLocation());
-                    expandedList.setActual_lon(getlat());
-                    expandedList.setActual_lon(getlon());
-
-                    if (expandedList.getIs_scaned().equals("1")) {
-                        checkBox.setChecked(true);
-                        isc = false;
-                        //  checkBox.setEnabled(false);
-                        //              checkBox.setButtonDrawable(R.drawable.ic_check_box_disable);
-                    }
-                }
-            } else {
-
-            }
+//            if (!checkBox.isChecked() && !expandedList.getIs_scaned().equals("1")) {
+//                imgEditBoxNoPickup.setEnabled(true);
+//            } else {
+//                imgEditBoxNoPickup.setEnabled(false);
+//            }
+//
+//            if (expandedList.getIs_scaned().equals("0")) {
+//                imgEditBoxNoPickup.setEnabled(true);
+//            }
+//
+//
+//            if (expandedList.getIs_scaned().equals("2")) {
+//                checkBox.setChecked(true);
+//                imgEditBoxNoPickup.setEnabled(true);
+//                //  checkBox.setEnabled(false);
+//                checkBox.setButtonDrawable(R.drawable.ic_indeterminate_check_box_black_24dp);
+//
+//            } else {
+//                //  checkBox.setEnabled(true);
+//                checkBox.setButtonDrawable(R.drawable.custom_checkbox);
+//            }
+//
+//            if (expandedList.getIs_scaned().equals("1")) {
+//                checkBox.setChecked(true);
+//                //  checkBox.setEnabled(false);
+//                //     checkBox.setButtonDrawable(R.drawable.ic_check_box_disable);
+//            }
+//
+//            if (isc) {
+//                if (expandedList.getInto().equals("0")) {
+//                    expandedList.setIs_scaned("0");
+//                    if (expandedList.getIs_scaned().equals("0")) {
+//                        checkBox.setChecked(false);
+//                        imgEditBoxNoPickup.setEnabled(true);
+//                        isc = false;
+//                    }
+//                } else {
+//                    expandedList.setIs_scaned("1");
+//                    expandedList.setTime_begin(getdate());
+//
+//                    // Log.d("sdgfjkashdfsdf", "getChildView: "+ LocationLatLon.getLastLocation());
+//                    expandedList.setActual_lon(getlat());
+//                    expandedList.setActual_lon(getlon());
+//
+//                    if (expandedList.getIs_scaned().equals("1")) {
+//                        checkBox.setChecked(true);
+//                        isc = false;
+//                        //  checkBox.setEnabled(false);
+//                        //              checkBox.setButtonDrawable(R.drawable.ic_check_box_disable);
+//                    }
+//                }
+//            } else {
+//
+//            }
 
 
 //            checkBox.setOnClickListener(v -> {
@@ -1342,13 +1408,17 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
                 box.setText(context.getString(R.string.boxes) + " (" + listTitle.getBox_checked() + " | " + listTitle.getBox_total() + ")");
             }
 
-            if(listTitle.getBox_checked().equals(listTitle.getBox_total())){
+
+            Log.d("boxScanTotal", "total: " + listTitle.getBox_checked() + " cons: " + listTitle.getConsignment());
+
+
+            if (listTitle.getBox_checked().equals(listTitle.getBox_total())) {
                 consignment.setTextColor(Color.parseColor("#1D781F"));
                 box.setTextColor(Color.parseColor("#1D781F"));
                 tvPickUp_global.setTextColor(Color.parseColor("#1D781F"));
                 textView24.setTextColor(Color.parseColor("#1D781F"));
                 tvConGroupCountPick.setTextColor(Color.parseColor("#1D781F"));
-            }else{
+            } else {
                 consignment.setTextColor(Color.parseColor("#696969"));
                 consignment.setTextColor(Color.parseColor("#696969"));
                 box.setTextColor(Color.parseColor("#696969"));

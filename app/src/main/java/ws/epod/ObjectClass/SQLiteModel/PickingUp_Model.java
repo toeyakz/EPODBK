@@ -11,6 +11,7 @@ public class PickingUp_Model {
     public String paytype = "";
     public String global_cancel = "";
     public String price = "";
+    public int count = 0;
     //public ArrayList<PickingUpEexpand_Model> list_expand;
 
     public PickingUp_Model( String consignment, String box_total,String box_checked, String global_total, String station_address, String paytype, String global_cancel,String price ) {
@@ -22,6 +23,15 @@ public class PickingUp_Model {
         this.paytype = paytype;
         this.global_cancel = global_cancel;
         this.price = price;
+    }
+
+
+    public int getCount() {
+        return count;
+    }
+
+    public void setCount(int count) {
+        this.count = count;
     }
 
     public String getPrice() {

@@ -16,6 +16,7 @@ public class PickingUpEexpand_Model {
     private String time_begin = "";
     private String actual_lat = "";
     private String actual_lon = "";
+    private int count = 0;
 
     public PickingUpEexpand_Model( String box_no, String waybil_no, String is_scaned, String row_number, String consignment, String delivery_no, String plan_seq, String comment
     ,String picture1, String picture2, String picture3) {
@@ -30,6 +31,14 @@ public class PickingUpEexpand_Model {
         this.picture1 = picture1;
         this.picture2 = picture2;
         this.picture3 = picture3;
+    }
+
+    public int getCount() {
+        return count;
+    }
+
+    public void setCount(int count) {
+        this.count = count;
     }
 
     public String getTime_begin() {
