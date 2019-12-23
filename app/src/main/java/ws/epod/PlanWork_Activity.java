@@ -711,15 +711,22 @@ public class PlanWork_Activity extends AppCompatActivity {
     }
 
 
-    public class UploadWork2ND extends AsyncTask<String, String, String> {
+    public class UploadWork2ND extends AsyncTask<String, Integer, String> {
 
         int IsSuccess = 1;
+        float percentage;
 
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
+//            progressDialog = new ProgressDialog(PlanWork_Activity.this);
+//            progressDialog.setCancelable(false);
+//            progressDialog.setMessage(getApplicationContext().getString(R.string.sync_data));
+//            progressDialog.show();
+
             progressDialog = new ProgressDialog(PlanWork_Activity.this);
             progressDialog.setCancelable(false);
+            progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
             progressDialog.setMessage(getApplicationContext().getString(R.string.sync_data));
             progressDialog.show();
 
@@ -731,6 +738,8 @@ public class PlanWork_Activity extends AppCompatActivity {
             JSONObject Root = new JSONObject();
             JSONObject picture1 = new JSONObject();
             ArrayList<UploadImage.Data> uploadImage = new ArrayList<>();
+
+
 
 //            String id_plan = "";
 //            String url = Var.WEBSERVICE2 + "func=setPlan&driver_id=" + Var.UserLogin.driver_id;
@@ -946,7 +955,7 @@ public class PlanWork_Activity extends AppCompatActivity {
 
                                         }//pic1
                                     }
-
+                                    //publishProgress();
                                     IsSuccess = 1;
                                 } else {
                                     IsSuccess = 0;
@@ -958,6 +967,7 @@ public class PlanWork_Activity extends AppCompatActivity {
 
 
                 } else {
+
 //                    new DownloadWork().execute();
                     IsSuccess = 1;
                 }
@@ -1255,19 +1265,31 @@ public class PlanWork_Activity extends AppCompatActivity {
         }
     }
 
-    public class UpLoadWork extends AsyncTask<String, String, String> {
+    public class UpLoadWork extends AsyncTask<String, Integer, String> {
 
         ProgressDialog pd;
         int IsSuccess = 1;
 
+
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
+
+        }
+
+        @Override
+        protected void onProgressUpdate(Integer... values) {
+            super.onProgressUpdate(values);
+
+            int current = values[0];
+            int total = values[1];
+
+            float percentage = 100 * (float)current / (float)total;
+
             pd = new ProgressDialog(PlanWork_Activity.this);
             pd.setCancelable(false);
-            pd.setMessage(getApplicationContext().getString(R.string.sync_data));
+            pd.setMessage(percentage+" % "+getApplicationContext().getString(R.string.sync_data));
             pd.show();
-
         }
 
         @SuppressLint("WrongThread")
