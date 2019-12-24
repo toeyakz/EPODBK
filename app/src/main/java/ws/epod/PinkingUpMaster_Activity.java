@@ -131,6 +131,9 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
 
     String[] arrayNameImage = new String[3];
 
+    ArrayList<Integer> posiGroup = new ArrayList();
+    ArrayList<Integer> posiChile = new ArrayList();
+
 
     ArrayList<String> picTemp1 = new ArrayList<>();
     ArrayList<String> picTemp2 = new ArrayList<>();
@@ -158,6 +161,10 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
     LinearLayout layoutJobHome, layoutJobToday;
 
     boolean isc = false;
+
+    private int statusComment = 0;
+    private int isComment = 0;
+    private int statusCheck = 0;
 
 
     int arrayIsScan = 0;
@@ -238,13 +245,7 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
                 Animation animation = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.alpha);
                 imgCameraScan.startAnimation(animation);
 
-                // valueLoop = true;
                 qrScan.initiateScan();
-//                scannerView = new ZXingScannerView(getApplicationContext());
-//                scannerView.setResultHandler(new ZXingScannerResultHandler());
-//
-//                setContentView(scannerView);
-//                scannerView.startCamera();
             }
         });
 
@@ -266,167 +267,211 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
                 Animation animation = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.alpha);
                 savePickingUp.startAnimation(animation);
 
-                ch_comment();
+                statusComment = 0;
+                isComment = 0;
 
-                final AlertDialog.Builder alertbox = new AlertDialog.Builder(view.getRootView().getContext());
-                alertbox.setTitle(getString(R.string.alert));
-                alertbox.setMessage("SAVE JOB?");
-                alertbox.setNegativeButton("SAVE",
-                        new DialogInterface.OnClickListener() {
-
-                            @SuppressLint("StaticFieldLeak")
-                            public void onClick(DialogInterface arg0,
-                                                int arg1) {
-
-                                new AsyncTask<Void, Void, Void>() {
-                                    int IsSuccess = 1;
-                                    int positionGroup = -1;
-                                    ProgressDialog pd;
-                                    private int lastExpandedPosition = -1;
-
-                                    @Override
-                                    protected void onPreExecute() {
-                                        super.onPreExecute();
-                                        pd = new ProgressDialog(PinkingUpMaster_Activity.this);
-                                        pd.setCancelable(false);
-                                        pd.setMessage("Saving data..");
-                                        pd.show();
-
-                                    }
-
-                                    @Override
-                                    protected Void doInBackground(Void... voids) {
-
-                                        try {
-                                            if (expandableListAdapter == null) {
-                                                cancel(true);
-                                            } else {
-
-                                                int[] position = isCheckSaveBox(expandableListAdapter);
-                                                positionGroup = position[1];
-                                                if (position[0] == 1) {
-                                                    Log.d("checkFail", "doInBackground: save");
-                                                    for (int i = 0; i < expandableListAdapter.getGroupCount(); i++) {
-                                                        expandableListAdapter.getChildrenCount(i);
-                                                        final PickingUp_Model picking = (PickingUp_Model) expandableListAdapter.getGroup(i);
-                                                        for (int j = 0; j < expandableListAdapter.getChildrenCount(i); j++) {
-                                                            final PickingUpEexpand_Model expandedList = (PickingUpEexpand_Model) expandableListAdapter.getChild(i, j);
-
-                                                            Log.d("ASfasdjhfk", "doInBackground: " + expandedList.getConsignment() + "box : " + expandedList.getBox_no() + " status: " +
-                                                                    expandedList.getIs_scaned() + " date: " + expandedList.getTime_begin() + "lat: " + expandedList.getActual_lat() + "lon: " +
-                                                                    expandedList.getActual_lon());
-
-                                                            Log.d("ASfasdjhfk", "p1: " + expandedList.getPicture1() + " p2: " + expandedList.getPicture2() + " p3: " + expandedList.getPicture3());
+                int positionGroup = 0;
+                int positionChiew = 0;
 
 
-                                                            ContentValues cv = new ContentValues();
+                for (int i = 0; i < expandableListAdapter.getGroupCount(); i++) {
+                    PickingUp_Model groupView = (PickingUp_Model) expandableListAdapter.getGroup(i);
+                    for (int j = 0; j < expandableListAdapter.getChildrenCount(i); j++) {
+                        PickingUpEexpand_Model childView = (PickingUpEexpand_Model) expandableListAdapter.getChild(i, j);
 
-                                                            cv.put("is_scaned", expandedList.getIs_scaned());
-                                                            cv.put("actual_lat", expandedList.getActual_lat());
-                                                            cv.put("actual_lon", expandedList.getActual_lon());
-                                                            cv.put("time_begin", expandedList.getTime_begin());
-                                                            cv.put("status_upload", "0");
-                                                            if (!expandedList.getPicture1().equals("")) {
-                                                                cv.put("picture1", expandedList.getPicture1());
-                                                            }
-                                                            if (!expandedList.getPicture2().equals("")) {
-                                                                cv.put("picture2", expandedList.getPicture2());
-                                                            }
-                                                            if (!expandedList.getPicture3().equals("")) {
-                                                                cv.put("picture3", expandedList.getPicture3());
-                                                            }
-                                                            if (!expandedList.getComment().equals("")) {
-                                                                cv.put("comment", expandedList.getComment());
-                                                            }
-
-                                                            cv.put("modified_date", getdate());
-                                                            databaseHelper.db().update("Plan", cv, "delivery_no= '" + expandedList.getDelivery_no() + "' and plan_seq = '" + expandedList.getPlan_seq() + "' and activity_type = 'LOAD' and " +
-                                                                    " consignment_no = '" + expandedList.getConsignment() + "' and box_no = '" + expandedList.getBox_no() + "' and trash = '0'", null);
+                        if (childView.getIs_scaned().equals("2")) {
+                            statusComment += 1;
+                            if (!childView.getComment().equals("") || !childView.getPicture1().equals("") ||
+                                    !childView.getPicture2().equals("") || !childView.getPicture3().equals("")) {
+                                isComment += 1;
+                            } else {
+                                positionGroup = i;
+                                positionChiew = j;
 
 
-                                                            if (!expandedList.getPicture1().equals("")) {
-                                                                String sql = "INSERT INTO image (name_img, status_img) VALUES('" + expandedList.getPicture1() + "','0')";
-                                                                databaseHelper.db().execSQL(sql);
-                                                            }
-                                                            if (!expandedList.getPicture2().equals("")) {
-                                                                String sql = "INSERT INTO image (name_img, status_img) VALUES('" + expandedList.getPicture2() + "','0')";
-                                                                databaseHelper.db().execSQL(sql);
-                                                            }
-                                                            if (!expandedList.getPicture3().equals("")) {
-                                                                String sql = "INSERT INTO image (name_img, status_img) VALUES('" + expandedList.getPicture3() + "','0')";
-                                                                databaseHelper.db().execSQL(sql);
-                                                            }
-                                                            //  databaseHelper.db().insert("image", null, cv2);
+                            }
+                        }
+                        if(childView.getIs_scaned().equals("1")){
+                            statusCheck =+ 1;
+                        }
 
 
-                                                            lastExpandedPosition = i;
-                                                            IsSuccess = 1;
-                                                        }
-                                                    }
+                    }
 
-                                                    Temp1 = new ArrayList<>();
-                                                    Temp2 = new ArrayList<>();
-                                                    Temp3 = new ArrayList<>();
-                                                } else {
-                                                    // Toast.makeText(PinkingUpMaster_Activity.this, "fail.", Toast.LENGTH_SHORT).show();
-                                                    Log.d("checkFail", "doInBackground: save fail");
-                                                    IsSuccess = 0;
-                                                }
+                }
 
+                if (isCheckIntent(statusComment, isComment, statusCheck)) {
 
-                                            }
+                    final AlertDialog.Builder alertbox = new AlertDialog.Builder(view.getRootView().getContext());
+                    alertbox.setTitle(getString(R.string.alert));
+                    alertbox.setMessage("SAVE JOB?");
+                    alertbox.setNegativeButton("SAVE",
+                            new DialogInterface.OnClickListener() {
 
-                                        } catch (Exception e) {
-                                            IsSuccess = 0;
+                                @SuppressLint("StaticFieldLeak")
+                                public void onClick(DialogInterface arg0,
+                                                    int arg1) {
+
+                                    new AsyncTask<Void, Void, Void>() {
+                                        int IsSuccess = 1;
+                                        int positionGroup = -1;
+                                        ProgressDialog pd;
+                                        private int lastExpandedPosition = -1;
+
+                                        @Override
+                                        protected void onPreExecute() {
+                                            super.onPreExecute();
+                                            pd = new ProgressDialog(PinkingUpMaster_Activity.this);
+                                            pd.setCancelable(false);
+                                            pd.setMessage("Saving data..");
+                                            pd.show();
+
                                         }
 
+                                        @Override
+                                        protected Void doInBackground(Void... voids) {
 
-                                        return null;
-                                    }
+                                            try {
+                                                if (expandableListAdapter == null) {
+                                                    cancel(true);
+                                                } else {
 
-                                    @Override
-                                    protected void onPostExecute(Void aVoid) {
-                                        super.onPostExecute(aVoid);
+                                                    int[] position = isCheckSaveBox(expandableListAdapter);
+                                                    positionGroup = position[1];
+                                                    if (position[0] == 1) {
+                                                        Log.d("checkFail", "doInBackground: save");
+                                                        for (int i = 0; i < expandableListAdapter.getGroupCount(); i++) {
+                                                            expandableListAdapter.getChildrenCount(i);
+                                                            final PickingUp_Model picking = (PickingUp_Model) expandableListAdapter.getGroup(i);
+                                                            for (int j = 0; j < expandableListAdapter.getChildrenCount(i); j++) {
+                                                                final PickingUpEexpand_Model expandedList = (PickingUpEexpand_Model) expandableListAdapter.getChild(i, j);
+
+                                                                Log.d("ASfasdjhfk", "doInBackground: " + expandedList.getConsignment() + "box : " + expandedList.getBox_no() + " status: " +
+                                                                        expandedList.getIs_scaned() + " date: " + expandedList.getTime_begin() + "lat: " + expandedList.getActual_lat() + "lon: " +
+                                                                        expandedList.getActual_lon());
+
+                                                                Log.d("ASfasdjhfk", "p1: " + expandedList.getPicture1() + " p2: " + expandedList.getPicture2() + " p3: " + expandedList.getPicture3());
 
 
-                                        pd.dismiss();
+                                                                ContentValues cv = new ContentValues();
 
-                                        if (IsSuccess == 1) {
-                                            Toast.makeText(PinkingUpMaster_Activity.this, "Saved.", Toast.LENGTH_SHORT).show();
-                                            getSQLite();
+                                                                cv.put("is_scaned", expandedList.getIs_scaned());
+                                                                cv.put("actual_lat", expandedList.getActual_lat());
+                                                                cv.put("actual_lon", expandedList.getActual_lon());
+                                                                cv.put("time_begin", expandedList.getTime_begin());
+                                                                cv.put("status_upload", "0");
+                                                                if (!expandedList.getPicture1().equals("")) {
+                                                                    cv.put("picture1", expandedList.getPicture1());
+                                                                }
+                                                                if (!expandedList.getPicture2().equals("")) {
+                                                                    cv.put("picture2", expandedList.getPicture2());
+                                                                }
+                                                                if (!expandedList.getPicture3().equals("")) {
+                                                                    cv.put("picture3", expandedList.getPicture3());
+                                                                }
+                                                                if (!expandedList.getComment().equals("")) {
+                                                                    cv.put("comment", expandedList.getComment());
+                                                                }
 
-                                        } else {
-                                            if (positionGroup != -1) {
-                                                expandableListView.smoothScrollToPosition(positionGroup);
-                                                new Handler().postDelayed(new Runnable() {
-                                                    @Override
-                                                    public void run() {
-                                                        //expandableListView.setSelectedGroup(positionGroub);
+                                                                cv.put("modified_date", getdate());
+                                                                databaseHelper.db().update("Plan", cv, "delivery_no= '" + expandedList.getDelivery_no() + "' and plan_seq = '" + expandedList.getPlan_seq() + "' and activity_type = 'LOAD' and " +
+                                                                        " consignment_no = '" + expandedList.getConsignment() + "' and box_no = '" + expandedList.getBox_no() + "' and trash = '0'", null);
+
+
+                                                                if (!expandedList.getPicture1().equals("")) {
+                                                                    String sql = "INSERT INTO image (name_img, status_img) VALUES('" + expandedList.getPicture1() + "','0')";
+                                                                    databaseHelper.db().execSQL(sql);
+                                                                }
+                                                                if (!expandedList.getPicture2().equals("")) {
+                                                                    String sql = "INSERT INTO image (name_img, status_img) VALUES('" + expandedList.getPicture2() + "','0')";
+                                                                    databaseHelper.db().execSQL(sql);
+                                                                }
+                                                                if (!expandedList.getPicture3().equals("")) {
+                                                                    String sql = "INSERT INTO image (name_img, status_img) VALUES('" + expandedList.getPicture3() + "','0')";
+                                                                    databaseHelper.db().execSQL(sql);
+                                                                }
+                                                                //  databaseHelper.db().insert("image", null, cv2);
+
+
+                                                                lastExpandedPosition = i;
+                                                                IsSuccess = 1;
+                                                            }
+                                                        }
+
+                                                        Temp1 = new ArrayList<>();
+                                                        Temp2 = new ArrayList<>();
+                                                        Temp3 = new ArrayList<>();
+                                                    } else {
+                                                        // Toast.makeText(PinkingUpMaster_Activity.this, "fail.", Toast.LENGTH_SHORT).show();
+                                                        Log.d("checkFail", "doInBackground: save fail");
+                                                        IsSuccess = 0;
+                                                    }
+
+
+                                                }
+
+                                            } catch (Exception e) {
+                                                IsSuccess = 0;
+                                            }
+
+
+                                            return null;
+                                        }
+
+                                        @Override
+                                        protected void onPostExecute(Void aVoid) {
+                                            super.onPostExecute(aVoid);
+
+
+                                            pd.dismiss();
+
+                                            if (IsSuccess == 1) {
+                                                Toast.makeText(PinkingUpMaster_Activity.this, "Saved.", Toast.LENGTH_SHORT).show();
+                                                getSQLite();
+
+                                            } else {
+                                                if (positionGroup != -1) {
+                                                    expandableListView.smoothScrollToPosition(positionGroup);
+                                                    new Handler().postDelayed(new Runnable() {
+                                                        @Override
+                                                        public void run() {
+                                                            //expandableListView.setSelectedGroup(positionGroub);
 //                                                        expandableListView.setAdapter(expandableListAdapter);
 //                                                        expandableListAdapter.notifyDataSetChanged();
 //                                                        expandableListView.smoothScrollToPositionFromTop(positionGroup, j);
-                                                        expandableListView.expandGroup(positionGroup);
-                                                    }
-                                                }, 500);
+                                                            expandableListView.expandGroup(positionGroup);
+                                                        }
+                                                    }, 500);
 
 
+                                                }
+                                                Toast.makeText(PinkingUpMaster_Activity.this, "can't save.", Toast.LENGTH_SHORT).show();
                                             }
-                                            Toast.makeText(PinkingUpMaster_Activity.this, "can't save.", Toast.LENGTH_SHORT).show();
                                         }
-                                    }
-                                }.execute();
+                                    }.execute();
 
-                            }
-                        });
-                alertbox.setNeutralButton(getString(R.string.cancel),
-                        new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
+                                }
+                            });
+                    alertbox.setNeutralButton(getString(R.string.cancel),
+                            new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
 
-                            }
-                        });
-                alertbox.show();
+                                }
+                            });
+                    alertbox.show();
+                } else {
 
+
+                    expandableListView.setAdapter(expandableListAdapter);
+                    expandableListView.expandGroup(positionGroup);
+                    expandableListAdapter.notifyDataSetChanged();
+                    expandableListView.smoothScrollToPositionFromTop(positionGroup, positionChiew);
+
+
+                    Toasty.error(getApplicationContext(), "Please reason!", Toast.LENGTH_SHORT, true).show();
+                    return;
+                }
 
             }
         });
@@ -467,29 +512,25 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
 
     }
 
-    private void ch_comment() {
-        for (int i = 0; i < expandableListAdapter.getGroupCount(); i++) {
-            final PickingUp_Model groupView = (PickingUp_Model) expandableListAdapter.getGroup(i);
-            for (int j = 0; j < expandableListAdapter.getChildrenCount(i); j++) {
-                final PickingUpEexpand_Model childView = (PickingUpEexpand_Model) expandableListAdapter.getChild(i, j);
+    private boolean isCheckIntent(int statusComment, int isComment, int statusCheck) {
 
-                if (childView.getIs_scaned().equals("2")) {
-                    if (!childView.getComment().equals("") || !childView.getPicture1().equals("")
-                            || !childView.getPicture2().equals("") || !childView.getPicture3().equals("")) {
+        if (statusComment != 0 || isComment != 0 || statusCheck != 0) {
+            if (statusComment != 0) {
+                if (statusComment == isComment) {
 
-                    } else {
-                        Toasty.error(getApplicationContext(), "Please Reason!", Toast.LENGTH_SHORT, true).show();
-                        expandableListView.setAdapter(expandableListAdapter);
-                        expandableListView.expandGroup(i);
-                        expandableListAdapter.notifyDataSetChanged();
-                        expandableListView.smoothScrollToPositionFromTop(i, j);
-                        return;
-                    }
+                } else {
+                    //Toast.makeText(Invoice_Activity.this, "Please comment return.", Toast.LENGTH_SHORT).show();
+                    return false;
                 }
-
             }
-
+            if(statusCheck != 0){
+            }
+        } else {
+            Toasty.error(getApplicationContext(), "Please reason!", Toast.LENGTH_SHORT, true).show();
+            return false;
         }
+
+        return true;
     }
 
     private void scan(String value) {
@@ -1236,6 +1277,7 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
             if (expandedList.getIs_scaned().equals("1")) {
                 checkBox.setChecked(true);
                 imgEditBoxNoPickup.setEnabled(false);
+                textView29.setVisibility(View.GONE);
             } else if (expandedList.getIs_scaned().equals("2")) {
                 checkBox.setChecked(true);
                 imgEditBoxNoPickup.setEnabled(true);
@@ -1247,9 +1289,11 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
                     textView29.setVisibility(View.VISIBLE);
                 }
             } else if (expandedList.getIs_scaned().equals("0")) {
+                textView29.setVisibility(View.GONE);
                 checkBox.setChecked(false);
+                imgEditBoxNoPickup.setEnabled(false);
                 checkBox.setButtonDrawable(R.drawable.custom_checkbox);
-                imgEditBoxNoPickup.setEnabled(true);
+                //imgEditBoxNoPickup.setEnabled(true);
             }
 
 
@@ -1921,7 +1965,7 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
                     if (!picture1.equals("") || !picture2.equals("") || !picture3.equals("") || !commentOfspinner.equals("")) {
                         cv.put("is_scaned", "2");
                         picking.setComment(commentOfspinner);
-                        picking.setIs_scaned("2");
+                        // picking.setIs_scaned("2");
                         picking.setTime_begin(getdate());
                         picking.setActual_lat(getlat());
                         picking.setActual_lon(getlon());
@@ -1938,7 +1982,7 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
                         cv.put("is_scaned", "0");
 
                         picking.setComment("");
-                        picking.setIs_scaned("0");
+                        // picking.setIs_scaned("0");
                         picking.setTime_begin("");
                         picking.setActual_lat("");
                         picking.setActual_lon("");
@@ -1972,8 +2016,8 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
 //                    expandableListAdapter.notifyDataSetChanged();
 //                    expandableListView.expandGroup(positionGroup);
                     alertDialog.dismiss();
-                    Toast.makeText(PinkingUpMaster_Activity.this, "Saved.", Toast.LENGTH_SHORT).show();
-
+                    //Toast.makeText(PinkingUpMaster_Activity.this, "Saved.", Toast.LENGTH_SHORT).show();
+                    Toasty.success(getApplicationContext(),"reasoned.",Toast.LENGTH_SHORT, true);
                 }
             });
 

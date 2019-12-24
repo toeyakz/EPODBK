@@ -1,13 +1,13 @@
 package ws.epod.ObjectClass.SQLiteModel;
 
 public class PickingUpEexpand_Model {
-    public String box_no= "";
-    public String waybil_no = "";
-    public String is_scaned = "";
-    public String row_number = "";
-    public String consignment = "";
-    public String delivery_no = "";
-    public String plan_seq = "";
+    private String box_no= "";
+    private String waybil_no = "";
+    private String is_scaned = "";
+    private String row_number = "";
+    private String consignment = "";
+    private String delivery_no = "";
+    private String plan_seq = "";
     private String into = "0";
     private String comment = "";
     private String picture1 = "";

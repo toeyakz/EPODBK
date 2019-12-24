@@ -67,6 +67,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 
+import es.dmoral.toasty.Toasty;
 import fr.ganfra.materialspinner.MaterialSpinner;
 import me.dm7.barcodescanner.zxing.ZXingScannerView;
 import ws.epod.Adapter.DialogConsAdapter;
@@ -78,6 +79,8 @@ import ws.epod.ObjectClass.LocationTrack;
 import ws.epod.ObjectClass.SQLiteModel.DeliverExpand_Model;
 import ws.epod.ObjectClass.SQLiteModel.Deliver_Model;
 import ws.epod.ObjectClass.SQLiteModel.Dialog_Cons_Detail_Model;
+import ws.epod.ObjectClass.SQLiteModel.PickingUpEexpand_Model;
+import ws.epod.ObjectClass.SQLiteModel.PickingUp_Model;
 import ws.epod.ObjectClass.SQLiteModel.Reason_model;
 
 public class Deliver_Activity extends AppCompatActivity {
@@ -107,7 +110,7 @@ public class Deliver_Activity extends AppCompatActivity {
 
     TextView btnEnterWaybillNo, bnCloseJobDeliver;
 
-    String INPUT_WAY = "PLUS";
+    String INPUT_WAY = "CHECK";
     String SWICH_EXPAND = "ON";
     Button btnSaveComent_PICK;
     int lastPosition = 0;
@@ -147,6 +150,10 @@ public class Deliver_Activity extends AppCompatActivity {
     LinearLayout layoutJobHome, layoutJobToday;
 
     LocationTrack locationTrack;
+
+    private int statusComment = 0;
+    private int isComment = 0;
+    private int statusCheck = 0;
 
     boolean isc = false;
 
@@ -265,150 +272,197 @@ public class Deliver_Activity extends AppCompatActivity {
                 Animation animation = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.alpha);
                 imgSave_dialog_Deli.startAnimation(animation);
 
-                final AlertDialog.Builder alertbox = new AlertDialog.Builder(view.getRootView().getContext());
-                alertbox.setTitle(getString(R.string.alert));
-                alertbox.setMessage("SAVE JOB?");
-                alertbox.setNegativeButton("SAVE",
-                        new DialogInterface.OnClickListener() {
 
-                            @SuppressLint("StaticFieldLeak")
-                            public void onClick(DialogInterface arg0,
-                                                int arg1) {
+                statusComment = 0;
+                isComment = 0;
 
-                                new AsyncTask<Void, Void, Void>() {
-                                    int IsSuccess = 1;
-                                    int positionGroup = -1;
-                                    ProgressDialog pd;
-                                    private int lastExpandedPosition = -1;
+                int positionGroup = 0;
+                int positionChiew = 0;
 
-                                    @Override
-                                    protected void onPreExecute() {
-                                        super.onPreExecute();
-                                        pd = new ProgressDialog(Deliver_Activity.this);
-                                        pd.setCancelable(false);
-                                        pd.setMessage("Saving data..");
-                                        pd.show();
 
-                                    }
+                for (int i = 0; i < expandableListAdapter.getGroupCount(); i++) {
+                    Deliver_Model groupView = (Deliver_Model) expandableListAdapter.getGroup(i);
+                    for (int j = 0; j < expandableListAdapter.getChildrenCount(i); j++) {
+                        DeliverExpand_Model childView = (DeliverExpand_Model) expandableListAdapter.getChild(i, j);
 
-                                    @Override
-                                    protected Void doInBackground(Void... voids) {
+                        if (childView.getIs_scaned().equals("2")) {
+                            statusComment += 1;
+                            if (!childView.getComment().equals("") || !childView.getPicture1().equals("") ||
+                                    !childView.getPicture2().equals("") || !childView.getPicture3().equals("")) {
+                                isComment += 1;
+                            } else {
+                                positionGroup = i;
+                                positionChiew = j;
 
-                                        try {
-                                            if (expandableListAdapter == null) {
-                                                cancel(true);
-                                            } else {
 
-                                                int[] position = isCheckSaveBox(expandableListAdapter);
-                                                positionGroup = position[1];
-                                                if (position[0] == 1) {
-                                                    for (int i = 0; i < expandableListAdapter.getGroupCount(); i++) {
-                                                        expandableListAdapter.getChildrenCount(i);
-                                                        for (int j = 0; j < expandableListAdapter.getChildrenCount(i); j++) {
-                                                            final DeliverExpand_Model expandedList = (DeliverExpand_Model) expandableListAdapter.getChild(i, j);
+                            }
+                        }
+                        if(childView.getIs_scaned().equals("1")){
+                            statusCheck =+ 1;
+                        }
 
-                                                            Log.d("ASfasdjhfk", "doInBackground: " + expandedList.getConsignment() + "box : " + expandedList.getBox_no() + " status: " +
-                                                                    expandedList.getIs_scaned() + " date: " + expandedList.getTime_begin()+ "lat: "+ expandedList.getActual_lat()+ "lon: "+
-                                                                    expandedList.getActual_lon());
-////
-                                                            ContentValues cv = new ContentValues();
 
-                                                            cv.put("is_scaned", expandedList.getIs_scaned());
-                                                            cv.put("actual_lat", expandedList.getActual_lat());
-                                                            cv.put("actual_lon", expandedList.getActual_lon());
-                                                            cv.put("time_begin", expandedList.getTime_begin());
-                                                            cv.put("status_upload", "0");
+                    }
 
-                                                            if (!expandedList.getPicture1().equals("")) {
-                                                                cv.put("picture1", expandedList.getPicture1());
-                                                            }
-                                                            if (!expandedList.getPicture2().equals("")) {
-                                                                cv.put("picture2", expandedList.getPicture2());
-                                                            }
-                                                            if (!expandedList.getPicture3().equals("")) {
-                                                                cv.put("picture3", expandedList.getPicture3());
-                                                            }
-                                                            if (!expandedList.getComment().equals("")) {
-                                                                cv.put("comment", expandedList.getComment());
-                                                            }
-                                                            cv.put("modified_date", getdate());
-                                                            databaseHelper.db().update("Plan", cv, "delivery_no= '" + expandedList.getDelivery_no() + "' and plan_seq = '" + expandedList.getPlan_seq() + "' and activity_type = 'UNLOAD' and " +
-                                                                    " consignment_no = '" + expandedList.getConsignment() + "' and box_no = '" + expandedList.getBox_no() + "' and trash = '0'", null);
+                }
 
-                                                            if (!expandedList.getPicture1().equals("")) {
-                                                                String sql = "INSERT INTO image (name_img, status_img) VALUES('" + expandedList.getPicture1() + "','0')";
-                                                                databaseHelper.db().execSQL(sql);
-                                                            }
-                                                            if (!expandedList.getPicture2().equals("")) {
-                                                                String sql = "INSERT INTO image (name_img, status_img) VALUES('" + expandedList.getPicture2() + "','0')";
-                                                                databaseHelper.db().execSQL(sql);
-                                                            }
-                                                            if (!expandedList.getPicture3().equals("")) {
-                                                                String sql = "INSERT INTO image (name_img, status_img) VALUES('" + expandedList.getPicture3() + "','0')";
-                                                                databaseHelper.db().execSQL(sql);
-                                                            }
 
-                                                            lastExpandedPosition = i;
-                                                            IsSuccess = 1;
-                                                        }
-                                                    }
-                                                    Temp1 = new ArrayList<>();
-                                                    Temp2 = new ArrayList<>();
-                                                    Temp3 = new ArrayList<>();
+
+                if (isCheckIntent(statusComment, isComment, statusCheck)) {
+                    final AlertDialog.Builder alertbox = new AlertDialog.Builder(view.getRootView().getContext());
+                    alertbox.setTitle(getString(R.string.alert));
+                    alertbox.setMessage("SAVE JOB?");
+                    alertbox.setNegativeButton("SAVE",
+                            new DialogInterface.OnClickListener() {
+
+                                @SuppressLint("StaticFieldLeak")
+                                public void onClick(DialogInterface arg0,
+                                                    int arg1) {
+
+                                    new AsyncTask<Void, Void, Void>() {
+                                        int IsSuccess = 1;
+                                        int positionGroup = -1;
+                                        ProgressDialog pd;
+                                        private int lastExpandedPosition = -1;
+
+                                        @Override
+                                        protected void onPreExecute() {
+                                            super.onPreExecute();
+                                            pd = new ProgressDialog(Deliver_Activity.this);
+                                            pd.setCancelable(false);
+                                            pd.setMessage("Saving data..");
+                                            pd.show();
+
+                                        }
+
+                                        @Override
+                                        protected Void doInBackground(Void... voids) {
+
+                                            try {
+                                                if (expandableListAdapter == null) {
+                                                    cancel(true);
                                                 } else {
-                                                    Log.d("checkFail", "doInBackground: save fail");
-                                                    IsSuccess = 0;
+
+                                                    int[] position = isCheckSaveBox(expandableListAdapter);
+                                                    positionGroup = position[1];
+                                                    if (position[0] == 1) {
+                                                        for (int i = 0; i < expandableListAdapter.getGroupCount(); i++) {
+                                                            expandableListAdapter.getChildrenCount(i);
+                                                            for (int j = 0; j < expandableListAdapter.getChildrenCount(i); j++) {
+                                                                final DeliverExpand_Model expandedList = (DeliverExpand_Model) expandableListAdapter.getChild(i, j);
+
+                                                                Log.d("ASfasdjhfk", "doInBackground: " + expandedList.getConsignment() + "box : " + expandedList.getBox_no() + " status: " +
+                                                                        expandedList.getIs_scaned() + " date: " + expandedList.getTime_begin() + "lat: " + expandedList.getActual_lat() + "lon: " +
+                                                                        expandedList.getActual_lon());
+////
+                                                                ContentValues cv = new ContentValues();
+
+                                                                cv.put("is_scaned", expandedList.getIs_scaned());
+                                                                cv.put("actual_lat", expandedList.getActual_lat());
+                                                                cv.put("actual_lon", expandedList.getActual_lon());
+                                                                cv.put("time_begin", expandedList.getTime_begin());
+                                                                cv.put("status_upload", "0");
+
+                                                                if (!expandedList.getPicture1().equals("")) {
+                                                                    cv.put("picture1", expandedList.getPicture1());
+                                                                }
+                                                                if (!expandedList.getPicture2().equals("")) {
+                                                                    cv.put("picture2", expandedList.getPicture2());
+                                                                }
+                                                                if (!expandedList.getPicture3().equals("")) {
+                                                                    cv.put("picture3", expandedList.getPicture3());
+                                                                }
+                                                                if (!expandedList.getComment().equals("")) {
+                                                                    cv.put("comment", expandedList.getComment());
+                                                                }
+                                                                cv.put("modified_date", getdate());
+                                                                databaseHelper.db().update("Plan", cv, "delivery_no= '" + expandedList.getDelivery_no() + "' and plan_seq = '" + expandedList.getPlan_seq() + "' and activity_type = 'UNLOAD' and " +
+                                                                        " consignment_no = '" + expandedList.getConsignment() + "' and box_no = '" + expandedList.getBox_no() + "' and trash = '0'", null);
+
+                                                                if (!expandedList.getPicture1().equals("")) {
+                                                                    String sql = "INSERT INTO image (name_img, status_img) VALUES('" + expandedList.getPicture1() + "','0')";
+                                                                    databaseHelper.db().execSQL(sql);
+                                                                }
+                                                                if (!expandedList.getPicture2().equals("")) {
+                                                                    String sql = "INSERT INTO image (name_img, status_img) VALUES('" + expandedList.getPicture2() + "','0')";
+                                                                    databaseHelper.db().execSQL(sql);
+                                                                }
+                                                                if (!expandedList.getPicture3().equals("")) {
+                                                                    String sql = "INSERT INTO image (name_img, status_img) VALUES('" + expandedList.getPicture3() + "','0')";
+                                                                    databaseHelper.db().execSQL(sql);
+                                                                }
+
+                                                                lastExpandedPosition = i;
+                                                                IsSuccess = 1;
+                                                            }
+                                                        }
+                                                        Temp1 = new ArrayList<>();
+                                                        Temp2 = new ArrayList<>();
+                                                        Temp3 = new ArrayList<>();
+                                                    } else {
+                                                        Log.d("checkFail", "doInBackground: save fail");
+                                                        IsSuccess = 0;
+                                                    }
+
                                                 }
 
+                                            } catch (Exception e) {
+                                                IsSuccess = 0;
                                             }
 
-                                        } catch (Exception e) {
-                                            IsSuccess = 0;
+
+                                            return null;
                                         }
 
+                                        @Override
+                                        protected void onPostExecute(Void aVoid) {
+                                            super.onPostExecute(aVoid);
 
-                                        return null;
-                                    }
+                                            pd.dismiss();
 
-                                    @Override
-                                    protected void onPostExecute(Void aVoid) {
-                                        super.onPostExecute(aVoid);
+                                            if (IsSuccess == 1) {
+                                                Toast.makeText(Deliver_Activity.this, "Saved.", Toast.LENGTH_SHORT).show();
+                                                getSQLite();
 
-                                        pd.dismiss();
+                                            } else {
+                                                if (positionGroup != -1) {
+                                                    expandableListView.smoothScrollToPosition(positionGroup);
+                                                    new Handler().postDelayed(new Runnable() {
+                                                        @Override
+                                                        public void run() {
+                                                            //expandableListView.setSelectedGroup(positionGroub);
 
-                                        if (IsSuccess == 1) {
-                                            Toast.makeText(Deliver_Activity.this, "Saved.", Toast.LENGTH_SHORT).show();
-                                            getSQLite();
-
-                                        } else {
-                                            if (positionGroup != -1) {
-                                                expandableListView.smoothScrollToPosition(positionGroup);
-                                                new Handler().postDelayed(new Runnable() {
-                                                    @Override
-                                                    public void run() {
-                                                        //expandableListView.setSelectedGroup(positionGroub);
-
-                                                        expandableListView.expandGroup(positionGroup);
-                                                    }
-                                                }, 500);
+                                                            expandableListView.expandGroup(positionGroup);
+                                                        }
+                                                    }, 500);
 
 
+                                                }
+                                                Toast.makeText(Deliver_Activity.this, "can't save.", Toast.LENGTH_SHORT).show();
                                             }
-                                            Toast.makeText(Deliver_Activity.this, "can't save.", Toast.LENGTH_SHORT).show();
                                         }
-                                    }
-                                }.execute();
+                                    }.execute();
 
-                            }
-                        });
-                alertbox.setNeutralButton(getString(R.string.cancel),
-                        new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
+                                }
+                            });
+                    alertbox.setNeutralButton(getString(R.string.cancel),
+                            new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
 
-                            }
-                        });
-                alertbox.show();
+                                }
+                            });
+                    alertbox.show();
+                }else{
+                    expandableListView.setAdapter(expandableListAdapter);
+                    expandableListView.expandGroup(positionGroup);
+                    expandableListAdapter.notifyDataSetChanged();
+                    expandableListView.smoothScrollToPositionFromTop(positionGroup, positionChiew);
+
+
+                    Toasty.error(getApplicationContext(), "Please reason!", Toast.LENGTH_SHORT, true).show();
+                    return;
+                }
             }
         });
 
@@ -416,13 +470,16 @@ public class Deliver_Activity extends AppCompatActivity {
         imageView8.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (INPUT_WAY.equals("PLUS")) {
-                    INPUT_WAY = "MINUS";
-                    imageView8.setImageResource(R.drawable.ic_toggleminus);
 
-                } else {
-                    INPUT_WAY = "PLUS";
-                    imageView8.setImageResource(R.drawable.ic_toggleplus);
+                if (INPUT_WAY.equals("CHECK")) {
+                    INPUT_WAY = "COMMENT";
+                    imageView8.setImageResource(R.drawable.ic_indeterminate_check_box_black_24dp);
+                } else if (INPUT_WAY.equals("COMMENT")) {
+                    INPUT_WAY = "UNCHECK";
+                    imageView8.setImageResource(R.drawable.ic_check_box_uncheck);
+                } else if (INPUT_WAY.equals("UNCHECK")) {
+                    INPUT_WAY = "CHECK";
+                    imageView8.setImageResource(R.drawable.ic_check_box_checked);
                 }
             }
         });
@@ -431,66 +488,190 @@ public class Deliver_Activity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                String get_waybill = edtFineWaybillPick.getText().toString();
-
-
-                if (INPUT_WAY.equals("PLUS")) {
-                    for (int i = 0;
-                         i < expandableListAdapter.getGroupCount(); i++) {
-                        for (int j = 0; j < expandableListAdapter.getChildrenCount(i); j++) {
-                            final DeliverExpand_Model expandedList = (DeliverExpand_Model) expandableListAdapter.getChild(i, j);
-
-                            if (get_waybill.equals(expandedList.getWaybil_no())) {
-
-                                lastPosition = i;
-
-                                ((DeliverExpand_Model) expandableListAdapter.getChild(i, j)).setIs_scaned("1");
-                                ((DeliverExpand_Model) expandableListAdapter.getChild(i, j)).setTime_begin(getdate());
-                                ((DeliverExpand_Model) expandableListAdapter.getChild(i, j)).setActual_lat(getlat());
-                                ((DeliverExpand_Model) expandableListAdapter.getChild(i, j)).setActual_lon(getlon());
-                                isc = false;
-                                Toast.makeText(Deliver_Activity.this, "Checked.", Toast.LENGTH_SHORT).show();
-                                expandableListView.setAdapter(expandableListAdapter);
-                                expandableListView.expandGroup(i);
-                                expandableListAdapter.notifyDataSetChanged();
-                            } else {
-                                // Toast.makeText(PinkingUpMaster_Activity.this, "This Waybill No doesn't exist.", Toast.LENGTH_SHORT).show();
-                            }
-
-                        }
-                    }
-                } else {
-                    for (int i = 0;
-                         i < expandableListAdapter.getGroupCount(); i++) {
-                        for (int j = 0; j < expandableListAdapter.getChildrenCount(i); j++) {
-                            final DeliverExpand_Model expandedList = (DeliverExpand_Model) expandableListAdapter.getChild(i, j);
-
-                            if (get_waybill.equals(expandedList.getWaybil_no())) {
-
-                                lastPosition = i;
-
-                                ((DeliverExpand_Model) expandableListAdapter.getChild(i, j)).setIs_scaned("0");
-                                ((DeliverExpand_Model) expandableListAdapter.getChild(i, j)).setTime_begin("");
-                                ((DeliverExpand_Model) expandableListAdapter.getChild(i, j)).setActual_lat("");
-                                ((DeliverExpand_Model) expandableListAdapter.getChild(i, j)).setActual_lon("");
-                                isc = false;
-                                Toast.makeText(Deliver_Activity.this, "Un Check.", Toast.LENGTH_SHORT).show();
-                                expandableListView.setAdapter(expandableListAdapter);
-                                expandableListView.expandGroup(i);
-                                expandableListAdapter.notifyDataSetChanged();
-                            } else {
-                                //  Toast.makeText(PinkingUpMaster_Activity.this, "This Waybill No doesn't exist.", Toast.LENGTH_SHORT).show();
-                            }
-
-                        }
-                    }
-                }
+                String getScanText = edtFineWaybillPick.getText().toString();
+                scan(getScanText);
 
 
             }
         });
 
 
+    }
+
+    private boolean isCheckIntent(int statusComment, int isComment, int statusCheck) {
+
+        if (statusComment != 0 || isComment != 0 || statusCheck != 0) {
+            if (statusComment != 0) {
+                if (statusComment == isComment) {
+
+                } else {
+                    //Toast.makeText(Invoice_Activity.this, "Please comment return.", Toast.LENGTH_SHORT).show();
+                    return false;
+                }
+            }
+            if (statusCheck != 0) {
+            }
+        } else {
+            Toasty.error(getApplicationContext(), "Please reason!", Toast.LENGTH_SHORT, true).show();
+            return false;
+        }
+
+        return true;
+    }
+
+    private void scan(String value) {
+        boolean scannotFind = false;
+
+        if (INPUT_WAY.equals("CHECK")) {
+            for (int i = 0; i < expandableListAdapter.getGroupCount(); i++) {
+                // expandableListView.expandGroup(i);
+                final Deliver_Model listTitle = (Deliver_Model) expandableListAdapter.getGroup(i);
+
+                for (int j = 0; j < expandableListAdapter.getChildrenCount(i); j++) {
+                    final DeliverExpand_Model expandedList = (DeliverExpand_Model) expandableListAdapter.getChild(i, j);
+
+                    if (expandedList.getIs_scaned().equals("0") || expandedList.getIs_scaned().equals("2")) {
+                        if (value.equals(expandedList.getWaybil_no())) {
+
+                            scannotFind = true;
+
+                            if (!expandedList.getIs_scaned().equals("2")) {
+                                if (listTitle.getCount() >= 0) {
+                                    int count = listTitle.getCount() + 1;
+                                    listTitle.setCount(count);
+                                    listTitle.setBox_checked(String.valueOf(listTitle.getCount()));
+                                }
+                            }
+                            expandedList.setIs_scaned("1");
+                            expandedList.setTime_begin(getdate());
+                            expandedList.setActual_lat(getlat());
+                            expandedList.setActual_lon(getlon());
+                            expandedList.setComment("");
+                            expandedList.setPicture1("");
+                            expandedList.setPicture2("");
+                            expandedList.setPicture3("");
+
+
+                            Toasty.success(getApplicationContext(), "Checked!", Toast.LENGTH_SHORT, true).show();
+
+                            //ToastScan(icon,"Checked.");
+
+                            expandableListView.setAdapter(expandableListAdapter);
+                            expandableListView.expandGroup(i);
+                            expandableListAdapter.notifyDataSetChanged();
+                            expandableListView.smoothScrollToPositionFromTop(i, j);
+                        } else {
+
+                        }
+                    } else {
+                        if (value.equals(expandedList.getWaybil_no())) {
+                            // ToastScan(null,"Scanned.");
+                            scannotFind = true;
+                            Toasty.info(getApplicationContext(), "Scanned.", Toast.LENGTH_SHORT, true).show();
+                        }
+
+                    }
+                }
+
+            }
+
+
+        } else if (INPUT_WAY.equals("UNCHECK")) {
+            for (int i = 0; i < expandableListAdapter.getGroupCount(); i++) {
+                //expandableListView.expandGroup(i);
+                final Deliver_Model listTitle = (Deliver_Model) expandableListAdapter.getGroup(i);
+                for (int j = 0; j < expandableListAdapter.getChildrenCount(i); j++) {
+                    final DeliverExpand_Model expandedList = (DeliverExpand_Model) expandableListAdapter.getChild(i, j);
+
+
+                    if (!expandedList.getIs_scaned().equals("0")) {
+                        if (value.equals(expandedList.getWaybil_no())) {
+
+                            scannotFind = true;
+
+                            if (!listTitle.getBox_checked().equals("0")) {
+                                int count = listTitle.getCount() - 1;
+                                listTitle.setCount(count);
+                                listTitle.setBox_checked(String.valueOf(listTitle.getCount()));
+                            }
+
+                            expandedList.setIs_scaned("0");
+                            expandedList.setTime_begin("");
+                            expandedList.setActual_lat("");
+                            expandedList.setActual_lon("");
+                            expandedList.setComment("");
+                            expandedList.setPicture1("");
+                            expandedList.setPicture2("");
+                            expandedList.setPicture3("");
+
+                            Toasty.success(getApplicationContext(), "Un Check!", Toast.LENGTH_SHORT, true).show();
+
+                            expandableListView.setAdapter(expandableListAdapter);
+                            expandableListView.expandGroup(i);
+                            expandableListAdapter.notifyDataSetChanged();
+                            expandableListView.smoothScrollToPositionFromTop(i, j);
+                        } else {
+                        }
+                    } else {
+                        if (value.equals(expandedList.getWaybil_no())) {
+                            scannotFind = true;
+                            Toasty.info(getApplicationContext(), "Un scan.", Toast.LENGTH_SHORT, true).show();
+                        }
+
+                        //toastScan("Change the lower button to scan.");
+                    }
+
+                }
+
+
+            }
+        }
+        if (INPUT_WAY.equals("COMMENT")) {
+            for (int i = 0; i < expandableListAdapter.getGroupCount(); i++) {
+                final Deliver_Model listTitle = (Deliver_Model) expandableListAdapter.getGroup(i);
+                for (int j = 0; j < expandableListAdapter.getChildrenCount(i); j++) {
+                    final DeliverExpand_Model expandedList = (DeliverExpand_Model) expandableListAdapter.getChild(i, j);
+
+                    if (((DeliverExpand_Model) expandableListAdapter.getChild(i, j)).getIs_scaned().equals("0")
+                            || ((DeliverExpand_Model) expandableListAdapter.getChild(i, j)).getIs_scaned().equals("1")) {
+                        if (value.equals(expandedList.getWaybil_no())) {
+
+                            scannotFind = true;
+                            // lastPosition = i;
+
+                            if (!expandedList.getIs_scaned().equals("1")) {
+                                int count = listTitle.getCount() + 1;
+                                listTitle.setCount(count);
+                                listTitle.setBox_checked(String.valueOf(listTitle.getCount()));
+                            }
+                            expandedList.setIs_scaned("2");
+
+                            Toasty.success(getApplicationContext(), "Please comment!", Toast.LENGTH_SHORT, true).show();
+
+                            expandableListView.setAdapter(expandableListAdapter);
+                            expandableListView.expandGroup(i);
+                            expandableListAdapter.notifyDataSetChanged();
+                            expandableListView.smoothScrollToPositionFromTop(i, j);
+                        } else {
+
+                        }
+                    } else {
+                        if (value.equals(expandedList.getWaybil_no())) {
+                            scannotFind = true;
+                            Toasty.info(getApplicationContext(), "Scanned.", Toast.LENGTH_SHORT, true).show();
+                        }
+
+                    }
+
+
+                }
+
+            }
+        }//comment
+
+        if (!scannotFind) {
+            Toasty.info(getApplicationContext(), "This Waybill No doesn't exist.", Toast.LENGTH_SHORT, true).show();
+        }
     }
 
     private String getlat() {
@@ -763,65 +944,66 @@ public class Deliver_Activity extends AppCompatActivity {
                 getScanText = getScanText.trim();
 
                 // edtFineWaybillPick.setText(result.getContents());
+                scan(getScanText);
 
-                if (INPUT_WAY.equals("PLUS")) {
-                    for (int i = 0;
-                         i < expandableListAdapter.getGroupCount(); i++) {
-                        for (int j = 0; j < expandableListAdapter.getChildrenCount(i); j++) {
-                            final DeliverExpand_Model expandedList = (DeliverExpand_Model) expandableListAdapter.getChild(i, j);
-
-                            if (getScanText.equals(expandedList.getWaybil_no())) {
-
-                                lastPosition = i;
-
-                                ((DeliverExpand_Model) expandableListAdapter.getChild(i, j)).setInto("1");
-                                ((DeliverExpand_Model) expandableListAdapter.getChild(i, j)).setIs_scaned("1");
-                                ((DeliverExpand_Model) expandableListAdapter.getChild(i, j)).setTime_begin(getdate());
-                                ((DeliverExpand_Model) expandableListAdapter.getChild(i, j)).setActual_lat(getlat());
-                                ((DeliverExpand_Model) expandableListAdapter.getChild(i, j)).setActual_lon(getlon());
-                                isc = true;
-
-
-                                Toast.makeText(Deliver_Activity.this, "Checked.", Toast.LENGTH_SHORT).show();
-                                expandableListView.setAdapter(expandableListAdapter);
-                                expandableListView.expandGroup(i);
-                                expandableListAdapter.notifyDataSetChanged();
-                                expandableListView.smoothScrollToPosition(i);
-                            } else {
-                                // Toast.makeText(PinkingUpMaster_Activity.this, "This Waybill No doesn't exist.", Toast.LENGTH_SHORT).show();
-                            }
-
-                        }
-                    }
-                } else {
-                    for (int i = 0;
-                         i < expandableListAdapter.getGroupCount(); i++) {
-                        for (int j = 0; j < expandableListAdapter.getChildrenCount(i); j++) {
-                            final DeliverExpand_Model expandedList = (DeliverExpand_Model) expandableListAdapter.getChild(i, j);
-
-                            if (getScanText.equals(expandedList.getWaybil_no())) {
-
-                                lastPosition = i;
-
-                                ((DeliverExpand_Model) expandableListAdapter.getChild(i, j)).setInto("0");
-                                ((DeliverExpand_Model) expandableListAdapter.getChild(i, j)).setIs_scaned("0");
-                                ((DeliverExpand_Model) expandableListAdapter.getChild(i, j)).setTime_begin("");
-                                ((DeliverExpand_Model) expandableListAdapter.getChild(i, j)).setActual_lat("");
-                                ((DeliverExpand_Model) expandableListAdapter.getChild(i, j)).setActual_lon("");
-                                isc = true;
-
-                                Toast.makeText(Deliver_Activity.this, "Un Check.", Toast.LENGTH_SHORT).show();
-                                expandableListView.setAdapter(expandableListAdapter);
-                                expandableListView.expandGroup(i);
-                                expandableListAdapter.notifyDataSetChanged();
-                                expandableListView.smoothScrollToPosition(i);
-                            } else {
-                                //  Toast.makeText(PinkingUpMaster_Activity.this, "This Waybill No doesn't exist.", Toast.LENGTH_SHORT).show();
-                            }
-
-                        }
-                    }
-                }
+//                if (INPUT_WAY.equals("PLUS")) {
+//                    for (int i = 0;
+//                         i < expandableListAdapter.getGroupCount(); i++) {
+//                        for (int j = 0; j < expandableListAdapter.getChildrenCount(i); j++) {
+//                            final DeliverExpand_Model expandedList = (DeliverExpand_Model) expandableListAdapter.getChild(i, j);
+//
+//                            if (getScanText.equals(expandedList.getWaybil_no())) {
+//
+//                                lastPosition = i;
+//
+//                                ((DeliverExpand_Model) expandableListAdapter.getChild(i, j)).setInto("1");
+//                                ((DeliverExpand_Model) expandableListAdapter.getChild(i, j)).setIs_scaned("1");
+//                                ((DeliverExpand_Model) expandableListAdapter.getChild(i, j)).setTime_begin(getdate());
+//                                ((DeliverExpand_Model) expandableListAdapter.getChild(i, j)).setActual_lat(getlat());
+//                                ((DeliverExpand_Model) expandableListAdapter.getChild(i, j)).setActual_lon(getlon());
+//                                isc = true;
+//
+//
+//                                Toast.makeText(Deliver_Activity.this, "Checked.", Toast.LENGTH_SHORT).show();
+//                                expandableListView.setAdapter(expandableListAdapter);
+//                                expandableListView.expandGroup(i);
+//                                expandableListAdapter.notifyDataSetChanged();
+//                                expandableListView.smoothScrollToPosition(i);
+//                            } else {
+//                                // Toast.makeText(PinkingUpMaster_Activity.this, "This Waybill No doesn't exist.", Toast.LENGTH_SHORT).show();
+//                            }
+//
+//                        }
+//                    }
+//                } else {
+//                    for (int i = 0;
+//                         i < expandableListAdapter.getGroupCount(); i++) {
+//                        for (int j = 0; j < expandableListAdapter.getChildrenCount(i); j++) {
+//                            final DeliverExpand_Model expandedList = (DeliverExpand_Model) expandableListAdapter.getChild(i, j);
+//
+//                            if (getScanText.equals(expandedList.getWaybil_no())) {
+//
+//                                lastPosition = i;
+//
+//                                ((DeliverExpand_Model) expandableListAdapter.getChild(i, j)).setInto("0");
+//                                ((DeliverExpand_Model) expandableListAdapter.getChild(i, j)).setIs_scaned("0");
+//                                ((DeliverExpand_Model) expandableListAdapter.getChild(i, j)).setTime_begin("");
+//                                ((DeliverExpand_Model) expandableListAdapter.getChild(i, j)).setActual_lat("");
+//                                ((DeliverExpand_Model) expandableListAdapter.getChild(i, j)).setActual_lon("");
+//                                isc = true;
+//
+//                                Toast.makeText(Deliver_Activity.this, "Un Check.", Toast.LENGTH_SHORT).show();
+//                                expandableListView.setAdapter(expandableListAdapter);
+//                                expandableListView.expandGroup(i);
+//                                expandableListAdapter.notifyDataSetChanged();
+//                                expandableListView.smoothScrollToPosition(i);
+//                            } else {
+//                                //  Toast.makeText(PinkingUpMaster_Activity.this, "This Waybill No doesn't exist.", Toast.LENGTH_SHORT).show();
+//                            }
+//
+//                        }
+//                    }
+//                }
 
             }
         } else {
@@ -1000,7 +1182,7 @@ public class Deliver_Activity extends AppCompatActivity {
         public View getChildView(int listPosition, final int expandedListPosition,
                                  boolean isLastChild, View convertView, ViewGroup parent) {
             final DeliverExpand_Model expandedList = (DeliverExpand_Model) getChild(listPosition, expandedListPosition);
-
+            LanguageClass.setLanguage(getApplicationContext());
             if (convertView == null) {
                 LayoutInflater layoutInflater = (LayoutInflater) this.context
                         .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -1008,7 +1190,7 @@ public class Deliver_Activity extends AppCompatActivity {
             }
 
             final CheckBox checkBox;
-            final TextView box_no, waybill_no, tvExpand_Count;
+            final TextView box_no, waybill_no, tvExpand_Count, textView29;
             final ImageView imgEditBoxNoPickup;
 
             box_no = convertView.findViewById(R.id.tvExpand_Box);
@@ -1016,6 +1198,7 @@ public class Deliver_Activity extends AppCompatActivity {
             tvExpand_Count = convertView.findViewById(R.id.tvExpand_Count);
             checkBox = convertView.findViewById(R.id.cbExpand_isscaned);
             imgEditBoxNoPickup = convertView.findViewById(R.id.imgEditBoxNoPickup);
+            textView29 = convertView.findViewById(R.id.textView29);
 
             Log.d("sdfgjhkasdfuiol", "getChildView: " + expandedList.getIs_scaned());
 
@@ -1025,61 +1208,80 @@ public class Deliver_Activity extends AppCompatActivity {
             box_no.setText("BoxNo. " + expandedList.getBox_no());
             waybill_no.setText("WaybillNo: " + expandedList.getWaybil_no());
 
-            if (!checkBox.isChecked() && !expandedList.getIs_scaned().equals("1")) {
+            if (expandedList.getIs_scaned().equals("1")) {
+                checkBox.setChecked(true);
+                imgEditBoxNoPickup.setEnabled(false);
+                textView29.setVisibility(View.GONE);
+            } else if (expandedList.getIs_scaned().equals("2")) {
+                checkBox.setChecked(true);
                 imgEditBoxNoPickup.setEnabled(true);
-            } else {
+                checkBox.setButtonDrawable(R.drawable.ic_indeterminate_check_box_black_24dp);
+                if (!expandedList.getComment().equals("") || !expandedList.getPicture1().equals("")
+                        || !expandedList.getPicture2().equals("") || !expandedList.getPicture3().equals("")) {
+                    textView29.setVisibility(View.GONE);
+                } else {
+                    textView29.setVisibility(View.VISIBLE);
+                }
+            } else if (expandedList.getIs_scaned().equals("0")) {
+                textView29.setVisibility(View.GONE);
+                checkBox.setChecked(false);
+                checkBox.setButtonDrawable(R.drawable.custom_checkbox);
                 imgEditBoxNoPickup.setEnabled(false);
             }
 
-            if (expandedList.getIs_scaned().equals("0")) {
-                imgEditBoxNoPickup.setEnabled(true);
-            }
 
-            if (expandedList.getIs_scaned().equals("2")) {
-                checkBox.setChecked(true);
-                imgEditBoxNoPickup.setEnabled(true);
-               // checkBox.setEnabled(false);
-                checkBox.setButtonDrawable(R.drawable.ic_indeterminate_check_box_black_24dp);
-
-            } else {
-              //  checkBox.setEnabled(true);
-                checkBox.setButtonDrawable(R.drawable.custom_checkbox);
-            }
-
-            if (expandedList.getIs_scaned().equals("1")) {
-                checkBox.setChecked(true);
-
-            }
-
-            if (isc) {
-                if (expandedList.getInto().equals("0")) {
-                    expandedList.setIs_scaned("0");
-                    if (expandedList.getIs_scaned().equals("0")) {
-                        checkBox.setChecked(false);
-                        imgEditBoxNoPickup.setEnabled(true);
-                        isc = false;
-                    }
-                } else {
-                    expandedList.setIs_scaned("1");
-                    expandedList.setTime_begin(getdate());
-
-                    // Log.d("sdgfjkashdfsdf", "getChildView: "+ LocationLatLon.getLastLocation());
-                    expandedList.setActual_lon(getlat());
-                    expandedList.setActual_lon(getlon());
-
-                    if (expandedList.getIs_scaned().equals("1")) {
-                        checkBox.setChecked(true);
-                        isc = false;
-                        //  checkBox.setEnabled(false);
-                        //              checkBox.setButtonDrawable(R.drawable.ic_check_box_disable);
-                    }
-                }
-            } else {
-
-            }
-
-
-
+//            if (!checkBox.isChecked() && !expandedList.getIs_scaned().equals("1")) {
+//                imgEditBoxNoPickup.setEnabled(true);
+//            } else {
+//                imgEditBoxNoPickup.setEnabled(false);
+//            }
+//
+//            if (expandedList.getIs_scaned().equals("0")) {
+//                imgEditBoxNoPickup.setEnabled(true);
+//            }
+//
+//            if (expandedList.getIs_scaned().equals("2")) {
+//                checkBox.setChecked(true);
+//                imgEditBoxNoPickup.setEnabled(true);
+//               // checkBox.setEnabled(false);
+//                checkBox.setButtonDrawable(R.drawable.ic_indeterminate_check_box_black_24dp);
+//
+//            } else {
+//              //  checkBox.setEnabled(true);
+//                checkBox.setButtonDrawable(R.drawable.custom_checkbox);
+//            }
+//
+//            if (expandedList.getIs_scaned().equals("1")) {
+//                checkBox.setChecked(true);
+//
+//            }
+//
+//            if (isc) {
+//                if (expandedList.getInto().equals("0")) {
+//                    expandedList.setIs_scaned("0");
+//                    if (expandedList.getIs_scaned().equals("0")) {
+//                        checkBox.setChecked(false);
+//                        imgEditBoxNoPickup.setEnabled(true);
+//                        isc = false;
+//                    }
+//                } else {
+//                    expandedList.setIs_scaned("1");
+//                    expandedList.setTime_begin(getdate());
+//
+//                    // Log.d("sdgfjkashdfsdf", "getChildView: "+ LocationLatLon.getLastLocation());
+//                    expandedList.setActual_lon(getlat());
+//                    expandedList.setActual_lon(getlon());
+//
+//                    if (expandedList.getIs_scaned().equals("1")) {
+//                        checkBox.setChecked(true);
+//                        isc = false;
+//                        //  checkBox.setEnabled(false);
+//                        //              checkBox.setButtonDrawable(R.drawable.ic_check_box_disable);
+//                    }
+//                }
+//            } else {
+//
+//            }
 
 
 //            checkBox.setOnClickListener(v -> {
@@ -1140,7 +1342,7 @@ public class Deliver_Activity extends AppCompatActivity {
                                  View convertView, ViewGroup parent) {
 
             final Deliver_Model listTitle = (Deliver_Model) getGroup(listPosition);
-
+            LanguageClass.setLanguage(getApplicationContext());
             if (convertView == null) {
                 LayoutInflater layoutInflater = (LayoutInflater) this.context.
                         getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -1167,22 +1369,28 @@ public class Deliver_Activity extends AppCompatActivity {
             TextView box = convertView.findViewById(R.id.tvPickingUp_Box);
 
 
-            if(!listTitle.getBox_checked().equals("0")){
+            if (listTitle.getBox_checked().equals(listTitle.getBox_total())) {
                 consignment.setTextColor(Color.parseColor("#1D781F"));
                 box.setTextColor(Color.parseColor("#1D781F"));
                 tvPickUp_global.setTextColor(Color.parseColor("#1D781F"));
                 textView24.setTextColor(Color.parseColor("#1D781F"));
                 textView26.setTextColor(Color.parseColor("#1D781F"));
-            }else{
+                textView25.setTextColor(Color.parseColor("#1D781F"));
+            } else {
                 consignment.setTextColor(Color.parseColor("#696969"));
                 consignment.setTextColor(Color.parseColor("#696969"));
                 box.setTextColor(Color.parseColor("#696969"));
                 tvPickUp_global.setTextColor(Color.parseColor("#9C9C9C"));
                 textView24.setTextColor(Color.parseColor("#696969"));
                 textView26.setTextColor(Color.parseColor("#696969"));
+                textView25.setTextColor(Color.parseColor("#696969"));
             }
 
-            box.setText("Box (" + listTitle.getBox_checked() + " | " + listTitle.getBox_total() + ")");
+            if (listTitle.getBox_total().equals("1")) {
+                box.setText(context.getString(R.string.box) + " (" + listTitle.getBox_checked() + " | " + listTitle.getBox_total() + ")");
+            } else {
+                box.setText(context.getString(R.string.boxes) + " (" + listTitle.getBox_checked() + " | " + listTitle.getBox_total() + ")");
+            }
 
             tvPickUp_global.setText("Global (" + listTitle.getGlobal_total() + ")");
 
@@ -1678,7 +1886,7 @@ public class Deliver_Activity extends AppCompatActivity {
                         cv.put("comment", commentOfspinner);
 
                         picking.setComment(commentOfspinner);
-                        picking.setIs_scaned("2");
+                        //picking.setIs_scaned("2");
                         picking.setTime_begin(getdate());
                         picking.setActual_lat(getlat());
                         picking.setActual_lon(getlon());
@@ -1687,7 +1895,7 @@ public class Deliver_Activity extends AppCompatActivity {
                         cv.put("is_scaned", "0");
 
                         picking.setComment("");
-                        picking.setIs_scaned("0");
+                        // picking.setIs_scaned("0");
                         picking.setTime_begin("");
                         picking.setActual_lat("");
                         picking.setActual_lon("");
@@ -1717,7 +1925,8 @@ public class Deliver_Activity extends AppCompatActivity {
 //                    expandableListView.expandGroup(position,true);
 //                    expandableListView.smoothScrollToPosition(position);
                     alertDialog.dismiss();
-                    Toast.makeText(Deliver_Activity.this, "Saved.", Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(Deliver_Activity.this, "Saved.", Toast.LENGTH_SHORT).show();
+                    Toasty.success(getApplicationContext(), "reasoned.", Toast.LENGTH_SHORT, true);
 
                 }
             });

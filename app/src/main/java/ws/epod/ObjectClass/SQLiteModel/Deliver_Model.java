@@ -1,14 +1,15 @@
 package ws.epod.ObjectClass.SQLiteModel;
 
 public class Deliver_Model {
-    public String consignment_no = "";
-    public String box_total = "";
-    public String box_checked = "";
-    public String global_total = "";
-    public String station_address = "";
-    public String paytype = "";
-    public String global_cancel = "";
-    public String price = "";
+    private String consignment_no = "";
+    private String box_total = "";
+    private String box_checked = "";
+    private String global_total = "";
+    private String station_address = "";
+    private String paytype = "";
+    private String global_cancel = "";
+    private String price = "";
+    private int count = 0;
 
 
     public Deliver_Model( String consignment_no, String box_total,String box_checked, String global_total, String station_address, String paytype, String global_cancel, String price ) {
@@ -20,6 +21,14 @@ public class Deliver_Model {
         this.paytype = paytype;
         this.global_cancel = global_cancel;
         this.price = price;
+    }
+
+    public int getCount() {
+        return count;
+    }
+
+    public void setCount(int count) {
+        this.count = count;
     }
 
     public String getPrice() {

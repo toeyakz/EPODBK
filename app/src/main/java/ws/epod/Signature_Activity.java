@@ -331,6 +331,8 @@ public class Signature_Activity extends AppCompatActivity {
     private boolean takeImageFromcamera() {
         boolean result = false;
 
+        Log.d("Asfjklasasdf", "onClick: ถ่ายรูป");
+
         SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         Gson gson = new Gson();
         String json = sharedPrefs.getString("MyObject", "");
@@ -358,10 +360,10 @@ public class Signature_Activity extends AppCompatActivity {
                 jsonInsertPicSign.put("pic_sign_load", imgList[0]);
                 jsonInsertPicSign.put("create_date", getdate());
                 jsonInsertPicSign.put("status_delete", "0");
-
-                String sql = "INSERT INTO image_invoice (name_img, status_img, create_date) VALUES('" + imgList[0] + "','0', '" + getdate() + "')";
-                databaseHelper.db().execSQL(sql);
-
+                if(imgList[0] != null){
+                    String sql = "INSERT INTO image_invoice (name_img, status_img, create_date) VALUES('" + imgList[0] + "','0', '" + getdate() + "')";
+                    databaseHelper.db().execSQL(sql);
+                }
 
                 if (!arrayList.get(i).getComment().equals("")) {
                     jsonInsertComment.put("consignment_no", arrayList.get(i).getConsignment_no());
