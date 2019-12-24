@@ -266,6 +266,8 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
                 Animation animation = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.alpha);
                 savePickingUp.startAnimation(animation);
 
+                ch_comment();
+
                 final AlertDialog.Builder alertbox = new AlertDialog.Builder(view.getRootView().getContext());
                 alertbox.setTitle(getString(R.string.alert));
                 alertbox.setMessage("SAVE JOB?");
@@ -400,7 +402,9 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
                                                     @Override
                                                     public void run() {
                                                         //expandableListView.setSelectedGroup(positionGroub);
-
+//                                                        expandableListView.setAdapter(expandableListAdapter);
+//                                                        expandableListAdapter.notifyDataSetChanged();
+//                                                        expandableListView.smoothScrollToPositionFromTop(positionGroup, j);
                                                         expandableListView.expandGroup(positionGroup);
                                                     }
                                                 }, 500);
@@ -454,7 +458,7 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
                 String getScanText = edtFineWaybillPick.getText().toString();
                 scan(getScanText);
 
-               // edtFineWaybillPick.setText("");
+                // edtFineWaybillPick.setText("");
 
 
             }
@@ -463,7 +467,32 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
 
     }
 
-    private void scan(String value){
+    private void ch_comment() {
+        for (int i = 0; i < expandableListAdapter.getGroupCount(); i++) {
+            final PickingUp_Model groupView = (PickingUp_Model) expandableListAdapter.getGroup(i);
+            for (int j = 0; j < expandableListAdapter.getChildrenCount(i); j++) {
+                final PickingUpEexpand_Model childView = (PickingUpEexpand_Model) expandableListAdapter.getChild(i, j);
+
+                if (childView.getIs_scaned().equals("2")) {
+                    if (!childView.getComment().equals("") || !childView.getPicture1().equals("")
+                            || !childView.getPicture2().equals("") || !childView.getPicture3().equals("")) {
+
+                    } else {
+                        Toasty.error(getApplicationContext(), "Please Reason!", Toast.LENGTH_SHORT, true).show();
+                        expandableListView.setAdapter(expandableListAdapter);
+                        expandableListView.expandGroup(i);
+                        expandableListAdapter.notifyDataSetChanged();
+                        expandableListView.smoothScrollToPositionFromTop(i, j);
+                        return;
+                    }
+                }
+
+            }
+
+        }
+    }
+
+    private void scan(String value) {
         boolean scannotFind = false;
 
         if (INPUT_WAY.equals("CHECK")) {
@@ -490,6 +519,10 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
                             expandedList.setTime_begin(getdate());
                             expandedList.setActual_lat(getlat());
                             expandedList.setActual_lon(getlon());
+                            expandedList.setComment("");
+                            expandedList.setPicture1("");
+                            expandedList.setPicture2("");
+                            expandedList.setPicture3("");
 
 
                             Toasty.success(getApplicationContext(), "Checked!", Toast.LENGTH_SHORT, true).show();
@@ -539,6 +572,10 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
                             expandedList.setTime_begin("");
                             expandedList.setActual_lat("");
                             expandedList.setActual_lon("");
+                            expandedList.setComment("");
+                            expandedList.setPicture1("");
+                            expandedList.setPicture2("");
+                            expandedList.setPicture3("");
 
                             Toasty.success(getApplicationContext(), "Un Check!", Toast.LENGTH_SHORT, true).show();
 
@@ -605,7 +642,7 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
             }
         }//comment
 
-        if(!scannotFind){
+        if (!scannotFind) {
             Toasty.info(getApplicationContext(), "This Waybill No doesn't exist.", Toast.LENGTH_SHORT, true).show();
         }
     }
@@ -1175,7 +1212,7 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
             Log.d("qwegwegsdg", "getGroupView: " + (expandedListPosition + 1));
 
 
-            final TextView box_no, waybill_no, tvExpand_Count;
+            final TextView box_no, waybill_no, tvExpand_Count, textView29;
             final ImageView imgEditBoxNoPickup;
 
             box_no = convertView.findViewById(R.id.tvExpand_Box);
@@ -1183,6 +1220,7 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
             tvExpand_Count = convertView.findViewById(R.id.tvExpand_Count);
             CheckBox checkBox = convertView.findViewById(R.id.cbExpand_isscaned);
             imgEditBoxNoPickup = convertView.findViewById(R.id.imgEditBoxNoPickup);
+            textView29 = convertView.findViewById(R.id.textView29);
 
 
             tvExpand_Count.setText(String.valueOf((expandedListPosition + 1)));
@@ -1202,6 +1240,12 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
                 checkBox.setChecked(true);
                 imgEditBoxNoPickup.setEnabled(true);
                 checkBox.setButtonDrawable(R.drawable.ic_indeterminate_check_box_black_24dp);
+                if (!expandedList.getComment().equals("") || !expandedList.getPicture1().equals("")
+                        || !expandedList.getPicture2().equals("") || !expandedList.getPicture3().equals("")) {
+                    textView29.setVisibility(View.GONE);
+                } else {
+                    textView29.setVisibility(View.VISIBLE);
+                }
             } else if (expandedList.getIs_scaned().equals("0")) {
                 checkBox.setChecked(false);
                 checkBox.setButtonDrawable(R.drawable.custom_checkbox);
@@ -1881,12 +1925,12 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
                         picking.setTime_begin(getdate());
                         picking.setActual_lat(getlat());
                         picking.setActual_lon(getlon());
-                        if (listTitle.getCount() >= 0) {
-                            int count = listTitle.getCount() + 1;
-                            listTitle.setCount(count);
-                            Log.d("asdad", "onClick: " + listTitle.getCount());
-                        }
-                        listTitle.setBox_checked(String.valueOf(listTitle.getCount()));
+//                        if (listTitle.getCount() >= 0) {
+//                            int count = listTitle.getCount() + 1;
+//                            listTitle.setCount(count);
+//                            Log.d("asdad", "onClick: " + listTitle.getCount());
+//                        }
+//                        listTitle.setBox_checked(String.valueOf(listTitle.getCount()));
 
                         cv.put("comment", commentOfspinner);
                     } else {
@@ -1898,11 +1942,11 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
                         picking.setTime_begin("");
                         picking.setActual_lat("");
                         picking.setActual_lon("");
-                        if (!listTitle.getBox_checked().equals("0")) {
-                            int count = listTitle.getCount() - 1;
-                            listTitle.setCount(count);
-                        }
-                        listTitle.setBox_checked(String.valueOf(listTitle.getCount()));
+//                        if (!listTitle.getBox_checked().equals("0")) {
+//                            int count = listTitle.getCount() - 1;
+//                            listTitle.setCount(count);
+//                        }
+//                        listTitle.setBox_checked(String.valueOf(listTitle.getCount()));
                     }
 
 
@@ -1925,6 +1969,7 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
                     //                  getSQLite();
 //                    expandableListView.setAdapter(expandableListAdapter);
 //                    expandableListView.smoothScrollToPositionFromTop(positionGroup,positionChill);
+//                    expandableListAdapter.notifyDataSetChanged();
 //                    expandableListView.expandGroup(positionGroup);
                     alertDialog.dismiss();
                     Toast.makeText(PinkingUpMaster_Activity.this, "Saved.", Toast.LENGTH_SHORT).show();
