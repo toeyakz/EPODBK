@@ -79,7 +79,7 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHolder> {
                 // Toast.makeText(context, list.get(i).TEXT, Toast.LENGTH_SHORT).show();
                 if ( list.get(i).TEXT.equals("Picking Up") ) {
 
-                    Toast.makeText(context, "Pick", Toast.LENGTH_SHORT).show();
+                   // Toast.makeText(context, "Pick", Toast.LENGTH_SHORT).show();
                     Intent intent = new Intent(context, PinkingUpMaster_Activity.class);
                     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                     context.startActivity(intent);
@@ -149,7 +149,7 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHolder> {
 
                 } else {// DELIVERY
 
-                    Toast.makeText(context, "deli", Toast.LENGTH_SHORT).show();
+                   // Toast.makeText(context, "deli", Toast.LENGTH_SHORT).show();
                     Intent intent = new Intent(context, Deliver_Activity.class);
                     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                     context.startActivity(intent);
