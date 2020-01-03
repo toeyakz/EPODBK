@@ -512,8 +512,8 @@ public class Deliver_Activity extends AppCompatActivity {
             if (statusCheck != 0) {
             }
         } else {
-            Toasty.error(getApplicationContext(), "Please reason!", Toast.LENGTH_SHORT, true).show();
-            return false;
+           // Toasty.error(getApplicationContext(), "Please reason!", Toast.LENGTH_SHORT, true).show();
+            return true;
         }
 
         return true;

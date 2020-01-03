@@ -55,7 +55,6 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHolder> {
     @Override
     public void onBindViewHolder( @NonNull final MainAdapter.ViewHolder viewHolder, final int i ) {
 
-
         narisv = new NarisBaseValue(context);
         netCon = new ConnectionDetector(context);
         databaseHelper = new DatabaseHelper(context);
@@ -75,8 +74,6 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHolder> {
             @Override
             public void onClick( final View view ) {
 
-
-                // Toast.makeText(context, list.get(i).TEXT, Toast.LENGTH_SHORT).show();
                 if ( list.get(i).TEXT.equals("Picking Up") ) {
 
                    // Toast.makeText(context, "Pick", Toast.LENGTH_SHORT).show();
@@ -84,136 +81,12 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHolder> {
                     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                     context.startActivity(intent);
 
-//                    if ( !list.get(i).isscaned_pick.equals("0") ) {
-//                        final AlertDialog.Builder alertbox = new AlertDialog.Builder(view.getRootView().getContext());
-//                        alertbox.setTitle(context.getString(R.string.alert));
-//                        alertbox.setMessage(context.getString(R.string.confirm_attendance));
-//
-//
-//                        alertbox.setNegativeButton(context.getString(R.string.confirm),
-//                                new DialogInterface.OnClickListener() {
-//                                    public void onClick( DialogInterface arg0,
-//                                                         int arg1 ) {
-//                                        String pattern = "yyyy-MM-dd kk:mm";
-//                                        SimpleDateFormat sdf = new SimpleDateFormat(pattern, new Locale("en", "th"));
-//                                        String date_now = sdf.format(Calendar.getInstance().getTime());
-//
-//                                        String stringLatitude = "";
-//                                        String stringLongitude = "";
-//
-//                                        client = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
-//
-//                                        if ( ActivityCompat.checkSelfPermission(context, ACCESS_FINE_LOCATION) !=
-//                                                PackageManager.PERMISSION_GRANTED ) {
-//                                            return;
-//                                        }
-//
-//                                        Location location = client.getLastKnownLocation(client.NETWORK_PROVIDER);
-//
-////                                        double latitude = location.getLatitude();
-////                                        double longitude = location.getLongitude();
-////
-////                                        stringLatitude = String.valueOf(latitude);
-////                                        stringLongitude = String.valueOf(longitude);
-////
-////
-////                                        Log.d("AfvWEBUHKLWLS", "onClick: " + date_now + "=>" + stringLatitude + "=>" + stringLongitude);
-////                                        Log.d("AfvWEBUHKLWLS", "onClick: " + "=>" + stringLatitude + "=>" + stringLongitude);
-////
-//////
-////                                        ContentValues cv = new ContentValues();
-////                                        cv.put("time_actual_in", date_now);
-////                                        cv.put("time_begin", date_now);
-////                                        cv.put("actual_lat", stringLatitude);
-////                                        cv.put("actual_lon", stringLongitude);
-////                                        cv.put("actual_seq", list.get(i).actual_seq);
-////                                        cv.put("modified_date", date_now);
-////                                        databaseHelper.db().update("Plan", cv, "delivery_no= '" + list.get(i).DELIVERY_NO + "' and plan_seq = '" + list.get(i).PLAN_SEQ + "' and activity_type = 'LOAD' and trash = '0'", null);
-//
-//                                        Toast.makeText(context, "Pick", Toast.LENGTH_SHORT).show();
-//                                        Intent intent = new Intent(context, PinkingUpMaster_Activity.class);
-//                                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-//                                        context.startActivity(intent);
-//
-//                                    }
-//                                });
-//                        alertbox.show();
-//                    }else{
-//                        Toast.makeText(context, "Pick", Toast.LENGTH_SHORT).show();
-//                        Intent intent = new Intent(context, PinkingUpMaster_Activity.class);
-//                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-//                        context.startActivity(intent);
-//                    }
-
-
-
                 } else {// DELIVERY
 
                    // Toast.makeText(context, "deli", Toast.LENGTH_SHORT).show();
                     Intent intent = new Intent(context, Deliver_Activity.class);
                     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                     context.startActivity(intent);
-
-//                    if ( !list.get(i).isscaned_deli.equals("0") ) {
-//                        final AlertDialog.Builder alertbox = new AlertDialog.Builder(view.getRootView().getContext());
-//                        alertbox.setTitle(context.getString(R.string.alert));
-//                        alertbox.setMessage(context.getString(R.string.confirm_attendance));
-//
-//
-//                        alertbox.setNegativeButton(context.getString(R.string.confirm),
-//                                new DialogInterface.OnClickListener() {
-//                                    public void onClick( DialogInterface arg0,
-//                                                         int arg1 ) {
-//                                        String pattern = "yyyy-MM-dd kk:mm";
-//                                        SimpleDateFormat sdf = new SimpleDateFormat(pattern, new Locale("en", "th"));
-//                                        String date_now = sdf.format(Calendar.getInstance().getTime());
-//
-//                                        String stringLatitude = "";
-//                                        String stringLongitude = "";
-//
-//                                        client = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
-//
-//                                        if ( ActivityCompat.checkSelfPermission(context, ACCESS_FINE_LOCATION) !=
-//                                                PackageManager.PERMISSION_GRANTED ) {
-//                                            return;
-//                                        }
-//
-//                                        Location location = client.getLastKnownLocation(client.NETWORK_PROVIDER);
-//
-//                                        double latitude = location.getLatitude();
-//                                        double longitude = location.getLongitude();
-//
-//                                        stringLatitude = String.valueOf(latitude);
-//                                        stringLongitude = String.valueOf(longitude);
-//
-//
-//                                        Log.d("AfvWEBUHKLWLS", "onClick: " + date_now + "=>" + stringLatitude + "=>" + stringLongitude);
-//                                        Log.d("AfvWEBUHKLWLS", "onClick: " + "=>" + stringLatitude + "=>" + stringLongitude);
-//
-////
-//                                        ContentValues cv = new ContentValues();
-//                                        cv.put("time_actual_in", date_now);
-//                                        cv.put("time_begin", date_now);
-//                                        cv.put("actual_lat", stringLatitude);
-//                                        cv.put("actual_lon", stringLongitude);
-//                                        cv.put("actual_seq", list.get(i).actual_seq);
-//                                        cv.put("modified_date", date_now);
-//                                        databaseHelper.db().update("Plan", cv, "delivery_no= '" + list.get(i).DELIVERY_NO + "' and plan_seq = '" + list.get(i).PLAN_SEQ + "' and activity_type = 'UNLOAD' and trash = '0'", null);
-//
-//                                        Toast.makeText(context, "deli", Toast.LENGTH_SHORT).show();
-//                                        Intent intent = new Intent(context, Deliver_Activity.class);
-//                                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-//                                        context.startActivity(intent);
-//
-//                                    }
-//                                });
-//                        alertbox.show();
-//                    }else{
-//                        Toast.makeText(context, "deli", Toast.LENGTH_SHORT).show();
-//                        Intent intent = new Intent(context, Deliver_Activity.class);
-//                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-//                        context.startActivity(intent);
-//                    }
 
                 }
             }
