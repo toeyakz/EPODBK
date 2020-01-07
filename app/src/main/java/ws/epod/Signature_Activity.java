@@ -464,7 +464,7 @@ public class Signature_Activity extends AppCompatActivity {
                     jsonInsertPicSign.put("create_date", getdate());
                     jsonInsertPicSign.put("status_delete", "0");
 
-                    String sql = "INSERT INTO image_invoice (name_img, status_img, create_date) VALUES('" + imgList[0] + "','0', '" + getdate() + "')";
+                    String sql = "INSERT INTO image_invoice (name_img, status_img, create_date) VALUES('" + image.getName() + "','0', '" + getdate() + "')";
                     databaseHelper.db().execSQL(sql);
 
                     if (!arrayList.get(i).getComment().equals("")) {

@@ -1265,407 +1265,407 @@ public class PlanWork_Activity extends AppCompatActivity {
         }
     }
 
-    public class UpLoadWork extends AsyncTask<String, Integer, String> {
-
-        ProgressDialog pd;
-        int IsSuccess = 1;
-
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-
-        }
-
-        @Override
-        protected void onProgressUpdate(Integer... values) {
-            super.onProgressUpdate(values);
-
-            int current = values[0];
-            int total = values[1];
-
-            float percentage = 100 * (float)current / (float)total;
-
-            pd = new ProgressDialog(PlanWork_Activity.this);
-            pd.setCancelable(false);
-            pd.setMessage(percentage+" % "+getApplicationContext().getString(R.string.sync_data));
-            pd.show();
-        }
-
-        @SuppressLint("WrongThread")
-        @Override
-        protected String doInBackground(String... strings) {
-
-
-            JSONObject Root = new JSONObject();
-            JSONObject picture1 = new JSONObject();
-
-            String id_plan = "";
-            String url = Var.WEBSERVICE2 + "func=setPlan&driver_id=" + Var.UserLogin.driver_id;
-            String urlPic1 = "http://www.wisasoft.com:8997/TMS_MSM/resources/function/php/service.php?func=setImg";
-            try {
-
-                String sql = "select * from Plan where is_scaned <> '0' and status_upload= '0'";
-                Cursor cursor = databaseHelper.selectDB(sql);
-
-                JSONArray ContactArray = new JSONArray();
-                File f = new File(Environment.getExternalStorageDirectory()
-                        + "/ContactDetail.txt");
-                FileOutputStream fos = null;
-                try {
-                    fos = new FileOutputStream(f, true);
-                } catch (FileNotFoundException e) {
-                    e.printStackTrace();
-                }
-                PrintStream ps = new PrintStream(fos);
-
-                Log.d("UploadWorkLog", "doInBackground: " + cursor.getCount());
-                int i = 0;
-                cursor.moveToFirst();
-                if (cursor.getCount() > 0) {
-                    do {
-
-                        JSONObject contact = new JSONObject();
-
-                        try {
-
-                            id_plan = cursor.getString(cursor.getColumnIndex("id"));
-                            contact.put("id", cursor.getString(cursor.getColumnIndex("id")));
-                            contact.put("delivery_date", cursor.getString(cursor.getColumnIndex("delivery_date")));
-                            contact.put("vehicle_name", cursor.getString(cursor.getColumnIndex("vehicle_name")));
-                            contact.put("blackbox", cursor.getString(cursor.getColumnIndex("blackbox")));
-                            contact.put("delivery_no", cursor.getString(cursor.getColumnIndex("delivery_no")));
-                            contact.put("plan_seq", cursor.getString(cursor.getColumnIndex("plan_seq")));
-                            contact.put("station_code", cursor.getString(cursor.getColumnIndex("station_code")));
-                            contact.put("station_name", cursor.getString(cursor.getColumnIndex("station_name")));
-                            contact.put("station_address", cursor.getString(cursor.getColumnIndex("station_address")));
-                            contact.put("station_lat", cursor.getString(cursor.getColumnIndex("station_lat")));
-                            contact.put("station_lon", cursor.getString(cursor.getColumnIndex("station_lon")));
-                            contact.put("station_area", cursor.getString(cursor.getColumnIndex("station_area")));
-                            contact.put("plan_in", cursor.getString(cursor.getColumnIndex("plan_in")));
-                            contact.put("plan_out", cursor.getString(cursor.getColumnIndex("plan_out")));
-                            contact.put("consignment_no", cursor.getString(cursor.getColumnIndex("consignment_no")));
-                            contact.put("order_no", cursor.getString(cursor.getColumnIndex("order_no")));
-                            contact.put("activity_type", cursor.getString(cursor.getColumnIndex("activity_type")));
-                            contact.put("box_no", cursor.getString(cursor.getColumnIndex("box_no")));
-                            contact.put("waybill_no", cursor.getString(cursor.getColumnIndex("waybill_no")));
-                            contact.put("weight", cursor.getString(cursor.getColumnIndex("weight")));
-                            contact.put("actual_seq", cursor.getString(cursor.getColumnIndex("actual_seq")));
-                            contact.put("actual_lat", cursor.getString(cursor.getColumnIndex("actual_lat")));
-                            contact.put("actual_lon", cursor.getString(cursor.getColumnIndex("actual_lon")));
-                            contact.put("time_actual_in", cursor.getString(cursor.getColumnIndex("time_actual_in")));
-                            contact.put("time_actual_out", cursor.getString(cursor.getColumnIndex("time_actual_out")));
-                            contact.put("time_begin", cursor.getString(cursor.getColumnIndex("time_begin")));
-                            contact.put("time_end", cursor.getString(cursor.getColumnIndex("time_end")));
-                            contact.put("signature", cursor.getString(cursor.getColumnIndex("signature")));
-                            contact.put("is_scanned", cursor.getString(cursor.getColumnIndex("is_scaned")));
-                            contact.put("comment", cursor.getString(cursor.getColumnIndex("comment")));
-                            contact.put("picture1", cursor.getString(cursor.getColumnIndex("picture1")));
-                            contact.put("picture2", cursor.getString(cursor.getColumnIndex("picture2")));
-                            contact.put("picture3", cursor.getString(cursor.getColumnIndex("picture3")));
-                            contact.put("driver_code", cursor.getString(cursor.getColumnIndex("driver_code")));
-                            contact.put("driver_name", cursor.getString(cursor.getColumnIndex("driver_name")));
-                            contact.put("modified_date", cursor.getString(cursor.getColumnIndex("modified_date")));
-                            contact.put("trash", cursor.getString(cursor.getColumnIndex("trash")));
-
-                            ContactArray.put(i, contact);
-                            i++;
-
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-
-
-                    } while (cursor.moveToNext());
-
-                    Root.put("data", ContactArray);
-                    ps.append(Root.toString());
-
-                    Log.d("UploadWorkLog", "doInBackground: " + Root.toString());
-
-                    JSONArray fa = narisv.SendAndGetJson_reJsonArray(Root, url);
-                    if (fa.getJSONObject(0).getString("status").equals("Y")) {
-
-
-                        for (int pic = 0; pic < fa.getJSONObject(0).getJSONArray("returnId").length(); pic++) {
-
-
-                            String json_data = fa.getJSONObject(0).getJSONArray("returnId").getString(pic);
-
-                            //เปิดดทีหลัง
-//                                        ContentValues cv = new ContentValues();
-//                                        cv.put("status_upload", "1");
-//                                        databaseHelper.db().update("Plan", cv, "id= '" + json_data + "'", null);
-
-                        }
-
-
-                        String sql_getPicture = "select pl.id\n" +
-                                ", ifnull((select im.name_img from image im where im.name_img = pl.picture1 and im.status_img = '0'), '') as picture1\n" +
-                                ", ifnull((select im.name_img from image im where im.name_img = pl.picture2 and im.status_img = '0'), '') as picture2\n" +
-                                ", ifnull((select im.name_img from image im where im.name_img = pl.picture3 and im.status_img = '0'), '') as picture3\n" +
-                                "from plan pl\n" +
-                                "where pl.is_scaned = '2'";
-                        Cursor cursor_getPicture = databaseHelper.selectDB(sql_getPicture);
-
-                        JSONArray imageArrayPic1 = new JSONArray();
-
-                        Log.d("sdgwsdgwe", "doInBackground: --" + cursor_getPicture.getCount());
-                        int j = 0;
-                        cursor_getPicture.moveToFirst();
-                        if (cursor_getPicture.getCount() > 0) {
-                            do {
-                                JSONObject contactPic1 = new JSONObject();
-
-                                //Log.d("sdgwsdgwe", "doInBackground: picture1--" + cursor_getPicture.getString(cursor_getPicture.getColumnIndex("picture1")));
-
-                                if (!cursor_getPicture.getString(cursor_getPicture.getColumnIndex("picture1")).equals("")) {
-
-                                    Log.d("AfWEIUGHMWENFNW", "doInBackground: --" + contactPic1.toString());
-
-                                    contactPic1.put("id", cursor_getPicture.getString(cursor_getPicture.getColumnIndex("id")));
-                                    contactPic1.put("name", cursor_getPicture.getString(cursor_getPicture.getColumnIndex("picture1")));
-                                    contactPic1.put("seq", "1");
-
-                                    File file = new File("/storage/emulated/0/Android/data/ws.epod/files/Pictures/" + cursor_getPicture.getString(cursor_getPicture.getColumnIndex("picture1")));
-                                    Bitmap myBitmap = BitmapFactory.decodeFile(file.getAbsolutePath());
-
-                                    ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-                                    myBitmap.compress(Bitmap.CompressFormat.JPEG, 70, byteArrayOutputStream);
-                                    byte[] byteArrayImage = byteArrayOutputStream.toByteArray();
-                                    encodedImagePic1 = Base64.encodeToString(byteArrayImage, Base64.DEFAULT);
-
-                                    contactPic1.put("img", "data:image/jpeg;base64," + encodedImagePic1);
-
-                                    imageArrayPic1.put(contactPic1);
-
-                                }
-
-                                if (!cursor_getPicture.getString(cursor_getPicture.getColumnIndex("picture2")).equals("")) {
-
-                                    contactPic1 = new JSONObject();
-
-                                    contactPic1.put("id", cursor_getPicture.getString(cursor_getPicture.getColumnIndex("id")));
-                                    contactPic1.put("name", cursor_getPicture.getString(cursor_getPicture.getColumnIndex("picture2")));
-                                    contactPic1.put("seq", "2");
-
-                                    File file = new File("/storage/emulated/0/Android/data/ws.epod/files/Pictures/" + cursor_getPicture.getString(cursor_getPicture.getColumnIndex("picture2")));
-                                    Bitmap myBitmap = BitmapFactory.decodeFile(file.getAbsolutePath());
-
-                                    ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-                                    myBitmap.compress(Bitmap.CompressFormat.JPEG, 70, byteArrayOutputStream);
-                                    byte[] byteArrayImage = byteArrayOutputStream.toByteArray();
-                                    encodedImagePic2 = Base64.encodeToString(byteArrayImage, Base64.DEFAULT);
-
-                                    contactPic1.put("img", "data:image/jpeg;base64," + encodedImagePic2);
-
-                                    imageArrayPic1.put(contactPic1);
-
-                                }
-
-                                if (!cursor_getPicture.getString(cursor_getPicture.getColumnIndex("picture3")).equals("")) {
-
-                                    contactPic1 = new JSONObject();
-
-                                    contactPic1.put("id", cursor_getPicture.getString(cursor_getPicture.getColumnIndex("id")));
-                                    contactPic1.put("name", cursor_getPicture.getString(cursor_getPicture.getColumnIndex("picture3")));
-                                    contactPic1.put("seq", "3");
-
-                                    File file = new File("/storage/emulated/0/Android/data/ws.epod/files/Pictures/" + cursor_getPicture.getString(cursor_getPicture.getColumnIndex("picture3")));
-                                    Bitmap myBitmap = BitmapFactory.decodeFile(file.getAbsolutePath());
-
-                                    ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-                                    myBitmap.compress(Bitmap.CompressFormat.JPEG, 70, byteArrayOutputStream);
-                                    byte[] byteArrayImage = byteArrayOutputStream.toByteArray();
-                                    encodedImagePic3 = Base64.encodeToString(byteArrayImage, Base64.DEFAULT);
-
-                                    contactPic1.put("img", "data:image/jpeg;base64," + encodedImagePic3);
-
-                                    imageArrayPic1.put(contactPic1);
-
-                                }
-
-
-                            } while (cursor_getPicture.moveToNext());
-
-                            picture1.put("data", imageArrayPic1);
-
-                            Log.d("dataLog", "doInBackground: " + picture1);
-
-
-                            if (picture1 != null) {
-                                JSONArray sendPic1 = narisv.sendImageBase64(picture1, urlPic1);
-                                if (sendPic1.getJSONObject(0).getString("status").equals("Y")) {
-
-                                    for (int pic = 0; pic < sendPic1.getJSONObject(0).getJSONArray("img").length(); pic++) {
-
-                                        String json_data = sendPic1.getJSONObject(0).getJSONArray("img").getString(pic);
-                                        Log.d("TRD", "TRD_1: " + json_data);
-
-//                                        ContentValues cv = new ContentValues();
-//                                        cv.put("status_img", "1");
-//                                        databaseHelper.db().update("image", cv, "name_img= '" + json_data + "'", null);
-
-                                    }
-                                } else {
-                                    Log.d("TRD", "TRD_1: Fail");
-                                }
-                            }//pic1
-
-
-                        }
-
-
-                        new LoadWork().execute();
-                        IsSuccess = 1;
-                    } else {
-                        IsSuccess = 0;
-                    }
-
-                } else {
-                    new LoadWork().execute();
-                    IsSuccess = 1;
-                }
-
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(String s) {
-            super.onPostExecute(s);
-
-
-            String mess = "";
-            switch (IsSuccess) {
-                case -1:
-                    mess = "Synced (not found data)";
-                    break;
-                case 1:
-                    mess = "Synced";
-                    getDataFromSQLite("", "", "");
-                    tvFilterStatus.setText("Filter by: Today");
-                    pd.dismiss();
-                    break;
-                case 0:
-                    mess = "Sync error!!";
-                    break;
-            }
-            Snackbar.make(rvPlanWork, mess, Snackbar.LENGTH_LONG)
-                    .setAction("Action", null).show();
-            if (planWorkAdapter != null) {
-                planWorkAdapter.notifyDataSetChanged();
-            }
-        }
-    }
-
-    public class LoadWork extends AsyncTask<String, String, String> {
-
-        int IsSuccess = 1;
-
-
-        @Override
-        protected String doInBackground(String... strings) {
-
-            try {
-
-                String max_modified_date = "";
-
-
-                String sql_getMaxModifild_date = "select MAX(modified_date) as max_modified_date from Plan ";
-                Cursor cursor_etMaxModifild_date = databaseHelper.selectDB(sql_getMaxModifild_date);
-                cursor_etMaxModifild_date.moveToFirst();
-                if (cursor_etMaxModifild_date.getCount() > 0) {
-                    do {
-                        max_modified_date = cursor_etMaxModifild_date.getString(cursor_etMaxModifild_date.getColumnIndex("max_modified_date"));
-
-                    } while (cursor_etMaxModifild_date.moveToNext());
-                } else {
-                    max_modified_date += "";
-                }
-                Log.d("PlanWorkLOG", "MaxModifiedDate : " + max_modified_date);
-
-
-                String pattern = "yyyy-MM-dd%kk:mm:ss";
-                SimpleDateFormat sdf = new SimpleDateFormat(pattern, new Locale("en", "th"));
-                String getDate = sdf.format(Calendar.getInstance().getTime());
-
-                String url = Var.WEBSERVICE2 + "func=getPlan&vehicle_id=" + Var.UserLogin.driver_vehicle_id + "&driver_id=" + Var.UserLogin.driver_id + "&serial=" +
-                        Var.UserLogin.driver_serial + "&phone_date=" + getDate + "&date+";
-                Log.d("PlanWorkLOG", url);
-                JSONArray GETJSON = narisv.getJsonFromUrl_reJsonArray(url);
-                Log.d("PlanWorkLOG", GETJSON.toString());
-                String sql2 = "";
-
-
-                for (int i = 0; i < GETJSON.length(); i++) {
-
-                    JSONObject json_data = GETJSON.getJSONObject(i);
-
-                }
-
-                if (narisv.INSERT_AS_SQL("Plan", GETJSON, "")) {
-                    Log.d("PlanWorkLOG", "SAVED INVOICE HEADER");
-
-                    String url_consign = Var.WEBSERVICE2 + "func=getConsignment&vehicle_id=" + Var.UserLogin.driver_vehicle_id;
-                    JSONArray GETJSON_CONSIGN = narisv.getJsonFromUrl_reJsonArray(url_consign);
-
-                    if (narisv.INSERT_AS_SQL("consignment", GETJSON_CONSIGN, "")) {
-                        Log.d("PlanWorkLOG", "SAVED Consignment.");
-
-                    } else {
-                        Log.d("PlanWorkLOG", "FAIL save consignment.");
-                    }
-
-
-                    IsSuccess = 1;
-                } else {
-                    Log.d("PlanWorkLOG", "FAIL");
-                    IsSuccess = 2;
-                }
-
-
-            } catch (Exception e) {
-
-            }
-
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(String s) {
-            super.onPostExecute(s);
-
-            firstSync = true;
-
+//    public class UpLoadWork extends AsyncTask<String, Integer, String> {
+//
+//        ProgressDialog pd;
+//        int IsSuccess = 1;
+//
+//
+//        @Override
+//        protected void onPreExecute() {
+//            super.onPreExecute();
+//
+//        }
+//
+//        @Override
+//        protected void onProgressUpdate(Integer... values) {
+//            super.onProgressUpdate(values);
+//
+//            int current = values[0];
+//            int total = values[1];
+//
+//            float percentage = 100 * (float)current / (float)total;
+//
+//            pd = new ProgressDialog(PlanWork_Activity.this);
+//            pd.setCancelable(false);
+//            pd.setMessage(percentage+" % "+getApplicationContext().getString(R.string.sync_data));
+//            pd.show();
+//        }
+//
+//        @SuppressLint("WrongThread")
+//        @Override
+//        protected String doInBackground(String... strings) {
+//
+//
+//            JSONObject Root = new JSONObject();
+//            JSONObject picture1 = new JSONObject();
+//
+//            String id_plan = "";
+//            String url = Var.WEBSERVICE2 + "func=setPlan&driver_id=" + Var.UserLogin.driver_id;
+//            String urlPic1 = "http://www.wisasoft.com:8997/TMS_MSM/resources/function/php/service.php?func=setImg";
+//            try {
+//
+//                String sql = "select * from Plan where is_scaned <> '0' and status_upload= '0'";
+//                Cursor cursor = databaseHelper.selectDB(sql);
+//
+//                JSONArray ContactArray = new JSONArray();
+//                File f = new File(Environment.getExternalStorageDirectory()
+//                        + "/ContactDetail.txt");
+//                FileOutputStream fos = null;
+//                try {
+//                    fos = new FileOutputStream(f, true);
+//                } catch (FileNotFoundException e) {
+//                    e.printStackTrace();
+//                }
+//                PrintStream ps = new PrintStream(fos);
+//
+//                Log.d("UploadWorkLog", "doInBackground: " + cursor.getCount());
+//                int i = 0;
+//                cursor.moveToFirst();
+//                if (cursor.getCount() > 0) {
+//                    do {
+//
+//                        JSONObject contact = new JSONObject();
+//
+//                        try {
+//
+//                            id_plan = cursor.getString(cursor.getColumnIndex("id"));
+//                            contact.put("id", cursor.getString(cursor.getColumnIndex("id")));
+//                            contact.put("delivery_date", cursor.getString(cursor.getColumnIndex("delivery_date")));
+//                            contact.put("vehicle_name", cursor.getString(cursor.getColumnIndex("vehicle_name")));
+//                            contact.put("blackbox", cursor.getString(cursor.getColumnIndex("blackbox")));
+//                            contact.put("delivery_no", cursor.getString(cursor.getColumnIndex("delivery_no")));
+//                            contact.put("plan_seq", cursor.getString(cursor.getColumnIndex("plan_seq")));
+//                            contact.put("station_code", cursor.getString(cursor.getColumnIndex("station_code")));
+//                            contact.put("station_name", cursor.getString(cursor.getColumnIndex("station_name")));
+//                            contact.put("station_address", cursor.getString(cursor.getColumnIndex("station_address")));
+//                            contact.put("station_lat", cursor.getString(cursor.getColumnIndex("station_lat")));
+//                            contact.put("station_lon", cursor.getString(cursor.getColumnIndex("station_lon")));
+//                            contact.put("station_area", cursor.getString(cursor.getColumnIndex("station_area")));
+//                            contact.put("plan_in", cursor.getString(cursor.getColumnIndex("plan_in")));
+//                            contact.put("plan_out", cursor.getString(cursor.getColumnIndex("plan_out")));
+//                            contact.put("consignment_no", cursor.getString(cursor.getColumnIndex("consignment_no")));
+//                            contact.put("order_no", cursor.getString(cursor.getColumnIndex("order_no")));
+//                            contact.put("activity_type", cursor.getString(cursor.getColumnIndex("activity_type")));
+//                            contact.put("box_no", cursor.getString(cursor.getColumnIndex("box_no")));
+//                            contact.put("waybill_no", cursor.getString(cursor.getColumnIndex("waybill_no")));
+//                            contact.put("weight", cursor.getString(cursor.getColumnIndex("weight")));
+//                            contact.put("actual_seq", cursor.getString(cursor.getColumnIndex("actual_seq")));
+//                            contact.put("actual_lat", cursor.getString(cursor.getColumnIndex("actual_lat")));
+//                            contact.put("actual_lon", cursor.getString(cursor.getColumnIndex("actual_lon")));
+//                            contact.put("time_actual_in", cursor.getString(cursor.getColumnIndex("time_actual_in")));
+//                            contact.put("time_actual_out", cursor.getString(cursor.getColumnIndex("time_actual_out")));
+//                            contact.put("time_begin", cursor.getString(cursor.getColumnIndex("time_begin")));
+//                            contact.put("time_end", cursor.getString(cursor.getColumnIndex("time_end")));
+//                            contact.put("signature", cursor.getString(cursor.getColumnIndex("signature")));
+//                            contact.put("is_scanned", cursor.getString(cursor.getColumnIndex("is_scaned")));
+//                            contact.put("comment", cursor.getString(cursor.getColumnIndex("comment")));
+//                            contact.put("picture1", cursor.getString(cursor.getColumnIndex("picture1")));
+//                            contact.put("picture2", cursor.getString(cursor.getColumnIndex("picture2")));
+//                            contact.put("picture3", cursor.getString(cursor.getColumnIndex("picture3")));
+//                            contact.put("driver_code", cursor.getString(cursor.getColumnIndex("driver_code")));
+//                            contact.put("driver_name", cursor.getString(cursor.getColumnIndex("driver_name")));
+//                            contact.put("modified_date", cursor.getString(cursor.getColumnIndex("modified_date")));
+//                            contact.put("trash", cursor.getString(cursor.getColumnIndex("trash")));
+//
+//                            ContactArray.put(i, contact);
+//                            i++;
+//
+//                        } catch (JSONException e) {
+//                            e.printStackTrace();
+//                        }
+//
+//
+//                    } while (cursor.moveToNext());
+//
+//                    Root.put("data", ContactArray);
+//                    ps.append(Root.toString());
+//
+//                    Log.d("UploadWorkLog", "doInBackground: " + Root.toString());
+//
+//                    JSONArray fa = narisv.SendAndGetJson_reJsonArray(Root, url);
+//                    if (fa.getJSONObject(0).getString("status").equals("Y")) {
+//
+//
+//                        for (int pic = 0; pic < fa.getJSONObject(0).getJSONArray("returnId").length(); pic++) {
+//
+//
+//                            String json_data = fa.getJSONObject(0).getJSONArray("returnId").getString(pic);
+//
+//                            //เปิดดทีหลัง
+////                                        ContentValues cv = new ContentValues();
+////                                        cv.put("status_upload", "1");
+////                                        databaseHelper.db().update("Plan", cv, "id= '" + json_data + "'", null);
+//
+//                        }
+//
+//
+//                        String sql_getPicture = "select pl.id\n" +
+//                                ", ifnull((select im.name_img from image im where im.name_img = pl.picture1 and im.status_img = '0'), '') as picture1\n" +
+//                                ", ifnull((select im.name_img from image im where im.name_img = pl.picture2 and im.status_img = '0'), '') as picture2\n" +
+//                                ", ifnull((select im.name_img from image im where im.name_img = pl.picture3 and im.status_img = '0'), '') as picture3\n" +
+//                                "from plan pl\n" +
+//                                "where pl.is_scaned = '2'";
+//                        Cursor cursor_getPicture = databaseHelper.selectDB(sql_getPicture);
+//
+//                        JSONArray imageArrayPic1 = new JSONArray();
+//
+//                        Log.d("sdgwsdgwe", "doInBackground: --" + cursor_getPicture.getCount());
+//                        int j = 0;
+//                        cursor_getPicture.moveToFirst();
+//                        if (cursor_getPicture.getCount() > 0) {
+//                            do {
+//                                JSONObject contactPic1 = new JSONObject();
+//
+//                                //Log.d("sdgwsdgwe", "doInBackground: picture1--" + cursor_getPicture.getString(cursor_getPicture.getColumnIndex("picture1")));
+//
+//                                if (!cursor_getPicture.getString(cursor_getPicture.getColumnIndex("picture1")).equals("")) {
+//
+//                                    Log.d("AfWEIUGHMWENFNW", "doInBackground: --" + contactPic1.toString());
+//
+//                                    contactPic1.put("id", cursor_getPicture.getString(cursor_getPicture.getColumnIndex("id")));
+//                                    contactPic1.put("name", cursor_getPicture.getString(cursor_getPicture.getColumnIndex("picture1")));
+//                                    contactPic1.put("seq", "1");
+//
+//                                    File file = new File("/storage/emulated/0/Android/data/ws.epod/files/Pictures/" + cursor_getPicture.getString(cursor_getPicture.getColumnIndex("picture1")));
+//                                    Bitmap myBitmap = BitmapFactory.decodeFile(file.getAbsolutePath());
+//
+//                                    ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+//                                    myBitmap.compress(Bitmap.CompressFormat.JPEG, 70, byteArrayOutputStream);
+//                                    byte[] byteArrayImage = byteArrayOutputStream.toByteArray();
+//                                    encodedImagePic1 = Base64.encodeToString(byteArrayImage, Base64.DEFAULT);
+//
+//                                    contactPic1.put("img", "data:image/jpeg;base64," + encodedImagePic1);
+//
+//                                    imageArrayPic1.put(contactPic1);
+//
+//                                }
+//
+//                                if (!cursor_getPicture.getString(cursor_getPicture.getColumnIndex("picture2")).equals("")) {
+//
+//                                    contactPic1 = new JSONObject();
+//
+//                                    contactPic1.put("id", cursor_getPicture.getString(cursor_getPicture.getColumnIndex("id")));
+//                                    contactPic1.put("name", cursor_getPicture.getString(cursor_getPicture.getColumnIndex("picture2")));
+//                                    contactPic1.put("seq", "2");
+//
+//                                    File file = new File("/storage/emulated/0/Android/data/ws.epod/files/Pictures/" + cursor_getPicture.getString(cursor_getPicture.getColumnIndex("picture2")));
+//                                    Bitmap myBitmap = BitmapFactory.decodeFile(file.getAbsolutePath());
+//
+//                                    ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+//                                    myBitmap.compress(Bitmap.CompressFormat.JPEG, 70, byteArrayOutputStream);
+//                                    byte[] byteArrayImage = byteArrayOutputStream.toByteArray();
+//                                    encodedImagePic2 = Base64.encodeToString(byteArrayImage, Base64.DEFAULT);
+//
+//                                    contactPic1.put("img", "data:image/jpeg;base64," + encodedImagePic2);
+//
+//                                    imageArrayPic1.put(contactPic1);
+//
+//                                }
+//
+//                                if (!cursor_getPicture.getString(cursor_getPicture.getColumnIndex("picture3")).equals("")) {
+//
+//                                    contactPic1 = new JSONObject();
+//
+//                                    contactPic1.put("id", cursor_getPicture.getString(cursor_getPicture.getColumnIndex("id")));
+//                                    contactPic1.put("name", cursor_getPicture.getString(cursor_getPicture.getColumnIndex("picture3")));
+//                                    contactPic1.put("seq", "3");
+//
+//                                    File file = new File("/storage/emulated/0/Android/data/ws.epod/files/Pictures/" + cursor_getPicture.getString(cursor_getPicture.getColumnIndex("picture3")));
+//                                    Bitmap myBitmap = BitmapFactory.decodeFile(file.getAbsolutePath());
+//
+//                                    ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+//                                    myBitmap.compress(Bitmap.CompressFormat.JPEG, 70, byteArrayOutputStream);
+//                                    byte[] byteArrayImage = byteArrayOutputStream.toByteArray();
+//                                    encodedImagePic3 = Base64.encodeToString(byteArrayImage, Base64.DEFAULT);
+//
+//                                    contactPic1.put("img", "data:image/jpeg;base64," + encodedImagePic3);
+//
+//                                    imageArrayPic1.put(contactPic1);
+//
+//                                }
+//
+//
+//                            } while (cursor_getPicture.moveToNext());
+//
+//                            picture1.put("data", imageArrayPic1);
+//
+//                            Log.d("dataLog", "doInBackground: " + picture1);
+//
+//
+//                            if (picture1 != null) {
+//                                JSONArray sendPic1 = narisv.sendImageBase64(picture1, urlPic1);
+//                                if (sendPic1.getJSONObject(0).getString("status").equals("Y")) {
+//
+//                                    for (int pic = 0; pic < sendPic1.getJSONObject(0).getJSONArray("img").length(); pic++) {
+//
+//                                        String json_data = sendPic1.getJSONObject(0).getJSONArray("img").getString(pic);
+//                                        Log.d("TRD", "TRD_1: " + json_data);
+//
+////                                        ContentValues cv = new ContentValues();
+////                                        cv.put("status_img", "1");
+////                                        databaseHelper.db().update("image", cv, "name_img= '" + json_data + "'", null);
+//
+//                                    }
+//                                } else {
+//                                    Log.d("TRD", "TRD_1: Fail");
+//                                }
+//                            }//pic1
+//
+//
+//                        }
+//
+//
+//                        new LoadWork().execute();
+//                        IsSuccess = 1;
+//                    } else {
+//                        IsSuccess = 0;
+//                    }
+//
+//                } else {
+//                    new LoadWork().execute();
+//                    IsSuccess = 1;
+//                }
+//
+//            } catch (Exception e) {
+//                e.printStackTrace();
+//            }
+//
+//            return null;
+//        }
+//
+//        @Override
+//        protected void onPostExecute(String s) {
+//            super.onPostExecute(s);
+//
+//
 //            String mess = "";
 //            switch (IsSuccess) {
 //                case -1:
 //                    mess = "Synced (not found data)";
 //                    break;
 //                case 1:
-//                    mess = "LoadWork Synced";
-//                    getDataFromsqlite();
+//                    mess = "Synced";
+//                    getDataFromSQLite("", "", "");
+//                    tvFilterStatus.setText("Filter by: Today");
+//                    pd.dismiss();
 //                    break;
-//                case 2:
-//                    mess = "LoadWork Sync error!!";
+//                case 0:
+//                    mess = "Sync error!!";
 //                    break;
 //            }
 //            Snackbar.make(rvPlanWork, mess, Snackbar.LENGTH_LONG)
 //                    .setAction("Action", null).show();
-//            planWorkAdapter.notifyDataSetChanged();
-        }
+//            if (planWorkAdapter != null) {
+//                planWorkAdapter.notifyDataSetChanged();
+//            }
+//        }
+//    }
 
-        @Override
-        protected void onProgressUpdate(String... values) {
-            super.onProgressUpdate(values);
-        }
-
-
-    }
+//    public class LoadWork extends AsyncTask<String, String, String> {
+//
+//        int IsSuccess = 1;
+//
+//
+//        @Override
+//        protected String doInBackground(String... strings) {
+//
+//            try {
+//
+//                String max_modified_date = "";
+//
+//
+//                String sql_getMaxModifild_date = "select MAX(modified_date) as max_modified_date from Plan ";
+//                Cursor cursor_etMaxModifild_date = databaseHelper.selectDB(sql_getMaxModifild_date);
+//                cursor_etMaxModifild_date.moveToFirst();
+//                if (cursor_etMaxModifild_date.getCount() > 0) {
+//                    do {
+//                        max_modified_date = cursor_etMaxModifild_date.getString(cursor_etMaxModifild_date.getColumnIndex("max_modified_date"));
+//
+//                    } while (cursor_etMaxModifild_date.moveToNext());
+//                } else {
+//                    max_modified_date += "";
+//                }
+//                Log.d("PlanWorkLOG", "MaxModifiedDate : " + max_modified_date);
+//
+//
+//                String pattern = "yyyy-MM-dd%kk:mm:ss";
+//                SimpleDateFormat sdf = new SimpleDateFormat(pattern, new Locale("en", "th"));
+//                String getDate = sdf.format(Calendar.getInstance().getTime());
+//
+//                String url = Var.WEBSERVICE2 + "func=getPlan&vehicle_id=" + Var.UserLogin.driver_vehicle_id + "&driver_id=" + Var.UserLogin.driver_id + "&serial=" +
+//                        Var.UserLogin.driver_serial + "&phone_date=" + getDate + "&date+";
+//                Log.d("PlanWorkLOG", url);
+//                JSONArray GETJSON = narisv.getJsonFromUrl_reJsonArray(url);
+//                Log.d("PlanWorkLOG", GETJSON.toString());
+//                String sql2 = "";
+//
+//
+//                for (int i = 0; i < GETJSON.length(); i++) {
+//
+//                    JSONObject json_data = GETJSON.getJSONObject(i);
+//
+//                }
+//
+//                if (narisv.INSERT_AS_SQL("Plan", GETJSON, "")) {
+//                    Log.d("PlanWorkLOG", "SAVED INVOICE HEADER");
+//
+//                    String url_consign = Var.WEBSERVICE2 + "func=getConsignment&vehicle_id=" + Var.UserLogin.driver_vehicle_id;
+//                    JSONArray GETJSON_CONSIGN = narisv.getJsonFromUrl_reJsonArray(url_consign);
+//
+//                    if (narisv.INSERT_AS_SQL("consignment", GETJSON_CONSIGN, "")) {
+//                        Log.d("PlanWorkLOG", "SAVED Consignment.");
+//
+//                    } else {
+//                        Log.d("PlanWorkLOG", "FAIL save consignment.");
+//                    }
+//
+//
+//                    IsSuccess = 1;
+//                } else {
+//                    Log.d("PlanWorkLOG", "FAIL");
+//                    IsSuccess = 2;
+//                }
+//
+//
+//            } catch (Exception e) {
+//
+//            }
+//
+//            return null;
+//        }
+//
+//        @Override
+//        protected void onPostExecute(String s) {
+//            super.onPostExecute(s);
+//
+//            firstSync = true;
+//
+////            String mess = "";
+////            switch (IsSuccess) {
+////                case -1:
+////                    mess = "Synced (not found data)";
+////                    break;
+////                case 1:
+////                    mess = "LoadWork Synced";
+////                    getDataFromsqlite();
+////                    break;
+////                case 2:
+////                    mess = "LoadWork Sync error!!";
+////                    break;
+////            }
+////            Snackbar.make(rvPlanWork, mess, Snackbar.LENGTH_LONG)
+////                    .setAction("Action", null).show();
+////            planWorkAdapter.notifyDataSetChanged();
+//        }
+//
+//        @Override
+//        protected void onProgressUpdate(String... values) {
+//            super.onProgressUpdate(values);
+//        }
+//
+//
+//    }
 
     private void getDataFromSQLite(String today, String dateBegin, String dateEnd) {
 
