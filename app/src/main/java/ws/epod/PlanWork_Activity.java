@@ -794,10 +794,10 @@ public class PlanWork_Activity extends AppCompatActivity {
                             contact.put("actual_seq", cursor.getString(cursor.getColumnIndex("actual_seq")));
                             contact.put("actual_lat", cursor.getString(cursor.getColumnIndex("actual_lat")));
                             contact.put("actual_lon", cursor.getString(cursor.getColumnIndex("actual_lon")));
-                            contact.put("time_actual_in", cursor.getString(cursor.getColumnIndex("time_actual_in")));
-                            contact.put("time_actual_out", cursor.getString(cursor.getColumnIndex("time_actual_out")));
+//                            contact.put("time_actual_in", cursor.getString(cursor.getColumnIndex("time_actual_in")));
+//                            contact.put("time_actual_out", cursor.getString(cursor.getColumnIndex("time_actual_out")));
                             contact.put("time_begin", cursor.getString(cursor.getColumnIndex("time_begin")));
-                            contact.put("time_end", cursor.getString(cursor.getColumnIndex("time_end")));
+//                            contact.put("time_end", cursor.getString(cursor.getColumnIndex("time_end")));
                             contact.put("signature", cursor.getString(cursor.getColumnIndex("signature")));
                             contact.put("is_scanned", cursor.getString(cursor.getColumnIndex("is_scaned")));
                             contact.put("comment", cursor.getString(cursor.getColumnIndex("comment")));

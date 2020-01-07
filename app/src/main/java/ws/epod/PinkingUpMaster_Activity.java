@@ -291,8 +291,8 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
 
                             }
                         }
-                        if(childView.getIs_scaned().equals("1")){
-                            statusCheck =+ 1;
+                        if (childView.getIs_scaned().equals("1")) {
+                            statusCheck = +1;
                         }
 
 
@@ -523,10 +523,10 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
                     return false;
                 }
             }
-            if(statusCheck != 0){
+            if (statusCheck != 0) {
             }
         } else {
-           // Toasty.error(getApplicationContext(), "Please reason!", Toast.LENGTH_SHORT, true).show();
+            // Toasty.error(getApplicationContext(), "Please reason!", Toast.LENGTH_SHORT, true).show();
             return true;
         }
 
@@ -564,6 +564,8 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
                             expandedList.setPicture1("");
                             expandedList.setPicture2("");
                             expandedList.setPicture3("");
+
+                            Log.d("Asjkljkksdf", "(1)scan: " + getdate() + " lat:" + getlat() + " lon:" + getlon());
 
 
                             Toasty.success(getApplicationContext(), "Checked!", Toast.LENGTH_SHORT, true).show();
@@ -659,6 +661,11 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
                                 listTitle.setBox_checked(String.valueOf(listTitle.getCount()));
                             }
                             expandedList.setIs_scaned("2");
+                            expandedList.setTime_begin(getdate());
+                            expandedList.setActual_lat(getlat());
+                            expandedList.setActual_lon(getlon());
+
+                            Log.d("Asjkljkksdf", "(2)scan: " + getdate() + " lat:" + getlat() + " lon:" + getlon());
 
                             Toasty.success(getApplicationContext(), "Please comment!", Toast.LENGTH_SHORT, true).show();
 
@@ -2017,7 +2024,7 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
 //                    expandableListView.expandGroup(positionGroup);
                     alertDialog.dismiss();
                     //Toast.makeText(PinkingUpMaster_Activity.this, "Saved.", Toast.LENGTH_SHORT).show();
-                    Toasty.success(getApplicationContext(),"reasoned.",Toast.LENGTH_SHORT, true);
+                    Toasty.success(getApplicationContext(), "reasoned.", Toast.LENGTH_SHORT, true);
                 }
             });
 

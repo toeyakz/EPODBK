@@ -645,8 +645,11 @@ public class Deliver_Activity extends AppCompatActivity {
                                 listTitle.setBox_checked(String.valueOf(listTitle.getCount()));
                             }
                             expandedList.setIs_scaned("2");
+                            expandedList.setTime_begin(getdate());
+                            expandedList.setActual_lat(getlat());
+                            expandedList.setActual_lon(getlon());
 
-                            Toasty.success(getApplicationContext(), "Please comment!", Toast.LENGTH_SHORT, true).show();
+                            Toasty.success(getApplicationContext(), "Please reason!", Toast.LENGTH_SHORT, true).show();
 
                             expandableListView.setAdapter(expandableListAdapter);
                             expandableListView.expandGroup(i);
