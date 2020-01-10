@@ -871,6 +871,7 @@ public class PlanWork_Activity extends AppCompatActivity {
                                         //เปิดดทีหลัง
                                         ContentValues cv = new ContentValues();
                                         cv.put("status_upload", "1");
+                                        cv.put("is_save", "1");
                                         databaseHelper.db().update("Plan", cv, "id= '" + json_data + "'", null);
 
                                     }
@@ -1719,7 +1720,7 @@ public class PlanWork_Activity extends AppCompatActivity {
                     "from Plan pl2 \n" +
                     "inner join consignment cm2 on cm2.consignment_no = pl2.consignment_no \n" +
                     "where pl2.delivery_no = pl.delivery_no and pl2.activity_type = 'UNLOAD' and pl2.consignment_no = cm2.consignment_no and cm2.trash = '0' \n" +
-                    "and pl.order_no in (select order_no from pic_sign where pic_sign_unload <> '')) as finish " +
+                    "and pl2.order_no in (select order_no from pic_sign where pic_sign_unload <> '')) as finish " +
                     "from Plan pl\n" +
                     "inner join consignment cm on cm.consignment_no = pl.consignment_no\n" +
                     "where (pl.delivery_date between '" + dateBegin + "' and '" + dateEnd + "') and pl.trash = '0'" +
@@ -1742,7 +1743,7 @@ public class PlanWork_Activity extends AppCompatActivity {
                     "from Plan pl2 \n" +
                     "inner join consignment cm2 on cm2.consignment_no = pl2.consignment_no \n" +
                     "where pl2.delivery_no = pl.delivery_no and pl2.activity_type = 'UNLOAD' and pl2.consignment_no = cm2.consignment_no and cm2.trash = '0' \n" +
-                    "and pl.order_no in (select order_no from pic_sign where pic_sign_unload <> '')) as finish " +
+                    "and pl2.order_no in (select order_no from pic_sign where pic_sign_unload <> '')) as finish " +
                     "from Plan pl\n" +
                     "inner join consignment cm on cm.consignment_no = pl.consignment_no\n" +
                     "where pl.delivery_date >= '" + today + "' and pl.trash = '0'" +
@@ -1764,7 +1765,7 @@ public class PlanWork_Activity extends AppCompatActivity {
                     "from Plan pl2  \n" +
                     "inner join consignment cm2 on cm2.consignment_no = pl2.consignment_no  \n" +
                     "where pl2.delivery_no = pl.delivery_no and pl2.activity_type = 'UNLOAD' and pl2.consignment_no = cm2.consignment_no and cm2.trash = '0'  and pl2.trash = '0'\n" +
-                    "and pl.order_no in (select order_no from pic_sign where pic_sign_unload <> '')) as finish  \n" +
+                    "and pl2.order_no in (select order_no from pic_sign where pic_sign_unload <> '')) as finish  \n" +
                     "from Plan pl \n" +
                     "inner join consignment cm on cm.consignment_no = pl.consignment_no \n" +
                     "where pl.delivery_date >= date('now') and pl.trash = '0'\n" +

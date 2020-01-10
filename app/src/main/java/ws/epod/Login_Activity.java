@@ -674,7 +674,7 @@ public class Login_Activity extends AppCompatActivity {
                 "station_lat Decimal(9,6), station_lon Decimal(8,6), station_area TEXT(255,0), plan_in TEXT(255,0), plan_out TEXT(255,0)" +
                 ", consignment_no TEXT(255,0), order_no TEXT(255,0), activity_type TEXT(255,0), box_no TEXT(255,0), waybill_no TEXT(255,0), weight TEXT(255,0)" +
                 ", actual_seq TEXT(255,0), actual_lat Decimal(9,6), actual_lon Decimal(8,6), time_actual_in TEXT(255,0), time_actual_out TEXT(255,0)" +
-                ", time_begin TEXT(255,0), time_end TEXT(255,0), signature TEXT(255,0), is_scaned TEXT(255,0), status_order_no TEXT(255,0)" +
+                ", time_begin TEXT(255,0), time_end TEXT(255,0), signature TEXT(255,0), is_scaned TEXT(255,0), is_save TEXT(255,0), status_order_no TEXT(255,0)" +
                 ", comment TEXT(255,0), picture1 TEXT(255,0), picture2 TEXT(255,0), picture3 TEXT(255,0), status_upload TEXT(255,0), driver_code TEXT(255,0)" +
                 ", driver_name TEXT(255,0), modified_date TEXT(255,0), trash TEXT(255,0), UNIQUE(id));";
         databaseHelper.execDB(sql);
