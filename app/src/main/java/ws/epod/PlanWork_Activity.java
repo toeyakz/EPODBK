@@ -271,6 +271,9 @@ public class PlanWork_Activity extends AppCompatActivity {
                 hideAll();
                 new UploadWork2ND().execute();
                 getDataFromSQLite("", "", "");
+
+                SharedPreferences getDateFilter = getSharedPreferences("getDateFilter", Context.MODE_PRIVATE);
+                getDateFilter.edit().clear().commit();
                 //  rvPlanWork.setAdapter(sectionAdapter);
 
             }
@@ -296,6 +299,10 @@ public class PlanWork_Activity extends AppCompatActivity {
             String today = sdf.format(Calendar.getInstance().getTime());
             getDataFromSQLite(today, "", "");
             tvFilterStatus.setText("Filter by: Today");
+
+            SharedPreferences getDateFilter = getSharedPreferences("getDateFilter", Context.MODE_PRIVATE);
+            getDateFilter.edit().clear().commit();
+
         });
         fabFilterDate.setOnClickListener(view -> {
             Animation animation = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.alpha);
@@ -376,6 +383,9 @@ public class PlanWork_Activity extends AppCompatActivity {
             Animation animation = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.alpha);
             button.startAnimation(animation);
 
+            SharedPreferences getDateFilter2 = getSharedPreferences("getDateFilter", Context.MODE_PRIVATE);
+            getDateFilter2.edit().clear();
+
             String FilterFromDate = edtFromDate.getText().toString().trim();
             String FilterToDate = edtToDate.getText().toString().trim();
 
@@ -386,7 +396,15 @@ public class PlanWork_Activity extends AppCompatActivity {
                 textView18.setText("Please select to date.");
                 textView18.setVisibility(View.VISIBLE);
             } else {
+
+
                 getDataFromSQLite("", FilterFromDate, FilterToDate);
+
+                SharedPreferences getDateFilter = getSharedPreferences("getDateFilter", Context.MODE_PRIVATE);
+                getDateFilter.edit().putString("FilterFromDate", FilterFromDate).apply();
+                getDateFilter.edit().putString("FilterToDate", FilterToDate).apply();
+
+
                 tvFilterStatus.setText("Filter by: " + FilterFromDate + " to " + FilterToDate);
                 alertDialog.dismiss();
             }
@@ -433,7 +451,18 @@ public class PlanWork_Activity extends AppCompatActivity {
         //createCustomAnimation();
 
         // new LoadWork().execute();
-        getDataFromSQLite("", "", "");
+
+        SharedPreferences getDateFilter = getSharedPreferences("getDateFilter", Context.MODE_PRIVATE);
+        String fromDate = getDateFilter.getString("FilterFromDate", "");
+        String toDate = getDateFilter.getString("FilterToDate", "");
+        getDateFilter.edit().clear().commit();
+
+        if(!fromDate.equals("")){
+            getDataFromSQLite("", fromDate, toDate);
+        }else{
+            getDataFromSQLite("", "", "");
+        }
+
         tvFilterStatus.setText("Filter by: Today");
         if (NarisBaseValue.firstlogin == 0) {
             new UploadWork2ND().execute();
@@ -1233,6 +1262,7 @@ public class PlanWork_Activity extends AppCompatActivity {
 
             firstSync = true;
             getDataFromSQLite("", "", "");
+
             String mess = "";
             switch (IsSuccess) {
                 case 1:
@@ -1260,6 +1290,8 @@ public class PlanWork_Activity extends AppCompatActivity {
 
                     break;
             }
+            SharedPreferences getDateFilter = getSharedPreferences("getDateFilter", Context.MODE_PRIVATE);
+            getDateFilter.edit().clear().commit();
 
 
         }
