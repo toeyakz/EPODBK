@@ -183,39 +183,47 @@
             tools:layout_editor_absoluteY="16dp" />
 
         <ImageView
+            android:id="@+id/fabSync"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right"
+            android:padding="8dp"
+            android:src="@drawable/ic_autorenew_black_24dp" />
+
+        <ImageView
             android:id="@+id/savePickingUp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="right"
             android:padding="8dp"
             android:src="@drawable/ic_save_black_24dp" />
-<!--        <TextView-->
-<!--            android:id="@+id/savePickingUp"-->
-<!--            android:layout_width="wrap_content"-->
-<!--            android:layout_height="match_parent"-->
-<!--            android:layout_gravity="right"-->
-<!--            android:layout_marginStart="5dp"-->
-<!--            android:paddingLeft="5dp"-->
-<!--            android:paddingTop="15dp"-->
-<!--            android:paddingRight="5dp"-->
-<!--            android:paddingBottom="15dp"-->
-<!--            android:text="@string/save"-->
-<!--            android:textColor="#fff"-->
-<!--            android:textStyle="bold" />-->
+        <!--        <TextView-->
+        <!--            android:id="@+id/savePickingUp"-->
+        <!--            android:layout_width="wrap_content"-->
+        <!--            android:layout_height="match_parent"-->
+        <!--            android:layout_gravity="right"-->
+        <!--            android:layout_marginStart="5dp"-->
+        <!--            android:paddingLeft="5dp"-->
+        <!--            android:paddingTop="15dp"-->
+        <!--            android:paddingRight="5dp"-->
+        <!--            android:paddingBottom="15dp"-->
+        <!--            android:text="@string/save"-->
+        <!--            android:textColor="#fff"-->
+        <!--            android:textStyle="bold" />-->
 
-        <View
-            android:layout_width="1dp"
-            android:layout_height="30dp"
-            android:layout_gravity="right"
-            android:layout_marginEnd="5dp"
-            android:background="#DADADA" />
+        <!--        <View-->
+        <!--            android:layout_width="1dp"-->
+        <!--            android:layout_height="30dp"-->
+        <!--            android:layout_gravity="right"-->
+        <!--            android:layout_marginEnd="5dp"-->
+        <!--            android:background="#DADADA" />-->
 
         <TextView
             android:id="@+id/bnCloseJobPick"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_gravity="right"
-            android:layout_marginEnd="5dp"
+            android:layout_marginEnd="13dp"
             android:paddingLeft="5dp"
             android:paddingTop="15dp"
             android:paddingRight="5dp"
@@ -223,9 +231,6 @@
             android:text="@string/confirm2"
             android:textColor="#fff"
             android:textStyle="bold" />
-
-
-
 
         <TextView
             android:id="@+id/headertest"

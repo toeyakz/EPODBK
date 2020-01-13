@@ -81,6 +81,7 @@ import ws.epod.Helper.NarisBaseValue;
 import ws.epod.ObjectClass.LanguageClass;
 import ws.epod.ObjectClass.SQLiteModel.Plan_model;
 import ws.epod.ObjectClass.Var;
+import ws.epod.sync.UploadDataPlan;
 
 public class PlanWork_Activity extends AppCompatActivity {
 
@@ -111,6 +112,8 @@ public class PlanWork_Activity extends AppCompatActivity {
 
     private APIInterface apiInterface;
 
+    private UploadDataPlan uploadDataPlan;
+
     FloatingActionButton ftPlan;
 
     SimpleDateFormat dateFormatter;
@@ -140,6 +143,8 @@ public class PlanWork_Activity extends AppCompatActivity {
         narisv = new NarisBaseValue(PlanWork_Activity.this);
 
         apiInterface = APIClient.getClient().create(APIInterface.class);
+
+        uploadDataPlan = new UploadDataPlan(getApplicationContext());
 
         netCon = new ConnectionDetector(getApplicationContext());
         databaseHelper = new DatabaseHelper(getApplicationContext());
@@ -187,6 +192,9 @@ public class PlanWork_Activity extends AppCompatActivity {
         getDataFromSQLite("", "", "");
         // new UploadWork2ND().execute();
         //new UpLoadWork().execute();
+
+
+
 
     }
 
@@ -743,7 +751,6 @@ public class PlanWork_Activity extends AppCompatActivity {
     public class UploadWork2ND extends AsyncTask<String, Integer, String> {
 
         int IsSuccess = 1;
-        float percentage;
 
         @Override
         protected void onPreExecute() {

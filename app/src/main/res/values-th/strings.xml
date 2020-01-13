@@ -97,4 +97,5 @@
     <string name="sync_data">กำลังซิงค์ข้อมูล..</string>
     <string name="job_operation">การดำเนินงาน</string>
     <string name="station">สถานี</string>
+    <string name="sync">ซิงค์</string>
 </resources>

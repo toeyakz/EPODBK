@@ -87,7 +87,8 @@ public class PickingUp_Activity extends AppCompatActivity {
             String box_no = cursor.getString(cursor.getColumnIndex("box_no"));
             String waybill_no = cursor.getString(cursor.getColumnIndex("waybill_no"));
 
-            list_expand.add(new PickingUpEexpand_Model(box_no, waybill_no,"","", "","","","","","","", "",""));
+            list_expand.add(new PickingUpEexpand_Model(box_no, waybill_no,"","", "","","","","","","", "","",""));
+
 
 
 

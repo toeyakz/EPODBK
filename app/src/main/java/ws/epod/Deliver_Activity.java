@@ -360,7 +360,11 @@ public class Deliver_Activity extends AppCompatActivity {
                                                                 cv.put("actual_lat", expandedList.getActual_lat());
                                                                 cv.put("actual_lon", expandedList.getActual_lon());
                                                                 cv.put("time_begin", expandedList.getTime_begin());
-                                                                cv.put("is_save", expandedList.getIs_save());
+                                                                if (expandedList.getIs_save().equals("2")) {
+                                                                    expandedList.setIs_save("1");
+                                                                    cv.put("is_save", expandedList.getIs_save());
+                                                                }
+
                                                                 cv.put("status_upload", "0");
 
                                                                 if (!expandedList.getPicture1().equals("")) {
@@ -530,7 +534,7 @@ public class Deliver_Activity extends AppCompatActivity {
                 for (int j = 0; j < expandableListAdapter.getChildrenCount(i); j++) {
                     final DeliverExpand_Model expandedList = (DeliverExpand_Model) expandableListAdapter.getChild(i, j);
 
-                    if (expandedList.getIs_save().equals("0")) {
+                    if (expandedList.getIs_save().equals("0") || expandedList.getIs_save().equals("2")) {
                         if (expandedList.getIs_scaned().equals("0") || expandedList.getIs_scaned().equals("2")) {
                             if (value.equals(expandedList.getWaybil_no())) {
 
@@ -547,7 +551,7 @@ public class Deliver_Activity extends AppCompatActivity {
                                 expandedList.setTime_begin(getdate());
                                 expandedList.setActual_lat(getlat());
                                 expandedList.setActual_lon(getlon());
-                                expandedList.setIs_save("1");
+                                expandedList.setIs_save("2");
                                 expandedList.setComment("");
                                 expandedList.setPicture1("");
                                 expandedList.setPicture2("");
@@ -586,7 +590,7 @@ public class Deliver_Activity extends AppCompatActivity {
                 for (int j = 0; j < expandableListAdapter.getChildrenCount(i); j++) {
                     final DeliverExpand_Model expandedList = (DeliverExpand_Model) expandableListAdapter.getChild(i, j);
 
-                    if (expandedList.getIs_save().equals("0")) {
+                    if (expandedList.getIs_save().equals("0") || expandedList.getIs_save().equals("2")) {
                         if (!expandedList.getIs_scaned().equals("0")) {
                             if (value.equals(expandedList.getWaybil_no())) {
 
@@ -637,7 +641,7 @@ public class Deliver_Activity extends AppCompatActivity {
                 for (int j = 0; j < expandableListAdapter.getChildrenCount(i); j++) {
                     final DeliverExpand_Model expandedList = (DeliverExpand_Model) expandableListAdapter.getChild(i, j);
 
-                    if (expandedList.getIs_save().equals("0")) {
+                    if (expandedList.getIs_save().equals("0") || expandedList.getIs_save().equals("2")) {
                         if (((DeliverExpand_Model) expandableListAdapter.getChild(i, j)).getIs_scaned().equals("0")
                                 || ((DeliverExpand_Model) expandableListAdapter.getChild(i, j)).getIs_scaned().equals("1")) {
                             if (value.equals(expandedList.getWaybil_no())) {
