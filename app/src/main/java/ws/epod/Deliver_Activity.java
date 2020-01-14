@@ -27,6 +27,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.BaseExpandableListAdapter;
@@ -82,6 +83,7 @@ import ws.epod.ObjectClass.SQLiteModel.Dialog_Cons_Detail_Model;
 import ws.epod.ObjectClass.SQLiteModel.PickingUpEexpand_Model;
 import ws.epod.ObjectClass.SQLiteModel.PickingUp_Model;
 import ws.epod.ObjectClass.SQLiteModel.Reason_model;
+import ws.epod.sync.UploadDataPlan;
 
 public class Deliver_Activity extends AppCompatActivity {
 
@@ -104,7 +106,8 @@ public class Deliver_Activity extends AppCompatActivity {
     private static final int IMAGE_02 = 1889;
     private static final int IMAGE_03 = 1890;
 
-    ImageView imgBack_Deliver, imgSave_dialog_Deli, imgClose_dialog, imgCommentPick_01, imgNewPick01, imgDeletePick01, imgCommentPick_02, imgNewPick02, imgDeletePick02, imgCommentPick_03, imgNewPick03, imgDeletePick03, imageView8, imgCameraScan;
+    ImageView imgBack_Deliver, imgSave_dialog_Deli, imgClose_dialog, imgCommentPick_01, imgNewPick01, imgDeletePick01, imgCommentPick_02, imgNewPick02, imgDeletePick02
+            , imgCommentPick_03, imgNewPick03, imgDeletePick03, imageView8, imgCameraScan, fabSync;
 
     EditText edtComment_PICK, edtFineWaybillPick;
 
@@ -150,6 +153,7 @@ public class Deliver_Activity extends AppCompatActivity {
     LinearLayout layoutJobHome, layoutJobToday;
 
     LocationTrack locationTrack;
+    private UploadDataPlan uploadDataPlan;
 
     private int statusComment = 0;
     private int isComment = 0;
@@ -180,7 +184,7 @@ public class Deliver_Activity extends AppCompatActivity {
         narisv = new NarisBaseValue(Deliver_Activity.this);
         netCon = new ConnectionDetector(getApplicationContext());
         databaseHelper = new DatabaseHelper(getApplicationContext());
-
+        uploadDataPlan = new UploadDataPlan(Deliver_Activity.this);
         arrayNameImage[0] = "";
         arrayNameImage[1] = "";
         arrayNameImage[2] = "";
@@ -203,6 +207,7 @@ public class Deliver_Activity extends AppCompatActivity {
         layoutJobToday = findViewById(R.id.layoutJobToday);
         fabJobHome = findViewById(R.id.fabJobHome);
         fabJobToday = findViewById(R.id.fabJobToday);
+        fabSync = findViewById(R.id.fabSync);
         expandableListView = findViewById(R.id.exPandDeli);
 
 
@@ -239,234 +244,14 @@ public class Deliver_Activity extends AppCompatActivity {
         });
 
 
-//        cancelDeliver.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick( View view ) {
-//
-//                String delivery_no = "";
-//                String plan_seq = "";
-//                String consignment_no = "";
-//
-//                for (int i = 0; i < expandableListAdapter.getGroupCount(); i++) {
-//                    expandableListAdapter.getChildrenCount(i);
-//                    for (int j = 0; j < expandableListAdapter.getChildrenCount(i); j++) {
-//                        final DeliverExpand_Model expandedList = (DeliverExpand_Model) expandableListAdapter.getChild(i, j);
-//                        delivery_no = expandedList.getDelivery_no();
-//                        plan_seq = expandedList.getPlan_seq();
-//                        consignment_no = expandedList.getConsignment();
-//                    }
-//                }
-//
-//                Intent intent = new Intent(getApplicationContext(), Signature_Activity.class);
-////                intent.addFlags(Intent.FLAG);
-//                intent.putExtra("delivery_no", delivery_no);
-//                intent.putExtra("plan_seq", plan_seq);
-//                intent.putExtra("consignment_no", consignment_no);
-//                startActivity(intent);
-//            }
-//        });
-
         imgSave_dialog_Deli.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Animation animation = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.alpha);
                 imgSave_dialog_Deli.startAnimation(animation);
 
+                isSave();
 
-                statusComment = 0;
-                isComment = 0;
-
-                int positionGroup = 0;
-                int positionChiew = 0;
-
-
-                for (int i = 0; i < expandableListAdapter.getGroupCount(); i++) {
-                    Deliver_Model groupView = (Deliver_Model) expandableListAdapter.getGroup(i);
-                    for (int j = 0; j < expandableListAdapter.getChildrenCount(i); j++) {
-                        DeliverExpand_Model childView = (DeliverExpand_Model) expandableListAdapter.getChild(i, j);
-
-                        if (childView.getIs_scaned().equals("2")) {
-                            statusComment += 1;
-                            if (!childView.getComment().equals("") || !childView.getPicture1().equals("") ||
-                                    !childView.getPicture2().equals("") || !childView.getPicture3().equals("")) {
-                                isComment += 1;
-                            } else {
-                                positionGroup = i;
-                                positionChiew = j;
-
-
-                            }
-                        }
-                        if (childView.getIs_scaned().equals("1")) {
-                            statusCheck = +1;
-                        }
-
-
-                    }
-
-                }
-
-
-                if (isCheckIntent(statusComment, isComment, statusCheck)) {
-                    final AlertDialog.Builder alertbox = new AlertDialog.Builder(view.getRootView().getContext());
-                    alertbox.setTitle(getString(R.string.alert));
-                    alertbox.setMessage("SAVE JOB?");
-                    alertbox.setNegativeButton("SAVE",
-                            new DialogInterface.OnClickListener() {
-
-                                @SuppressLint("StaticFieldLeak")
-                                public void onClick(DialogInterface arg0,
-                                                    int arg1) {
-
-                                    new AsyncTask<Void, Void, Void>() {
-                                        int IsSuccess = 1;
-                                        int positionGroup = -1;
-                                        ProgressDialog pd;
-                                        private int lastExpandedPosition = -1;
-
-                                        @Override
-                                        protected void onPreExecute() {
-                                            super.onPreExecute();
-                                            pd = new ProgressDialog(Deliver_Activity.this);
-                                            pd.setCancelable(false);
-                                            pd.setMessage("Saving data..");
-                                            pd.show();
-
-                                        }
-
-                                        @Override
-                                        protected Void doInBackground(Void... voids) {
-
-                                            try {
-                                                if (expandableListAdapter == null) {
-                                                    cancel(true);
-                                                } else {
-
-                                                    int[] position = isCheckSaveBox(expandableListAdapter);
-                                                    positionGroup = position[1];
-                                                    if (position[0] == 1) {
-                                                        for (int i = 0; i < expandableListAdapter.getGroupCount(); i++) {
-                                                            expandableListAdapter.getChildrenCount(i);
-                                                            for (int j = 0; j < expandableListAdapter.getChildrenCount(i); j++) {
-                                                                final DeliverExpand_Model expandedList = (DeliverExpand_Model) expandableListAdapter.getChild(i, j);
-
-                                                                Log.d("ASfasdjhfk", "doInBackground: " + expandedList.getConsignment() + "box : " + expandedList.getBox_no() + " status: " +
-                                                                        expandedList.getIs_scaned() + " date: " + expandedList.getTime_begin() + "lat: " + expandedList.getActual_lat() + "lon: " +
-                                                                        expandedList.getActual_lon());
-////
-                                                                ContentValues cv = new ContentValues();
-
-                                                                cv.put("is_scaned", expandedList.getIs_scaned());
-                                                                cv.put("actual_lat", expandedList.getActual_lat());
-                                                                cv.put("actual_lon", expandedList.getActual_lon());
-                                                                cv.put("time_begin", expandedList.getTime_begin());
-                                                                if (expandedList.getIs_save().equals("2")) {
-                                                                    expandedList.setIs_save("1");
-                                                                    cv.put("is_save", expandedList.getIs_save());
-                                                                }
-
-                                                                cv.put("status_upload", "0");
-
-                                                                if (!expandedList.getPicture1().equals("")) {
-                                                                    cv.put("picture1", expandedList.getPicture1());
-                                                                }
-                                                                if (!expandedList.getPicture2().equals("")) {
-                                                                    cv.put("picture2", expandedList.getPicture2());
-                                                                }
-                                                                if (!expandedList.getPicture3().equals("")) {
-                                                                    cv.put("picture3", expandedList.getPicture3());
-                                                                }
-                                                                if (!expandedList.getComment().equals("")) {
-                                                                    cv.put("comment", expandedList.getComment());
-                                                                }
-                                                                cv.put("modified_date", getdate());
-                                                                databaseHelper.db().update("Plan", cv, "delivery_no= '" + expandedList.getDelivery_no() + "' and plan_seq = '" + expandedList.getPlan_seq() + "' and activity_type = 'UNLOAD' and " +
-                                                                        " consignment_no = '" + expandedList.getConsignment() + "' and box_no = '" + expandedList.getBox_no() + "' and trash = '0'", null);
-
-                                                                if (!expandedList.getPicture1().equals("")) {
-                                                                    String sql = "INSERT INTO image (name_img, status_img) VALUES('" + expandedList.getPicture1() + "','0')";
-                                                                    databaseHelper.db().execSQL(sql);
-                                                                }
-                                                                if (!expandedList.getPicture2().equals("")) {
-                                                                    String sql = "INSERT INTO image (name_img, status_img) VALUES('" + expandedList.getPicture2() + "','0')";
-                                                                    databaseHelper.db().execSQL(sql);
-                                                                }
-                                                                if (!expandedList.getPicture3().equals("")) {
-                                                                    String sql = "INSERT INTO image (name_img, status_img) VALUES('" + expandedList.getPicture3() + "','0')";
-                                                                    databaseHelper.db().execSQL(sql);
-                                                                }
-
-                                                                lastExpandedPosition = i;
-                                                                IsSuccess = 1;
-                                                            }
-                                                        }
-                                                        Temp1 = new ArrayList<>();
-                                                        Temp2 = new ArrayList<>();
-                                                        Temp3 = new ArrayList<>();
-                                                    } else {
-                                                        Log.d("checkFail", "doInBackground: save fail");
-                                                        IsSuccess = 0;
-                                                    }
-
-                                                }
-
-                                            } catch (Exception e) {
-                                                IsSuccess = 0;
-                                            }
-
-
-                                            return null;
-                                        }
-
-                                        @Override
-                                        protected void onPostExecute(Void aVoid) {
-                                            super.onPostExecute(aVoid);
-
-                                            pd.dismiss();
-
-                                            if (IsSuccess == 1) {
-                                                Toast.makeText(Deliver_Activity.this, "Saved.", Toast.LENGTH_SHORT).show();
-                                                getSQLite();
-
-                                            } else {
-                                                if (positionGroup != -1) {
-                                                    expandableListView.smoothScrollToPosition(positionGroup);
-                                                    new Handler().postDelayed(new Runnable() {
-                                                        @Override
-                                                        public void run() {
-                                                            //expandableListView.setSelectedGroup(positionGroub);
-
-                                                            expandableListView.expandGroup(positionGroup);
-                                                        }
-                                                    }, 500);
-
-
-                                                }
-                                                Toast.makeText(Deliver_Activity.this, "can't save.", Toast.LENGTH_SHORT).show();
-                                            }
-                                        }
-                                    }.execute();
-
-                                }
-                            });
-                    alertbox.setNeutralButton(getString(R.string.cancel),
-                            new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialogInterface, int i) {
-
-                                }
-                            });
-                    alertbox.show();
-                } else {
-                    expandableListView.setAdapter(expandableListAdapter);
-                    expandableListView.expandGroup(positionGroup);
-                    expandableListAdapter.notifyDataSetChanged();
-                    expandableListView.smoothScrollToPositionFromTop(positionGroup, positionChiew);
-
-
-                    Toasty.error(getApplicationContext(), "Please reason!", Toast.LENGTH_SHORT, true).show();
-                    return;
-                }
             }
         });
 
@@ -499,7 +284,232 @@ public class Deliver_Activity extends AppCompatActivity {
             }
         });
 
+        expandableListView.setOnScrollListener(new AbsListView.OnScrollListener() {
+            @SuppressLint("RestrictedApi")
+            @Override
+            public void onScrollStateChanged(AbsListView view, int scrollState) {
+                switch (scrollState) {
+                    case SCROLL_STATE_IDLE:
+                        Log.d("Asfas5f", "The RecyclerView is not scrolling");
+                        fabHome.setVisibility(View.VISIBLE);
+                        break;
+                    case SCROLL_STATE_TOUCH_SCROLL:
+                        Log.d("Asfas5f", "Scrolling now");
+                        hideAll();
+                        fabHome.setVisibility(View.GONE);
+                        break;
+                    case 	SCROLL_STATE_FLING:
+                        Log.d("Asfas5f", "Scroll Settling");
+                        hideAll();
+                        fabHome.setVisibility(View.GONE);
+                        break;
 
+                }
+            }
+
+            @Override
+            public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+
+            }
+        });
+
+    }
+
+    private void isSave() {
+        statusComment = 0;
+        isComment = 0;
+
+        int positionGroup = 0;
+        int positionChiew = 0;
+
+
+        for (int i = 0; i < expandableListAdapter.getGroupCount(); i++) {
+            Deliver_Model groupView = (Deliver_Model) expandableListAdapter.getGroup(i);
+            for (int j = 0; j < expandableListAdapter.getChildrenCount(i); j++) {
+                DeliverExpand_Model childView = (DeliverExpand_Model) expandableListAdapter.getChild(i, j);
+
+                if (childView.getIs_scaned().equals("2")) {
+                    statusComment += 1;
+                    if (!childView.getComment().equals("") || !childView.getPicture1().equals("") ||
+                            !childView.getPicture2().equals("") || !childView.getPicture3().equals("")) {
+                        isComment += 1;
+                    } else {
+                        positionGroup = i;
+                        positionChiew = j;
+
+
+                    }
+                }
+                if (childView.getIs_scaned().equals("1")) {
+                    statusCheck = +1;
+                }
+
+
+            }
+
+        }
+
+
+        if (isCheckIntent(statusComment, isComment, statusCheck)) {
+            final AlertDialog.Builder alertbox = new AlertDialog.Builder(this);
+            alertbox.setTitle(getString(R.string.alert));
+            alertbox.setMessage("SAVE JOB?");
+            alertbox.setNegativeButton("SAVE",
+                    new DialogInterface.OnClickListener() {
+
+                        @SuppressLint("StaticFieldLeak")
+                        public void onClick(DialogInterface arg0,
+                                            int arg1) {
+
+                            new AsyncTask<Void, Void, Void>() {
+                                int IsSuccess = 1;
+                                int positionGroup = -1;
+                                ProgressDialog pd;
+                                private int lastExpandedPosition = -1;
+
+                                @Override
+                                protected void onPreExecute() {
+                                    super.onPreExecute();
+                                    pd = new ProgressDialog(Deliver_Activity.this);
+                                    pd.setCancelable(false);
+                                    pd.setMessage("Saving data..");
+                                    pd.show();
+
+                                }
+
+                                @Override
+                                protected Void doInBackground(Void... voids) {
+
+                                    try {
+                                        if (expandableListAdapter == null) {
+                                            cancel(true);
+                                        } else {
+
+                                            int[] position = isCheckSaveBox(expandableListAdapter);
+                                            positionGroup = position[1];
+                                            if (position[0] == 1) {
+                                                for (int i = 0; i < expandableListAdapter.getGroupCount(); i++) {
+                                                    expandableListAdapter.getChildrenCount(i);
+                                                    for (int j = 0; j < expandableListAdapter.getChildrenCount(i); j++) {
+                                                        final DeliverExpand_Model expandedList = (DeliverExpand_Model) expandableListAdapter.getChild(i, j);
+
+                                                        Log.d("ASfasdjhfk", "doInBackground: " + expandedList.getConsignment() + "box : " + expandedList.getBox_no() + " status: " +
+                                                                expandedList.getIs_scaned() + " date: " + expandedList.getTime_begin() + "lat: " + expandedList.getActual_lat() + "lon: " +
+                                                                expandedList.getActual_lon());
+////
+                                                        ContentValues cv = new ContentValues();
+
+                                                        cv.put("is_scaned", expandedList.getIs_scaned());
+                                                        cv.put("actual_lat", expandedList.getActual_lat());
+                                                        cv.put("actual_lon", expandedList.getActual_lon());
+                                                        cv.put("time_begin", expandedList.getTime_begin());
+                                                        if (expandedList.getIs_save().equals("2")) {
+                                                            expandedList.setIs_save("1");
+                                                            cv.put("is_save", expandedList.getIs_save());
+                                                        }
+
+                                                        cv.put("status_upload", "0");
+
+                                                        if (!expandedList.getPicture1().equals("")) {
+                                                            cv.put("picture1", expandedList.getPicture1());
+                                                        }
+                                                        if (!expandedList.getPicture2().equals("")) {
+                                                            cv.put("picture2", expandedList.getPicture2());
+                                                        }
+                                                        if (!expandedList.getPicture3().equals("")) {
+                                                            cv.put("picture3", expandedList.getPicture3());
+                                                        }
+                                                        if (!expandedList.getComment().equals("")) {
+                                                            cv.put("comment", expandedList.getComment());
+                                                        }
+                                                        cv.put("modified_date", getdate());
+                                                        databaseHelper.db().update("Plan", cv, "delivery_no= '" + expandedList.getDelivery_no() + "' and plan_seq = '" + expandedList.getPlan_seq() + "' and activity_type = 'UNLOAD' and " +
+                                                                " consignment_no = '" + expandedList.getConsignment() + "' and box_no = '" + expandedList.getBox_no() + "' and trash = '0'", null);
+
+                                                        if (!expandedList.getPicture1().equals("")) {
+                                                            String sql = "INSERT INTO image (name_img, status_img) VALUES('" + expandedList.getPicture1() + "','0')";
+                                                            databaseHelper.db().execSQL(sql);
+                                                        }
+                                                        if (!expandedList.getPicture2().equals("")) {
+                                                            String sql = "INSERT INTO image (name_img, status_img) VALUES('" + expandedList.getPicture2() + "','0')";
+                                                            databaseHelper.db().execSQL(sql);
+                                                        }
+                                                        if (!expandedList.getPicture3().equals("")) {
+                                                            String sql = "INSERT INTO image (name_img, status_img) VALUES('" + expandedList.getPicture3() + "','0')";
+                                                            databaseHelper.db().execSQL(sql);
+                                                        }
+
+                                                        lastExpandedPosition = i;
+                                                        IsSuccess = 1;
+                                                    }
+                                                }
+                                                Temp1 = new ArrayList<>();
+                                                Temp2 = new ArrayList<>();
+                                                Temp3 = new ArrayList<>();
+                                            } else {
+                                                Log.d("checkFail", "doInBackground: save fail");
+                                                IsSuccess = 0;
+                                            }
+
+                                        }
+
+                                    } catch (Exception e) {
+                                        IsSuccess = 0;
+                                    }
+
+
+                                    return null;
+                                }
+
+                                @Override
+                                protected void onPostExecute(Void aVoid) {
+                                    super.onPostExecute(aVoid);
+
+                                    pd.dismiss();
+
+                                    if (IsSuccess == 1) {
+                                        Toast.makeText(Deliver_Activity.this, "Saved.", Toast.LENGTH_SHORT).show();
+                                        getSQLite();
+
+                                    } else {
+                                        if (positionGroup != -1) {
+                                            expandableListView.smoothScrollToPosition(positionGroup);
+                                            new Handler().postDelayed(new Runnable() {
+                                                @Override
+                                                public void run() {
+                                                    //expandableListView.setSelectedGroup(positionGroub);
+
+                                                    expandableListView.expandGroup(positionGroup);
+                                                }
+                                            }, 500);
+
+
+                                        }
+                                        Toast.makeText(Deliver_Activity.this, "can't save.", Toast.LENGTH_SHORT).show();
+                                    }
+                                }
+                            }.execute();
+
+                        }
+                    });
+            alertbox.setNeutralButton(getString(R.string.cancel),
+                    new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+
+                        }
+                    });
+            alertbox.show();
+        } else {
+            expandableListView.setAdapter(expandableListAdapter);
+            expandableListView.expandGroup(positionGroup);
+            expandableListAdapter.notifyDataSetChanged();
+            expandableListView.smoothScrollToPositionFromTop(positionGroup, positionChiew);
+
+
+            Toasty.error(getApplicationContext(), "Please reason!", Toast.LENGTH_SHORT, true).show();
+            return;
+        }
     }
 
     private boolean isCheckIntent(int statusComment, int isComment, int statusCheck) {
@@ -658,7 +668,7 @@ public class Deliver_Activity extends AppCompatActivity {
                                 expandedList.setTime_begin(getdate());
                                 expandedList.setActual_lat(getlat());
                                 expandedList.setActual_lon(getlon());
-                                expandedList.setIs_save("1");
+                                expandedList.setIs_save("2");
 
                                 Toasty.success(getApplicationContext(), "Please reason!", Toast.LENGTH_SHORT, true).show();
 
@@ -761,6 +771,40 @@ public class Deliver_Activity extends AppCompatActivity {
             intent.putExtra("EXIT", true);
             startActivity(intent);
         });
+
+        fabSync.setOnClickListener(v -> {
+            Animation animation = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.alpha);
+            fabSync.startAnimation(animation);
+
+            hideAll();
+            saveCheck();
+
+        });
+
+    }
+
+    private void saveCheck() {
+        boolean isSaved = true;
+
+        for (int i = 0; i < expandableListAdapter.getGroupCount(); i++) {
+            Deliver_Model groupView = (Deliver_Model) expandableListAdapter.getGroup(i);
+            for (int j = 0; j < expandableListAdapter.getChildrenCount(i); j++) {
+                DeliverExpand_Model childView = (DeliverExpand_Model) expandableListAdapter.getChild(i, j);
+
+                if (childView.getIs_save().equals("2")) {
+                    isSaved = false;
+                }
+            }
+
+        }
+
+
+        if (isSaved) {
+            uploadDataPlan.Upload();
+           // Toast.makeText(getApplicationContext(), "saved.", Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(getApplicationContext(), "Please save job.", Toast.LENGTH_SHORT).show();
+        }
 
     }
 

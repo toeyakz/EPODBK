@@ -272,8 +272,10 @@ public class UploadDataPlan {
 
                                             UploadImage data = new UploadImage(uploadImage);
 
+                                            Log.d("kksksks", "doInBackground: "+uploadImage.get(0).toString());
 
-                                            if (picture1 != null) {
+
+                                            if (data != null) {
 
                                                 Call<ResponseBody> callImg = apiInterface.uploadPicture(data);
 

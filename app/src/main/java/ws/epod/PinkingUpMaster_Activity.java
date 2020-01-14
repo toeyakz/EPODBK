@@ -84,6 +84,7 @@ import ws.epod.ObjectClass.SQLiteModel.Dialog_Cons_Detail_Model;
 import ws.epod.ObjectClass.SQLiteModel.PickingUpEexpand_Model;
 import ws.epod.ObjectClass.SQLiteModel.PickingUp_Model;
 import ws.epod.ObjectClass.SQLiteModel.Reason_model;
+import ws.epod.sync.UploadDataPlan;
 
 public class PinkingUpMaster_Activity extends AppCompatActivity {
 
@@ -167,6 +168,8 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
     private int isComment = 0;
     private int statusCheck = 0;
 
+    private UploadDataPlan uploadDataPlan;
+
 
     int arrayIsScan = 0;
     //private LocationManager client;
@@ -198,6 +201,7 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
         narisv = new NarisBaseValue(PinkingUpMaster_Activity.this);
         netCon = new ConnectionDetector(getApplicationContext());
         databaseHelper = new DatabaseHelper(getApplicationContext());
+        uploadDataPlan = new UploadDataPlan(PinkingUpMaster_Activity.this);
 
         arrayNameImage[0] = "";
         arrayNameImage[1] = "";
@@ -887,7 +891,8 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
 
 
         if (isSaved) {
-            Toast.makeText(getApplicationContext(), "saved.", Toast.LENGTH_SHORT).show();
+            uploadDataPlan.Upload();
+           // Toast.makeText(getApplicationContext(), "saved.", Toast.LENGTH_SHORT).show();
         } else {
             Toast.makeText(getApplicationContext(), "Please save job.", Toast.LENGTH_SHORT).show();
         }
