@@ -421,6 +421,12 @@ public class Login_Activity extends AppCompatActivity {
                                     jsonArray.getJSONObject(0).remove("status");
                                     Log.d("NARISLOG", "####" + jsonArray.toString());
 
+                                    if (narisv.INSERT_AS_SQL("login", jsonArray, "")) {
+                                        Log.d("insertLogin", "success: ");
+                                    }else{
+                                        Log.d("insertLogin", "fial: ");
+                                    }
+
                                     SharedPreferences login_data = getSharedPreferences("LOGIN", Context.MODE_PRIVATE);
                                     Log.d("login_data", "####" + jsonArray.getJSONObject(0).getString("driver_id"));
 
@@ -428,7 +434,7 @@ public class Login_Activity extends AppCompatActivity {
                                     login_data.edit().putString("username", jsonArray.getJSONObject(0).getString("username")).apply();
                                     login_data.edit().putString("pass", jsonArray.getJSONObject(0).getString("pass")).apply();
                                     login_data.edit().putString("serial", jsonArray.getJSONObject(0).getString("serial")).apply();
-                                    login_data.edit().putString("driver_brand", android.os.Build.BRAND).apply();
+                                    login_data.edit().putString("driver_brand", Build.BRAND).apply();
                                     login_data.edit().putString("vehicle_name", jsonArray.getJSONObject(0).getString("vehicle_name")).apply();
                                     login_data.edit().putString("driver_fname", jsonArray.getJSONObject(0).getString("driver_fname")).apply();
                                     login_data.edit().putString("driver_lname", jsonArray.getJSONObject(0).getString("driver_lname")).apply();
