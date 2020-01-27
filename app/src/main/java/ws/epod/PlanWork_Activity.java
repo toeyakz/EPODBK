@@ -870,6 +870,8 @@ public class PlanWork_Activity extends AppCompatActivity {
                             if (!responseRecieved.equals("")) {
                                 JSONArray jsonArray = new JSONArray(responseRecieved);
 
+                                Log.d("djfklsduhksdio", "doInBackground: "+jsonArray.getJSONObject(0).getString("status"));
+
                                 if (jsonArray.getJSONObject(0).getString("status").equals("Y")) {
 //
                                     for (int pic = 0; pic < jsonArray.getJSONObject(0).getJSONArray("returnId").length(); pic++) {
@@ -1292,7 +1294,9 @@ public class PlanWork_Activity extends AppCompatActivity {
                     mess = "Sync error!!";
                     Snackbar.make(viewFab, mess, Snackbar.LENGTH_LONG)
                             .setAction("Action", null).show();
-
+                    if (progressDialog.isShowing()) {
+                        progressDialog.dismiss();
+                    }
                     // rvPlanWork.setAdapter(sectionAdapter);
                     //// planWorkAdapter.notifyDataSetChanged();
 

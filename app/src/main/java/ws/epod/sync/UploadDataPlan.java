@@ -10,6 +10,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Environment;
+import android.preference.PreferenceManager;
 import android.util.Base64;
 import android.util.Log;
 import android.widget.Toast;
@@ -84,11 +85,11 @@ public class UploadDataPlan {
             protected void onPreExecute() {
                 super.onPreExecute();
 
-                progressDialog = new ProgressDialog(context);
-                progressDialog.setCancelable(false);
-                progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-                progressDialog.setMessage(context.getString(R.string.sync_data));
-                progressDialog.show();
+//                progressDialog = new ProgressDialog(context);
+//                progressDialog.setCancelable(false);
+//                progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+//                progressDialog.setMessage(context.getString(R.string.sync_data));
+//                progressDialog.show();
 
             }
             @Override
@@ -353,6 +354,7 @@ public class UploadDataPlan {
                         //deleteJobAndImage();
                         new uploadInvoice().execute();
                         new DownloadWork().execute();
+
                         break;
                     case 2:
                         mess = "Sync error!!";
@@ -710,13 +712,14 @@ public class UploadDataPlan {
             switch (IsSuccess) {
                 case 1:
                     mess = "Synced";
-                    if (progressDialog.isShowing()) {
-                        progressDialog.dismiss();
-                    }
+//                    if (progressDialog.isShowing()) {
+//                        progressDialog.dismiss();
+//                    }
 //                    Snackbar.make(viewFab, mess, Snackbar.LENGTH_LONG)
 //                            .setAction("Action", null).show();
 
                     Toast.makeText(context, mess, Toast.LENGTH_SHORT).show();
+                    Var.synced = 1;
                     break;
                 case 2:
                     mess = "Sync error!!";

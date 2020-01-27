@@ -682,7 +682,7 @@ public class Login_Activity extends AppCompatActivity {
                 ", actual_seq TEXT(255,0), actual_lat Decimal(9,6), actual_lon Decimal(8,6), time_actual_in TEXT(255,0), time_actual_out TEXT(255,0)" +
                 ", time_begin TEXT(255,0), time_end TEXT(255,0), signature TEXT(255,0), is_scaned TEXT(255,0), is_save TEXT(255,0), status_order_no TEXT(255,0)" +
                 ", comment TEXT(255,0), picture1 TEXT(255,0), picture2 TEXT(255,0), picture3 TEXT(255,0), status_upload TEXT(255,0), driver_code TEXT(255,0)" +
-                ", driver_name TEXT(255,0), modified_date TEXT(255,0), trash TEXT(255,0), UNIQUE(id));";
+                ", driver_name TEXT(255,0), modified_date TEXT(255,0), trash TEXT(255,0), total_box TEXT(255,0), UNIQUE(id));";
         databaseHelper.execDB(sql);
 
         sql = "CREATE TABLE IF NOT EXISTS consignment (id TEXT(255,0), item_code item_code(255,0), item_send_time TEXT(255,0), consignment_no TEXT(255,0), subsidiary_cd TEXT(255,0), deli_note_no TEXT(255,0)," +
@@ -690,7 +690,7 @@ public class Login_Activity extends AppCompatActivity {
                 "ship_mode TEXT(255,0), ship_to_postal_cd TEXT(255,0), item_remarks TEXT(255,0), so_voucher_no TEXT(255,0), global_no TEXT(255,0), header_ref TEXT(255,0)" +
                 ",  deli_note_amount_price TEXT(255,0), comet_seq TEXT(255,0), warehouse TEXT(255,0), detail_remarks TEXT(255,0), isPlan TEXT(255,0)" +
                 ", modified_by TEXT(255,0), modified_date TEXT(255,0), create_by TEXT(255,0), create_date TEXT(255,0), trash TEXT(255,0)" +
-                ", inactive TEXT(255,0), status TEXT(255,0), activity_type TEXT(255,0), UNIQUE(id));";
+                ", inactive TEXT(255,0), status TEXT(255,0), activity_type TEXT(255,0), total_box TEXT(255,0), UNIQUE(id));";
         databaseHelper.execDB(sql);
 
         sql = "CREATE TABLE IF NOT EXISTS image (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,name_img TEXT(255,0), status_img TEXT(255,0), UNIQUE(id));";
