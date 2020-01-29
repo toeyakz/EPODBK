@@ -10,9 +10,10 @@ public class Deliver_Model {
     private String global_cancel = "";
     private String price = "";
     private int count = 0;
+    private int total_b;
 
 
-    public Deliver_Model( String consignment_no, String box_total,String box_checked, String global_total, String station_address, String paytype, String global_cancel, String price ) {
+    public Deliver_Model( String consignment_no, String box_total,String box_checked, String global_total, String station_address, String paytype, String global_cancel, String price, int total_b ) {
         this.consignment_no = consignment_no;
         this.box_total = box_total;
         this.box_checked = box_checked;
@@ -21,6 +22,15 @@ public class Deliver_Model {
         this.paytype = paytype;
         this.global_cancel = global_cancel;
         this.price = price;
+        this.total_b = total_b;
+    }
+
+    public int getTotal_b() {
+        return total_b;
+    }
+
+    public void setTotal_b(int total_b) {
+        this.total_b = total_b;
     }
 
     public int getCount() {

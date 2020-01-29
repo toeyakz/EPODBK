@@ -928,6 +928,7 @@ public class Deliver_Activity extends AppCompatActivity {
                 ",(select cm.deli_note_amount_price from consignment cm where cm.consignment_no = pl.consignment_no) as price\n" +
                 ",(select count(DISTINCT cm.global_no) from consignment cm where cm.consignment_no = pl.consignment_no) as global_total\n" +
                 ",(select count(DISTINCT cm.global_no) from consignment cm where cm.consignment_no = pl.consignment_no and cm.detail_remarks <> null) as global_cancel\n" +
+                ",(select pl2.total_box from Plan pl2 where pl2.activity_type = pl.activity_type and pl2.delivery_no = pl.delivery_no and pl2.plan_seq = pl.plan_seq and pl2.consignment_no = pl.consignment_no and pl2.trash = pl.trash LIMIT 1) as total_b "+
                 "from Plan pl\n" +
                 "inner join consignment cm on cm.consignment_no = pl.consignment_no\n" +
                 "where pl.delivery_no = '" + delivery_no + "' and  pl.plan_seq = '" + plan_seq + "' and pl.activity_type = 'UNLOAD' and pl.trash = '0' and pl.order_no in (select order_no from pic_sign where pic_sign_load <> '' )" +
@@ -949,10 +950,11 @@ public class Deliver_Activity extends AppCompatActivity {
                 String global_total = cursor.getString(cursor.getColumnIndex("global_total"));
                 String global_cancel = cursor.getString(cursor.getColumnIndex("global_cancel"));
                 String price = cursor.getString(cursor.getColumnIndex("price"));
+                int total_b = cursor.getInt(cursor.getColumnIndex("total_b"));
 
                 Log.d("PickingUpLOG", "onCreate: " + "==>" + consignment + "==>" + box_total + "==>" + box_checked);
 
-                list.add(new Deliver_Model(consignment, box_total, box_checked, global_total, station_address, pay_type, global_cancel, price));
+                list.add(new Deliver_Model(consignment, box_total, box_checked, global_total, station_address, pay_type, global_cancel, price, total_b));
 
 
                 String sql_expand = "select delivery_no, plan_seq, box_no, waybill_no, is_scaned, comment, picture1, picture2, picture3, is_save, (box_no - 1)+1 as row_number from Plan where consignment_no = '" + consignment + "' and  activity_type = 'UNLOAD' and trash = '0' and delivery_no = '" + delivery_no + "' and plan_seq = '" + plan_seq + "' ";
@@ -1441,6 +1443,7 @@ public class Deliver_Activity extends AppCompatActivity {
             ImageView pick_pay_type = convertView.findViewById(R.id.pick_pay_type);
             TextView textView25 = convertView.findViewById(R.id.textView25);
             TextView tv_Global_cancel = convertView.findViewById(R.id.tv_Global_cancel);
+            TextView tvTotal = convertView.findViewById(R.id.tvTotal);
 
 
             TextView consignment = convertView.findViewById(R.id.tvPickUp_Consignment);
@@ -1460,6 +1463,7 @@ public class Deliver_Activity extends AppCompatActivity {
                 textView24.setTextColor(Color.parseColor("#1D781F"));
                 textView26.setTextColor(Color.parseColor("#1D781F"));
                 textView25.setTextColor(Color.parseColor("#1D781F"));
+                tvTotal.setTextColor(Color.parseColor("#1D781F"));
             } else {
                 consignment.setTextColor(Color.parseColor("#696969"));
                 consignment.setTextColor(Color.parseColor("#696969"));
@@ -1468,7 +1472,10 @@ public class Deliver_Activity extends AppCompatActivity {
                 textView24.setTextColor(Color.parseColor("#696969"));
                 textView26.setTextColor(Color.parseColor("#696969"));
                 textView25.setTextColor(Color.parseColor("#696969"));
+                tvTotal.setTextColor(Color.parseColor("#696969"));
             }
+
+            tvTotal.setText("Total: " + listTitle.getTotal_b());
 
             if (listTitle.getBox_total().equals("1")) {
                 box.setText(context.getString(R.string.box) + " (" + listTitle.getBox_checked() + " | " + listTitle.getBox_total() + ")");
