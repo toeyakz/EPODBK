@@ -16,6 +16,7 @@ import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Typeface;
 import android.graphics.drawable.BitmapDrawable;
+import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -656,7 +657,7 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
                 for (int j = 0; j < expandableListAdapter.getChildrenCount(i); j++) {
                     final PickingUpEexpand_Model expandedList = (PickingUpEexpand_Model) expandableListAdapter.getChild(i, j);
 
-                    if (expandedList.getIs_save().equals("0") || expandedList.getIs_save().equals("2")) {
+                 //   if (expandedList.getIs_save().equals("0") || expandedList.getIs_save().equals("2")) {
                         if (expandedList.getIs_scaned().equals("0") || expandedList.getIs_scaned().equals("2")) {
                             if (value.equals(expandedList.getWaybil_no())) {
 
@@ -701,7 +702,7 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
                             }
 
                         }
-                    }
+                 //   }
 
                 }
 
@@ -766,7 +767,7 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
                 for (int j = 0; j < expandableListAdapter.getChildrenCount(i); j++) {
                     final PickingUpEexpand_Model expandedList = (PickingUpEexpand_Model) expandableListAdapter.getChild(i, j);
 
-                    if (expandedList.getIs_save().equals("0") || expandedList.getIs_save().equals("2")) {
+                   // if (expandedList.getIs_save().equals("0") || expandedList.getIs_save().equals("2")) {
                         if (((PickingUpEexpand_Model) expandableListAdapter.getChild(i, j)).getIs_scaned().equals("0")
                                 || ((PickingUpEexpand_Model) expandableListAdapter.getChild(i, j)).getIs_scaned().equals("1")) {
                             if (value.equals(expandedList.getWaybil_no())) {
@@ -803,7 +804,7 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
                             }
 
                         }
-                    }
+                    //}
 
 
                 }
@@ -1181,18 +1182,40 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
         int width = photo.getWidth();
         int height = photo.getHeight();
 
-        Matrix matrix = new Matrix();
-        matrix.postRotate(90);
+        int rotate = 0;
 
-        Bitmap resizedBitmap = Bitmap.createBitmap(photo, 0, 0, width, height, matrix, true);
+        try {
+            ExifInterface exif = new ExifInterface(sPath);
+            int orientation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL);
+            switch (orientation) {
+                case ExifInterface.ORIENTATION_ROTATE_270:
+                    rotate = 270;
+                    break;
+                case ExifInterface.ORIENTATION_ROTATE_180:
+                    rotate = 180;
+                    break;
+                case ExifInterface.ORIENTATION_ROTATE_90:
+                    rotate = 90;
+                    break;
+            }
 
-        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-        resizedBitmap.compress(Bitmap.CompressFormat.JPEG, 40, bytes);
+            Matrix matrix = new Matrix();
+            matrix.postRotate(rotate);
 
-        File file = new File(sPath);
-        FileOutputStream fo = new FileOutputStream(file);
-        fo.write(bytes.toByteArray());
-        fo.close();
+
+            Bitmap resizedBitmap = Bitmap.createBitmap(photo, 0, 0, width, height, matrix, true);
+
+            ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+            resizedBitmap.compress(Bitmap.CompressFormat.JPEG, 40, bytes);
+
+            File file = new File(sPath);
+            FileOutputStream fo = new FileOutputStream(file);
+            fo.write(bytes.toByteArray());
+            fo.close();
+
+        } catch (Exception e) {
+            e.getMessage();
+        }
 
     }
 
