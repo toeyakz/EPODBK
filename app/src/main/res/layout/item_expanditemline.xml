@@ -83,6 +83,7 @@
         android:layout_marginEnd="8dp"
         android:layout_marginBottom="8dp"
         android:text="WayBillNo 5244536595"
+        android:textIsSelectable="true"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/ddddd"
         app:layout_constraintStart_toEndOf="@+id/tvExpand_Count"

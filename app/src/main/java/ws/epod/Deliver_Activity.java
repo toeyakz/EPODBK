@@ -634,9 +634,14 @@ public class Deliver_Activity extends AppCompatActivity {
 
                                 if (!listTitle.getBox_checked().equals("0")) {
                                     int count = listTitle.getCount() - 1;
-                                    listTitle.setCount(count);
+                                    if(listTitle.getCount() <= 0){
+                                    }else{
+                                        listTitle.setCount(count);
+                                    }
                                     listTitle.setBox_checked(String.valueOf(listTitle.getCount()));
                                 }
+
+                                Log.d("sdfsdf",listTitle.getBox_checked());
 
                                 expandedList.setIs_scaned("0");
                                 expandedList.setTime_begin("");
