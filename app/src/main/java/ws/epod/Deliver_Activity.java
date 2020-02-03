@@ -626,7 +626,7 @@ public class Deliver_Activity extends AppCompatActivity {
                 for (int j = 0; j < expandableListAdapter.getChildrenCount(i); j++) {
                     final DeliverExpand_Model expandedList = (DeliverExpand_Model) expandableListAdapter.getChild(i, j);
 
-                    if (expandedList.getIs_save().equals("0") || expandedList.getIs_save().equals("2")) {
+                   // if (expandedList.getIs_save().equals("0") || expandedList.getIs_save().equals("2")) {
                         if (!expandedList.getIs_scaned().equals("0")) {
                             if (value.equals(expandedList.getWaybil_no())) {
 
@@ -664,7 +664,7 @@ public class Deliver_Activity extends AppCompatActivity {
 
                             //toastScan("Change the lower button to scan.");
                         }
-                    }
+                   // }
 
                 }
 
@@ -3191,7 +3191,7 @@ public class Deliver_Activity extends AppCompatActivity {
                     if (progressDialog.isShowing()) {
                         progressDialog.dismiss();
                     }
-                    expandableListView.setAdapter(expandableListAdapter);
+                    getSQLite();
 //                    Snackbar.make(viewFab, mess, Snackbar.LENGTH_LONG)
 //                            .setAction("Action", null).show();
 
