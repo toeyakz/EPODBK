@@ -415,7 +415,7 @@ public class Login_Activity extends AppCompatActivity {
                         if ( responseRecieved != null ) {
                             if ( !responseRecieved.equals("") ) {
                                 JSONArray jsonArray = new JSONArray(responseRecieved);
-
+                                Log.d("sa89a6", "####");
                                 if ( jsonArray.getJSONObject(0).getString("status").equals("Y") ) { // success
 
                                     jsonArray.getJSONObject(0).remove("status");
@@ -480,7 +480,7 @@ public class Login_Activity extends AppCompatActivity {
                                     Log.d("NARISLOG", "NOT FOUND USER : " + jsonArray.getJSONObject(0).getString("message"));
                                     IsSuccess = -2;//-2
                                 } else if ( netCon.isConnectingToInternet() ) {
-                                    Log.d("isSuccess_0", "_02");
+                                    Log.d("isSuccess_0", "0");
                                     IsSuccess = 0;//0
                                 }
                             }
@@ -488,10 +488,12 @@ public class Login_Activity extends AppCompatActivity {
                     }
 
                 } catch (IOException e) {
+                    Log.d("isSuccess_0", "00");
                     IsSuccess = 0;
                     e.printStackTrace();
                 } catch (JSONException e) {
                     IsSuccess = 0;
+                    Log.d("isSuccess_0", "000");
                     e.printStackTrace();
                 }
 
@@ -503,10 +505,9 @@ public class Login_Activity extends AppCompatActivity {
             protected void onPostExecute( Integer IsSuccess ) {
                 super.onPostExecute(IsSuccess);
 
+                Log.d("asda56s",IsSuccess+"");
+
                 if ( IsSuccess == 1 ) {
-
-
-
                     SharedPreferences login_get = getSharedPreferences("LOGIN", Context.MODE_PRIVATE);
                     Var.UserLogin.driver_id = login_get.getString("driver_id", "");
                     Var.UserLogin.driver_user = login_get.getString("username", "");
@@ -878,7 +879,7 @@ public class Login_Activity extends AppCompatActivity {
                 alert.setButton(getString(R.string.use_offline), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick( DialogInterface dialog, int which ) {
-                        new Authen_Offline().execute(edtUsername.getText().toString(), edtPassword.getText().toString());
+                      //  new Authen_Offline().execute(edtUsername.getText().toString(), edtPassword.getText().toString());
                     }
                 });
                 alert.setButton2(getString(R.string.cancel), new DialogInterface.OnClickListener() {
