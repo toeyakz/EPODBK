@@ -1189,7 +1189,8 @@ public class PlanWork_Activity extends AppCompatActivity {
 //                Log.d("PlanWorkLOG", url);
                 // JSONArray GETJSON = narisv.getJsonFromUrl_reJsonArray(url);
 
-                Call<ResponseBody> call = apiInterface.downloadWork(Var.UserLogin.driver_vehicle_id, Var.UserLogin.driver_id, Var.UserLogin.driver_serial, getDate, max_modified_date);
+                //Call<ResponseBody> call = apiInterface.downloadWork(Var.UserLogin.driver_vehicle_id, Var.UserLogin.driver_id, Var.UserLogin.driver_serial, getDate, max_modified_date);
+                Call<ResponseBody> call = apiInterface.downloadWork(Var.UserLogin.driver_vehicle_id, Var.UserLogin.driver_id, "4AB5F216", getDate, max_modified_date);
                 Response<ResponseBody> response = call.execute();
                 if (response.code() == 200) {
                     String responseRecieved = response.body().string();
@@ -1775,7 +1776,7 @@ public class PlanWork_Activity extends AppCompatActivity {
                     ", (select count(DISTINCT pl2.consignment_no)  \n" +
                     "from Plan pl2  \n" +
                     "inner join consignment cm2 on cm2.consignment_no = pl2.consignment_no  \n" +
-                    "where pl2.delivery_no = pl.delivery_no and pl2.activity_type = 'UNLOAD' and pl2.consignment_no = cm2.consignment_no and cm2.trash = '0'  and pl2.trash = '0'\n" +
+                    "where pl2.delivery_no = pl.delivery_no and pl2.activity_type = 'UNLOAD' and pl2.consignment_no = cm2.consignment_no  and pl2.trash = '0'\n" +
                     "and pl2.order_no in (select order_no from pic_sign where pic_sign_unload <> '')) as finish  \n" +
                     "from Plan pl \n" +
                     "inner join consignment cm on cm.consignment_no = pl.consignment_no \n" +
