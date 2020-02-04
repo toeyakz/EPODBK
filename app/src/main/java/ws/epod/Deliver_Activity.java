@@ -441,9 +441,9 @@ public class Deliver_Activity extends AppCompatActivity {
                                                         Log.d("ASfasdjhfk", "doInBackground: " + expandedList.getConsignment() + "box : " + expandedList.getBox_no() + " status: " +
                                                                 expandedList.getIs_scaned() + " date: " + expandedList.getTime_begin() + "lat: " + expandedList.getActual_lat() + "lon: " +
                                                                 expandedList.getActual_lon());
-////
-                                                        ContentValues cv = new ContentValues();
 
+
+                                                        ContentValues cv = new ContentValues();
                                                         cv.put("is_scaned", expandedList.getIs_scaned());
                                                         cv.put("actual_lat", expandedList.getActual_lat());
                                                         cv.put("actual_lon", expandedList.getActual_lon());
@@ -737,7 +737,6 @@ public class Deliver_Activity extends AppCompatActivity {
 
                         }
                  //   }
-
 
                 }
 
