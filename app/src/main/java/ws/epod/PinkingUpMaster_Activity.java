@@ -15,17 +15,16 @@ import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Typeface;
-import android.graphics.drawable.BitmapDrawable;
 import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
-import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 import android.util.Base64;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -59,7 +58,6 @@ import com.google.zxing.integration.android.IntentResult;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.w3c.dom.Text;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -71,14 +69,10 @@ import java.io.InputStream;
 import java.io.PrintStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Locale;
-import java.util.function.LongBinaryOperator;
-import java.util.stream.IntStream;
 
 import es.dmoral.toasty.Toasty;
 import fr.ganfra.materialspinner.MaterialSpinner;
@@ -309,6 +303,26 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
             }
         });
 
+        edtFineWaybillPick.setOnKeyListener(new View.OnKeyListener(){
+            public boolean onKey(View v, int keyCode, KeyEvent event)
+            {
+                if (event.getAction() == KeyEvent.ACTION_DOWN)
+                {
+                    switch (keyCode)
+                    {
+                        case KeyEvent.KEYCODE_DPAD_CENTER:
+                        case KeyEvent.KEYCODE_ENTER:
+                            scan(edtFineWaybillPick.getText().toString());
+                            edtFineWaybillPick.setText("");
+                            return true;
+                        default:
+                            break;
+                    }
+                }
+                return false;
+            }
+        });
+
         imageView8.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -335,6 +349,9 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
 
                 String getScanText = edtFineWaybillPick.getText().toString();
                 scan(getScanText);
+//                edtFineWaybillPick.setText("");
+
+
 
                 // edtFineWaybillPick.setText("");
 
@@ -1514,6 +1531,7 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
                 checkBox.setChecked(true);
                 imgEditBoxNoPickup.setEnabled(false);
                 textView29.setVisibility(View.GONE);
+                checkBox.setButtonDrawable(R.drawable.custom_checkbox);
             } else if (expandedList.getIs_scaned().equals("2")) {
                 checkBox.setChecked(true);
                 imgEditBoxNoPickup.setEnabled(true);

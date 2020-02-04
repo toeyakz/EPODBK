@@ -1,7 +1,5 @@
 package ws.epod.ObjectClass;
 
-import android.graphics.Color;
-
 /**
  * Created by Naris on 29/1/59.
  */
@@ -20,5 +18,8 @@ public class MenuObject {
     public String actual_seq = "";
     public String isscaned_pick = "";
     public String isscaned_deli = "";
+    public String total_load = "";
+    public String total_unload = "";
+    public String box_scanned = "";
 
 }

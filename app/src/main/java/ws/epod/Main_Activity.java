@@ -36,8 +36,7 @@ import ws.epod.ObjectClass.Var;
 public class Main_Activity extends LocalizationActivity {
 
     private Toolbar toolbar;
-    private TextView tvMain_truck, tvMain_user_driver, tvMain_name_driver, tvMain_date_bar, tvMain_planSeq, tvMain_cusName, tvMain_address
-            , tvMain_appoint, headerTxt_Main, textView8, textView10;
+    private TextView tvMain_truck, tvMain_user_driver, tvMain_name_driver, tvMain_date_bar, tvMain_planSeq, tvMain_cusName, tvMain_address, tvMain_appoint, headerTxt_Main, textView8, textView10;
     private ImageView imgBack_Job_Main;
     private RecyclerView rvMain;
     ArrayList<MenuObject> list = new ArrayList<>();
@@ -50,9 +49,10 @@ public class Main_Activity extends LocalizationActivity {
     DatabaseHelper databaseHelper;
     NarisBaseValue narisv;
     String consignment_no_pick = "", consignment_no_deli = "", boxes_pick = "", boxes_deli = "", global_total_pick = "", global_total_deli = "",
-            delivery_no02 = "", plan_seq02 = "", isscaned_pick = "", isscaned_deli = "", actual_seq = "";
+            delivery_no02 = "", plan_seq02 = "", isscaned_pick = "", isscaned_deli = "", actual_seq = "", total_load = "", total_unload = "", box_scanned_load = "", box_scanned_unload = "";
 
     boolean che = true;
+
 
     String getDate = "";
 
@@ -60,7 +60,7 @@ public class Main_Activity extends LocalizationActivity {
     public void onResume() {
         super.onResume();
         headerTxt_Main.setText(getApplicationContext().getString(R.string.job_operation));
-       // stopService(new Intent(getApplicationContext(), BackgroundService.class));
+        // stopService(new Intent(getApplicationContext(), BackgroundService.class));
         getSQLite();
         initView();
         addMenu();
@@ -69,19 +69,19 @@ public class Main_Activity extends LocalizationActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-       // startService(new Intent(getApplicationContext(),BackgroundService.class));
+        // startService(new Intent(getApplicationContext(),BackgroundService.class));
 
     }
 
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-      //  checkBackCon();
+        //  checkBackCon();
     }
 
 
     @Override
-    public void onCreate( Bundle savedInstanceState ) {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         LanguageClass.setLanguage(getApplicationContext());
         setContentView(R.layout.activity_main);
@@ -99,11 +99,11 @@ public class Main_Activity extends LocalizationActivity {
         headerTxt_Main = findViewById(R.id.headerTxt_Main);
         imgBack_Job_Main.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick( View view ) {
+            public void onClick(View view) {
                 Animation animation = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.alpha);
                 imgBack_Job_Main.startAnimation(animation);
                 finish();
-               // checkBackCon();
+                // checkBackCon();
 
             }
         });
@@ -188,7 +188,7 @@ public class Main_Activity extends LocalizationActivity {
     private void addMenu() {
 
         list = new ArrayList<>();
-        if ( !consignment_no_pick.equals("0") ) {
+        if (!consignment_no_pick.equals("0")) {
             MenuObject mo = new MenuObject();
             mo.IMAGE = R.drawable.ic_boxxx;
             mo.TEXT = "Picking Up";
@@ -199,10 +199,12 @@ public class Main_Activity extends LocalizationActivity {
             mo.PLAN_SEQ = plan_seq02;
             mo.isscaned_pick = isscaned_pick;
             mo.actual_seq = actual_seq;
+            mo.total_load = total_load;
+            mo.box_scanned = box_scanned_load;
             list.add(mo);
         }
 
-        if ( !consignment_no_deli.equals("0") ) {
+        if (!consignment_no_deli.equals("0")) {
             MenuObject mo2 = new MenuObject();
             mo2.IMAGE = R.drawable.ic_delivery_truck1;
             mo2.TEXT = "Deliver";
@@ -213,6 +215,8 @@ public class Main_Activity extends LocalizationActivity {
             mo2.PLAN_SEQ = plan_seq02;
             mo2.isscaned_deli = isscaned_deli;
             mo2.actual_seq = actual_seq;
+            mo2.total_load = total_unload;
+            mo2.box_scanned = box_scanned_unload;
             list.add(mo2);
 
         }
@@ -228,29 +232,36 @@ public class Main_Activity extends LocalizationActivity {
 
         Log.d("JOBOPERATIONLOG", "plan_seq: " + plan_seq + "delivery_no: " + delivery_no);
 
-        String sql = "select (select count(DISTINCT pl2.consignment_no ) from Plan pl2 where pl2.activity_type = 'LOAD' and pl2.plan_seq = pl.plan_seq  and pl2.delivery_no = pl.delivery_no and pl2.trash = pl.trash) as consignment_no_pick\n" +
-                ", (select count(DISTINCT pl2.consignment_no ) from Plan pl2 where pl2.activity_type = 'UNLOAD' and pl2.plan_seq = pl.plan_seq and pl2.delivery_no = pl.delivery_no and pl2.trash = pl.trash) as consignment_no_deli\n" +
-                ", (select count( pl2.box_no) from Plan pl2 where pl2.activity_type = 'LOAD' and pl2.plan_seq = pl.plan_seq and pl2.delivery_no = pl.delivery_no and pl2.trash = pl.trash) as boxes_pick\n" +
-                ", (select count( pl2.box_no) from Plan pl2 where pl2.activity_type = 'UNLOAD' and pl2.plan_seq = pl.plan_seq and pl2.delivery_no = pl.delivery_no and pl2.trash = pl.trash) as boxes_deli\n" +
-                ", (select count( pl2.box_no) from Plan pl2 where pl2.activity_type = 'LOAD' and pl2.plan_seq = pl.plan_seq and pl2.delivery_no = pl.delivery_no and is_scaned = '0' and pl2.trash = pl.trash) as  pick_isscaned\n" +
-                ", (select count( pl2.box_no) from Plan pl2 where pl2.activity_type = 'UNLOAD' and pl2.plan_seq = pl.plan_seq and pl2.delivery_no = pl.delivery_no and is_scaned = '0' and pl2.trash = pl.trash) as  deli_isscaned\n" +
-                ", (select count( DISTINCT cm.global_no) from consignment cm inner join Plan pl2 on pl2.consignment_no = cm.consignment_no where pl2.activity_type = 'LOAD' and pl2.plan_seq = pl.plan_seq and pl2.delivery_no = pl.delivery_no and pl2.trash = pl.trash) as global_total_pick\n" +
-                ", (select count( DISTINCT cm.global_no) from consignment cm inner join Plan pl2 on pl2.consignment_no = cm.consignment_no where pl2.activity_type = 'UNLOAD' and pl2.plan_seq = pl.plan_seq and pl2.delivery_no = pl.delivery_no and pl2.trash = pl.trash) as global_total_deli\n" +
-                ", (select pl2.time_actual_in from Plan pl2 where pl2.activity_type = 'LOAD' and pl2.plan_seq = pl.plan_seq and pl2.delivery_no = pl.delivery_no and pl2.trash = pl.trash LIMIT 1) as time_actual_in\n" +
-                ", (select count(pl2.is_scaned) from Plan pl2 where pl2.activity_type = 'LOAD' and pl2.plan_seq = pl.plan_seq and pl2.delivery_no = pl.delivery_no and is_scaned = '0' and pl2.trash = pl.trash) as isscaned_pick\n" +
-                ", (select count(pl2.is_scaned) from Plan pl2 where pl2.activity_type = 'UNLOAD' and pl2.plan_seq = pl.plan_seq and pl2.delivery_no = pl.delivery_no and is_scaned = '0' and pl2.trash = pl.trash) as isscaned_deli\n" +
-                ", (select count(pl2.delivery_no)+1 from Plan pl2 where pl2.trash = '0' and pl2.actual_seq <> '0' and pl2.delivery_no = pl.delivery_no and pl2.activity_type = pl.activity_type) as actual_seq\n" +
-                ",pl.delivery_no\n" +
-                ",pl.plan_seq\n" +
-                "from Plan pl\n" +
-                "where pl.delivery_no = '" + delivery_no + "' and pl.plan_seq = '" + plan_seq + "' and pl.trash = '0' " +
+        String sql = "select (select count(DISTINCT pl2.consignment_no ) from Plan pl2 where pl2.activity_type = 'LOAD' and pl2.plan_seq = pl.plan_seq  and pl2.delivery_no = pl.delivery_no and pl2.trash = pl.trash) as consignment_no_pick \n" +
+                ", (select count(DISTINCT pl2.consignment_no ) from Plan pl2 where pl2.activity_type = 'UNLOAD' and pl2.plan_seq = pl.plan_seq and pl2.delivery_no = pl.delivery_no and pl2.trash = pl.trash) as consignment_no_deli \n" +
+                ", (select count( pl2.box_no) from Plan pl2 where pl2.activity_type = 'LOAD' and pl2.plan_seq = pl.plan_seq and pl2.delivery_no = pl.delivery_no and pl2.trash = pl.trash) as boxes_pick \n" +
+                ", (select count( pl2.box_no) from Plan pl2 where pl2.activity_type = 'UNLOAD' and pl2.plan_seq = pl.plan_seq and pl2.delivery_no = pl.delivery_no and pl2.trash = pl.trash) as boxes_deli \n" +
+                ", (select count( pl2.box_no) from Plan pl2 where pl2.activity_type = 'LOAD' and pl2.plan_seq = pl.plan_seq and pl2.delivery_no = pl.delivery_no and is_scaned = '0' and pl2.trash = pl.trash) as  pick_isscaned \n" +
+                ", (select count( pl2.box_no) from Plan pl2 where pl2.activity_type = 'UNLOAD' and pl2.plan_seq = pl.plan_seq and pl2.delivery_no = pl.delivery_no and is_scaned = '0' and pl2.trash = pl.trash) as  deli_isscaned \n" +
+                ", (select count( DISTINCT cm.global_no) from consignment cm inner join Plan pl2 on pl2.consignment_no = cm.consignment_no where pl2.activity_type = 'LOAD' and pl2.plan_seq = pl.plan_seq and pl2.delivery_no = pl.delivery_no and pl2.trash = pl.trash) as global_total_pick \n" +
+                ", (select count( DISTINCT cm.global_no) from consignment cm inner join Plan pl2 on pl2.consignment_no = cm.consignment_no where pl2.activity_type = 'UNLOAD' and pl2.plan_seq = pl.plan_seq and pl2.delivery_no = pl.delivery_no and pl2.trash = pl.trash) as global_total_deli \n" +
+                ", (select pl2.time_actual_in from Plan pl2 where pl2.activity_type = 'LOAD' and pl2.plan_seq = pl.plan_seq and pl2.delivery_no = pl.delivery_no and pl2.trash = pl.trash LIMIT 1) as time_actual_in \n" +
+                ", (select count(pl2.is_scaned) from Plan pl2 where pl2.activity_type = 'LOAD' and pl2.plan_seq = pl.plan_seq and pl2.delivery_no = pl.delivery_no and is_scaned = '0' and pl2.trash = pl.trash) as isscaned_pick \n" +
+                ", (select count(pl2.is_scaned) from Plan pl2 where pl2.activity_type = 'UNLOAD' and pl2.plan_seq = pl.plan_seq and pl2.delivery_no = pl.delivery_no and is_scaned = '0' and pl2.trash = pl.trash) as isscaned_deli \n" +
+                ", (select count(pl2.delivery_no)+1 from Plan pl2 where pl2.trash = '0' and pl2.actual_seq <> '0' and pl2.delivery_no = pl.delivery_no and pl2.activity_type = pl.activity_type) as actual_seq \n" +
+                ",pl.delivery_no \n" +
+                ",pl.plan_seq \n" +
+                ",(SELECT sum(x1.total_box) from(select pl2.total_box from plan pl2 where pl2.delivery_no = pl.delivery_no and pl2.activity_type = 'LOAD' and pl2.plan_seq = pl.plan_seq and pl2.trash = pl.trash group by pl2.consignment_no)x1)as total_laod\n" +
+                ",(SELECT sum(x1.total_box) from(select pl2.total_box from plan pl2 where pl2.delivery_no = pl.delivery_no and pl2.activity_type = 'UNLOAD' and pl2.plan_seq = pl.plan_seq and pl2.trash = pl.trash group by pl2.consignment_no)x1) as total_unlaod\n" +
+                ",(select count(pl2.is_scaned) from plan pl2 where pl2.delivery_no = pl.delivery_no and pl2.plan_seq = pl.plan_seq and pl2.activity_type = 'LOAD' and pl2.trash = pl.trash and pl2.is_scaned <> '0') as box_scanned_load " +
+                ",(select count(pl2.is_scaned) from plan pl2 where pl2.delivery_no = pl.delivery_no and pl2.plan_seq = pl.plan_seq and pl2.activity_type = 'UNLOAD' and pl2.trash = pl.trash and pl2.is_scaned <> '0') as box_scanned_unload " +
+                "from Plan pl \n" +
+                "where pl.delivery_no = '" + delivery_no + "' and pl.plan_seq = '" + plan_seq + "' and pl.trash = '0'  " +
                 "GROUP BY pl.delivery_no";
         Cursor cursor = databaseHelper.selectDB(sql);
         Log.d("JOBOPERATIONLOG", "total line " + cursor.getCount());
 //        ArrayList<JobOperation_Model> jobOperationModels = new ArrayList<>();
+
+        int sum = 0;
+        int sum_scan = 0;
         cursor.moveToFirst();
         do {
-            if(cursor.getCount() > 0){
+            if (cursor.getCount() > 0) {
                 Log.d("JOBOPERATIONLOG", "getSQLite: " + cursor.getString(cursor.getColumnIndex("global_total_pick")));
                 consignment_no_pick = cursor.getString(cursor.getColumnIndex("consignment_no_pick"));
                 consignment_no_deli = cursor.getString(cursor.getColumnIndex("consignment_no_deli"));
@@ -264,6 +275,11 @@ public class Main_Activity extends LocalizationActivity {
                 isscaned_pick = cursor.getString(cursor.getColumnIndex("isscaned_pick"));
                 isscaned_deli = cursor.getString(cursor.getColumnIndex("isscaned_deli"));
                 actual_seq = cursor.getString(cursor.getColumnIndex("actual_seq"));
+                total_load = cursor.getString(cursor.getColumnIndex("total_laod"));
+                total_unload = cursor.getString(cursor.getColumnIndex("total_unlaod"));
+                box_scanned_load = cursor.getString(cursor.getColumnIndex("box_scanned_load"));
+                box_scanned_unload = cursor.getString(cursor.getColumnIndex("box_scanned_unload"));
+
 
                 Log.d("JOBOPERATIONLOG", "onCreate: " + "==>" + isscaned_pick);
             }
@@ -307,8 +323,8 @@ public class Main_Activity extends LocalizationActivity {
         textView10 = findViewById(R.id.textView10);
         textView8 = findViewById(R.id.textView8);
 
-        textView8.setText(getApplicationContext().getString(R.string.address)+": ");
-        textView10.setText(getApplicationContext().getString(R.string.appoint)+": ");
+        textView8.setText(getApplicationContext().getString(R.string.address) + ": ");
+        textView10.setText(getApplicationContext().getString(R.string.appoint) + ": ");
 
         tvMain_truck.setText(" : " + Var.UserLogin.driver_truck_license);
         tvMain_user_driver.setText(" : " + Var.UserLogin.driver_user);
@@ -317,7 +333,7 @@ public class Main_Activity extends LocalizationActivity {
 
         tvMain_cusName.setText(station_name);
         tvMain_address.setText(station_address);
-        if ( !plan_in.equals("") ) {
+        if (!plan_in.equals("")) {
             String drop = dateNewFormat(plan_in);
             tvMain_appoint.setText(drop);
         } else {
@@ -327,18 +343,18 @@ public class Main_Activity extends LocalizationActivity {
 
         String CurrentLang = Locale.getDefault().getLanguage();
 
-        if ( CurrentLang.equals("en") ) {
+        if (CurrentLang.equals("en")) {
             String pattern = "EEEE, dd MMMM yyyy";
             SimpleDateFormat sdf = new SimpleDateFormat(pattern, new Locale("en", "th"));
             tvMain_date_bar.setText(sdf.format(Calendar.getInstance().getTime()));
-        } else if ( CurrentLang.equals("th") ) {
+        } else if (CurrentLang.equals("th")) {
             String pattern = "EEEE, dd MMMM yyyy";
             SimpleDateFormat sdf = new SimpleDateFormat(pattern, new Locale("th", "th"));
             tvMain_date_bar.setText(sdf.format(Calendar.getInstance().getTime()));
         }
     }
 
-    private String dateNewFormat( String pattern ) {
+    private String dateNewFormat(String pattern) {
         String pattern2 = "dd/MM/yyyy kk:mm";
         SimpleDateFormat spf = new SimpleDateFormat("yyyy-MM-dd kk:mm:ss");
         Date newDate = null;

@@ -56,13 +56,29 @@
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:textSize="14dp" />
 
-            <TextView
-                android:id="@+id/tvBoxesMain"
-                android:layout_width="fill_parent"
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Boxes"
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                android:textSize="14dp" />
+                android:layout_gravity="left"
+                android:orientation="horizontal">
+                <TextView
+                    android:id="@+id/tvBoxesMain"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Boxes"
+                    android:layout_marginEnd="8dp"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:textSize="14dp" />
+                <TextView
+                    android:id="@+id/tvTotal"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Total: 12"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:textSize="14dp" />
+            </androidx.appcompat.widget.LinearLayoutCompat>
+
+
 
             <TextView
                 android:id="@+id/textView4"

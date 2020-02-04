@@ -1,14 +1,15 @@
 package ws.epod.Adapter;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.location.LocationManager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -38,33 +39,40 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHolder> {
     private LocationManager client;
 
 
-    public MainAdapter( ArrayList<MenuObject> list, Context context ) {
+    public MainAdapter(ArrayList<MenuObject> list, Context context) {
         this.list = list;
         this.context = context;
     }
 
     @NonNull
     @Override
-    public MainAdapter.ViewHolder onCreateViewHolder( @NonNull ViewGroup viewGroup, int i ) {
+    public MainAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
         View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.item_menu, viewGroup, false);
         MainAdapter.ViewHolder viewHolder = new MainAdapter.ViewHolder(view);
         return viewHolder;
     }
 
 
+    @SuppressLint("SetTextI18n")
     @Override
-    public void onBindViewHolder( @NonNull final MainAdapter.ViewHolder viewHolder, final int i ) {
+    public void onBindViewHolder(@NonNull final MainAdapter.ViewHolder viewHolder, final int i) {
 
         narisv = new NarisBaseValue(context);
         netCon = new ConnectionDetector(context);
         databaseHelper = new DatabaseHelper(context);
 
         viewHolder.picking_Menu.setText(list.get(i).TEXT);
-        viewHolder.tvConsignmentMain.setText(list.get(i).CONSIGNMENT + "•"+context.getString(R.string.consignment));
-        if(list.get(i).BOXES.equals("1")){
-            viewHolder.tvBoxesMain.setText(list.get(i).BOXES + "•"+context.getString(R.string.box));
-        }else{
-            viewHolder.tvBoxesMain.setText(list.get(i).BOXES + "•"+context.getString(R.string.boxes));
+        Log.d("ASfj5ad26", "onBindViewHolder: " + list.get(i).total_load);
+
+
+        viewHolder.tvTotal.setText("Total: " + list.get(i).total_load);
+
+
+        viewHolder.tvConsignmentMain.setText(list.get(i).CONSIGNMENT + "•" + context.getString(R.string.consignment));
+        if (list.get(i).BOXES.equals("1")) {
+            viewHolder.tvBoxesMain.setText(context.getString(R.string.box) + " (" + list.get(i).box_scanned + " | " + list.get(i).BOXES + ")");
+        } else {
+            viewHolder.tvBoxesMain.setText(context.getString(R.string.boxes) + " (" + list.get(i).box_scanned + " | " + list.get(i).BOXES + ")");
         }
 
         viewHolder.textView4.setText(list.get(i).GLOBAL + "•Global");
@@ -72,18 +80,18 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHolder> {
 
         viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick( final View view ) {
+            public void onClick(final View view) {
 
-                if ( list.get(i).TEXT.equals("Picking Up") ) {
+                if (list.get(i).TEXT.equals("Picking Up")) {
 
-                   // Toast.makeText(context, "Pick", Toast.LENGTH_SHORT).show();
+                    // Toast.makeText(context, "Pick", Toast.LENGTH_SHORT).show();
                     Intent intent = new Intent(context, PinkingUpMaster_Activity.class);
                     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                     context.startActivity(intent);
 
                 } else {// DELIVERY
 
-                   // Toast.makeText(context, "deli", Toast.LENGTH_SHORT).show();
+                    // Toast.makeText(context, "deli", Toast.LENGTH_SHORT).show();
                     Intent intent = new Intent(context, Deliver_Activity.class);
                     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                     context.startActivity(intent);
@@ -101,10 +109,10 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHolder> {
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
 
-        TextView picking_Menu, tvConsignmentMain, tvBoxesMain, textView4;
+        TextView picking_Menu, tvConsignmentMain, tvBoxesMain, textView4, tvTotal;
         ImageView icon;
 
-        public ViewHolder( View itemView ) {
+        public ViewHolder(View itemView) {
             super(itemView);
 
             picking_Menu = itemView.findViewById(R.id.picking_Menu);
@@ -112,6 +120,7 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHolder> {
             tvBoxesMain = itemView.findViewById(R.id.tvBoxesMain);
             textView4 = itemView.findViewById(R.id.textView4);
             icon = itemView.findViewById(R.id.icon);
+            tvTotal = itemView.findViewById(R.id.tvTotal);
 
         }
     }

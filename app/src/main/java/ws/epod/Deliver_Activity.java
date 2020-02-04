@@ -25,6 +25,7 @@ import android.os.Handler;
 import android.provider.MediaStore;
 import android.util.Base64;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -97,8 +98,6 @@ import ws.epod.ObjectClass.LocationTrack;
 import ws.epod.ObjectClass.SQLiteModel.DeliverExpand_Model;
 import ws.epod.ObjectClass.SQLiteModel.Deliver_Model;
 import ws.epod.ObjectClass.SQLiteModel.Dialog_Cons_Detail_Model;
-import ws.epod.ObjectClass.SQLiteModel.PickingUpEexpand_Model;
-import ws.epod.ObjectClass.SQLiteModel.PickingUp_Model;
 import ws.epod.ObjectClass.SQLiteModel.Reason_model;
 import ws.epod.ObjectClass.Var;
 import ws.epod.sync.UploadDataPlan;
@@ -299,13 +298,33 @@ public class Deliver_Activity extends AppCompatActivity {
             }
         });
 
+        edtFineWaybillPick.setOnKeyListener(new View.OnKeyListener(){
+            public boolean onKey(View v, int keyCode, KeyEvent event)
+            {
+                if (event.getAction() == KeyEvent.ACTION_DOWN)
+                {
+                    switch (keyCode)
+                    {
+                        case KeyEvent.KEYCODE_DPAD_CENTER:
+                        case KeyEvent.KEYCODE_ENTER:
+                            scan(edtFineWaybillPick.getText().toString());
+                            edtFineWaybillPick.setText("");
+                            return true;
+                        default:
+                            break;
+                    }
+                }
+                return false;
+            }
+        });
+
         btnEnterWaybillNo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
                 String getScanText = edtFineWaybillPick.getText().toString();
                 scan(getScanText);
-
+                edtFineWaybillPick.setText("");
 
             }
         });
@@ -1326,6 +1345,7 @@ public class Deliver_Activity extends AppCompatActivity {
                 checkBox.setChecked(true);
                 imgEditBoxNoPickup.setEnabled(false);
                 textView29.setVisibility(View.GONE);
+                checkBox.setButtonDrawable(R.drawable.custom_checkbox);
             } else if (expandedList.getIs_scaned().equals("2")) {
                 checkBox.setChecked(true);
                 imgEditBoxNoPickup.setEnabled(true);
