@@ -1189,8 +1189,8 @@ public class PlanWork_Activity extends AppCompatActivity {
 //                Log.d("PlanWorkLOG", url);
                 // JSONArray GETJSON = narisv.getJsonFromUrl_reJsonArray(url);
 
-                //Call<ResponseBody> call = apiInterface.downloadWork(Var.UserLogin.driver_vehicle_id, Var.UserLogin.driver_id, Var.UserLogin.driver_serial, getDate, max_modified_date);
-                Call<ResponseBody> call = apiInterface.downloadWork(Var.UserLogin.driver_vehicle_id, Var.UserLogin.driver_id, "4AB5F216", getDate, max_modified_date);
+                Call<ResponseBody> call = apiInterface.downloadWork(Var.UserLogin.driver_vehicle_id, Var.UserLogin.driver_id, Var.UserLogin.driver_serial, getDate, max_modified_date);
+                //Call<ResponseBody> call = apiInterface.downloadWork(Var.UserLogin.driver_vehicle_id, Var.UserLogin.driver_id, "4AB5F216", getDate, max_modified_date);
                 Response<ResponseBody> response = call.execute();
                 if (response.code() == 200) {
                     String responseRecieved = response.body().string();

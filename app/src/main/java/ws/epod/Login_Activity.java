@@ -406,8 +406,8 @@ public class Login_Activity extends AppCompatActivity {
 
                 int IsSuccess = 0;
 
-               // Call<ResponseBody> call = apiInterface.login2nd(user, pass, serail);
-                Call<ResponseBody> call = apiInterface.login2nd(user, pass, "4AB5F216");
+                Call<ResponseBody> call = apiInterface.login2nd(user, pass, serail);
+       //         Call<ResponseBody> call = apiInterface.login2nd(user, pass, "c49ac656");
                 try {
                     Response<ResponseBody> response = call.execute();
                     if ( response.code() == 200 ) {
