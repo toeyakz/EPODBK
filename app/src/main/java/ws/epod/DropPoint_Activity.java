@@ -51,6 +51,8 @@ import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -151,8 +153,8 @@ public class DropPoint_Activity extends AppCompatActivity {
                 "GROUP BY pl.delivery_no, pl.station_name order by cast(pl.plan_seq as real) asc";
         Log.d("isListDrop", "total line " + sql);
         Cursor cursor = databaseHelper.selectDB(sql);
-        Log.d("isListDrop", "total line " + cursor.getCount());
-        final ArrayList<JobList_Model> jobList_models = new ArrayList<>();
+        Log.d("isListDrops8a3a89", "total line " + cursor.getCount());
+        ArrayList<JobList_Model> jobList_models = new ArrayList<>();
         cursor.moveToFirst();
         do {
             if (cursor.getCount() > 0) {
@@ -169,26 +171,53 @@ public class DropPoint_Activity extends AppCompatActivity {
                 String delivery = cursor.getString(cursor.getColumnIndex("delivery"));
                 String station_code = cursor.getString(cursor.getColumnIndex("station_code"));
 
-                jobList_models.add(new JobList_Model(station_name, station_address, plan_seq, plan_in, plan_out, station_lat, station_lon, pick, pickUp, deli, delivery, delivery_no,station_code));
+                jobList_models.add(new JobList_Model(station_name, station_address, plan_seq, plan_in, plan_out, station_lat, station_lon, pick, pickUp, deli, delivery, delivery_no, station_code));
+
+                //Log.d("fk6d5d4", "isListDrop: -> " + plan_seq);
             }
 
         } while (cursor.moveToNext());
 
-
         ArrayList<JobList_Model> jobList_2 = new ArrayList<>();
+        ArrayList<JobList_Model> jobList_3 = new ArrayList<>();
+
+
         for (int i = 0; i < jobList_models.size(); i++) {
-            Log.d("isListDrop", "total line " + jobList_models.get(i).getPlan_in());
-            if(jobList_models.get(i).getPick().equals(jobList_models.get(i).getPickUp())){
+
+            String pick = jobList_models.get(i).getPick();
+            String pickup = jobList_models.get(i).getPickUp();
+            String deli = jobList_models.get(i).getDeli();
+            String delivery = jobList_models.get(i).getDelivery();
+
+            if (!pick.equals("0") || !deli.equals("0")) {
+
+                if ((pick.equals(pickup) && !deli.equals("0") && deli.equals(delivery)) ||
+                        (deli.equals(delivery) && !pick.equals("0") && pick.equals(pickup))) {
+
+                    jobList_2.add(jobList_models.get(i));
+                }
 
             }
+
+
         }
+
+        for (int i = 0; i < jobList_2.size(); i++) {
+            // ลบหัวอันที่แอดเข้าไปแล้ว
+            jobList_models.remove(jobList_2.get(i));
+
+        }
+
+        jobList_3.addAll(jobList_models);
+        jobList_3.addAll(jobList_2);
+
         //setToolbar
         tvDelevery_no.setText(delivery_no);
 
         //setAdapter Lsit
-        jobAdapter = new JobAdapter(jobList_models, getApplicationContext());
+        jobAdapter = new JobAdapter(jobList_3, getApplicationContext());
         rvJob.setAdapter(jobAdapter);
-        cursor.close();
+        // cursor.close();
 
     }
 

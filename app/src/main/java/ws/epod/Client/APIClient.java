@@ -14,8 +14,8 @@ public class APIClient {
     public static Retrofit getClient() {
 
         final OkHttpClient okHttpClient = new OkHttpClient.Builder()
-                .readTimeout(30, TimeUnit.SECONDS)
-                .connectTimeout(30, TimeUnit.SECONDS)
+                .readTimeout(20, TimeUnit.SECONDS)
+                .connectTimeout(20, TimeUnit.SECONDS)
                 .build();
 
         retrofit = new Retrofit.Builder()
