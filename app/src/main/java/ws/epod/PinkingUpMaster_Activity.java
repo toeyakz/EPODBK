@@ -22,14 +22,17 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.provider.MediaStore;
+import android.text.InputType;
 import android.util.Base64;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -303,6 +306,11 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
             }
         });
 
+        edtFineWaybillPick.requestFocus();
+        InputMethodManager mgr = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+        mgr.showSoftInput(edtFineWaybillPick, InputMethodManager.SHOW_FORCED);
+
+
         edtFineWaybillPick.setOnKeyListener(new View.OnKeyListener(){
             public boolean onKey(View v, int keyCode, KeyEvent event)
             {
@@ -390,6 +398,8 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
 
 
     }
+
+
 
     private boolean checkTotalScan() {
 

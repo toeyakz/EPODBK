@@ -31,6 +31,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -123,8 +124,7 @@ public class Deliver_Activity extends AppCompatActivity {
     private static final int IMAGE_02 = 1889;
     private static final int IMAGE_03 = 1890;
 
-    ImageView imgBack_Deliver, imgSave_dialog_Deli, imgClose_dialog, imgCommentPick_01, imgNewPick01, imgDeletePick01, imgCommentPick_02, imgNewPick02, imgDeletePick02
-            , imgCommentPick_03, imgNewPick03, imgDeletePick03, imageView8, imgCameraScan, fabSync;
+    ImageView imgBack_Deliver, imgSave_dialog_Deli, imgClose_dialog, imgCommentPick_01, imgNewPick01, imgDeletePick01, imgCommentPick_02, imgNewPick02, imgDeletePick02, imgCommentPick_03, imgNewPick03, imgDeletePick03, imageView8, imgCameraScan, fabSync;
 
     EditText edtComment_PICK, edtFineWaybillPick;
 
@@ -298,13 +298,15 @@ public class Deliver_Activity extends AppCompatActivity {
             }
         });
 
-        edtFineWaybillPick.setOnKeyListener(new View.OnKeyListener(){
-            public boolean onKey(View v, int keyCode, KeyEvent event)
-            {
-                if (event.getAction() == KeyEvent.ACTION_DOWN)
-                {
-                    switch (keyCode)
-                    {
+
+        edtFineWaybillPick.requestFocus();
+        InputMethodManager mgr = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+        mgr.showSoftInput(edtFineWaybillPick, InputMethodManager.SHOW_FORCED);
+
+        edtFineWaybillPick.setOnKeyListener(new View.OnKeyListener() {
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+                if (event.getAction() == KeyEvent.ACTION_DOWN) {
+                    switch (keyCode) {
                         case KeyEvent.KEYCODE_DPAD_CENTER:
                         case KeyEvent.KEYCODE_ENTER:
                             scan(edtFineWaybillPick.getText().toString());
@@ -343,7 +345,7 @@ public class Deliver_Activity extends AppCompatActivity {
                         hideAll();
                         fabHome.setVisibility(View.GONE);
                         break;
-                    case 	SCROLL_STATE_FLING:
+                    case SCROLL_STATE_FLING:
                         Log.d("Asfas5f", "Scroll Settling");
                         hideAll();
                         fabHome.setVisibility(View.GONE);
@@ -589,50 +591,50 @@ public class Deliver_Activity extends AppCompatActivity {
                 for (int j = 0; j < expandableListAdapter.getChildrenCount(i); j++) {
                     final DeliverExpand_Model expandedList = (DeliverExpand_Model) expandableListAdapter.getChild(i, j);
 
-                   // if (expandedList.getIs_save().equals("0") || expandedList.getIs_save().equals("2")) {
-                        if (expandedList.getIs_scaned().equals("0") || expandedList.getIs_scaned().equals("2")) {
-                            if (value.equals(expandedList.getWaybil_no())) {
+                    // if (expandedList.getIs_save().equals("0") || expandedList.getIs_save().equals("2")) {
+                    if (expandedList.getIs_scaned().equals("0") || expandedList.getIs_scaned().equals("2")) {
+                        if (value.equals(expandedList.getWaybil_no())) {
 
-                                scannotFind = true;
+                            scannotFind = true;
 
-                                if (!expandedList.getIs_scaned().equals("2")) {
-                                    if (listTitle.getCount() >= 0) {
-                                        int count = listTitle.getCount() + 1;
-                                        listTitle.setCount(count);
-                                        listTitle.setBox_checked(String.valueOf(listTitle.getCount()));
-                                    }
+                            if (!expandedList.getIs_scaned().equals("2")) {
+                                if (listTitle.getCount() >= 0) {
+                                    int count = listTitle.getCount() + 1;
+                                    listTitle.setCount(count);
+                                    listTitle.setBox_checked(String.valueOf(listTitle.getCount()));
                                 }
-                                expandedList.setIs_scaned("1");
-                                expandedList.setTime_begin(getdate());
-                                expandedList.setActual_lat(getlat());
-                                expandedList.setActual_lon(getlon());
-                                expandedList.setIs_save("2");
-                                expandedList.setComment("");
-                                expandedList.setPicture1("");
-                                expandedList.setPicture2("");
-                                expandedList.setPicture3("");
-
-
-                                Toasty.success(getApplicationContext(), "Checked!", Toast.LENGTH_SHORT, true).show();
-
-                                //ToastScan(icon,"Checked.");
-
-                                expandableListView.setAdapter(expandableListAdapter);
-                                expandableListView.expandGroup(i);
-                                expandableListAdapter.notifyDataSetChanged();
-                                expandableListView.smoothScrollToPositionFromTop(i, j);
-                            } else {
-
                             }
+                            expandedList.setIs_scaned("1");
+                            expandedList.setTime_begin(getdate());
+                            expandedList.setActual_lat(getlat());
+                            expandedList.setActual_lon(getlon());
+                            expandedList.setIs_save("2");
+                            expandedList.setComment("");
+                            expandedList.setPicture1("");
+                            expandedList.setPicture2("");
+                            expandedList.setPicture3("");
+
+
+                            Toasty.success(getApplicationContext(), "Checked!", Toast.LENGTH_SHORT, true).show();
+
+                            //ToastScan(icon,"Checked.");
+
+                            expandableListView.setAdapter(expandableListAdapter);
+                            expandableListView.expandGroup(i);
+                            expandableListAdapter.notifyDataSetChanged();
+                            expandableListView.smoothScrollToPositionFromTop(i, j);
                         } else {
-                            if (value.equals(expandedList.getWaybil_no())) {
-                                // ToastScan(null,"Scanned.");
-                                scannotFind = true;
-                                Toasty.info(getApplicationContext(), "Scanned.", Toast.LENGTH_SHORT, true).show();
-                            }
 
                         }
-                 //   }
+                    } else {
+                        if (value.equals(expandedList.getWaybil_no())) {
+                            // ToastScan(null,"Scanned.");
+                            scannotFind = true;
+                            Toasty.info(getApplicationContext(), "Scanned.", Toast.LENGTH_SHORT, true).show();
+                        }
+
+                    }
+                    //   }
                 }
 
             }
@@ -645,50 +647,50 @@ public class Deliver_Activity extends AppCompatActivity {
                 for (int j = 0; j < expandableListAdapter.getChildrenCount(i); j++) {
                     final DeliverExpand_Model expandedList = (DeliverExpand_Model) expandableListAdapter.getChild(i, j);
 
-                   // if (expandedList.getIs_save().equals("0") || expandedList.getIs_save().equals("2")) {
-                        if (!expandedList.getIs_scaned().equals("0")) {
-                            if (value.equals(expandedList.getWaybil_no())) {
+                    // if (expandedList.getIs_save().equals("0") || expandedList.getIs_save().equals("2")) {
+                    if (!expandedList.getIs_scaned().equals("0")) {
+                        if (value.equals(expandedList.getWaybil_no())) {
 
-                                scannotFind = true;
+                            scannotFind = true;
 
-                                if (!listTitle.getBox_checked().equals("0")) {
-                                    int count = listTitle.getCount() - 1;
-                                    if(listTitle.getCount() <= 0){
-                                    }else{
-                                        listTitle.setCount(count);
-                                    }
-                                    listTitle.setBox_checked(String.valueOf(listTitle.getCount()));
+                            if (!listTitle.getBox_checked().equals("0")) {
+                                int count = listTitle.getCount() - 1;
+                                if (listTitle.getCount() <= 0) {
+                                } else {
+                                    listTitle.setCount(count);
                                 }
-
-                                Log.d("sdfsdf",listTitle.getBox_checked());
-
-                                expandedList.setIs_scaned("0");
-                                expandedList.setTime_begin("");
-                                expandedList.setActual_lat("");
-                                expandedList.setActual_lon("");
-                                expandedList.setIs_save("0");
-                                expandedList.setComment("");
-                                expandedList.setPicture1("");
-                                expandedList.setPicture2("");
-                                expandedList.setPicture3("");
-
-                                Toasty.success(getApplicationContext(), "Un Check!", Toast.LENGTH_SHORT, true).show();
-
-                                expandableListView.setAdapter(expandableListAdapter);
-                                expandableListView.expandGroup(i);
-                                expandableListAdapter.notifyDataSetChanged();
-                                expandableListView.smoothScrollToPositionFromTop(i, j);
-                            } else {
+                                listTitle.setBox_checked(String.valueOf(listTitle.getCount()));
                             }
+
+                            Log.d("sdfsdf", listTitle.getBox_checked());
+
+                            expandedList.setIs_scaned("0");
+                            expandedList.setTime_begin("");
+                            expandedList.setActual_lat("");
+                            expandedList.setActual_lon("");
+                            expandedList.setIs_save("0");
+                            expandedList.setComment("");
+                            expandedList.setPicture1("");
+                            expandedList.setPicture2("");
+                            expandedList.setPicture3("");
+
+                            Toasty.success(getApplicationContext(), "Un Check!", Toast.LENGTH_SHORT, true).show();
+
+                            expandableListView.setAdapter(expandableListAdapter);
+                            expandableListView.expandGroup(i);
+                            expandableListAdapter.notifyDataSetChanged();
+                            expandableListView.smoothScrollToPositionFromTop(i, j);
                         } else {
-                            if (value.equals(expandedList.getWaybil_no())) {
-                                scannotFind = true;
-                                Toasty.info(getApplicationContext(), "Un scan.", Toast.LENGTH_SHORT, true).show();
-                            }
-
-                            //toastScan("Change the lower button to scan.");
                         }
-                   // }
+                    } else {
+                        if (value.equals(expandedList.getWaybil_no())) {
+                            scannotFind = true;
+                            Toasty.info(getApplicationContext(), "Un scan.", Toast.LENGTH_SHORT, true).show();
+                        }
+
+                        //toastScan("Change the lower button to scan.");
+                    }
+                    // }
 
                 }
 
@@ -701,42 +703,42 @@ public class Deliver_Activity extends AppCompatActivity {
                 for (int j = 0; j < expandableListAdapter.getChildrenCount(i); j++) {
                     final DeliverExpand_Model expandedList = (DeliverExpand_Model) expandableListAdapter.getChild(i, j);
 
-                   // if (expandedList.getIs_save().equals("0") || expandedList.getIs_save().equals("2")) {
-                        if (((DeliverExpand_Model) expandableListAdapter.getChild(i, j)).getIs_scaned().equals("0")
-                                || ((DeliverExpand_Model) expandableListAdapter.getChild(i, j)).getIs_scaned().equals("1")) {
-                            if (value.equals(expandedList.getWaybil_no())) {
+                    // if (expandedList.getIs_save().equals("0") || expandedList.getIs_save().equals("2")) {
+                    if (((DeliverExpand_Model) expandableListAdapter.getChild(i, j)).getIs_scaned().equals("0")
+                            || ((DeliverExpand_Model) expandableListAdapter.getChild(i, j)).getIs_scaned().equals("1")) {
+                        if (value.equals(expandedList.getWaybil_no())) {
 
-                                scannotFind = true;
-                                // lastPosition = i;
+                            scannotFind = true;
+                            // lastPosition = i;
 
-                                if (!expandedList.getIs_scaned().equals("1")) {
-                                    int count = listTitle.getCount() + 1;
-                                    listTitle.setCount(count);
-                                    listTitle.setBox_checked(String.valueOf(listTitle.getCount()));
-                                }
-                                expandedList.setIs_scaned("2");
-                                expandedList.setTime_begin(getdate());
-                                expandedList.setActual_lat(getlat());
-                                expandedList.setActual_lon(getlon());
-                                expandedList.setIs_save("2");
-
-                                Toasty.success(getApplicationContext(), "Please reason!", Toast.LENGTH_SHORT, true).show();
-
-                                expandableListView.setAdapter(expandableListAdapter);
-                                expandableListView.expandGroup(i);
-                                expandableListAdapter.notifyDataSetChanged();
-                                expandableListView.smoothScrollToPositionFromTop(i, j);
-                            } else {
-
+                            if (!expandedList.getIs_scaned().equals("1")) {
+                                int count = listTitle.getCount() + 1;
+                                listTitle.setCount(count);
+                                listTitle.setBox_checked(String.valueOf(listTitle.getCount()));
                             }
+                            expandedList.setIs_scaned("2");
+                            expandedList.setTime_begin(getdate());
+                            expandedList.setActual_lat(getlat());
+                            expandedList.setActual_lon(getlon());
+                            expandedList.setIs_save("2");
+
+                            Toasty.success(getApplicationContext(), "Please reason!", Toast.LENGTH_SHORT, true).show();
+
+                            expandableListView.setAdapter(expandableListAdapter);
+                            expandableListView.expandGroup(i);
+                            expandableListAdapter.notifyDataSetChanged();
+                            expandableListView.smoothScrollToPositionFromTop(i, j);
                         } else {
-                            if (value.equals(expandedList.getWaybil_no())) {
-                                scannotFind = true;
-                                Toasty.info(getApplicationContext(), "Scanned.", Toast.LENGTH_SHORT, true).show();
-                            }
 
                         }
-                 //   }
+                    } else {
+                        if (value.equals(expandedList.getWaybil_no())) {
+                            scannotFind = true;
+                            Toasty.info(getApplicationContext(), "Scanned.", Toast.LENGTH_SHORT, true).show();
+                        }
+
+                    }
+                    //   }
 
                 }
 
@@ -952,7 +954,7 @@ public class Deliver_Activity extends AppCompatActivity {
                 ",(select cm.deli_note_amount_price from consignment cm where cm.consignment_no = pl.consignment_no) as price\n" +
                 ",(select count(DISTINCT cm.global_no) from consignment cm where cm.consignment_no = pl.consignment_no) as global_total\n" +
                 ",(select count(DISTINCT cm.global_no) from consignment cm where cm.consignment_no = pl.consignment_no and cm.detail_remarks <> null) as global_cancel\n" +
-                ",(select pl2.total_box from Plan pl2 where pl2.activity_type = pl.activity_type and pl2.delivery_no = pl.delivery_no and pl2.plan_seq = pl.plan_seq and pl2.consignment_no = pl.consignment_no and pl2.trash = pl.trash LIMIT 1) as total_b "+
+                ",(select pl2.total_box from Plan pl2 where pl2.activity_type = pl.activity_type and pl2.delivery_no = pl.delivery_no and pl2.plan_seq = pl.plan_seq and pl2.consignment_no = pl.consignment_no and pl2.trash = pl.trash LIMIT 1) as total_b " +
                 "from Plan pl\n" +
                 "inner join consignment cm on cm.consignment_no = pl.consignment_no\n" +
                 "where pl.delivery_no = '" + delivery_no + "' and  pl.plan_seq = '" + plan_seq + "' and pl.activity_type = 'UNLOAD' and pl.trash = '0' and pl.order_no in (select order_no from pic_sign where pic_sign_load <> '' )" +
@@ -2576,7 +2578,6 @@ public class Deliver_Activity extends AppCompatActivity {
         databaseHelper = new DatabaseHelper(Deliver_Activity.this);
 
 
-
         new AsyncTask<String, Integer, String>() {
 
             int IsSuccess = 1;
@@ -2592,6 +2593,7 @@ public class Deliver_Activity extends AppCompatActivity {
                 progressDialog.show();
 
             }
+
             @Override
             protected String doInBackground(String... strings) {
                 JSONObject Root = new JSONObject();
@@ -2773,7 +2775,7 @@ public class Deliver_Activity extends AppCompatActivity {
 
                                             UploadImage data = new UploadImage(uploadImage);
 
-                                            Log.d("kksksks", "doInBackground: "+uploadImage.get(0).toString());
+                                            Log.d("kksksks", "doInBackground: " + uploadImage.get(0).toString());
 
 
                                             if (data != null) {
@@ -2865,7 +2867,6 @@ public class Deliver_Activity extends AppCompatActivity {
                 }
 
             }
-
 
 
         }.execute();
