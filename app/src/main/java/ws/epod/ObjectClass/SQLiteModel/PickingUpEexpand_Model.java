@@ -18,10 +18,11 @@ public class PickingUpEexpand_Model {
     private String actual_lon = "";
     private String is_save = "";
     private String status_upload = "";
+    private String order_no = "";
     private int count = 0;
 
     public PickingUpEexpand_Model( String box_no, String waybil_no, String is_scaned, String row_number, String consignment, String delivery_no, String plan_seq, String comment
-    ,String picture1, String picture2, String picture3, String time_begin, String is_save, String status_upload) {
+    ,String picture1, String picture2, String picture3, String time_begin, String is_save, String status_upload, String order_no) {
         this.box_no = box_no;
         this.waybil_no = waybil_no;
         this.is_scaned = is_scaned;
@@ -36,6 +37,15 @@ public class PickingUpEexpand_Model {
         this.time_begin = time_begin;
         this.is_save = is_save;
         this.status_upload = status_upload;
+        this.order_no = order_no;
+    }
+
+    public String getOrder_no() {
+        return order_no;
+    }
+
+    public void setOrder_no(String order_no) {
+        this.order_no = order_no;
     }
 
     public String getStatus_upload() {

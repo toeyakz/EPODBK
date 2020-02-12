@@ -39,7 +39,7 @@ public class DatabaseHelper extends SQLiteOpenHelper
     public void onCreate( SQLiteDatabase sqLiteDatabase)
     {
 
-
+        Log.d("ASfkasdlfgvno", "onCreate: "+sqLiteDatabase.getVersion());
 
     }
 

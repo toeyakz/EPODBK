@@ -206,10 +206,20 @@ public class DropPoint_Activity extends AppCompatActivity {
             // ลบหัวอันที่แอดเข้าไปแล้ว
             jobList_models.remove(jobList_2.get(i));
 
+//            for(int j = 0; j < jobList_models.size(); j++){
+//                jobList_models.get(j).setPlan_seq(j+jobList_models.get(j).getPlan_seq()+1);
+//                jobList_2.get(i).setPlan_seq(i+jobList_2.get(i).getPlan_seq()+1);
+//
+//            }
+
+
+
         }
 
         jobList_3.addAll(jobList_models);
         jobList_3.addAll(jobList_2);
+
+
 
         //setToolbar
         tvDelevery_no.setText(delivery_no);

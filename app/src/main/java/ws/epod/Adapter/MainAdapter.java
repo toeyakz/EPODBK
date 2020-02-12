@@ -87,6 +87,7 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHolder> {
                     // Toast.makeText(context, "Pick", Toast.LENGTH_SHORT).show();
                     Intent intent = new Intent(context, PinkingUpMaster_Activity.class);
                     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    intent.putExtra("isSync",true);
                     context.startActivity(intent);
 
                 } else {// DELIVERY
@@ -94,6 +95,7 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHolder> {
                     // Toast.makeText(context, "deli", Toast.LENGTH_SHORT).show();
                     Intent intent = new Intent(context, Deliver_Activity.class);
                     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    intent.putExtra("isSync",true);
                     context.startActivity(intent);
 
                 }

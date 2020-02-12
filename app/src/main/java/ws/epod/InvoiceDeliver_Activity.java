@@ -458,7 +458,7 @@ public class InvoiceDeliver_Activity extends AppCompatActivity {
                 ",ifnull((select ps4.status_unload from pic_sign ps4 where ps4.order_no = pl.order_no and ps4.pic_sign_unload <> '' ),'') as status_unload  \n" +
                 ", pl.order_no  \n" +
                 ",(SELECT pl.delivery_no) AS delivery_no  \n" +
-                ",ifnull((select ci2.comment_deliver from comment_invoice ci2 where ci2.order_no = pl.order_no) ,'') as comment_deliver  \n" +
+                ",ifnull((select ci2.comment_unload from comment_invoice ci2 where ci2.order_no = pl.order_no) ,'') as comment_deliver  \n" +
                 ",ifnull((select ps2.pic_sign_load from pic_sign ps2 where ps2.order_no = pl.order_no) ,'') as pic_sign_load  \n" +
                 ",ifnull((select ps2.pic_sign_unload from pic_sign ps2 where ps2.order_no = pl.order_no and ps2.pic_sign_unload <> '' ) ,'') as pic_sign_unload  \n" +
                 "from Consignment cm  \n" +
@@ -481,7 +481,7 @@ public class InvoiceDeliver_Activity extends AppCompatActivity {
                 String signature = cursor.getString(cursor.getColumnIndex("pic_sign_unload"));
                 String order_no = cursor.getString(cursor.getColumnIndex("order_no"));
                 String delivery_no2 = cursor.getString(cursor.getColumnIndex("delivery_no"));
-                String comment = cursor.getString(cursor.getColumnIndex("comment_deliver"));
+                String comment = cursor.getString(cursor.getColumnIndex("comment_unload"));
 
                 Log.d("AsfweosiugE", "setView: " + deli_note_no + ">" + consignment + ">" + status);
 
@@ -891,7 +891,7 @@ public class InvoiceDeliver_Activity extends AppCompatActivity {
 //                                    databaseHelper.db().update("consignment", cv, "consignment_no= '" + cons + "' and deli_note_no = '" + deli_note + "' and trash = '0'", null);
 
                                     databaseHelper.db().delete("pic_sign", "order_no = ? and pic_sign_unload <> ? ", new String[]{order_no, "''"});
-                                    databaseHelper.db().delete("comment_invoice", "order_no = ? and comment_deliver <> ?", new String[]{order_no, "''"});
+                                    databaseHelper.db().delete("comment_invoice", "order_no = ? and comment_unload <> ?", new String[]{order_no, "''"});
                                     databaseHelper.db().delete("image_invoice", "name_img = ?", new String[]{signature});
 
 //                                    File file = new File("/storage/emulated/0/Android/data/ws.epod/files/Signature/" + signature);

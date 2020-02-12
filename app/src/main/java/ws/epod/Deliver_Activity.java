@@ -177,6 +177,8 @@ public class Deliver_Activity extends AppCompatActivity {
     Animation showLayout, hideLayout;
     LinearLayout layoutJobHome, layoutJobToday;
 
+    boolean isSync = false;
+
     LocationTrack locationTrack;
     private UploadDataPlan uploadDataPlan;
 
@@ -238,6 +240,13 @@ public class Deliver_Activity extends AppCompatActivity {
 
         showLayout = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.show_layout);
         hideLayout = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.hide_layout);
+
+        isSync = getIntent().getExtras().getBoolean("isSync");
+        if(isSync){
+            Upload();
+        }else{
+
+        }
 
         getSQLite();
         onClickFab();
@@ -3217,6 +3226,7 @@ public class Deliver_Activity extends AppCompatActivity {
                         progressDialog.dismiss();
                     }
                     getSQLite();
+                    isSync = false;
 //                    Snackbar.make(viewFab, mess, Snackbar.LENGTH_LONG)
 //                            .setAction("Action", null).show();
 

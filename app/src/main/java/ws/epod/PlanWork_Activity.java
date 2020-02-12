@@ -194,8 +194,6 @@ public class PlanWork_Activity extends AppCompatActivity {
         //new UpLoadWork().execute();
 
 
-
-
     }
 
 
@@ -465,9 +463,9 @@ public class PlanWork_Activity extends AppCompatActivity {
         String toDate = getDateFilter.getString("FilterToDate", "");
         getDateFilter.edit().clear().commit();
 
-        if(!fromDate.equals("")){
+        if (!fromDate.equals("")) {
             getDataFromSQLite("", fromDate, toDate);
-        }else{
+        } else {
             getDataFromSQLite("", "", "");
         }
 
@@ -541,7 +539,21 @@ public class PlanWork_Activity extends AppCompatActivity {
             ArrayList<UploadImageInvoice.Data2> uploadImage = new ArrayList<>();
             Log.d("statusUploadInvoice", "doInBackground: 1");
             try {
-                String sql = "select id, (select delivery_no from plan) as delivery_no, order_no, consignment_no, invoice_no, pic_sign_load, pic_sign_unload, date_sign_load, date_sign_unload from pic_sign where status_upload_invoice = '0' and status_delete = '0' ";
+                String sql = "select ps.id \n" +
+                        ", (select delivery_no from plan) as delivery_no \n" +
+                        ", ps.order_no \n" +
+                        ", ps.consignment_no \n" +
+                        ", ps.invoice_no \n" +
+                        ", ps.pic_sign_load \n" +
+                        ", ps.pic_sign_unload \n" +
+                        ", ps.date_sign_load \n" +
+                        ", ps.date_sign_unload  \n" +
+                        ", (select ci2.comment_load from comment_invoice ci2 where ci2.invoice_no = ps.invoice_no  and ci2.order_no = ps.order_no) as comment_load \n" +
+                        ", (select ci2.comment_unload from comment_invoice ci2 where ci2.invoice_no = ps.invoice_no  and ci2.order_no = ps.order_no) as comment_unload \n" +
+                        ", (select ci2.status_load from comment_invoice ci2 where ci2.invoice_no = ps.invoice_no  and ci2.order_no = ps.order_no) as status_load \n" +
+                        ", (select ci2.status_unload from comment_invoice ci2 where ci2.invoice_no = ps.invoice_no  and ci2.order_no = ps.order_no) as status_unload \n" +
+                        "from pic_sign ps \n" +
+                        "where status_upload_invoice = '0' and status_delete = '0'";
                 Cursor cursor = databaseHelper.selectDB(sql);
                 JSONArray ContactArray = new JSONArray();
 
@@ -563,6 +575,10 @@ public class PlanWork_Activity extends AppCompatActivity {
                             contact.put("pic_sign_unload", cursor.getString(cursor.getColumnIndex("pic_sign_unload")));
                             contact.put("date_sign_load", cursor.getString(cursor.getColumnIndex("date_sign_load")));
                             contact.put("date_sign_unload", cursor.getString(cursor.getColumnIndex("date_sign_unload")));
+                            contact.put("comment_load", cursor.getString(cursor.getColumnIndex("comment_load")));
+                            contact.put("comment_unload", cursor.getString(cursor.getColumnIndex("comment_unload")));
+                            contact.put("status_load", cursor.getString(cursor.getColumnIndex("status_load")));
+                            contact.put("status_unload", cursor.getString(cursor.getColumnIndex("status_unload")));
 
                             ContactArray.put(i, contact);
                             i++;
@@ -776,7 +792,6 @@ public class PlanWork_Activity extends AppCompatActivity {
             ArrayList<UploadImage.Data> uploadImage = new ArrayList<>();
 
 
-
 //            String id_plan = "";
 //            String url = Var.WEBSERVICE2 + "func=setPlan&driver_id=" + Var.UserLogin.driver_id;
 //            String urlPic1 = "http://www.wisasoft.com:8997/TMS_MSM/resources/function/php/service.php?func=setImg";
@@ -870,7 +885,7 @@ public class PlanWork_Activity extends AppCompatActivity {
                             if (!responseRecieved.equals("")) {
                                 JSONArray jsonArray = new JSONArray(responseRecieved);
 
-                                Log.d("djfklsduhksdio", "doInBackground: "+jsonArray.getJSONObject(0).getString("status"));
+                                Log.d("djfklsduhksdio", "doInBackground: " + jsonArray.getJSONObject(0).getString("status"));
 
                                 if (jsonArray.getJSONObject(0).getString("status").equals("Y")) {
 //
@@ -1055,7 +1070,7 @@ public class PlanWork_Activity extends AppCompatActivity {
         String extension = "";
         File f = new File("/storage/emulated/0/Android/data/ws.epod/files/Signature/");
         File[] files = f.listFiles();
-        if(files != null) {
+        if (files != null) {
             for (int i = 0; i < files.length; i++) {
 
                 File file = files[i];
@@ -1079,19 +1094,19 @@ public class PlanWork_Activity extends AppCompatActivity {
         String extension = "";
         File f = new File("/storage/emulated/0/Android/data/ws.epod/files/Pictures/");
         File[] files = f.listFiles();
-        if(files != null){
-        for (int i = 0; i < files.length; i++) {
+        if (files != null) {
+            for (int i = 0; i < files.length; i++) {
 
-            File file = files[i];
-            int ind = files[i].getPath().lastIndexOf('.');
-            if (ind > 0) {
-                extension = files[i].getPath().substring(files[i].getPath().length() - 3);// this is the extension
-                if (extension.equals("jpg")) {
-                    tFileList.add(file.getName());
+                File file = files[i];
+                int ind = files[i].getPath().lastIndexOf('.');
+                if (ind > 0) {
+                    extension = files[i].getPath().substring(files[i].getPath().length() - 3);// this is the extension
+                    if (extension.equals("jpg")) {
+                        tFileList.add(file.getName());
+                    }
                 }
             }
         }
-    }
         return tFileList;
     }
 
@@ -1232,6 +1247,36 @@ public class PlanWork_Activity extends AppCompatActivity {
                                                             JSONArray jsonArrayReason = new JSONArray(recievedReason);
                                                             if (narisv.INSERT_AS_SQL("reason", jsonArrayReason, "")) {
                                                                 Log.d("PlanWorkLOG", "SAVED reason.");
+
+
+                                                                Call<ResponseBody> inVoice = apiInterface.invoice(Var.UserLogin.driver_vehicle_id);
+                                                                Response<ResponseBody> responseInvoice = inVoice.execute();
+                                                                if (responseInvoice.code() == 200) {
+                                                                    String recievedInvoice = responseInvoice.body().string();
+                                                                    if (recievedInvoice != null) {
+                                                                        if (!recievedInvoice.equals("")) {
+                                                                            JSONArray jsonArrayInvoice = new JSONArray(recievedInvoice);
+                                                                            for (int o = 0; o < jsonArrayInvoice.length(); o++) {
+
+                                                                                String sql = "INSERT OR REPLACE INTO pic_sign (consignment_no, order_no, invoice_no, pic_sign_load, pic_sign_unload" +
+                                                                                        ", date_sign_load, date_sign_unload, status_load, status_unload) VALUES('" + jsonArrayInvoice.getJSONObject(o).getString("consignment_no") + "'" +
+                                                                                        ", '" + jsonArrayInvoice.getJSONObject(o).getString("order_no") + "', '" + jsonArrayInvoice.getJSONObject(o).getString("invoice_no") + "'" +
+                                                                                        ", '" + jsonArrayInvoice.getJSONObject(o).getString("pic_sign_load") + "', '" + jsonArrayInvoice.getJSONObject(o).getString("pic_sign_unload") + "'" +
+                                                                                        ", '" + jsonArrayInvoice.getJSONObject(o).getString("date_sign_load") + "', '" + jsonArrayInvoice.getJSONObject(o).getString("date_sing_unload") + "'" +
+                                                                                        ", '" + jsonArrayInvoice.getJSONObject(o).getString("status_load") + "', '" + jsonArrayInvoice.getJSONObject(o).getString("status_unload") + "')";
+                                                                                databaseHelper.db().execSQL(sql);
+
+                                                                                String sql2 = "INSERT OR REPLACE INTO comment_invoice (consignment_no, order_no, invoice_no, comment_load, comment_unload, status_load" +
+                                                                                        ", status_unload) VALUES('" + jsonArrayInvoice.getJSONObject(o).getString("consignment_no") + "','" + jsonArrayInvoice.getJSONObject(o).getString("order_no") + "'" +
+                                                                                        ", '" + jsonArrayInvoice.getJSONObject(o).getString("invoice_no") + "', '" + jsonArrayInvoice.getJSONObject(o).getString("comment_load") + "'" +
+                                                                                        ", '" + jsonArrayInvoice.getJSONObject(o).getString("comment_unload") + "', '" + jsonArrayInvoice.getJSONObject(o).getString("status_load") + "'" +
+                                                                                        ", '"+jsonArrayInvoice.getJSONObject(o).getString("status_unload")+"')";
+                                                                                databaseHelper.db().execSQL(sql2);
+                                                                            }
+                                                                        }
+                                                                    }
+                                                                }
+
 
                                                             } else {
                                                                 Log.d("PlanWorkLOG", "FAIL save reason.");

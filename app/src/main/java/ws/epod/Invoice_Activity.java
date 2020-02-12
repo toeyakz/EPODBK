@@ -468,7 +468,7 @@ public class Invoice_Activity extends AppCompatActivity {
                 ", cm.consignment_no  \n" +
                 ", pl.order_no  \n" +
                 ",(SELECT pl.delivery_no) AS delivery_no  \n" +
-                ",ifnull((select ci2.comment from comment_invoice ci2 where ci2.order_no = pl.order_no) ,'') as comment" +
+                ",ifnull((select ci2.comment_load from comment_invoice ci2 where ci2.order_no = pl.order_no) ,'') as comment" +
                 ", pl.activity_type \n" +
                 ",ifnull((select ps2.pic_sign_load from pic_sign ps2 where ps2.order_no = pl.order_no) ,'') as pic_sign_load" +
                 ",ifnull((select ps2.status_load from pic_sign ps2 where ps2.order_no = pl.order_no) ,'') as status " +
@@ -905,7 +905,7 @@ public class Invoice_Activity extends AppCompatActivity {
 //                                    databaseHelper.db().update("pic_sign", cv, "order_no = '" + order_no + "' and pic_sign_load <> ''", null);
 
                                     databaseHelper.db().delete("pic_sign", "order_no = ? and pic_sign_load <> ? ", new String[]{order_no, "''"});
-                                    databaseHelper.db().delete("comment_invoice", "order_no = ? and comment <> ?", new String[]{order_no, "''"});
+                                    databaseHelper.db().delete("comment_invoice", "order_no = ? and comment_load <> ?", new String[]{order_no, "''"});
                                     databaseHelper.db().delete("image_invoice", "name_img = ?", new String[]{signature});
 
 

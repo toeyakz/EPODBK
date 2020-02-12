@@ -266,7 +266,7 @@ public class Signature_Activity extends AppCompatActivity {
     private void ResizeImages(String sPath) throws IOException {
 
         Bitmap photo = BitmapFactory.decodeFile(sPath);
-       // photo = Bitmap.createScaledBitmap(photo, 480, 1000, false);
+        // photo = Bitmap.createScaledBitmap(photo, 480, 1000, false);
 
         int width = photo.getWidth();
         int height = photo.getHeight();
@@ -360,7 +360,7 @@ public class Signature_Activity extends AppCompatActivity {
                 jsonInsertPicSign.put("pic_sign_load", imgList[0]);
                 jsonInsertPicSign.put("create_date", getdate());
                 jsonInsertPicSign.put("status_delete", "0");
-                if(imgList[0] != null){
+                if (imgList[0] != null) {
                     String sql = "INSERT INTO image_invoice (name_img, status_img, create_date) VALUES('" + imgList[0] + "','0', '" + getdate() + "')";
                     databaseHelper.db().execSQL(sql);
                 }
@@ -369,7 +369,7 @@ public class Signature_Activity extends AppCompatActivity {
                     jsonInsertComment.put("consignment_no", arrayList.get(i).getConsignment_no());
                     jsonInsertComment.put("order_no", arrayList.get(i).getOrder_no());
                     jsonInsertComment.put("invoice_no", arrayList.get(i).getDeli_note_no());
-                    jsonInsertComment.put("comment", arrayList.get(i).getComment());
+                    jsonInsertComment.put("comment_load", arrayList.get(i).getComment());
                     jsonInsertComment.put("status_load", arrayList.get(i).getStatus());
                     jsonInsertComment.put("delivery_no", arrayList.get(i).getDelivery_no());
                     jsonInsertComment.put("status_upload_comment", "0");
@@ -391,6 +391,20 @@ public class Signature_Activity extends AppCompatActivity {
                 if (!arrayList.get(i).getStatus().equals("0")) {
                     if (narisv.INSERT_AS_SQL("pic_sign", jsonArrayInsertPicSign, "")) {
                         Log.d("PlanWorkLOG", "SAVED Pic_sign.");
+
+
+//                        try
+//                        {
+//                            String sql1 = "INSERT OR REPLACE INTO comment_invoice (consignment_no, order_no, invoice_no, comment_load, status_load, delivery_no" +
+//                                    ", status_upload_comment, create_date) VALUES('" + arrayList.get(i).getConsignment_no() + "','" + arrayList.get(i).getOrder_no() + "'" +
+//                                    ", '" + arrayList.get(i).getDeli_note_no() + "', '" + arrayList.get(i).getComment() + "', '" + arrayList.get(i).getStatus() + "'" +
+//                                    ", '" + arrayList.get(i).getDelivery_no() + "', '0', '"+getdate()+"')";
+//                            databaseHelper.db().execSQL(sql1);
+//                        }catch (Exception e){
+//                            Log.d("PlanWorkLOG", "FAIL save Comment."+ e.getMessage());
+//                        }
+
+
                         if (narisv.INSERT_AS_SQL("comment_invoice", jsonArrayInsertComment, "")) {
                             Log.d("PlanWorkLOG", "SAVED Comment.");
                         } else {
@@ -471,7 +485,7 @@ public class Signature_Activity extends AppCompatActivity {
                         jsonInsertComment.put("consignment_no", arrayList.get(i).getConsignment_no());
                         jsonInsertComment.put("order_no", arrayList.get(i).getOrder_no());
                         jsonInsertComment.put("invoice_no", arrayList.get(i).getDeli_note_no());
-                        jsonInsertComment.put("comment", arrayList.get(i).getComment());
+                        jsonInsertComment.put("comment_load", arrayList.get(i).getComment());
                         jsonInsertComment.put("status_load", arrayList.get(i).getStatus());
                         jsonInsertComment.put("delivery_no", arrayList.get(i).getDelivery_no());
                         jsonInsertComment.put("status_upload_comment", "0");

@@ -53,6 +53,9 @@ public interface APIInterface {
     @POST("/TMS_MSM/services/service.php?func=getReason")
     Call<ResponseBody> reason();
 
+    @POST("/TMS_MSM/services/service.php?func=getInvoice")
+    Call<ResponseBody> invoice(@Query("vehicle_id") String vehicle_id);
+
 
 
     //********************************************************************************************

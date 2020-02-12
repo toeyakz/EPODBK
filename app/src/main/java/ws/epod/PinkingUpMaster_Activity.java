@@ -175,6 +175,7 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
 
     private int ch_list = 0;
     boolean isSave = true;
+    boolean isSync = false;
 
     int c = 0;
 
@@ -201,7 +202,10 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        // getSQLite();
+        getSQLite();
+
+
+        // Upload();
 
 //        scannerView.setResultHandler(new ZXingScannerResultHandler());
         // Start camera on resume
@@ -259,7 +263,14 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
         hideLayout = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.hide_layout);
 
 
-        getSQLite();
+        isSync = getIntent().getExtras().getBoolean("isSync");
+        if (isSync) {
+            Upload();
+        } else {
+
+        }
+
+        //getSQLite();
         onClickFab();
 
 
@@ -311,13 +322,10 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
         mgr.showSoftInput(edtFineWaybillPick, InputMethodManager.SHOW_FORCED);
 
 
-        edtFineWaybillPick.setOnKeyListener(new View.OnKeyListener(){
-            public boolean onKey(View v, int keyCode, KeyEvent event)
-            {
-                if (event.getAction() == KeyEvent.ACTION_DOWN)
-                {
-                    switch (keyCode)
-                    {
+        edtFineWaybillPick.setOnKeyListener(new View.OnKeyListener() {
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+                if (event.getAction() == KeyEvent.ACTION_DOWN) {
+                    switch (keyCode) {
                         case KeyEvent.KEYCODE_DPAD_CENTER:
                         case KeyEvent.KEYCODE_ENTER:
                             scan(edtFineWaybillPick.getText().toString());
@@ -357,8 +365,7 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
 
                 String getScanText = edtFineWaybillPick.getText().toString();
                 scan(getScanText);
-//                edtFineWaybillPick.setText("");
-
+                edtFineWaybillPick.setText("");
 
 
                 // edtFineWaybillPick.setText("");
@@ -398,7 +405,6 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
 
 
     }
-
 
 
     private boolean checkTotalScan() {
@@ -749,20 +755,20 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
 
                             scannotFind = true;
 
-                          //  Log.d("sdfsdf","ก่อนหน้า"+ listTitle.getBox_checked());
+                            //  Log.d("sdfsdf","ก่อนหน้า"+ listTitle.getBox_checked());
                             if (!listTitle.getBox_checked().equals("0")) {
                                 int count = listTitle.getCount() - 1;
-                               // int count2 = listTitle.getCount();
-                                if(listTitle.getCount() <= 0){
-                                }else{
+                                // int count2 = listTitle.getCount();
+                                if (listTitle.getCount() <= 0) {
+                                } else {
                                     listTitle.setCount(count);
                                 }
 
-                                Log.d("sdfsdf", listTitle.getCount()+"");
+                                Log.d("sdfsdf", listTitle.getCount() + "");
                                 listTitle.setBox_checked(String.valueOf(listTitle.getCount()));
                             }
 
-                           // Log.d("sdfsdf", listTitle.getBox_checked());
+                            // Log.d("sdfsdf", listTitle.getBox_checked());
 
                             expandedList.setIs_scaned("0");
                             expandedList.setTime_begin("");
@@ -1148,7 +1154,7 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
                 list.add(new PickingUp_Model(consignment, box_total, box_checked, global_total, station_address, pay_type, global_cancel, price, total_b));
 
 
-                String sql_expand = "select delivery_no, plan_seq, box_no, waybill_no, is_scaned, comment, picture1, picture2, picture3, time_begin, is_save, status_upload, (box_no - 1)+1 as row_number from Plan where consignment_no = '" + consignment + "' and activity_type = 'LOAD' and delivery_no = '" + delivery_no + "' and plan_seq = '" + plan_seq + "' and trash = '0' order by row_number";
+                String sql_expand = "select delivery_no, plan_seq, box_no, waybill_no, is_scaned, comment, picture1, picture2, picture3, time_begin, is_save, status_upload, (box_no - 1)+1 as row_number, (select pl2.order_no from Plan pl2 where pl2.order_no in (select ps.order_no from pic_sign ps where pic_sign_load <> '' )) as order_no  from Plan where consignment_no = '" + consignment + "' and activity_type = 'LOAD' and delivery_no = '" + delivery_no + "' and plan_seq = '" + plan_seq + "' and trash = '0' order by row_number";
                 Cursor cursor_expand = databaseHelper.selectDB(sql_expand);
                 Log.d("PickingUpLOG", "total line " + cursor_expand.getColumnCount());
 
@@ -1170,10 +1176,11 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
                         String time_begin = cursor_expand.getString(cursor_expand.getColumnIndex("time_begin"));
                         String is_save = cursor_expand.getString(cursor_expand.getColumnIndex("is_save"));
                         String status_upload = cursor_expand.getString(cursor_expand.getColumnIndex("status_upload"));
+                        String order_no = cursor_expand.getString(cursor_expand.getColumnIndex("order_no"));
 
                         Log.d("Aslalllalal", "getSQLite: " + consignment + ">" + waybill_no + ">" + is_scaned);
 
-                        list_expand.add(new PickingUpEexpand_Model(box_no, waybill_no, is_scaned, row_number, consignment, delivery_no2, plan_seq2, comment, picture1, picture2, picture3, time_begin, is_save, status_upload));
+                        list_expand.add(new PickingUpEexpand_Model(box_no, waybill_no, is_scaned, row_number, consignment, delivery_no2, plan_seq2, comment, picture1, picture2, picture3, time_begin, is_save, status_upload, order_no));
                     } while (cursor_expand.moveToNext());
                 }
 
@@ -3122,7 +3129,21 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
             ArrayList<UploadImageInvoice.Data2> uploadImage = new ArrayList<>();
             Log.d("statusUploadInvoice", "doInBackground: 1");
             try {
-                String sql = "select id, (select delivery_no from plan) as delivery_no, order_no, consignment_no, invoice_no, pic_sign_load, pic_sign_unload, date_sign_load, date_sign_unload from pic_sign where status_upload_invoice = '0' and status_delete = '0' ";
+                String sql = "select ps.id \n" +
+                        ", (select delivery_no from plan) as delivery_no \n" +
+                        ", ps.order_no \n" +
+                        ", ps.consignment_no \n" +
+                        ", ps.invoice_no \n" +
+                        ", ps.pic_sign_load \n" +
+                        ", ps.pic_sign_unload \n" +
+                        ", ps.date_sign_load \n" +
+                        ", ps.date_sign_unload  \n" +
+                        ", (select ci2.comment_load from comment_invoice ci2 where ci2.invoice_no = ps.invoice_no  and ci2.order_no = ps.order_no) as comment_load \n" +
+                        ", (select ci2.comment_unload from comment_invoice ci2 where ci2.invoice_no = ps.invoice_no  and ci2.order_no = ps.order_no) as comment_unload \n" +
+                        ", (select ci2.status_load from comment_invoice ci2 where ci2.invoice_no = ps.invoice_no  and ci2.order_no = ps.order_no) as status_load \n" +
+                        ", (select ci2.status_unload from comment_invoice ci2 where ci2.invoice_no = ps.invoice_no  and ci2.order_no = ps.order_no) as status_unload \n" +
+                        "from pic_sign ps \n" +
+                        "where status_upload_invoice = '0' and status_delete = '0'";
                 Cursor cursor = databaseHelper.selectDB(sql);
                 JSONArray ContactArray = new JSONArray();
 
@@ -3144,6 +3165,10 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
                             contact.put("pic_sign_unload", cursor.getString(cursor.getColumnIndex("pic_sign_unload")));
                             contact.put("date_sign_load", cursor.getString(cursor.getColumnIndex("date_sign_load")));
                             contact.put("date_sign_unload", cursor.getString(cursor.getColumnIndex("date_sign_unload")));
+                            contact.put("comment_load", cursor.getString(cursor.getColumnIndex("comment_load")));
+                            contact.put("comment_unload", cursor.getString(cursor.getColumnIndex("comment_unload")));
+                            contact.put("status_load", cursor.getString(cursor.getColumnIndex("status_load")));
+                            contact.put("status_unload", cursor.getString(cursor.getColumnIndex("status_unload")));
 
                             ContactArray.put(i, contact);
                             i++;
@@ -3408,6 +3433,34 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
                                                             if (narisv.INSERT_AS_SQL("reason", jsonArrayReason, "")) {
                                                                 Log.d("PlanWorkLOG", "SAVED reason.");
 
+                                                                Call<ResponseBody> inVoice = apiInterface.invoice(Var.UserLogin.driver_vehicle_id);
+                                                                Response<ResponseBody> responseInvoice = inVoice.execute();
+                                                                if (responseInvoice.code() == 200) {
+                                                                    String recievedInvoice = responseInvoice.body().string();
+                                                                    if (recievedInvoice != null) {
+                                                                        if (!recievedInvoice.equals("")) {
+                                                                            JSONArray jsonArrayInvoice = new JSONArray(recievedInvoice);
+                                                                            for (int o = 0; o < jsonArrayInvoice.length(); o++) {
+
+                                                                                String sql = "INSERT OR REPLACE INTO pic_sign (consignment_no, order_no, invoice_no, pic_sign_load, pic_sign_unload" +
+                                                                                        ", date_sign_load, date_sign_unload, status_load, status_unload) VALUES('" + jsonArrayInvoice.getJSONObject(o).getString("consignment_no") + "'" +
+                                                                                        ", '" + jsonArrayInvoice.getJSONObject(o).getString("order_no") + "', '" + jsonArrayInvoice.getJSONObject(o).getString("invoice_no") + "'" +
+                                                                                        ", '" + jsonArrayInvoice.getJSONObject(o).getString("pic_sign_load") + "', '" + jsonArrayInvoice.getJSONObject(o).getString("pic_sign_unload") + "'" +
+                                                                                        ", '" + jsonArrayInvoice.getJSONObject(o).getString("date_sign_load") + "', '" + jsonArrayInvoice.getJSONObject(o).getString("date_sing_unload") + "'" +
+                                                                                        ", '" + jsonArrayInvoice.getJSONObject(o).getString("status_load") + "', '" + jsonArrayInvoice.getJSONObject(o).getString("status_unload") + "')";
+                                                                                databaseHelper.db().execSQL(sql);
+
+                                                                                String sql2 = "INSERT OR REPLACE INTO comment_invoice (consignment_no, order_no, invoice_no, comment_load, comment_unload, status_load" +
+                                                                                        ", status_unload) VALUES('" + jsonArrayInvoice.getJSONObject(o).getString("consignment_no") + "','" + jsonArrayInvoice.getJSONObject(o).getString("order_no") + "'" +
+                                                                                        ", '" + jsonArrayInvoice.getJSONObject(o).getString("invoice_no") + "', '" + jsonArrayInvoice.getJSONObject(o).getString("comment_load") + "'" +
+                                                                                        ", '" + jsonArrayInvoice.getJSONObject(o).getString("comment_unload") + "', '" + jsonArrayInvoice.getJSONObject(o).getString("status_load") + "'" +
+                                                                                        ", '" + jsonArrayInvoice.getJSONObject(o).getString("status_unload") + "')";
+                                                                                databaseHelper.db().execSQL(sql2);
+                                                                            }
+                                                                        }
+                                                                    }
+                                                                }
+
                                                             } else {
                                                                 Log.d("PlanWorkLOG", "FAIL save reason.");
                                                             }
@@ -3454,6 +3507,7 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
                         progressDialog.dismiss();
                     }
                     getSQLite();
+                    isSync = false;
 //                    Snackbar.make(viewFab, mess, Snackbar.LENGTH_LONG)
 //                            .setAction("Action", null).show();
 

@@ -357,7 +357,7 @@ public class Signature_Deliver_Activity extends AppCompatActivity {
                     jsonInsertComment.put("consignment_no", arrayList.get(i).getConsignment_no());
                     jsonInsertComment.put("order_no", arrayList.get(i).getOrder_no());
                     jsonInsertComment.put("invoice_no", arrayList.get(i).getDeli_note_no());
-                    jsonInsertComment.put("comment_deliver", arrayList.get(i).getComment());
+                    jsonInsertComment.put("comment_unload", arrayList.get(i).getComment());
                     jsonInsertComment.put("status_load", arrayList.get(i).getStatus());
                     jsonInsertComment.put("delivery_no", arrayList.get(i).getDelivery_no());
                     jsonInsertComment.put("status_upload_comment", "0");
@@ -459,7 +459,7 @@ public class Signature_Deliver_Activity extends AppCompatActivity {
                         jsonInsertComment.put("consignment_no", arrayList.get(i).getConsignment_no());
                         jsonInsertComment.put("order_no", arrayList.get(i).getOrder_no());
                         jsonInsertComment.put("invoice_no", arrayList.get(i).getDeli_note_no());
-                        jsonInsertComment.put("comment_deliver", arrayList.get(i).getComment());
+                        jsonInsertComment.put("comment_unload", arrayList.get(i).getComment());
                         jsonInsertComment.put("status_unload", arrayList.get(i).getStatus());
                         jsonInsertComment.put("delivery_no", arrayList.get(i).getDelivery_no());
                         jsonInsertComment.put("status_upload_comment", "0");
