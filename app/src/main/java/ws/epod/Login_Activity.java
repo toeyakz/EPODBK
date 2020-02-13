@@ -123,7 +123,7 @@ public class Login_Activity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if ( pd != null && pd.isShowing() ) {
+        if (pd != null && pd.isShowing()) {
             pd.cancel();
         }
     }
@@ -135,14 +135,14 @@ public class Login_Activity extends AppCompatActivity {
 
         new AsyncTask<Void, Void, Void>() {
             @Override
-            protected Void doInBackground( Void... voids ) {
+            protected Void doInBackground(Void... voids) {
 
                 checkPermissions();
                 return null;
             }
 
             @Override
-            protected void onPostExecute( Void aVoid ) {
+            protected void onPostExecute(Void aVoid) {
 
 
                 CheckDatabaseStructure();
@@ -153,9 +153,9 @@ public class Login_Activity extends AppCompatActivity {
         }.execute();
 
         SharedPreferences login_data = getSharedPreferences("LOGIN", Context.MODE_PRIVATE);
-        String status_login= login_data.getString("status_login", null);
-        if(status_login!= null){
-            if(status_login.equals("1")){
+        String status_login = login_data.getString("status_login", null);
+        if (status_login != null) {
+            if (status_login.equals("1")) {
 
                 Var.UserLogin.driver_id = login_data.getString("driver_id", "");
                 Var.UserLogin.driver_user = login_data.getString("username", "");
@@ -167,7 +167,7 @@ public class Login_Activity extends AppCompatActivity {
                 Var.UserLogin.driver_lname = login_data.getString("driver_lname", "");
                 Var.UserLogin.driver_vehicle_id = login_data.getString("vehicle_id", "");
                 Var.UserLogin.driver_status_login = login_data.getString("status_login", "");
-                Intent intent= new Intent(getApplicationContext(), PlanWork_Activity.class);
+                Intent intent = new Intent(getApplicationContext(), PlanWork_Activity.class);
                 startActivity(intent);
             }
         }
@@ -177,7 +177,7 @@ public class Login_Activity extends AppCompatActivity {
     }
 
     @Override
-    protected void onCreate( Bundle savedInstanceState ) {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         netCon = new ConnectionDetector(getApplicationContext());
@@ -190,7 +190,7 @@ public class Login_Activity extends AppCompatActivity {
 
         SharedPreferences Language_Locale = getSharedPreferences("PREFERENCE_LANGUAGE", Context.MODE_PRIVATE);
         String language = Language_Locale.getString("LANGUAGE_KEY", "ENGLISH");
-        if ( language.equals("ENGLISH") ) {
+        if (language.equals("ENGLISH")) {
             Configuration config = new Configuration();
             config.locale = Locale.ENGLISH;
             getResources().updateConfiguration(config, null);
@@ -214,7 +214,7 @@ public class Login_Activity extends AppCompatActivity {
 
 
         new CountDownTimer(500, 1) {
-            public void onTick( long millisUntilFinished ) {
+            public void onTick(long millisUntilFinished) {
                 tag.show();
             }
 
@@ -235,11 +235,11 @@ public class Login_Activity extends AppCompatActivity {
         edtUsername = findViewById(R.id.edtUsername);
         edtPassword = findViewById(R.id.edtPassword);
 
-        if ( !Username.equals("") ) {
+        if (!Username.equals("")) {
             user_data.edit().putBoolean("isChange", false).apply();
 //            edtUsername.setText(Username);
 //            edtPassword.setText(password);
-            if ( isChange ) {
+            if (isChange) {
                 user_data.edit().putBoolean("isChange", false).apply();
                 edtUsername.setText(Username);
                 edtPassword.setText(password);
@@ -263,9 +263,9 @@ public class Login_Activity extends AppCompatActivity {
 
         String val = Build.VERSION.RELEASE;
         val = val.replace(".", "");
-        if ( Integer.parseInt(val) >= 600 ) {
+        if (Integer.parseInt(val) >= 600) {
             // only for gingerbread and newer versions
-            if ( checkAndRequestPermissions() ) {
+            if (checkAndRequestPermissions()) {
 
                 // carry on the normal flow, as the case of  permissions  granted.
             } else {
@@ -280,7 +280,7 @@ public class Login_Activity extends AppCompatActivity {
         }
 
 
-        if ( checkPermissions() ) {
+        if (checkPermissions()) {
             CheckDatabaseStructure();
             //  permissions  granted.
         }
@@ -292,8 +292,8 @@ public class Login_Activity extends AppCompatActivity {
 
         edtPassword.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
-            public boolean onEditorAction( TextView textView, int i, KeyEvent keyEvent ) {
-                if ( i == EditorInfo.IME_NULL ) {
+            public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
+                if (i == EditorInfo.IME_NULL) {
                     attemptLogin();
                     return true;
                 }
@@ -304,7 +304,7 @@ public class Login_Activity extends AppCompatActivity {
         //button onclick
         btnLogin.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick( View view ) {
+            public void onClick(View view) {
 
 
                 //attemptLogin();
@@ -329,11 +329,11 @@ public class Login_Activity extends AppCompatActivity {
 
     }
 
-    private void isLogin(){
+    private void isLogin() {
         SharedPreferences login_data = getSharedPreferences("LOGIN", Context.MODE_PRIVATE);
-        String status_login= login_data.getString("status_login", null);
-        if(login_data != null){
-            if(status_login.equals("1")){
+        String status_login = login_data.getString("status_login", null);
+        if (login_data != null) {
+            if (status_login.equals("1")) {
                 Intent intent = new Intent(getApplicationContext(), PlanWork_Activity.class);
                 startActivity(intent);
             }
@@ -345,11 +345,11 @@ public class Login_Activity extends AppCompatActivity {
 
         edtPassword.addTextChangedListener(new TextWatcher() {
             @Override
-            public void beforeTextChanged( CharSequence charSequence, int i, int i1, int i2 ) {
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
             }
 
-            public void onTextChanged( CharSequence s, int start, int before, int count ) {
-                if ( edtPassword.getText().toString().length() > 0 ) {
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if (edtPassword.getText().toString().length() > 0) {
                     show_pass_btn.setVisibility(View.VISIBLE);
                 } else {
                     show_pass_btn.setVisibility(View.GONE);
@@ -357,18 +357,18 @@ public class Login_Activity extends AppCompatActivity {
             }
 
             @Override
-            public void afterTextChanged( Editable editable ) {
-                if ( edtPassword.getText().toString().length() > 0 ) {
+            public void afterTextChanged(Editable editable) {
+                if (edtPassword.getText().toString().length() > 0) {
                     show_pass_btn.setVisibility(View.VISIBLE);
 
                     show_pass_btn.setOnClickListener(view -> {
                         Log.d("sdfkj", "showAndHidePassword: ");
-                        if ( edtPassword.getTransformationMethod().equals(PasswordTransformationMethod.getInstance()) ) {
-                            ( (ImageView) ( view ) ).setImageResource(R.drawable.ic_visibility_off_black_24dp);
+                        if (edtPassword.getTransformationMethod().equals(PasswordTransformationMethod.getInstance())) {
+                            ((ImageView) (view)).setImageResource(R.drawable.ic_visibility_off_black_24dp);
                             edtPassword.setTransformationMethod(HideReturnsTransformationMethod.getInstance());
                             edtPassword.setSelection(edtPassword.getText().length());
                         } else {
-                            ( (ImageView) ( view ) ).setImageResource(R.drawable.ic_remove_red_eye_black_24dp);
+                            ((ImageView) (view)).setImageResource(R.drawable.ic_remove_red_eye_black_24dp);
                             edtPassword.setTransformationMethod(PasswordTransformationMethod.getInstance());
                             edtPassword.setSelection(edtPassword.getText().length());
                         }
@@ -384,7 +384,7 @@ public class Login_Activity extends AppCompatActivity {
     }
 
     @SuppressLint("StaticFieldLeak")
-    private void loginSync( final String user, final String pass, final String serail ) {
+    private void loginSync(final String user, final String pass, final String serail) {
 
         new AsyncTask<Void, Void, Integer>() {
 
@@ -402,28 +402,28 @@ public class Login_Activity extends AppCompatActivity {
             }
 
             @Override
-            protected Integer doInBackground( Void... voids ) {
+            protected Integer doInBackground(Void... voids) {
 
                 int IsSuccess = 0;
 
                 Call<ResponseBody> call = apiInterface.login2nd(user, pass, serail);
-       //         Call<ResponseBody> call = apiInterface.login2nd(user, pass, "c49ac656");
+                //         Call<ResponseBody> call = apiInterface.login2nd(user, pass, "c49ac656");
                 try {
                     Response<ResponseBody> response = call.execute();
-                    if ( response.code() == 200 ) {
+                    if (response.code() == 200) {
                         String responseRecieved = response.body().string();
-                        if ( responseRecieved != null ) {
-                            if ( !responseRecieved.equals("") ) {
+                        if (responseRecieved != null) {
+                            if (!responseRecieved.equals("")) {
                                 JSONArray jsonArray = new JSONArray(responseRecieved);
                                 Log.d("sa89a6", "####");
-                                if ( jsonArray.getJSONObject(0).getString("status").equals("Y") ) { // success
+                                if (jsonArray.getJSONObject(0).getString("status").equals("Y")) { // success
 
                                     jsonArray.getJSONObject(0).remove("status");
                                     Log.d("NARISLOG", "####" + jsonArray.toString());
 
                                     if (narisv.INSERT_AS_SQL("login", jsonArray, "")) {
                                         Log.d("insertLogin", "success: ");
-                                    }else{
+                                    } else {
                                         Log.d("insertLogin", "fial: ");
                                     }
 
@@ -470,16 +470,16 @@ public class Login_Activity extends AppCompatActivity {
 //                                        Log.d("isSuccess_0", "_01");
 //                                        IsSuccess = 0; //0 sakito_config
 //                                    }
-                                } else if ( jsonArray.getJSONObject(0).getString("status").equals("N") && jsonArray.getJSONObject(0).getString("type").equals("U") ) { // fail
+                                } else if (jsonArray.getJSONObject(0).getString("status").equals("N") && jsonArray.getJSONObject(0).getString("type").equals("U")) { // fail
                                     Log.d("NARISLOG", "NOT FOUND USER : " + jsonArray.getJSONObject(0).getString("message"));
                                     IsSuccess = -1; //-1
-                                } else if ( jsonArray.getJSONObject(0).getString("status").equals("N") && jsonArray.getJSONObject(0).getString("type").equals("P") ) {
+                                } else if (jsonArray.getJSONObject(0).getString("status").equals("N") && jsonArray.getJSONObject(0).getString("type").equals("P")) {
                                     Log.d("NARISLOG", "NOT FOUND USER : " + jsonArray.getJSONObject(0).getString("message"));
                                     IsSuccess = -1;//-1
-                                } else if ( jsonArray.getJSONObject(0).getString("status").equals("N") && jsonArray.getJSONObject(0).getString("type").equals("S") ) {
+                                } else if (jsonArray.getJSONObject(0).getString("status").equals("N") && jsonArray.getJSONObject(0).getString("type").equals("S")) {
                                     Log.d("NARISLOG", "NOT FOUND USER : " + jsonArray.getJSONObject(0).getString("message"));
                                     IsSuccess = -2;//-2
-                                } else if ( netCon.isConnectingToInternet() ) {
+                                } else if (netCon.isConnectingToInternet()) {
                                     Log.d("isSuccess_0", "0");
                                     IsSuccess = 0;//0
                                 }
@@ -502,12 +502,12 @@ public class Login_Activity extends AppCompatActivity {
             }
 
             @Override
-            protected void onPostExecute( Integer IsSuccess ) {
+            protected void onPostExecute(Integer IsSuccess) {
                 super.onPostExecute(IsSuccess);
 
-                Log.d("asda56s",IsSuccess+"");
+                Log.d("asda56s", IsSuccess + "");
 
-                if ( IsSuccess == 1 ) {
+                if (IsSuccess == 1) {
                     SharedPreferences login_get = getSharedPreferences("LOGIN", Context.MODE_PRIVATE);
                     Var.UserLogin.driver_id = login_get.getString("driver_id", "");
                     Var.UserLogin.driver_user = login_get.getString("username", "");
@@ -520,49 +520,49 @@ public class Login_Activity extends AppCompatActivity {
                     Var.UserLogin.driver_vehicle_id = login_get.getString("vehicle_id", "");
                     Var.UserLogin.driver_status_login = login_get.getString("status_login", "");
 
-                   // login_get.edit().clear();
+                    // login_get.edit().clear();
 
                     // Toast.makeText(Login_Activity.this, "Success !", Toast.LENGTH_SHORT).show();
                     Intent i = new Intent(Login_Activity.this, PlanWork_Activity.class);
                     startActivity(i);
-                } else if ( IsSuccess == -1 ) {
+                } else if (IsSuccess == -1) {
                     AlertDialog alert = new AlertDialog.Builder(Login_Activity.this).create();
                     alert.setTitle(getString(R.string.not_found));
                     alert.setMessage(getString(R.string.u_or_p_incorrect));
                     alert.setButton2(getString(R.string.close), new DialogInterface.OnClickListener() {
                         @Override
-                        public void onClick( DialogInterface dialog, int which ) {
+                        public void onClick(DialogInterface dialog, int which) {
 
                         }
                     });
                     alert.show();
 
                     // attemptLogin();
-                } else if ( IsSuccess == -2 ) {
+                } else if (IsSuccess == -2) {
                     AlertDialog alert = new AlertDialog.Builder(Login_Activity.this).create();
                     alert.setTitle("Serial !!");
                     alert.setMessage(getString(R.string.serial_not_match));
                     alert.setButton(getString(R.string.close), new DialogInterface.OnClickListener() {
                         @Override
-                        public void onClick( DialogInterface dialog, int which ) {
+                        public void onClick(DialogInterface dialog, int which) {
 
                         }
                     });
                     alert.show();
-                } else if ( IsSuccess == 0 ) {
+                } else if (IsSuccess == 0) {
                     //Toast.makeText(Login_Activity.this, "Fail", Toast.LENGTH_SHORT).show();
                     AlertDialog alert = new AlertDialog.Builder(Login_Activity.this).create();
                     alert.setTitle(getString(R.string.server_connection));
                     alert.setMessage(getString(R.string.cannot_connect_to_the_server));
                     alert.setButton(getString(R.string.use_offline), new DialogInterface.OnClickListener() {
                         @Override
-                        public void onClick( DialogInterface dialog, int which ) {
+                        public void onClick(DialogInterface dialog, int which) {
                             new Authen_Offline().execute(edtUsername.getText().toString(), edtPassword.getText().toString());
                         }
                     });
                     alert.setButton2(getString(R.string.cancel), new DialogInterface.OnClickListener() {
                         @Override
-                        public void onClick( DialogInterface dialog, int which ) {
+                        public void onClick(DialogInterface dialog, int which) {
 
                         }
                     });
@@ -618,19 +618,19 @@ public class Login_Activity extends AppCompatActivity {
             Manifest.permission.READ_EXTERNAL_STORAGE,
             Manifest.permission.CAMERA,
             Manifest.permission.ACCESS_FINE_LOCATION,
-            Manifest.permission.READ_PHONE_STATE };
+            Manifest.permission.READ_PHONE_STATE};
 
     private boolean checkPermissions() {
         int result;
         List<String> listPermissionsNeeded = new ArrayList<>();
         for (String p : permissions) {
             result = ContextCompat.checkSelfPermission(getApplicationContext(), p);
-            if ( result != PackageManager.PERMISSION_GRANTED ) {
+            if (result != PackageManager.PERMISSION_GRANTED) {
                 listPermissionsNeeded.add(p);
 
             }
         }
-        if ( !listPermissionsNeeded.isEmpty() ) {
+        if (!listPermissionsNeeded.isEmpty()) {
             ActivityCompat.requestPermissions(this, listPermissionsNeeded.toArray(new String[listPermissionsNeeded.size()]), MULTIPLE_PERMISSIONS);
             return false;
         }
@@ -640,16 +640,16 @@ public class Login_Activity extends AppCompatActivity {
     }
 
     @Override
-    public void onRequestPermissionsResult( int requestCode, @NonNull String[] permissionsList, @NonNull int[] grantResults ) {
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissionsList, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         Log.d("TAG", "onRequestPermissionsResult: ");
         switch (requestCode) {
             case MULTIPLE_PERMISSIONS: {
 
-                if ( grantResults.length > 0 ) {
+                if (grantResults.length > 0) {
                     String permissionsDenied = "";
                     for (String per : permissionsList) {
-                        if ( grantResults[0] == PackageManager.PERMISSION_DENIED ) {
+                        if (grantResults[0] == PackageManager.PERMISSION_DENIED) {
                             permissionsDenied += "\n" + per;
                             Log.d("TAG", "onRequestPermissionsResult: 1");
                         }
@@ -669,7 +669,6 @@ public class Login_Activity extends AppCompatActivity {
         }
 
     }
-
 
 
     private void CheckDatabaseStructure() {
@@ -698,13 +697,14 @@ public class Login_Activity extends AppCompatActivity {
         databaseHelper.execDB(sql);
 
         sql = "CREATE TABLE IF NOT EXISTS pic_sign (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, consignment_no TEXT(255,0), order_no TEXT(255,0), invoice_no TEXT(255,0)" +
-                ",pic_sign_load TEXT(255,0),pic_sign_unload TEXT(255,0),date_sign_load TEXT(255,0),date_sign_unload TEXT(255,0), delivery_no TEXT(255,0)" +
-                ",status_load TEXT(255,0),status_unload TEXT(255,0),status_upload_invoice TEXT(255,0), status_delete TEXT(255,0), create_date TEXT(255,0), UNIQUE(order_no));";
+                ",pic_sign_load TEXT(255,0),pic_sign_unload TEXT(255,0),comment_load TEXT(255,0), comment_unload TEXT(255,0), date_sign_load TEXT(255,0),date_sign_unload TEXT(255,0), delivery_no TEXT(255,0)" +
+                ",status_load TEXT(255,0),status_unload TEXT(255,0),status_upload_invoice TEXT(255,0), status_delete TEXT(255,0), create_date TEXT(255,0)" +
+                ", UNIQUE(consignment_no,order_no,invoice_no,delivery_no));";
         databaseHelper.execDB(sql);
 
         sql = "CREATE TABLE IF NOT EXISTS comment_invoice (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, consignment_no TEXT(255,0), order_no TEXT(255,0), invoice_no TEXT(255,0)" +
                 ",comment_load TEXT(255,0), comment_unload TEXT(255,0), status_load TEXT(255,0), status_unload TEXT(255,0), delivery_no TEXT(255,0), status_upload_comment TEXT(255,0)" +
-                ", create_date TEXT(255,0), UNIQUE(order_no));";
+                ", create_date TEXT(255,0), UNIQUE(id));";
         databaseHelper.execDB(sql);
 
         sql = "CREATE TABLE IF NOT EXISTS Var (Var TEXT NOT NULL,Value TEXT,Value2 TEXT,MODIFIED_DATE TEXT,PRIMARY KEY(Var));";
@@ -727,14 +727,14 @@ public class Login_Activity extends AppCompatActivity {
     private void clearOldData() {
     }
 
-    private static String convertStreamToString( InputStream is ) {
+    private static String convertStreamToString(InputStream is) {
 
         BufferedReader reader = new BufferedReader(new InputStreamReader(is));
         StringBuilder sb = new StringBuilder();
 
         String line = null;
         try {
-            while (( line = reader.readLine() ) != null) {
+            while ((line = reader.readLine()) != null) {
                 sb.append(line + "\n");
             }
         } catch (IOException e) {
@@ -764,7 +764,7 @@ public class Login_Activity extends AppCompatActivity {
         }
 
         @Override
-        protected String doInBackground( String... strings ) {
+        protected String doInBackground(String... strings) {
 
             try {
                 String username = strings[0];
@@ -780,11 +780,11 @@ public class Login_Activity extends AppCompatActivity {
                 Log.d("NARISLOG", re_json.getJSONObject(0).getString("status"));
 
 
-                if ( re_json.getJSONObject(0).getString("status").equals("Y") ) { // success
+                if (re_json.getJSONObject(0).getString("status").equals("Y")) { // success
 
                     re_json.getJSONObject(0).remove("status");
                     Log.d("NARISLOG", "####" + re_json.toString());
-                    if ( narisv.INSERT_AS_SQL("login", re_json, "") ) {
+                    if (narisv.INSERT_AS_SQL("login", re_json, "")) {
                         Log.d("NARISLOG", "INSERT JSON SUCCESS");
 
 
@@ -809,16 +809,16 @@ public class Login_Activity extends AppCompatActivity {
                         Log.d("isSuccess_0", "_01");
                         IsSuccess = 0; //0 sakito_config
                     }
-                } else if ( re_json.getJSONObject(0).getString("status").equals("N") && re_json.getJSONObject(0).getString("type").equals("U") ) { // fail
+                } else if (re_json.getJSONObject(0).getString("status").equals("N") && re_json.getJSONObject(0).getString("type").equals("U")) { // fail
                     Log.d("NARISLOG", "NOT FOUND USER : " + re_json.getJSONObject(0).getString("message"));
                     IsSuccess = -1; //-1
-                } else if ( re_json.getJSONObject(0).getString("status").equals("N") && re_json.getJSONObject(0).getString("type").equals("P") ) {
+                } else if (re_json.getJSONObject(0).getString("status").equals("N") && re_json.getJSONObject(0).getString("type").equals("P")) {
                     Log.d("NARISLOG", "NOT FOUND USER : " + re_json.getJSONObject(0).getString("message"));
                     IsSuccess = -1;//-1
-                } else if ( re_json.getJSONObject(0).getString("status").equals("N") && re_json.getJSONObject(0).getString("type").equals("S") ) {
+                } else if (re_json.getJSONObject(0).getString("status").equals("N") && re_json.getJSONObject(0).getString("type").equals("S")) {
                     Log.d("NARISLOG", "NOT FOUND USER : " + re_json.getJSONObject(0).getString("message"));
                     IsSuccess = -2;//-2
-                } else if ( netCon.isConnectingToInternet() ) {
+                } else if (netCon.isConnectingToInternet()) {
                     Log.d("isSuccess_0", "_02");
                     IsSuccess = 0;//0
                 }
@@ -834,57 +834,57 @@ public class Login_Activity extends AppCompatActivity {
         }
 
         @Override
-        protected void onProgressUpdate( String... values ) {
+        protected void onProgressUpdate(String... values) {
             super.onProgressUpdate(values);
         }
 
         @Override
-        protected void onPostExecute( String s ) {
+        protected void onPostExecute(String s) {
             super.onPostExecute(s);
             pd.hide();
 
-            if ( IsSuccess == 1 ) {
+            if (IsSuccess == 1) {
                 // Toast.makeText(Login_Activity.this, "Success !", Toast.LENGTH_SHORT).show();
                 Intent i = new Intent(Login_Activity.this, PlanWork_Activity.class);
                 startActivity(i);
-            } else if ( IsSuccess == -1 ) {
+            } else if (IsSuccess == -1) {
                 AlertDialog alert = new AlertDialog.Builder(Login_Activity.this).create();
                 alert.setTitle(getString(R.string.not_found));
                 alert.setMessage(getString(R.string.u_or_p_incorrect));
                 alert.setButton2(getString(R.string.close), new DialogInterface.OnClickListener() {
                     @Override
-                    public void onClick( DialogInterface dialog, int which ) {
+                    public void onClick(DialogInterface dialog, int which) {
 
                     }
                 });
                 alert.show();
 
                 // attemptLogin();
-            } else if ( IsSuccess == -2 ) {
+            } else if (IsSuccess == -2) {
                 AlertDialog alert = new AlertDialog.Builder(Login_Activity.this).create();
                 alert.setTitle("Serial !!");
                 alert.setMessage(getString(R.string.serial_not_match));
                 alert.setButton(getString(R.string.close), new DialogInterface.OnClickListener() {
                     @Override
-                    public void onClick( DialogInterface dialog, int which ) {
+                    public void onClick(DialogInterface dialog, int which) {
 
                     }
                 });
                 alert.show();
-            } else if ( IsSuccess == 0 ) {
+            } else if (IsSuccess == 0) {
                 //Toast.makeText(Login_Activity.this, "Fail", Toast.LENGTH_SHORT).show();
                 AlertDialog alert = new AlertDialog.Builder(Login_Activity.this).create();
                 alert.setTitle(getString(R.string.server_connection));
                 alert.setMessage(getString(R.string.cannot_connect_to_the_server));
                 alert.setButton(getString(R.string.use_offline), new DialogInterface.OnClickListener() {
                     @Override
-                    public void onClick( DialogInterface dialog, int which ) {
-                      //  new Authen_Offline().execute(edtUsername.getText().toString(), edtPassword.getText().toString());
+                    public void onClick(DialogInterface dialog, int which) {
+                        //  new Authen_Offline().execute(edtUsername.getText().toString(), edtPassword.getText().toString());
                     }
                 });
                 alert.setButton2(getString(R.string.cancel), new DialogInterface.OnClickListener() {
                     @Override
-                    public void onClick( DialogInterface dialog, int which ) {
+                    public void onClick(DialogInterface dialog, int which) {
 
                     }
                 });
@@ -907,18 +907,18 @@ public class Login_Activity extends AppCompatActivity {
         }
 
         @Override
-        protected String doInBackground( String... params ) {
+        protected String doInBackground(String... params) {
             try {
                 Log.d("NARISLOG", "Authen Offline");
                 String sql = "select * from login where username = '" + params[0] + "' and pass = '" + params[1] + "' ";
                 Cursor c = databaseHelper.selectDB(sql);
                 Log.d("NARISLOG", "total line " + c.getCount());
-                if ( c.getCount() > 0 ) {
+                if (c.getCount() > 0) {
                     c.moveToFirst();
                     // Log.d("NARISLOG1", "_01"+c);
-                    if ( c.getString(c.getColumnIndex("serial")).equals(imei) ) {
+                    if (c.getString(c.getColumnIndex("serial")).equals(imei)) {
 
-                        if ( c.getString(c.getColumnIndex("status_login")).equals("0") ) {
+                        if (c.getString(c.getColumnIndex("status_login")).equals("0")) {
 //                            String update_login = "UPDATE login SET driver_status_login = '1' WHERE driver_id = "+c.getString(c.getColumnIndex("driver_id"));
 //                            databaseHelper.rawQuery(update_login);
 
@@ -967,38 +967,38 @@ public class Login_Activity extends AppCompatActivity {
         }
 
         @Override
-        protected void onProgressUpdate( String... values ) {
+        protected void onProgressUpdate(String... values) {
             super.onProgressUpdate(values);
         }
 
         @Override
-        protected void onPostExecute( String s ) {
+        protected void onPostExecute(String s) {
             super.onPostExecute(s);
             pd.hide();
 
-            if ( IsSuccess == 1 ) {
+            if (IsSuccess == 1) {
                 Intent i = new Intent(Login_Activity.this, PlanWork_Activity.class);
                 startActivity(i);
-            } else if ( IsSuccess == -1 ) {
+            } else if (IsSuccess == -1) {
                 AlertDialog alert = new AlertDialog.Builder(Login_Activity.this).create();
                 alert.setTitle(getString(R.string.no_history_found));
                 alert.setMessage(getString(R.string.user_not_found));
                 alert.setButton(getString(R.string.close), new DialogInterface.OnClickListener() {
                     @Override
-                    public void onClick( DialogInterface dialog, int which ) {
+                    public void onClick(DialogInterface dialog, int which) {
 
                     }
                 });
                 alert.show();
 
                 // attemptLogin();
-            } else if ( IsSuccess == -2 ) {
+            } else if (IsSuccess == -2) {
                 AlertDialog alert = new AlertDialog.Builder(Login_Activity.this).create();
                 alert.setTitle("Serial !!");
                 alert.setMessage(getString(R.string.serial_not_match));
                 alert.setButton(getString(R.string.close), new DialogInterface.OnClickListener() {
                     @Override
-                    public void onClick( DialogInterface dialog, int which ) {
+                    public void onClick(DialogInterface dialog, int which) {
 
                     }
                 });
@@ -1009,7 +1009,7 @@ public class Login_Activity extends AppCompatActivity {
                 alert.setMessage(getString(R.string.cannot_retrieve_user_data));
                 alert.setButton(getString(R.string.close), new DialogInterface.OnClickListener() {
                     @Override
-                    public void onClick( DialogInterface dialog, int which ) {
+                    public void onClick(DialogInterface dialog, int which) {
 
                     }
                 });
@@ -1037,20 +1037,20 @@ public class Login_Activity extends AppCompatActivity {
        /* if ( pWriteStorage != PackageManager.PERMISSION_GRANTED ) {
             listPermissionsNeeded.add(android.Manifest.permission.WRITE_EXTERNAL_STORAGE);
         }*/
-        if ( pReadStorage != PackageManager.PERMISSION_GRANTED ) {
+        if (pReadStorage != PackageManager.PERMISSION_GRANTED) {
             listPermissionsNeeded.add(android.Manifest.permission.READ_EXTERNAL_STORAGE);
         }
-        if ( pInternet != PackageManager.PERMISSION_GRANTED ) {
+        if (pInternet != PackageManager.PERMISSION_GRANTED) {
             listPermissionsNeeded.add(android.Manifest.permission.READ_PHONE_STATE);
         }
-        if ( pAccessLocation != PackageManager.PERMISSION_GRANTED ) {
+        if (pAccessLocation != PackageManager.PERMISSION_GRANTED) {
             listPermissionsNeeded.add(android.Manifest.permission.ACCESS_FINE_LOCATION);
         }
-        if ( pCamera != PackageManager.PERMISSION_GRANTED ) {
+        if (pCamera != PackageManager.PERMISSION_GRANTED) {
             listPermissionsNeeded.add(Manifest.permission.CAMERA);
         }
 
-        if ( !listPermissionsNeeded.isEmpty() ) {
+        if (!listPermissionsNeeded.isEmpty()) {
             ActivityCompat.requestPermissions(this, listPermissionsNeeded.toArray(new String[listPermissionsNeeded.size()]), REQUEST_ID_MULTIPLE_PERMISSIONS);
             return false;
         }
@@ -1059,7 +1059,7 @@ public class Login_Activity extends AppCompatActivity {
 
 
     private void attemptLogin() {
-        if ( mAuthTask != null ) {
+        if (mAuthTask != null) {
             return;
         }
 
@@ -1075,7 +1075,7 @@ public class Login_Activity extends AppCompatActivity {
         View focusView = null;
 
         // Check for a valid password, if the user entered one.
-        if ( !TextUtils.isEmpty(password) && !isPasswordValid(password) ) {
+        if (!TextUtils.isEmpty(password) && !isPasswordValid(password)) {
             edtPassword.setError(getString(R.string.error_invalid_password));
             focusView = edtPassword;
             cancel = true;
@@ -1092,7 +1092,7 @@ public class Login_Activity extends AppCompatActivity {
 //            cancel = true;
 //        }
 
-        if ( cancel ) {
+        if (cancel) {
             // There was an error; don't attempt login and focus the first
             // form field with an error.
             focusView.requestFocus();
@@ -1106,7 +1106,7 @@ public class Login_Activity extends AppCompatActivity {
     }
 
     private void populateAutoComplete() {
-        if ( !mayRequestContacts() ) {
+        if (!mayRequestContacts()) {
             return;
         }
 
@@ -1114,23 +1114,23 @@ public class Login_Activity extends AppCompatActivity {
     }
 
     private boolean mayRequestContacts() {
-        if ( Build.VERSION.SDK_INT < Build.VERSION_CODES.M ) {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
             return true;
         }
-        if ( checkSelfPermission(READ_CONTACTS) == PackageManager.PERMISSION_GRANTED ) {
+        if (checkSelfPermission(READ_CONTACTS) == PackageManager.PERMISSION_GRANTED) {
             return true;
         }
-        if ( shouldShowRequestPermissionRationale(READ_CONTACTS) ) {
+        if (shouldShowRequestPermissionRationale(READ_CONTACTS)) {
             Snackbar.make(edtUsername, R.string.permission_rationale, Snackbar.LENGTH_INDEFINITE)
                     .setAction(android.R.string.ok, new View.OnClickListener() {
                         @Override
                         @TargetApi(Build.VERSION_CODES.M)
-                        public void onClick( View v ) {
-                            requestPermissions(new String[]{ READ_CONTACTS }, REQUEST_READ_CONTACTS);
+                        public void onClick(View v) {
+                            requestPermissions(new String[]{READ_CONTACTS}, REQUEST_READ_CONTACTS);
                         }
                     });
         } else {
-            requestPermissions(new String[]{ READ_CONTACTS }, REQUEST_READ_CONTACTS);
+            requestPermissions(new String[]{READ_CONTACTS}, REQUEST_READ_CONTACTS);
         }
         return false;
     }
@@ -1145,13 +1145,13 @@ public class Login_Activity extends AppCompatActivity {
         private final String mEmail;
         private final String mPassword;
 
-        UserLoginTask( String email, String password ) {
+        UserLoginTask(String email, String password) {
             mEmail = email;
             mPassword = password;
         }
 
         @Override
-        protected Boolean doInBackground( Void... params ) {
+        protected Boolean doInBackground(Void... params) {
             // TODO: attempt authentication against a network service.
 
             try {
@@ -1163,7 +1163,7 @@ public class Login_Activity extends AppCompatActivity {
 
             for (String credential : DUMMY_CREDENTIALS) {
                 String[] pieces = credential.split(":");
-                if ( pieces[0].equals(mEmail) ) {
+                if (pieces[0].equals(mEmail)) {
                     // Account exists, return true if the password matches.
                     return pieces[1].equals(mPassword);
                 }
@@ -1174,11 +1174,11 @@ public class Login_Activity extends AppCompatActivity {
         }
 
         @Override
-        protected void onPostExecute( final Boolean success ) {
+        protected void onPostExecute(final Boolean success) {
             mAuthTask = null;
             //showProgress(false);
 
-            if ( success ) {
+            if (success) {
                 finish();
             } else {
                 edtPassword.setError(getString(R.string.error_incorrect_password));
@@ -1193,12 +1193,12 @@ public class Login_Activity extends AppCompatActivity {
         }
     }
 
-    private boolean isEmailValid( String email ) {
+    private boolean isEmailValid(String email) {
         //TODO: Replace this with your own logic
         return email.contains("@");
     }
 
-    private boolean isPasswordValid( String password ) {
+    private boolean isPasswordValid(String password) {
         //TODO: Replace this with your own logic
         return password.length() > 4;
     }
@@ -1207,18 +1207,18 @@ public class Login_Activity extends AppCompatActivity {
      * Shows the progress UI and hides the login form.
      */
     @TargetApi(Build.VERSION_CODES.HONEYCOMB_MR2)
-    private void showProgress( final boolean show ) {
+    private void showProgress(final boolean show) {
         // On Honeycomb MR2 we have the ViewPropertyAnimator APIs, which allow
         // for very easy animations. If available, use these APIs to fade-in
         // the progress spinner.
-        if ( Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2 ) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2) {
             int shortAnimTime = getResources().getInteger(android.R.integer.config_shortAnimTime);
 
             mLoginFormView.setVisibility(show ? View.GONE : View.VISIBLE);
             mLoginFormView.animate().setDuration(shortAnimTime).alpha(
                     show ? 0 : 1).setListener(new AnimatorListenerAdapter() {
                 @Override
-                public void onAnimationEnd( Animator animation ) {
+                public void onAnimationEnd(Animator animation) {
                     mLoginFormView.setVisibility(show ? View.GONE : View.VISIBLE);
                 }
             });
@@ -1240,7 +1240,7 @@ public class Login_Activity extends AppCompatActivity {
     }
 
     @Override
-    public void onSaveInstanceState( Bundle outState, PersistableBundle outPersistentState ) {
+    public void onSaveInstanceState(Bundle outState, PersistableBundle outPersistentState) {
         super.onSaveInstanceState(outState, outPersistentState);
 
         outState.putString("Username", Username);
@@ -1249,14 +1249,14 @@ public class Login_Activity extends AppCompatActivity {
     }
 
     @Override
-    public void onRestoreInstanceState( Bundle savedInstanceState ) {
+    public void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
         Username = savedInstanceState.getString("Username");
         password = savedInstanceState.getString("Password");
     }
 
     @Override
-    public boolean onCreateOptionsMenu( Menu menu ) {
+    public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.munu_login, menu); //your file name
         //menu.add(0, THAI, R.id.lang_thai, 300, "Thai");
@@ -1265,7 +1265,7 @@ public class Login_Activity extends AppCompatActivity {
 
 
     @Override
-    public boolean onOptionsItemSelected( MenuItem item ) {
+    public boolean onOptionsItemSelected(MenuItem item) {
         SharedPreferences user_data = this.getSharedPreferences("USER_DATA", Context.MODE_PRIVATE);
         SharedPreferences Language_Locale = this.getSharedPreferences("PREFERENCE_LANGUAGE", Context.MODE_PRIVATE);
         switch (item.getItemId()) {

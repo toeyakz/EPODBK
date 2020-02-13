@@ -18,10 +18,11 @@ public class DeliverExpand_Model {
     private String actual_lat = "";
     private String actual_lon = "";
     private String is_save = "";
+    private String order_no = "";
 
 
     public DeliverExpand_Model( String box_no, String waybil_no, String is_scaned, String row_number, String consignment, String delivery_no, String plan_seq, String comment
-            ,String picture1, String picture2, String picture3, String is_save ) {
+            ,String picture1, String picture2, String picture3, String is_save, String order_no ) {
         this.box_no = box_no;
         this.waybil_no = waybil_no;
         this.is_scaned = is_scaned;
@@ -34,6 +35,15 @@ public class DeliverExpand_Model {
         this.picture2 = picture2;
         this.picture3 = picture3;
         this.is_save = is_save;
+        this.order_no = order_no;
+    }
+
+    public String getOrder_no() {
+        return order_no;
+    }
+
+    public void setOrder_no(String order_no) {
+        this.order_no = order_no;
     }
 
     public String getIs_save() {

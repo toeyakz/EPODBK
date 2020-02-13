@@ -539,20 +539,20 @@ public class PlanWork_Activity extends AppCompatActivity {
             ArrayList<UploadImageInvoice.Data2> uploadImage = new ArrayList<>();
             Log.d("statusUploadInvoice", "doInBackground: 1");
             try {
-                String sql = "select ps.id \n" +
-                        ", (select delivery_no from plan) as delivery_no \n" +
-                        ", ps.order_no \n" +
-                        ", ps.consignment_no \n" +
-                        ", ps.invoice_no \n" +
-                        ", ps.pic_sign_load \n" +
-                        ", ps.pic_sign_unload \n" +
-                        ", ps.date_sign_load \n" +
-                        ", ps.date_sign_unload  \n" +
-                        ", (select ci2.comment_load from comment_invoice ci2 where ci2.invoice_no = ps.invoice_no  and ci2.order_no = ps.order_no) as comment_load \n" +
-                        ", (select ci2.comment_unload from comment_invoice ci2 where ci2.invoice_no = ps.invoice_no  and ci2.order_no = ps.order_no) as comment_unload \n" +
-                        ", (select ci2.status_load from comment_invoice ci2 where ci2.invoice_no = ps.invoice_no  and ci2.order_no = ps.order_no) as status_load \n" +
-                        ", (select ci2.status_unload from comment_invoice ci2 where ci2.invoice_no = ps.invoice_no  and ci2.order_no = ps.order_no) as status_unload \n" +
-                        "from pic_sign ps \n" +
+                String sql = "select ps.id  \n" +
+                        ", ps.delivery_no  \n" +
+                        ", ps.order_no  \n" +
+                        ", ps.consignment_no  \n" +
+                        ", ps.invoice_no  \n" +
+                        ", ps.pic_sign_load  \n" +
+                        ", ps.pic_sign_unload  \n" +
+                        ", ps.date_sign_load  \n" +
+                        ", ps.date_sign_unload   \n" +
+                        ", ps.comment_load  \n" +
+                        ", ps.comment_unload  \n" +
+                        ", ps.status_load  \n" +
+                        ", ps.status_unload  \n" +
+                        "from pic_sign ps  \n" +
                         "where status_upload_invoice = '0' and status_delete = '0'";
                 Cursor cursor = databaseHelper.selectDB(sql);
                 JSONArray ContactArray = new JSONArray();
@@ -603,6 +603,7 @@ public class PlanWork_Activity extends AppCompatActivity {
                                         for (int j = 0; j < jsonArray.getJSONObject(0).getJSONArray("data").length(); j++) {
                                             String json_data = jsonArray.getJSONObject(0).getJSONArray("data").getString(j);
 
+                                            Log.d("DSAf5s0d", "doInBackground: "+json_data);
                                             //เปิดทีหลัง
                                             ContentValues cv = new ContentValues();
                                             cv.put("status_upload_invoice", "1");
@@ -1258,20 +1259,24 @@ public class PlanWork_Activity extends AppCompatActivity {
                                                                             JSONArray jsonArrayInvoice = new JSONArray(recievedInvoice);
                                                                             for (int o = 0; o < jsonArrayInvoice.length(); o++) {
 
-                                                                                String sql = "INSERT OR REPLACE INTO pic_sign (consignment_no, order_no, invoice_no, pic_sign_load, pic_sign_unload" +
-                                                                                        ", date_sign_load, date_sign_unload, status_load, status_unload) VALUES('" + jsonArrayInvoice.getJSONObject(o).getString("consignment_no") + "'" +
+                                                                                String sql = "INSERT OR REPLACE INTO pic_sign (delivery_no, consignment_no, order_no, invoice_no, pic_sign_load, pic_sign_unload" +
+                                                                                        ", comment_load, comment_unload, date_sign_load, date_sign_unload, status_load, status_unload, status_upload_invoice" +
+                                                                                        ", status_delete) VALUES('" + jsonArrayInvoice.getJSONObject(o).getString("delivery_no") + "'" +
+                                                                                        ",'" + jsonArrayInvoice.getJSONObject(o).getString("consignment_no") + "'" +
                                                                                         ", '" + jsonArrayInvoice.getJSONObject(o).getString("order_no") + "', '" + jsonArrayInvoice.getJSONObject(o).getString("invoice_no") + "'" +
                                                                                         ", '" + jsonArrayInvoice.getJSONObject(o).getString("pic_sign_load") + "', '" + jsonArrayInvoice.getJSONObject(o).getString("pic_sign_unload") + "'" +
+                                                                                        ", '" + jsonArrayInvoice.getJSONObject(o).getString("comment_load") + "', '" + jsonArrayInvoice.getJSONObject(o).getString("comment_unload") + "'" +
                                                                                         ", '" + jsonArrayInvoice.getJSONObject(o).getString("date_sign_load") + "', '" + jsonArrayInvoice.getJSONObject(o).getString("date_sing_unload") + "'" +
-                                                                                        ", '" + jsonArrayInvoice.getJSONObject(o).getString("status_load") + "', '" + jsonArrayInvoice.getJSONObject(o).getString("status_unload") + "')";
+                                                                                        ", '" + jsonArrayInvoice.getJSONObject(o).getString("status_load") + "', '" + jsonArrayInvoice.getJSONObject(o).getString("status_unload") + "','1','0')";
                                                                                 databaseHelper.db().execSQL(sql);
 
-                                                                                String sql2 = "INSERT OR REPLACE INTO comment_invoice (consignment_no, order_no, invoice_no, comment_load, comment_unload, status_load" +
-                                                                                        ", status_unload) VALUES('" + jsonArrayInvoice.getJSONObject(o).getString("consignment_no") + "','" + jsonArrayInvoice.getJSONObject(o).getString("order_no") + "'" +
-                                                                                        ", '" + jsonArrayInvoice.getJSONObject(o).getString("invoice_no") + "', '" + jsonArrayInvoice.getJSONObject(o).getString("comment_load") + "'" +
-                                                                                        ", '" + jsonArrayInvoice.getJSONObject(o).getString("comment_unload") + "', '" + jsonArrayInvoice.getJSONObject(o).getString("status_load") + "'" +
-                                                                                        ", '"+jsonArrayInvoice.getJSONObject(o).getString("status_unload")+"')";
-                                                                                databaseHelper.db().execSQL(sql2);
+//                                                                                String sql2 = "INSERT OR REPLACE INTO comment_invoice (delivery_no, consignment_no, order_no, invoice_no, comment_load, comment_unload, status_load" +
+//                                                                                        ", status_unload) VALUES('" + jsonArrayInvoice.getJSONObject(o).getString("delivery_no") + "'" +
+//                                                                                        ",'" + jsonArrayInvoice.getJSONObject(o).getString("consignment_no") + "','" + jsonArrayInvoice.getJSONObject(o).getString("order_no") + "'" +
+//                                                                                        ", '" + jsonArrayInvoice.getJSONObject(o).getString("invoice_no") + "', '" + jsonArrayInvoice.getJSONObject(o).getString("comment_load") + "'" +
+//                                                                                        ", '" + jsonArrayInvoice.getJSONObject(o).getString("comment_unload") + "', '" + jsonArrayInvoice.getJSONObject(o).getString("status_load") + "'" +
+//                                                                                        ", '"+jsonArrayInvoice.getJSONObject(o).getString("status_unload")+"')";
+//                                                                                databaseHelper.db().execSQL(sql2);
                                                                             }
                                                                         }
                                                                     }

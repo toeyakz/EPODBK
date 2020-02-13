@@ -12,6 +12,7 @@ import android.content.ContentValues;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -342,12 +343,18 @@ public class Signature_Deliver_Activity extends AppCompatActivity {
                 jsonInsertPicSign.put("consignment_no", arrayList.get(i).getConsignment_no());
                 jsonInsertPicSign.put("order_no", arrayList.get(i).getOrder_no());
                 jsonInsertPicSign.put("invoice_no", arrayList.get(i).getDeli_note_no());
-                jsonInsertPicSign.put("status_load", arrayList.get(i).getStatus());
+                jsonInsertPicSign.put("status_unload", arrayList.get(i).getStatus());
                 jsonInsertPicSign.put("date_sign_unload", getdate());
                 jsonInsertPicSign.put("status_upload_invoice", "0");
                 jsonInsertPicSign.put("pic_sign_unload", imgList[0]);
                 jsonInsertPicSign.put("create_date", getdate());
                 jsonInsertPicSign.put("status_delete", "0");
+                if (!arrayList.get(i).getComment().equals("")) {
+                    jsonInsertPicSign.put("comment_unload", arrayList.get(i).getComment());
+                } else {
+                    jsonInsertPicSign.put("comment_unload", "");
+                }
+                jsonInsertPicSign.put("delivery_no", arrayList.get(i).getDelivery_no());
 
                 String sql = "INSERT INTO image_invoice (name_img, status_img, create_date) VALUES('" + imgList[0] + "','0', '" + getdate() + "')";
                 databaseHelper.db().execSQL(sql);
@@ -358,7 +365,16 @@ public class Signature_Deliver_Activity extends AppCompatActivity {
                     jsonInsertComment.put("order_no", arrayList.get(i).getOrder_no());
                     jsonInsertComment.put("invoice_no", arrayList.get(i).getDeli_note_no());
                     jsonInsertComment.put("comment_unload", arrayList.get(i).getComment());
-                    jsonInsertComment.put("status_load", arrayList.get(i).getStatus());
+                    jsonInsertComment.put("status_unload", arrayList.get(i).getStatus());
+                    jsonInsertComment.put("delivery_no", arrayList.get(i).getDelivery_no());
+                    jsonInsertComment.put("status_upload_comment", "0");
+                    jsonInsertComment.put("create_date", getdate());
+                } else {
+                    jsonInsertComment.put("consignment_no", arrayList.get(i).getConsignment_no());
+                    jsonInsertComment.put("order_no", arrayList.get(i).getOrder_no());
+                    jsonInsertComment.put("invoice_no", arrayList.get(i).getDeli_note_no());
+                    jsonInsertComment.put("comment_unload", "");
+                    jsonInsertComment.put("status_unload", arrayList.get(i).getStatus());
                     jsonInsertComment.put("delivery_no", arrayList.get(i).getDelivery_no());
                     jsonInsertComment.put("status_upload_comment", "0");
                     jsonInsertComment.put("create_date", getdate());
@@ -377,7 +393,44 @@ public class Signature_Deliver_Activity extends AppCompatActivity {
 
 
                 if (!arrayList.get(i).getStatus().equals("0")) {
-                    if (narisv.INSERT_AS_SQL("pic_sign", jsonArrayInsertPicSign, "")) {
+
+                    String select_invoice = "select ps.* " +
+                            "from pic_sign ps " +
+                            "where ps.delivery_no = '" + arrayList.get(i).getDelivery_no() + "' and ps.consignment_no = '" + arrayList.get(i).getConsignment_no() + "' " +
+                            "and ps.order_no = '" + arrayList.get(i).getOrder_no() + "' and ps.invoice_no = '" + arrayList.get(i).getDeli_note_no() + "'";
+                    Cursor cursor = databaseHelper.selectDB(select_invoice);
+
+                    Log.d("isListDrops8a3a89", "total line " + cursor.getCount());
+                    // ArrayList<JobList_Model> jobList_models = new ArrayList<>();
+                    cursor.moveToFirst();
+                    do {
+                        if (cursor.getCount() > 0) {
+                            String delivery_no = cursor.getString(cursor.getColumnIndex("delivery_no"));
+                            String consignment_no = cursor.getString(cursor.getColumnIndex("consignment_no"));
+                            String order_no = cursor.getString(cursor.getColumnIndex("order_no"));
+                            String invoice_no = cursor.getString(cursor.getColumnIndex("invoice_no"));
+
+
+                            ContentValues update_invoice = new ContentValues();
+                            update_invoice.put("pic_sign_unload", imgList[0]);
+                            if (!arrayList.get(i).getComment().equals("")) {
+                                update_invoice.put("comment_unload", arrayList.get(i).getComment());
+                            } else {
+                                update_invoice.put("comment_unload", "");
+                            }
+                            update_invoice.put("date_sign_unload", getdate());
+                            update_invoice.put("status_unload", arrayList.get(i).getStatus());
+                            update_invoice.put("status_upload_invoice", "0");
+                            // cv.put("delivery_no", "");
+                            databaseHelper.db().update("pic_sign", update_invoice, "delivery_no = '" + delivery_no + "' and consignment_no = '" + consignment_no + "'" +
+                                    "and order_no = '" + order_no + "' and invoice_no = '" + invoice_no + "' ", null);
+
+
+                        }
+
+                    } while (cursor.moveToNext());
+
+                    /*if (narisv.INSERT_AS_SQL("pic_sign", jsonArrayInsertPicSign, "")) {
                         Log.d("PlanWorkLOG", "SAVED Pic_sign.");
                         if (narisv.INSERT_AS_SQL("comment_invoice", jsonArrayInsertComment, "")) {
                             Log.d("PlanWorkLOG", "SAVED Comment.");
@@ -386,7 +439,7 @@ public class Signature_Deliver_Activity extends AppCompatActivity {
                         }
                     } else {
                         Log.d("PlanWorkLOG", "FAIL save Pic_sign.");
-                    }
+                    }*/
                 }
 
 
@@ -449,10 +502,15 @@ public class Signature_Deliver_Activity extends AppCompatActivity {
                     jsonInsertPicSign.put("pic_sign_unload", image.getName());
                     jsonInsertPicSign.put("create_date", getdate());
                     jsonInsertPicSign.put("status_delete", "0");
+                    if (!arrayList.get(i).getComment().equals("")) {
+                        jsonInsertPicSign.put("comment_unload", arrayList.get(i).getComment());
+                    } else {
+                        jsonInsertPicSign.put("comment_unload", "");
+                    }
+                    jsonInsertPicSign.put("delivery_no", arrayList.get(i).getDelivery_no());
 
                     String sql = "INSERT INTO image_invoice (name_img, status_img, create_date) VALUES('" + image.getName() + "','0', '" + getdate() + "')";
                     databaseHelper.db().execSQL(sql);
-
 
 
                     if (!arrayList.get(i).getComment().equals("")) {
@@ -460,6 +518,15 @@ public class Signature_Deliver_Activity extends AppCompatActivity {
                         jsonInsertComment.put("order_no", arrayList.get(i).getOrder_no());
                         jsonInsertComment.put("invoice_no", arrayList.get(i).getDeli_note_no());
                         jsonInsertComment.put("comment_unload", arrayList.get(i).getComment());
+                        jsonInsertComment.put("status_unload", arrayList.get(i).getStatus());
+                        jsonInsertComment.put("delivery_no", arrayList.get(i).getDelivery_no());
+                        jsonInsertComment.put("status_upload_comment", "0");
+                        jsonInsertComment.put("create_date", getdate());
+                    } else {
+                        jsonInsertComment.put("consignment_no", arrayList.get(i).getConsignment_no());
+                        jsonInsertComment.put("order_no", arrayList.get(i).getOrder_no());
+                        jsonInsertComment.put("invoice_no", arrayList.get(i).getDeli_note_no());
+                        jsonInsertComment.put("comment_unload", "");
                         jsonInsertComment.put("status_unload", arrayList.get(i).getStatus());
                         jsonInsertComment.put("delivery_no", arrayList.get(i).getDelivery_no());
                         jsonInsertComment.put("status_upload_comment", "0");
@@ -474,7 +541,45 @@ public class Signature_Deliver_Activity extends AppCompatActivity {
 
                     jsonArrayInsertPicSign.put(jsonInsertPicSign);
                     jsonArrayInsertComment.put(jsonInsertComment);
-                    if (narisv.INSERT_AS_SQL("pic_sign", jsonArrayInsertPicSign, "")) {
+
+
+                    String select_invoice = "select ps.* " +
+                            "from pic_sign ps " +
+                            "where ps.delivery_no = '" + arrayList.get(i).getDelivery_no() + "' and ps.consignment_no = '" + arrayList.get(i).getConsignment_no() + "' " +
+                            "and ps.order_no = '" + arrayList.get(i).getOrder_no() + "' and ps.invoice_no = '" + arrayList.get(i).getDeli_note_no() + "'";
+                    Cursor cursor = databaseHelper.selectDB(select_invoice);
+
+                    Log.d("isListDrops8a3a89", "total line " + cursor.getCount());
+                    // ArrayList<JobList_Model> jobList_models = new ArrayList<>();
+                    cursor.moveToFirst();
+                    do {
+                        if (cursor.getCount() > 0) {
+                            String delivery_no = cursor.getString(cursor.getColumnIndex("delivery_no"));
+                            String consignment_no = cursor.getString(cursor.getColumnIndex("consignment_no"));
+                            String order_no = cursor.getString(cursor.getColumnIndex("order_no"));
+                            String invoice_no = cursor.getString(cursor.getColumnIndex("invoice_no"));
+
+
+                            ContentValues update_invoice = new ContentValues();
+                            update_invoice.put("pic_sign_unload", image.getName());
+                            if (!arrayList.get(i).getComment().equals("")) {
+                                update_invoice.put("comment_unload", arrayList.get(i).getComment());
+                            } else {
+                                update_invoice.put("comment_unload", "");
+                            }
+                            update_invoice.put("date_sign_unload", getdate());
+                            update_invoice.put("status_unload", arrayList.get(i).getStatus());
+                            update_invoice.put("status_upload_invoice", "0");
+                            // cv.put("delivery_no", "");
+                            databaseHelper.db().update("pic_sign", update_invoice, "delivery_no = '" + delivery_no + "' and consignment_no = '" + consignment_no + "'" +
+                                    "and order_no = '" + order_no + "' and invoice_no = '" + invoice_no + "' ", null);
+
+
+                        }
+
+                    } while (cursor.moveToNext());
+
+                    /*if (narisv.INSERT_AS_SQL("pic_sign", jsonArrayInsertPicSign, "")) {
                         Log.d("PlanWorkLOG", "SAVED Pic_sign.");
                         if (narisv.INSERT_AS_SQL("comment_invoice", jsonArrayInsertComment, "")) {
                             Log.d("PlanWorkLOG", "SAVED Comment.");
@@ -483,7 +588,7 @@ public class Signature_Deliver_Activity extends AppCompatActivity {
                         }
                     } else {
                         Log.d("PlanWorkLOG", "FAIL save Pic_sign.");
-                    }
+                    }*/
 
 
                 } catch (JSONException e) {

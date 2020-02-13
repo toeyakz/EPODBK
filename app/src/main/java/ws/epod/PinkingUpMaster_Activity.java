@@ -696,42 +696,55 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
 
                             scannotFind = true;
 
-                            if (!expandedList.getIs_scaned().equals("2")) {
-                                if (listTitle.getCount() >= 0) {
-                                    int count = listTitle.getCount() + 1;
-                                    listTitle.setCount(count);
-                                    listTitle.setBox_checked(String.valueOf(listTitle.getCount()));
+                            if (!expandedList.getOrder_no().equals("")) {
+                                Toasty.info(getApplicationContext(), "Please un sign this order.", Toast.LENGTH_SHORT, true).show();
+                            } else {
+
+
+                                if (!expandedList.getIs_scaned().equals("2")) {
+                                    if (listTitle.getCount() >= 0) {
+                                        int count = listTitle.getCount() + 1;
+                                        listTitle.setCount(count);
+                                        listTitle.setBox_checked(String.valueOf(listTitle.getCount()));
+                                    }
                                 }
+                                expandedList.setIs_scaned("1");
+                                expandedList.setTime_begin(getdate());
+                                expandedList.setActual_lat(getlat());
+                                expandedList.setActual_lon(getlon());
+                                expandedList.setIs_save("2");
+                                expandedList.setComment("");
+                                expandedList.setPicture1("");
+                                expandedList.setPicture2("");
+                                expandedList.setPicture3("");
+
+                                Log.d("Asjkljkksdf", "(1)scan: " + getdate() + " lat:" + getlat() + " lon:" + getlon());
+
+
+                                Toasty.success(getApplicationContext(), "Checked!", Toast.LENGTH_SHORT, true).show();
+
+                                //ToastScan(icon,"Checked.");
+
+                                expandableListView.setAdapter(expandableListAdapter);
+                                expandableListView.expandGroup(i);
+                                expandableListAdapter.notifyDataSetChanged();
+                                expandableListView.smoothScrollToPositionFromTop(i, j);
                             }
-                            expandedList.setIs_scaned("1");
-                            expandedList.setTime_begin(getdate());
-                            expandedList.setActual_lat(getlat());
-                            expandedList.setActual_lon(getlon());
-                            expandedList.setIs_save("2");
-                            expandedList.setComment("");
-                            expandedList.setPicture1("");
-                            expandedList.setPicture2("");
-                            expandedList.setPicture3("");
-
-                            Log.d("Asjkljkksdf", "(1)scan: " + getdate() + " lat:" + getlat() + " lon:" + getlon());
-
-
-                            Toasty.success(getApplicationContext(), "Checked!", Toast.LENGTH_SHORT, true).show();
-
-                            //ToastScan(icon,"Checked.");
-
-                            expandableListView.setAdapter(expandableListAdapter);
-                            expandableListView.expandGroup(i);
-                            expandableListAdapter.notifyDataSetChanged();
-                            expandableListView.smoothScrollToPositionFromTop(i, j);
                         } else {
 
                         }
                     } else {
+
                         if (value.equals(expandedList.getWaybil_no())) {
                             // ToastScan(null,"Scanned.");
                             scannotFind = true;
-                            Toasty.info(getApplicationContext(), "Scanned.", Toast.LENGTH_SHORT, true).show();
+                            if (!expandedList.getOrder_no().equals("")) {
+                                Toasty.info(getApplicationContext(), "Please un sign this order.", Toast.LENGTH_SHORT, true).show();
+                            } else {
+                                Toasty.info(getApplicationContext(), "Scanned.", Toast.LENGTH_SHORT, true).show();
+                            }
+                            //Toasty.info(getApplicationContext(), "Scanned.", Toast.LENGTH_SHORT, true).show();
+
                         }
 
                     }
@@ -750,48 +763,58 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
                     final PickingUpEexpand_Model expandedList = (PickingUpEexpand_Model) expandableListAdapter.getChild(i, j);
 
                     //  if (expandedList.getIs_save().equals("0") || expandedList.getIs_save().equals("2")) {
+                    // เป็น 1 หรือ 2
                     if (!expandedList.getIs_scaned().equals("0")) {
                         if (value.equals(expandedList.getWaybil_no())) {
 
                             scannotFind = true;
 
-                            //  Log.d("sdfsdf","ก่อนหน้า"+ listTitle.getBox_checked());
-                            if (!listTitle.getBox_checked().equals("0")) {
-                                int count = listTitle.getCount() - 1;
-                                // int count2 = listTitle.getCount();
-                                if (listTitle.getCount() <= 0) {
-                                } else {
-                                    listTitle.setCount(count);
+                            if (!expandedList.getOrder_no().equals("")) {
+                                Toasty.info(getApplicationContext(), "Please un sign this order.", Toast.LENGTH_SHORT, true).show();
+                            } else {
+
+
+                                //  Log.d("sdfsdf","ก่อนหน้า"+ listTitle.getBox_checked());
+                                if (!listTitle.getBox_checked().equals("0")) {
+                                    int count = listTitle.getCount() - 1;
+                                    // int count2 = listTitle.getCount();
+                                    if (listTitle.getCount() <= 0) {
+                                    } else {
+                                        listTitle.setCount(count);
+                                    }
+
+                                    Log.d("sdfsdf", listTitle.getCount() + "");
+                                    listTitle.setBox_checked(String.valueOf(listTitle.getCount()));
                                 }
 
-                                Log.d("sdfsdf", listTitle.getCount() + "");
-                                listTitle.setBox_checked(String.valueOf(listTitle.getCount()));
+                                // Log.d("sdfsdf", listTitle.getBox_checked());
+
+                                expandedList.setIs_scaned("0");
+                                expandedList.setTime_begin("");
+                                expandedList.setActual_lat("");
+                                expandedList.setActual_lon("");
+                                expandedList.setIs_save("0");
+                                expandedList.setComment("");
+                                expandedList.setPicture1("");
+                                expandedList.setPicture2("");
+                                expandedList.setPicture3("");
+
+                                Toasty.success(getApplicationContext(), "Un Check!", Toast.LENGTH_SHORT, true).show();
+
+                                expandableListView.setAdapter(expandableListAdapter);
+                                expandableListView.expandGroup(i);
+                                expandableListAdapter.notifyDataSetChanged();
+                                expandableListView.smoothScrollToPositionFromTop(i, j);
                             }
-
-                            // Log.d("sdfsdf", listTitle.getBox_checked());
-
-                            expandedList.setIs_scaned("0");
-                            expandedList.setTime_begin("");
-                            expandedList.setActual_lat("");
-                            expandedList.setActual_lon("");
-                            expandedList.setIs_save("0");
-                            expandedList.setComment("");
-                            expandedList.setPicture1("");
-                            expandedList.setPicture2("");
-                            expandedList.setPicture3("");
-
-                            Toasty.success(getApplicationContext(), "Un Check!", Toast.LENGTH_SHORT, true).show();
-
-                            expandableListView.setAdapter(expandableListAdapter);
-                            expandableListView.expandGroup(i);
-                            expandableListAdapter.notifyDataSetChanged();
-                            expandableListView.smoothScrollToPositionFromTop(i, j);
                         } else {
                         }
                     } else {
+
                         if (value.equals(expandedList.getWaybil_no())) {
                             scannotFind = true;
+
                             Toasty.info(getApplicationContext(), "Un scan.", Toast.LENGTH_SHORT, true).show();
+
                         }
 
                         //toastScan("Change the lower button to scan.");
@@ -816,33 +839,43 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
 
                             scannotFind = true;
                             // lastPosition = i;
+                            if (!expandedList.getOrder_no().equals("")) {
+                                Toasty.info(getApplicationContext(), "Please un sign this order.", Toast.LENGTH_SHORT, true).show();
+                            } else {
 
-                            if (!expandedList.getIs_scaned().equals("1")) {
-                                int count = listTitle.getCount() + 1;
-                                listTitle.setCount(count);
-                                listTitle.setBox_checked(String.valueOf(listTitle.getCount()));
+
+                                if (!expandedList.getIs_scaned().equals("1")) {
+                                    int count = listTitle.getCount() + 1;
+                                    listTitle.setCount(count);
+                                    listTitle.setBox_checked(String.valueOf(listTitle.getCount()));
+                                }
+                                expandedList.setIs_scaned("2");
+                                expandedList.setTime_begin(getdate());
+                                expandedList.setActual_lat(getlat());
+                                expandedList.setActual_lon(getlon());
+                                expandedList.setIs_save("2");
+
+                                Log.d("Asjkljkksdf", "(2)scan: " + getdate() + " lat:" + getlat() + " lon:" + getlon());
+
+                                Toasty.success(getApplicationContext(), "Please comment!", Toast.LENGTH_SHORT, true).show();
+
+                                expandableListView.setAdapter(expandableListAdapter);
+                                expandableListView.expandGroup(i);
+                                expandableListAdapter.notifyDataSetChanged();
+                                expandableListView.smoothScrollToPositionFromTop(i, j);
                             }
-                            expandedList.setIs_scaned("2");
-                            expandedList.setTime_begin(getdate());
-                            expandedList.setActual_lat(getlat());
-                            expandedList.setActual_lon(getlon());
-                            expandedList.setIs_save("2");
-
-                            Log.d("Asjkljkksdf", "(2)scan: " + getdate() + " lat:" + getlat() + " lon:" + getlon());
-
-                            Toasty.success(getApplicationContext(), "Please comment!", Toast.LENGTH_SHORT, true).show();
-
-                            expandableListView.setAdapter(expandableListAdapter);
-                            expandableListView.expandGroup(i);
-                            expandableListAdapter.notifyDataSetChanged();
-                            expandableListView.smoothScrollToPositionFromTop(i, j);
                         } else {
 
                         }
                     } else {
                         if (value.equals(expandedList.getWaybil_no())) {
                             scannotFind = true;
-                            Toasty.info(getApplicationContext(), "Scanned.", Toast.LENGTH_SHORT, true).show();
+                            if (!expandedList.getOrder_no().equals("")) {
+                                Toasty.info(getApplicationContext(), "Please un sign this order.", Toast.LENGTH_SHORT, true).show();
+                            } else {
+                                Toasty.info(getApplicationContext(), "Scanned.", Toast.LENGTH_SHORT, true).show();
+                            }
+                            //Toasty.info(getApplicationContext(), "Scanned.", Toast.LENGTH_SHORT, true).show();
                         }
 
                     }
@@ -1154,7 +1187,23 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
                 list.add(new PickingUp_Model(consignment, box_total, box_checked, global_total, station_address, pay_type, global_cancel, price, total_b));
 
 
-                String sql_expand = "select delivery_no, plan_seq, box_no, waybill_no, is_scaned, comment, picture1, picture2, picture3, time_begin, is_save, status_upload, (box_no - 1)+1 as row_number, (select pl2.order_no from Plan pl2 where pl2.order_no in (select ps.order_no from pic_sign ps where pic_sign_load <> '' )) as order_no  from Plan where consignment_no = '" + consignment + "' and activity_type = 'LOAD' and delivery_no = '" + delivery_no + "' and plan_seq = '" + plan_seq + "' and trash = '0' order by row_number";
+                String sql_expand = "select pl.delivery_no\n" +
+                        ", pl.plan_seq\n" +
+                        ", pl.box_no\n" +
+                        ", pl.waybill_no\n" +
+                        ", pl.is_scaned\n" +
+                        ", pl.comment\n" +
+                        ", pl.picture1\n" +
+                        ", pl.picture2\n" +
+                        ", pl.picture3\n" +
+                        ", pl.time_begin\n" +
+                        ", pl.is_save\n" +
+                        ", pl.status_upload\n" +
+                        ", (pl.box_no - 1)+1 as row_number\n" +
+                        ", ifnull((select pl2.order_no from Plan pl2 where pl2.consignment_no = pl.consignment_no and pl2. delivery_no = pl.delivery_no and pl2.plan_seq = pl.plan_seq \n" +
+                        " and  pl2.order_no in (select ps.order_no from pic_sign ps where pic_sign_load <> '' )),'') as order_no " +
+                        "  from Plan pl where pl.consignment_no = '" + consignment + "' and pl.activity_type = 'LOAD' and pl.delivery_no = '" + delivery_no + "' and pl.plan_seq = '" + plan_seq + "' and pl.trash = '0' \n" +
+                        "  order by row_number";
                 Cursor cursor_expand = databaseHelper.selectDB(sql_expand);
                 Log.d("PickingUpLOG", "total line " + cursor_expand.getColumnCount());
 
@@ -3129,20 +3178,20 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
             ArrayList<UploadImageInvoice.Data2> uploadImage = new ArrayList<>();
             Log.d("statusUploadInvoice", "doInBackground: 1");
             try {
-                String sql = "select ps.id \n" +
-                        ", (select delivery_no from plan) as delivery_no \n" +
-                        ", ps.order_no \n" +
-                        ", ps.consignment_no \n" +
-                        ", ps.invoice_no \n" +
-                        ", ps.pic_sign_load \n" +
-                        ", ps.pic_sign_unload \n" +
-                        ", ps.date_sign_load \n" +
-                        ", ps.date_sign_unload  \n" +
-                        ", (select ci2.comment_load from comment_invoice ci2 where ci2.invoice_no = ps.invoice_no  and ci2.order_no = ps.order_no) as comment_load \n" +
-                        ", (select ci2.comment_unload from comment_invoice ci2 where ci2.invoice_no = ps.invoice_no  and ci2.order_no = ps.order_no) as comment_unload \n" +
-                        ", (select ci2.status_load from comment_invoice ci2 where ci2.invoice_no = ps.invoice_no  and ci2.order_no = ps.order_no) as status_load \n" +
-                        ", (select ci2.status_unload from comment_invoice ci2 where ci2.invoice_no = ps.invoice_no  and ci2.order_no = ps.order_no) as status_unload \n" +
-                        "from pic_sign ps \n" +
+                String sql = "select ps.id  \n" +
+                        ", ps.delivery_no  \n" +
+                        ", ps.order_no  \n" +
+                        ", ps.consignment_no  \n" +
+                        ", ps.invoice_no  \n" +
+                        ", ps.pic_sign_load  \n" +
+                        ", ps.pic_sign_unload  \n" +
+                        ", ps.date_sign_load  \n" +
+                        ", ps.date_sign_unload   \n" +
+                        ", ps.comment_load  \n" +
+                        ", ps.comment_unload  \n" +
+                        ", ps.status_load  \n" +
+                        ", ps.status_unload  \n" +
+                        "from pic_sign ps  \n" +
                         "where status_upload_invoice = '0' and status_delete = '0'";
                 Cursor cursor = databaseHelper.selectDB(sql);
                 JSONArray ContactArray = new JSONArray();
@@ -3176,6 +3225,10 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
                         } while (cursor.moveToNext());
 
                         Root.put("data", ContactArray);
+
+                        for (int s = 0; s < ContactArray.length(); s++) {
+                            Log.d("as52a8", "doInBackground: " + ContactArray.get(s));
+                        }
                         Log.d("statusUploadInvoice", "doInBackground: " + Root.toString());
 
                         String rootToString = Root.toString();
@@ -3442,20 +3495,26 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
                                                                             JSONArray jsonArrayInvoice = new JSONArray(recievedInvoice);
                                                                             for (int o = 0; o < jsonArrayInvoice.length(); o++) {
 
-                                                                                String sql = "INSERT OR REPLACE INTO pic_sign (consignment_no, order_no, invoice_no, pic_sign_load, pic_sign_unload" +
-                                                                                        ", date_sign_load, date_sign_unload, status_load, status_unload) VALUES('" + jsonArrayInvoice.getJSONObject(o).getString("consignment_no") + "'" +
+
+
+                                                                                String sql = "INSERT OR REPLACE INTO pic_sign (delivery_no, consignment_no, order_no, invoice_no, pic_sign_load, pic_sign_unload" +
+                                                                                        ", comment_load, comment_unload, date_sign_load, date_sign_unload, status_load, status_unload, status_upload_invoice" +
+                                                                                        ", status_delete) VALUES('" + jsonArrayInvoice.getJSONObject(o).getString("delivery_no") + "'" +
+                                                                                        ",'" + jsonArrayInvoice.getJSONObject(o).getString("consignment_no") + "'" +
                                                                                         ", '" + jsonArrayInvoice.getJSONObject(o).getString("order_no") + "', '" + jsonArrayInvoice.getJSONObject(o).getString("invoice_no") + "'" +
                                                                                         ", '" + jsonArrayInvoice.getJSONObject(o).getString("pic_sign_load") + "', '" + jsonArrayInvoice.getJSONObject(o).getString("pic_sign_unload") + "'" +
+                                                                                        ", '" + jsonArrayInvoice.getJSONObject(o).getString("comment_load") + "', '" + jsonArrayInvoice.getJSONObject(o).getString("comment_unload") + "'" +
                                                                                         ", '" + jsonArrayInvoice.getJSONObject(o).getString("date_sign_load") + "', '" + jsonArrayInvoice.getJSONObject(o).getString("date_sing_unload") + "'" +
-                                                                                        ", '" + jsonArrayInvoice.getJSONObject(o).getString("status_load") + "', '" + jsonArrayInvoice.getJSONObject(o).getString("status_unload") + "')";
+                                                                                        ", '" + jsonArrayInvoice.getJSONObject(o).getString("status_load") + "', '" + jsonArrayInvoice.getJSONObject(o).getString("status_unload") + "','1','0')";
                                                                                 databaseHelper.db().execSQL(sql);
 
-                                                                                String sql2 = "INSERT OR REPLACE INTO comment_invoice (consignment_no, order_no, invoice_no, comment_load, comment_unload, status_load" +
-                                                                                        ", status_unload) VALUES('" + jsonArrayInvoice.getJSONObject(o).getString("consignment_no") + "','" + jsonArrayInvoice.getJSONObject(o).getString("order_no") + "'" +
-                                                                                        ", '" + jsonArrayInvoice.getJSONObject(o).getString("invoice_no") + "', '" + jsonArrayInvoice.getJSONObject(o).getString("comment_load") + "'" +
-                                                                                        ", '" + jsonArrayInvoice.getJSONObject(o).getString("comment_unload") + "', '" + jsonArrayInvoice.getJSONObject(o).getString("status_load") + "'" +
-                                                                                        ", '" + jsonArrayInvoice.getJSONObject(o).getString("status_unload") + "')";
-                                                                                databaseHelper.db().execSQL(sql2);
+//                                                                                String sql2 = "INSERT OR REPLACE INTO comment_invoice (delivery_no, consignment_no, order_no, invoice_no, comment_load, comment_unload, status_load" +
+//                                                                                        ", status_unload) VALUES('" + jsonArrayInvoice.getJSONObject(o).getString("delivery_no") + "'" +
+//                                                                                        ",'" + jsonArrayInvoice.getJSONObject(o).getString("consignment_no") + "','" + jsonArrayInvoice.getJSONObject(o).getString("order_no") + "'" +
+//                                                                                        ", '" + jsonArrayInvoice.getJSONObject(o).getString("invoice_no") + "', '" + jsonArrayInvoice.getJSONObject(o).getString("comment_load") + "'" +
+//                                                                                        ", '" + jsonArrayInvoice.getJSONObject(o).getString("comment_unload") + "', '" + jsonArrayInvoice.getJSONObject(o).getString("status_load") + "'" +
+//                                                                                        ", '" + jsonArrayInvoice.getJSONObject(o).getString("status_unload") + "')";
+//                                                                                databaseHelper.db().execSQL(sql2);
                                                                             }
                                                                         }
                                                                     }

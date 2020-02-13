@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -464,21 +465,21 @@ public class Invoice_Activity extends AppCompatActivity {
         String delivery_no = user_data.getString("delivery_no", "");
         String plan_seq = user_data.getString("plan_seq", "");
 
-        String sql = "select cm.deli_note_no  \n" +
-                ", cm.consignment_no  \n" +
-                ", pl.order_no  \n" +
-                ",(SELECT pl.delivery_no) AS delivery_no  \n" +
-                ",ifnull((select ci2.comment_load from comment_invoice ci2 where ci2.order_no = pl.order_no) ,'') as comment" +
-                ", pl.activity_type \n" +
-                ",ifnull((select ps2.pic_sign_load from pic_sign ps2 where ps2.order_no = pl.order_no) ,'') as pic_sign_load" +
-                ",ifnull((select ps2.status_load from pic_sign ps2 where ps2.order_no = pl.order_no) ,'') as status " +
-                ", pl.is_scaned\n" +
-                ", pl.waybill_no\n" +
-                "from Consignment cm  \n" +
-                "inner join Plan pl on pl.consignment_no = cm.consignment_no  \n" +
-                "LEFT JOIN comment_invoice ci on ci.consignment_no = cm.consignment_no  \n" +
-                "LEFT JOIN pic_sign ps on ps.consignment_no = cm.consignment_no  \n" +
-                "where pl.delivery_no = '" + delivery_no + "' AND pl.plan_seq = '" + plan_seq + "' AND pl.activity_type = 'LOAD' AND pl.trash = '0'and pl.is_scaned <> '0' " +
+        String sql = "select cm.deli_note_no   \n" +
+                ", cm.consignment_no   \n" +
+                ", pl.order_no   \n" +
+                ",(SELECT pl.delivery_no) AS delivery_no   \n" +
+                ",ifnull((select ps2.comment_load from pic_sign ps2 where ps2.order_no = pl.order_no) ,'') as comment \n" +
+                ", pl.activity_type  \n" +
+                ",ifnull((select ps2.pic_sign_load from pic_sign ps2 where ps2.order_no = pl.order_no) ,'') as pic_sign_load \n" +
+                ",ifnull((select ps2.status_load from pic_sign ps2 where ps2.order_no = pl.order_no) ,'') as status  \n" +
+                ", pl.is_scaned \n" +
+                ", pl.waybill_no \n" +
+                "from Consignment cm   \n" +
+                "inner join Plan pl on pl.consignment_no = cm.consignment_no   \n" +
+                "LEFT JOIN comment_invoice ci on ci.consignment_no = cm.consignment_no   \n" +
+                "LEFT JOIN pic_sign ps on ps.consignment_no = cm.consignment_no   \n" +
+                "where pl.delivery_no = '" + delivery_no + "' AND pl.plan_seq = '" + plan_seq + "' AND pl.activity_type = 'LOAD' AND pl.trash = '0'and pl.is_scaned <> '0'  " +
                 "GROUP by pl.order_no, cm.deli_note_no";
         Cursor cursor = databaseHelper.selectDB(sql);
         Log.d("isMapRoute", "total line " + sql);
@@ -899,14 +900,29 @@ public class Invoice_Activity extends AppCompatActivity {
                             @Override
                             protected Void doInBackground(Void... voids) {
                                 try {
-//                                    ContentValues cv = new ContentValues();
-//                                    cv.put("status_load", "0");
-//                                    //  cv.put("modified_date", getDate);
-//                                    databaseHelper.db().update("pic_sign", cv, "order_no = '" + order_no + "' and pic_sign_load <> ''", null);
+                                    ContentValues cv = new ContentValues();
+                                    cv.put("pic_sign_load", "");
+                                    cv.put("date_sign_load", "");
+                                    cv.put("status_load", "0");
+                                    cv.put("comment_load", "");
+                                    cv.put("status_upload_invoice", "0");
+                                    // cv.put("delivery_no", "");
+                                    databaseHelper.db().update("pic_sign", cv, "order_no = '" + order_no + "' and pic_sign_load <> ''", null);
 
-                                    databaseHelper.db().delete("pic_sign", "order_no = ? and pic_sign_load <> ? ", new String[]{order_no, "''"});
-                                    databaseHelper.db().delete("comment_invoice", "order_no = ? and comment_load <> ?", new String[]{order_no, "''"});
-                                    databaseHelper.db().delete("image_invoice", "name_img = ?", new String[]{signature});
+//                                    ContentValues cv2 = new ContentValues();
+//                                    cv2.put("comment_load", "");
+//                                    cv2.put("status_load", "0");
+//                                    // cv2.put("delivery_no", "");
+//                                    databaseHelper.db().update("comment_invoice", cv2, "order_no = '" + order_no + "'", null);
+
+
+                                    ContentValues cv3 = new ContentValues();
+                                    cv3.put("name_img", "");
+                                    databaseHelper.db().update("image_invoice", cv3, "name_img = '" + signature + "' ", null);
+
+//                                    databaseHelper.db().delete("pic_sign", "order_no = ? and pic_sign_load <> ? ", new String[]{order_no, "''"});
+//                                    databaseHelper.db().delete("comment_invoice", "order_no = ? and comment_load <> ?", new String[]{order_no, "''"});
+//                                    databaseHelper.db().delete("image_invoice", "name_img = ?", new String[]{signature});
 
 
                                 } catch (Exception e) {

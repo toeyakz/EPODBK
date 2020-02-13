@@ -360,6 +360,12 @@ public class Signature_Activity extends AppCompatActivity {
                 jsonInsertPicSign.put("pic_sign_load", imgList[0]);
                 jsonInsertPicSign.put("create_date", getdate());
                 jsonInsertPicSign.put("status_delete", "0");
+                if(!arrayList.get(i).getComment().equals("")){
+                    jsonInsertPicSign.put("comment_load", arrayList.get(i).getComment());
+                }else{
+                    jsonInsertPicSign.put("comment_load", "");
+                }
+                jsonInsertPicSign.put("delivery_no", arrayList.get(i).getDelivery_no());
                 if (imgList[0] != null) {
                     String sql = "INSERT INTO image_invoice (name_img, status_img, create_date) VALUES('" + imgList[0] + "','0', '" + getdate() + "')";
                     databaseHelper.db().execSQL(sql);
@@ -370,6 +376,15 @@ public class Signature_Activity extends AppCompatActivity {
                     jsonInsertComment.put("order_no", arrayList.get(i).getOrder_no());
                     jsonInsertComment.put("invoice_no", arrayList.get(i).getDeli_note_no());
                     jsonInsertComment.put("comment_load", arrayList.get(i).getComment());
+                    jsonInsertComment.put("status_load", arrayList.get(i).getStatus());
+                    jsonInsertComment.put("delivery_no", arrayList.get(i).getDelivery_no());
+                    jsonInsertComment.put("status_upload_comment", "0");
+                    jsonInsertComment.put("create_date", getdate());
+                }else{
+                    jsonInsertComment.put("consignment_no", arrayList.get(i).getConsignment_no());
+                    jsonInsertComment.put("order_no", arrayList.get(i).getOrder_no());
+                    jsonInsertComment.put("invoice_no", arrayList.get(i).getDeli_note_no());
+                    jsonInsertComment.put("comment_load", "");
                     jsonInsertComment.put("status_load", arrayList.get(i).getStatus());
                     jsonInsertComment.put("delivery_no", arrayList.get(i).getDelivery_no());
                     jsonInsertComment.put("status_upload_comment", "0");
@@ -477,6 +492,12 @@ public class Signature_Activity extends AppCompatActivity {
                     jsonInsertPicSign.put("pic_sign_load", image.getName());
                     jsonInsertPicSign.put("create_date", getdate());
                     jsonInsertPicSign.put("status_delete", "0");
+                    if(!arrayList.get(i).getComment().equals("")){
+                        jsonInsertPicSign.put("comment_load", arrayList.get(i).getComment());
+                    }else{
+                        jsonInsertPicSign.put("comment_load", "");
+                    }
+                    jsonInsertPicSign.put("delivery_no", arrayList.get(i).getDelivery_no());
 
                     String sql = "INSERT INTO image_invoice (name_img, status_img, create_date) VALUES('" + image.getName() + "','0', '" + getdate() + "')";
                     databaseHelper.db().execSQL(sql);
@@ -486,6 +507,15 @@ public class Signature_Activity extends AppCompatActivity {
                         jsonInsertComment.put("order_no", arrayList.get(i).getOrder_no());
                         jsonInsertComment.put("invoice_no", arrayList.get(i).getDeli_note_no());
                         jsonInsertComment.put("comment_load", arrayList.get(i).getComment());
+                        jsonInsertComment.put("status_load", arrayList.get(i).getStatus());
+                        jsonInsertComment.put("delivery_no", arrayList.get(i).getDelivery_no());
+                        jsonInsertComment.put("status_upload_comment", "0");
+                        jsonInsertComment.put("create_date", getdate());
+                    }else{
+                        jsonInsertComment.put("consignment_no", arrayList.get(i).getConsignment_no());
+                        jsonInsertComment.put("order_no", arrayList.get(i).getOrder_no());
+                        jsonInsertComment.put("invoice_no", arrayList.get(i).getDeli_note_no());
+                        jsonInsertComment.put("comment_load", "");
                         jsonInsertComment.put("status_load", arrayList.get(i).getStatus());
                         jsonInsertComment.put("delivery_no", arrayList.get(i).getDelivery_no());
                         jsonInsertComment.put("status_upload_comment", "0");
