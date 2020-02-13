@@ -59,7 +59,7 @@ public class InvoiceDeliver_Activity extends AppCompatActivity {
     private RecyclerView rvInv, recyclerView;
     private InvAdapter invAdapter;
 
-    ImageView imgBack_Deliver, imageView22;
+    ImageView imgBack_Deliver, imageView22,sign;
 
     ConnectionDetector netCon;
     DatabaseHelper databaseHelper;
@@ -73,7 +73,7 @@ public class InvoiceDeliver_Activity extends AppCompatActivity {
 
     String commentOfspinner = "";
 
-    TextView textView15, textView21, textView22, sign, tvNoData;
+    TextView textView15, textView21, textView22, tvNoData;
 
     View popupInputDialogView = null;
     AlertDialog alertDialog;
@@ -133,6 +133,7 @@ public class InvoiceDeliver_Activity extends AppCompatActivity {
 
         rvInv.addOnScrollListener(new CustomScrollListener() {
         });
+
         setView();
         onClickFab();
 
