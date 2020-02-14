@@ -622,6 +622,19 @@ public class Invoice_Activity extends AppCompatActivity {
                 holder.reTurnCheck.setVisibility(View.GONE);
                 holder.comCheck.setVisibility(View.INVISIBLE);
                 holder.imgEditBoxNoPickup.setEnabled(false);
+                holder.imgEditBoxNoPickup.setVisibility(View.GONE);
+
+                if (list.get(position).getStatus().equals("1")) {
+                    holder.status_show.setVisibility(View.VISIBLE);
+                    holder.status_show.setImageDrawable(getResources().getDrawable(R.drawable.ic_check_circle_black_24dp));
+                } else if (list.get(position).getStatus().equals("2")) {
+                    holder.status_show.setVisibility(View.VISIBLE);
+                    holder.status_show.setImageDrawable(getResources().getDrawable(R.drawable.ic_do_not_disturb_on_black_24dp));
+                } else {
+                    holder.status_show.setVisibility(View.VISIBLE);
+                    holder.status_show.setImageDrawable(getResources().getDrawable(R.drawable.img_ret));
+                }
+
             } else {
                 //holder.textView22.setText("Status: signed");
                 holder.textView22.setVisibility(View.GONE);
@@ -630,10 +643,13 @@ public class Invoice_Activity extends AppCompatActivity {
                 holder.reTurnCheck.setVisibility(View.VISIBLE);
                 holder.comCheck.setVisibility(View.VISIBLE);
                 //  holder.imgEditBoxNoPickup.setEnabled(false);
-
+                holder.imgEditBoxNoPickup.setVisibility(View.VISIBLE);
                 if (list.get(position).getStatus().equals("") || list.get(position).getStatus().equals("0")) {
                     holder.imgEditBoxNoPickup.setEnabled(false);
                 }
+
+                holder.status_show.setVisibility(View.GONE);
+
             }
 
             if (list.get(position).getStatus().equals("1")) {
@@ -827,7 +843,7 @@ public class Invoice_Activity extends AppCompatActivity {
 
         public class ViewHolder extends RecyclerView.ViewHolder {
             CheckBox comCheck, reCheck, reTurnCheck;
-            ImageView imgEditBoxNoPickup, imageView11;
+            ImageView imgEditBoxNoPickup, imageView11, status_show;
             TextView tvUseComment, textView21, textView22, textView15, textView9;
 
             public ViewHolder(View itemView) {
@@ -843,6 +859,7 @@ public class Invoice_Activity extends AppCompatActivity {
                 imgEditBoxNoPickup = itemView.findViewById(R.id.imgEditBoxNoPickup);
                 imageView11 = itemView.findViewById(R.id.imageView11);
                 reTurnCheck = itemView.findViewById(R.id.reTurnCheck);
+                status_show = itemView.findViewById(R.id.status_show);
 
             }
         }

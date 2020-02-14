@@ -3,10 +3,9 @@ package ws.epod.Helper;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
-import android.database.sqlite.SQLiteOpenHelper;
-import android.database.sqlite.SQLiteStatement;
+
+
 import android.util.Log;
 
 import java.io.File;
@@ -14,6 +13,9 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 
+import io.requery.android.database.sqlite.SQLiteDatabase;
+import io.requery.android.database.sqlite.SQLiteOpenHelper;
+import io.requery.android.database.sqlite.SQLiteStatement;
 import ws.epod.ObjectClass.Var;
 
 public class DatabaseHelper extends SQLiteOpenHelper
@@ -35,27 +37,27 @@ public class DatabaseHelper extends SQLiteOpenHelper
     }
 
 
-    @Override
-    public void onCreate( SQLiteDatabase sqLiteDatabase)
-    {
-
-        Log.d("ASfkasdlfgvno", "onCreate: "+sqLiteDatabase.getVersion());
-
-    }
-
-    @Override
-    public void onUpgrade( SQLiteDatabase sqLiteDatabase, int oldversion, int newversion)
-    {
-        Log.d("NARIS", "onupgrade from ver."+ oldversion + " -> "+newversion );
-        String sql = "";
-        switch(newversion){
-            case 2 :{
-
-            }
-        }
-
-
-    }
+//    @Override
+//    public void onCreate( SQLiteDatabase sqLiteDatabase)
+//    {
+//
+//        Log.d("ASfkasdlfgvno", "onCreate: "+sqLiteDatabase.getVersion());
+//
+//    }
+//
+//    @Override
+//    public void onUpgrade( SQLiteDatabase sqLiteDatabase, int oldversion, int newversion)
+//    {
+//        Log.d("NARIS", "onupgrade from ver."+ oldversion + " -> "+newversion );
+//        String sql = "";
+//        switch(newversion){
+//            case 2 :{
+//
+//            }
+//        }
+//
+//
+//    }
 
 
 
@@ -196,4 +198,20 @@ public class DatabaseHelper extends SQLiteOpenHelper
        return SQLiteDatabase.deleteDatabase(new File(path));
     }
 
+
+    @Override
+    public void onCreate(io.requery.android.database.sqlite.SQLiteDatabase db) {
+
+    }
+
+    @Override
+    public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+        Log.d("NARIS", "onupgrade from ver."+ oldVersion + " -> "+newVersion );
+        String sql = "";
+        switch(newVersion){
+            case 2 :{
+
+            }
+        }
+    }
 }

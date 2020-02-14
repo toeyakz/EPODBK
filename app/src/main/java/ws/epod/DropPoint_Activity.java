@@ -141,15 +141,16 @@ public class DropPoint_Activity extends AppCompatActivity {
 
         String delivery_date = getIntent().getExtras().getString("delivery_date");
         String delivery_no = getIntent().getExtras().getString("delivery_no");
-        String sql = "select pl.station_name, pl.station_address, pl.plan_seq, pl.plan_in, plan_out, pl.delivery_no, pl.station_lat, pl.station_lon, pl.station_code \n" +
-                ", (select count( pl2.box_no) from Plan pl2 where pl2.activity_type = 'LOAD' and pl2.delivery_no = pl.delivery_no and pl2.station_code = pl.station_code and pl2.trash = pl.trash) as pick \n" +
-                ", (select count( pl2.box_no) from Plan pl2 where pl2.activity_type = 'LOAD' and pl2.is_scaned <> '0'and pl2.delivery_no = pl.delivery_no and pl2.station_code = pl.station_code and pl2.trash = pl.trash\n" +
-                "and pl2.order_no in (select order_no from pic_sign where pic_sign_load <> '')) as pickUp \n" +
-                ", (select count( pl2.box_no) from Plan pl2 where pl2.activity_type = 'UNLOAD' and pl2.delivery_no = pl.delivery_no and pl2.station_code = pl.station_code and pl2.trash = pl.trash\n" +
-                "and pl2.order_no in (select order_no from pic_sign where pic_sign_load <> '')) as deli \n" +
-                ", (select count( pl2.box_no) from Plan pl2 where pl2.activity_type = 'UNLOAD' and pl2.is_scaned <> '0' and pl2.delivery_no = pl.delivery_no and pl2.station_code = pl.station_code and pl2.trash = pl.trash\n" +
-                "and pl2.order_no in (select order_no from pic_sign where pic_sign_unload <> '')) as delivery \n" +
-                "from Plan pl where pl.delivery_date='" + delivery_date + "' and pl.delivery_no = '" + delivery_no + "' and pl.trash = '0' " +
+        String sql = "select pl.station_name, pl.station_address, pl.plan_seq, pl.plan_in, plan_out, pl.delivery_no, pl.station_lat, pl.station_lon, pl.station_code  \n" +
+                ", (select count( pl2.box_no) from Plan pl2 where pl2.activity_type = 'LOAD' and pl2.delivery_no = pl.delivery_no and pl2.station_code = pl.station_code and pl2.trash = pl.trash) as pick  \n" +
+                ", (select count( pl2.box_no) from Plan pl2 where pl2.activity_type = 'LOAD' and pl2.is_scaned <> '0'and pl2.delivery_no = pl.delivery_no and pl2.station_code = pl.station_code and pl2.trash = pl.trash \n" +
+                "and pl2.order_no in (select order_no from pic_sign where pic_sign_load <> '')) as pickUp  \n" +
+                ", (select count( pl2.box_no) from Plan pl2 where pl2.activity_type = 'UNLOAD' and pl2.delivery_no = pl.delivery_no and pl2.station_code = pl.station_code and pl2.trash = pl.trash \n" +
+                "and pl2.order_no in (select order_no from pic_sign where pic_sign_load <> '')) as deli  \n" +
+                ", (select count( pl2.box_no) from Plan pl2 where pl2.activity_type = 'UNLOAD' and pl2.is_scaned <> '0' and pl2.delivery_no = pl.delivery_no and pl2.station_code = pl.station_code and pl2.trash = pl.trash \n" +
+                "and pl2.order_no in (select order_no from pic_sign where pic_sign_unload <> '')) as delivery\n" +
+                ", ROW_NUMBER() OVER(ORDER BY pl.plan_seq) AS rows_num \n" +
+                "from Plan pl where pl.delivery_date='" + delivery_date + "' and pl.delivery_no = '" + delivery_no + "' and pl.trash = '0'  " +
                 "GROUP BY pl.delivery_no, pl.station_name order by cast(pl.plan_seq as real) asc";
         Log.d("isListDrop", "total line " + sql);
         Cursor cursor = databaseHelper.selectDB(sql);
@@ -170,8 +171,9 @@ public class DropPoint_Activity extends AppCompatActivity {
                 String deli = cursor.getString(cursor.getColumnIndex("deli"));
                 String delivery = cursor.getString(cursor.getColumnIndex("delivery"));
                 String station_code = cursor.getString(cursor.getColumnIndex("station_code"));
+                String rows_num = cursor.getString(cursor.getColumnIndex("rows_num"));
 
-                jobList_models.add(new JobList_Model(station_name, station_address, plan_seq, plan_in, plan_out, station_lat, station_lon, pick, pickUp, deli, delivery, delivery_no, station_code));
+                jobList_models.add(new JobList_Model(station_name, station_address, plan_seq, plan_in, plan_out, station_lat, station_lon, pick, pickUp, deli, delivery, delivery_no, station_code, rows_num));
 
                 //Log.d("fk6d5d4", "isListDrop: -> " + plan_seq);
             }
@@ -183,6 +185,8 @@ public class DropPoint_Activity extends AppCompatActivity {
 
 
         for (int i = 0; i < jobList_models.size(); i++) {
+
+            Log.d("dsfs7822s", "isListDrop: "+jobList_models.get(i).getRows_num());
 
             String pick = jobList_models.get(i).getPick();
             String pickup = jobList_models.get(i).getPickUp();
@@ -213,12 +217,10 @@ public class DropPoint_Activity extends AppCompatActivity {
 //            }
 
 
-
         }
 
         jobList_3.addAll(jobList_models);
         jobList_3.addAll(jobList_2);
-
 
 
         //setToolbar

@@ -10,6 +10,7 @@ import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.SQLException;
+
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
@@ -64,6 +65,7 @@ import java.util.HashSet;
 import java.util.Locale;
 
 import io.github.luizgrp.sectionedrecyclerviewadapter.SectionedRecyclerViewAdapter;
+import io.requery.android.database.sqlite.SQLiteDatabase;
 import okhttp3.MediaType;
 import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
@@ -82,6 +84,8 @@ import ws.epod.ObjectClass.LanguageClass;
 import ws.epod.ObjectClass.SQLiteModel.Plan_model;
 import ws.epod.ObjectClass.Var;
 import ws.epod.sync.UploadDataPlan;
+
+
 
 public class PlanWork_Activity extends AppCompatActivity {
 
@@ -179,6 +183,18 @@ public class PlanWork_Activity extends AppCompatActivity {
         hideButton = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.hide_button);
         showLayout = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.show_layout);
         hideLayout = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.hide_layout);
+
+//        String query = "select sqlite_version() AS sqlite_version";
+//        //SQLiteDatabase db = SQLiteDatabase.openOrCreateDatabase(":memory:", null);
+//        SQLiteDatabase db = SQLiteDatabase.create(null);
+//        Cursor cursor = db.rawQuery(query, null);
+//        String sqliteVersion = "";
+//        if (cursor.moveToNext()) {
+//            sqliteVersion = cursor.getString(0);
+//
+//            Log.d("asjfhaosf", "onCreate: "+sqliteVersion);
+//        }
+
 
 //        handler = new android.os.Handler();
 //        runnable = new Runnable() {

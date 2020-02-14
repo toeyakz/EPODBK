@@ -57,6 +57,8 @@ dependencies {
     implementation 'com.github.ganfra:material-spinner:2.0.0'
 
     implementation 'com.github.GrenderG:Toasty:1.4.2'
+    api 'io.requery:sqlite-android:3.27.2'
+    api 'androidx.sqlite:sqlite:2.0.1'
 
 
 
