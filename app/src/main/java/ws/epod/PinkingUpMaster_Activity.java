@@ -3,6 +3,7 @@ package ws.epod;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.ContentValues;
 import android.content.Context;
@@ -30,6 +31,7 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.inputmethod.InputMethodManager;
@@ -55,6 +57,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.addisonelliott.segmentedbutton.SegmentedButtonGroup;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.zxing.Result;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 
@@ -99,6 +102,7 @@ import ws.epod.ObjectClass.SQLiteModel.Dialog_Cons_Detail_Model;
 import ws.epod.ObjectClass.SQLiteModel.PickingUpEexpand_Model;
 import ws.epod.ObjectClass.SQLiteModel.PickingUp_Model;
 import ws.epod.ObjectClass.SQLiteModel.Reason_model;
+import ws.epod.ObjectClass.SimpleScannerActivity;
 import ws.epod.ObjectClass.Var;
 import ws.epod.sync.UploadDataPlan;
 
@@ -194,15 +198,24 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
     private int statusCheck = 0;
 
     private UploadDataPlan uploadDataPlan;
-
+    private ZXingScannerView mScannerView;
 
     int arrayIsScan = 0;
     //private LocationManager client;
 
+    String issueScan = "";
+
+    private Runnable delayScan = new Runnable() {
+        @Override
+        public void run() {
+            startScan();
+        }
+    };
+
     @Override
     protected void onResume() {
         super.onResume();
-        getSQLite();
+        //getSQLite();
 
 
         // Upload();
@@ -266,11 +279,12 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
         isSync = getIntent().getExtras().getBoolean("isSync");
         if (isSync) {
             Upload();
+            getSQLite();
         } else {
 
         }
 
-        //getSQLite();
+
         onClickFab();
 
 
@@ -290,7 +304,11 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
                 Animation animation = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.alpha);
                 imgCameraScan.startAnimation(animation);
 
-                qrScan.initiateScan();
+                startScan();
+
+
+//                Intent intents = new Intent(PinkingUpMaster_Activity.this, SimpleScannerActivity.class);
+//                startActivityForResult(intents, 112);
             }
         });
 
@@ -406,6 +424,13 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
 
     }
 
+    private void startScan() {
+        qrScan.setPrompt("Scan a barcode or qr code");
+        qrScan.setOrientationLocked(false);
+        qrScan.setBeepEnabled(false);
+        qrScan.initiateScan();
+
+    }
 
     private boolean checkTotalScan() {
 
@@ -441,7 +466,6 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
             return true;
         }
     }
-
 
     private void isSave() {
         statusComment = 0;
@@ -718,7 +742,7 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
                                 expandedList.setPicture2("");
                                 expandedList.setPicture3("");
 
-                                Log.d("Asjkljkksdf", "(1)scan: " + getdate() + " lat:" + getlat() + " lon:" + getlon());
+                                Log.d("Asjkljkksdf", "(1)scan: " + getdate() + " lat:" + getlat() + " lon:" + getlon() + " scan:" + expandedList.getIs_scaned());
 
 
                                 Toasty.success(getApplicationContext(), "Checked!", Toast.LENGTH_SHORT, true).show();
@@ -726,9 +750,13 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
                                 //ToastScan(icon,"Checked.");
 
                                 expandableListView.setAdapter(expandableListAdapter);
+                                Log.d("sa52c", "1");
                                 expandableListView.expandGroup(i);
+                                Log.d("sa52c", "2");
                                 expandableListAdapter.notifyDataSetChanged();
+                                Log.d("sa52c", "3");
                                 expandableListView.smoothScrollToPositionFromTop(i, j);
+                                Log.d("sa52c", "4");
                             }
                         } else {
 
@@ -888,10 +916,10 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
         }//comment
 
         if (!scannotFind) {
+            issueScan = "This Waybill No doesn't exist.";
             Toasty.info(getApplicationContext(), "This Waybill No doesn't exist.", Toast.LENGTH_SHORT, true).show();
         }
     }
-
 
     private String getlat() {
 
@@ -1187,22 +1215,22 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
                 list.add(new PickingUp_Model(consignment, box_total, box_checked, global_total, station_address, pay_type, global_cancel, price, total_b));
 
 
-                String sql_expand = "select pl.delivery_no\n" +
-                        ", pl.plan_seq\n" +
-                        ", pl.box_no\n" +
-                        ", pl.waybill_no\n" +
-                        ", pl.is_scaned\n" +
-                        ", pl.comment\n" +
-                        ", pl.picture1\n" +
-                        ", pl.picture2\n" +
-                        ", pl.picture3\n" +
-                        ", pl.time_begin\n" +
-                        ", pl.is_save\n" +
-                        ", pl.status_upload\n" +
-                        ", (pl.box_no - 1)+1 as row_number\n" +
-                        ", ifnull((select pl2.order_no from Plan pl2 where pl2.consignment_no = pl.consignment_no and pl2. delivery_no = pl.delivery_no and pl2.plan_seq = pl.plan_seq \n" +
-                        " and  pl2.order_no in (select ps.order_no from pic_sign ps where pic_sign_load <> '' )),'') as order_no " +
-                        "  from Plan pl where pl.consignment_no = '" + consignment + "' and pl.activity_type = 'LOAD' and pl.delivery_no = '" + delivery_no + "' and pl.plan_seq = '" + plan_seq + "' and pl.trash = '0' \n" +
+                String sql_expand = "select pl.delivery_no \n" +
+                        ", pl.plan_seq \n" +
+                        ", pl.box_no \n" +
+                        ", pl.waybill_no \n" +
+                        ", pl.is_scaned \n" +
+                        ", pl.comment \n" +
+                        ", pl.picture1 \n" +
+                        ", pl.picture2 \n" +
+                        ", pl.picture3 \n" +
+                        ", pl.time_begin \n" +
+                        ", pl.is_save \n" +
+                        ", pl.status_upload \n" +
+                        ", ROW_NUMBER() OVER(ORDER BY pl.box_no) as row_number \n" +
+                        ", ifnull((select pl2.order_no from Plan pl2 where pl2.consignment_no = pl.consignment_no and pl2. delivery_no = pl.delivery_no and pl2.plan_seq = pl.plan_seq  \n" +
+                        " and pl2.order_no = pl.order_no and pl2.order_no in (select ps.order_no from pic_sign ps where pic_sign_load <> '' )),'') as order_no  \n" +
+                        "  from Plan pl where pl.consignment_no = '" + consignment + "' and pl.activity_type = 'LOAD' and pl.delivery_no = '" + delivery_no + "' and pl.plan_seq = '" + plan_seq + "' and pl.trash = '0'  " +
                         "  order by row_number";
                 Cursor cursor_expand = databaseHelper.selectDB(sql_expand);
                 Log.d("PickingUpLOG", "total line " + cursor_expand.getColumnCount());
@@ -1311,12 +1339,43 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
 
     }
 
+    private void showDialog(){
+        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
+        LayoutInflater inflater = this.getLayoutInflater();
+        View dialogView = inflater.inflate(R.layout.dialog_warning__scan, null);
+        dialogBuilder.setView(dialogView);
+        dialogBuilder.setCancelable(false);
+
+        Button btnCloseDialog = dialogView.findViewById(R.id.btnCloseDialog);
+
+        AlertDialog alertDialog = dialogBuilder.create();
+        btnCloseDialog.setOnClickListener(v -> {
+            alertDialog.dismiss();
+            issueScan = "";
+            new Handler().postDelayed(delayScan, 500);
+        });
+
+        alertDialog.show();
+
+    }
+
+
+
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
         // valueLoop = true;
+
+//        if(requestCode == 112){
+//            if(resultCode == RESULT_OK){
+//                String value = data.getStringExtra("SCAN_RESULT");
+//                Log.d("Lgos6sdf14", "onActivityResult: "+value);
+//
+//                scan(value);
+//            }
+//        }
 
 
         IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
@@ -1328,7 +1387,15 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
                 getScanText = getScanText.trim();
 
                 scan(getScanText);
+                if (issueScan.equals("This Waybill No doesn't exist.")) {
+                    showDialog();
+                  // return;
+                }else{
+                    new Handler().postDelayed(delayScan, 1000);
+                }
 
+
+                // startScan();
             }
         } else {
             super.onActivityResult(requestCode, resultCode, data);
@@ -1510,6 +1577,7 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
         }
         return path;
     }
+
 
     //***********************************************************************************************************************************************************************//
     public class PickingUpAdapter extends BaseExpandableListAdapter {
@@ -3494,7 +3562,6 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
                                                                         if (!recievedInvoice.equals("")) {
                                                                             JSONArray jsonArrayInvoice = new JSONArray(recievedInvoice);
                                                                             for (int o = 0; o < jsonArrayInvoice.length(); o++) {
-
 
 
                                                                                 String sql = "INSERT OR REPLACE INTO pic_sign (delivery_no, consignment_no, order_no, invoice_no, pic_sign_load, pic_sign_unload" +

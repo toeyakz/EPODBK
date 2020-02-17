@@ -48,6 +48,7 @@ dependencies {
     implementation 'com.github.addisonelliott:SegmentedButton:3.1.2'
     //สแกนบาร์โค้ต
     implementation 'com.journeyapps:zxing-android-embedded:3.4.0'
+    implementation 'me.dm7.barcodescanner:zxing:1.9.13'
 
     //Section วันที่
     implementation 'io.github.luizgrp.sectionedrecyclerviewadapter:sectionedrecyclerviewadapter:1.2.0'

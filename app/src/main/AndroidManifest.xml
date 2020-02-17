@@ -67,6 +67,15 @@
         <activity
             android:name=".PlanWork_Activity"
             android:screenOrientation="portrait" />
+
+        <activity android:name=".ObjectClass.SimpleScannerActivity"
+            android:screenOrientation="portrait"/>
+
+        <activity
+            android:name="com.journeyapps.barcodescanner.CaptureActivity"
+            android:screenOrientation="fullSensor"
+            tools:replace="screenOrientation" />
+
         <activity
             android:name=".Main_Activity"
             android:screenOrientation="portrait" />

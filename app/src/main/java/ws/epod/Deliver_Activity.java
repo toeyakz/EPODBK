@@ -186,14 +186,20 @@ public class Deliver_Activity extends AppCompatActivity {
     private int isComment = 0;
     private int statusCheck = 0;
 
-    boolean isc = false;
+    String issueScan = "";
+    private Runnable delayScan = new Runnable() {
+        @Override
+        public void run() {
+            startScan();
+        }
+    };
 
     private LocationManager client;
 
     @Override
     protected void onResume() {
         super.onResume();
-        getSQLite();
+
 
     }
 
@@ -245,6 +251,7 @@ public class Deliver_Activity extends AppCompatActivity {
         isSync = getIntent().getExtras().getBoolean("isSync");
         if (isSync) {
             Upload();
+            getSQLite();
         } else {
 
         }
@@ -257,7 +264,8 @@ public class Deliver_Activity extends AppCompatActivity {
             public void onClick(View view) {
                 Animation animation = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.alpha);
                 imgCameraScan.startAnimation(animation);
-                qrScan.initiateScan();
+               // qrScan.initiateScan();
+                startScan();
             }
         });
 
@@ -369,6 +377,14 @@ public class Deliver_Activity extends AppCompatActivity {
 
             }
         });
+
+    }
+
+    private void startScan() {
+        qrScan.setPrompt("Scan a barcode or qr code");
+        qrScan.setOrientationLocked(false);
+        qrScan.setBeepEnabled(false);
+        qrScan.initiateScan();
 
     }
 
@@ -785,6 +801,7 @@ public class Deliver_Activity extends AppCompatActivity {
         if(!scannotFind)
 
     {
+        issueScan = "This Waybill No doesn't exist.";
         Toasty.info(getApplicationContext(), "This Waybill No doesn't exist.", Toast.LENGTH_SHORT, true).show();
     }
 }
@@ -1034,9 +1051,9 @@ public class Deliver_Activity extends AppCompatActivity {
                         ", pl.time_begin \n" +
                         ", pl.is_save \n" +
                         ", pl.status_upload \n" +
-                        ", (pl.box_no - 1)+1 as row_number \n" +
+                        ", ROW_NUMBER() OVER(ORDER BY pl.box_no) as row_number \n" +
                         ", ifnull((select pl2.order_no from Plan pl2 where pl2.consignment_no = pl.consignment_no and pl2. delivery_no = pl.delivery_no and pl2.plan_seq = pl.plan_seq   \n" +
-                        " and  pl2.order_no in (select ps.order_no from pic_sign ps where pic_sign_unload <> '' )),'') as order_no  \n" +
+                        " and pl2.order_no = pl.order_no and pl2.order_no in (select ps.order_no from pic_sign ps where pic_sign_unload <> '' )),'') as order_no  \n" +
                         "from Plan pl where pl.consignment_no = '" + consignment + "' and pl.activity_type = 'UNLOAD' and pl.delivery_no = '" + delivery_no + "' and pl.plan_seq = '" + plan_seq + "' and pl.trash = '0'  " +
                         "order by row_number";
                 Cursor cursor_expand = databaseHelper.selectDB(sql_expand);
@@ -1120,10 +1137,30 @@ public class Deliver_Activity extends AppCompatActivity {
 
     }
 
+    private void showDialog(){
+        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
+        LayoutInflater inflater = this.getLayoutInflater();
+        View dialogView = inflater.inflate(R.layout.dialog_warning__scan, null);
+        dialogBuilder.setView(dialogView);
+        dialogBuilder.setCancelable(false);
+
+        Button btnCloseDialog = dialogView.findViewById(R.id.btnCloseDialog);
+
+        AlertDialog alertDialog2 = dialogBuilder.create();
+        btnCloseDialog.setOnClickListener(v -> {
+            alertDialog2.dismiss();
+            issueScan = "";
+            new Handler().postDelayed(delayScan, 500);
+        });
+
+        alertDialog.show();
+
+    }
+
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-
 
         IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
         if (result != null) {
@@ -1133,8 +1170,15 @@ public class Deliver_Activity extends AppCompatActivity {
                 String getScanText = result.getContents();
                 getScanText = getScanText.trim();
 
-                // edtFineWaybillPick.setText(result.getContents());
                 scan(getScanText);
+                if (issueScan.equals("This Waybill No doesn't exist.")) {
+                    showDialog();
+                    // return;
+                }else{
+                    new Handler().postDelayed(delayScan, 1000);
+                }
+                // edtFineWaybillPick.setText(result.getContents());
+                //scan(getScanText);
 
 //                if (INPUT_WAY.equals("PLUS")) {
 //                    for (int i = 0;
