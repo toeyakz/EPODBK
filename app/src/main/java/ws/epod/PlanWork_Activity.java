@@ -7,6 +7,7 @@ import android.app.ProgressDialog;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.SQLException;
@@ -31,6 +32,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -2178,6 +2180,11 @@ public class PlanWork_Activity extends AppCompatActivity {
                 }
 
                 return true;
+            case R.id.scan_menu:
+
+                Toast.makeText(getApplicationContext(), "wow", Toast.LENGTH_SHORT).show();
+                startActivity(new Intent(getApplicationContext(),ScanOfflineActivity.class));
+
             default:
                 return super.onOptionsItemSelected(item);
         }

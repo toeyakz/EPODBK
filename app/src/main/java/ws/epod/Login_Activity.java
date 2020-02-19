@@ -721,6 +721,10 @@ public class Login_Activity extends AppCompatActivity {
         sql = "CREATE TABLE IF NOT EXISTS image_invoice (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,name_img TEXT(255,0), status_img TEXT(255,0), create_date TEXT(255,0) , UNIQUE(id));";
         databaseHelper.execDB(sql);
 
+        sql = "CREATE TABLE IF NOT EXISTS header_waybill (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, waybill_no TEXT(255,0), date_scan TEXT(255,0), lat Decimal(9,6), lon Decimal(8,6)," +
+                "is_scanned TEXT(255,0), status_complete TEXT(255,0), UNIQUE(id));";
+        databaseHelper.execDB(sql);
+
 
     }
 

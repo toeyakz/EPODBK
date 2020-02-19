@@ -62,5 +62,4 @@ dependencies {
     api 'androidx.sqlite:sqlite:2.0.1'
 
 
-
 }
