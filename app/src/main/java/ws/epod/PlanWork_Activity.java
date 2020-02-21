@@ -84,7 +84,7 @@ import ws.epod.Helper.NarisBaseValue;
 import ws.epod.ObjectClass.LanguageClass;
 import ws.epod.ObjectClass.SQLiteModel.Plan_model;
 import ws.epod.ObjectClass.Var;
-import ws.epod.scan.ScanOfflineActivity;
+import ws.epod.scan.view.OfflineScan.ScanOfflineActivity;
 import ws.epod.sync.UploadDataPlan;
 
 

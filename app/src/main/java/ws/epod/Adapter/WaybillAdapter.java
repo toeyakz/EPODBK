@@ -1,6 +1,7 @@
 package ws.epod.Adapter;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,6 +15,7 @@ import java.util.ArrayList;
 
 import ws.epod.ObjectClass.SQLiteModel.WaybillModel;
 import ws.epod.R;
+import ws.epod.scan.Util.OfflineScanUtil;
 
 public class WaybillAdapter extends RecyclerView.Adapter<WaybillAdapter.ViewHolder> {
 
@@ -42,9 +44,14 @@ public class WaybillAdapter extends RecyclerView.Adapter<WaybillAdapter.ViewHold
 
         holder.checkBox_scan.setOnClickListener(v -> {
             if(holder.checkBox_scan.isChecked()){
-               // Util.addWaybill(models.get(i));
+                OfflineScanUtil.addListToDelete(models.get(i));
             }else{
-               // Util.deleteWaybill(i);
+                OfflineScanUtil.listDelete.remove(models.get(i));
+
+            }
+
+            for (WaybillModel waybillModel : OfflineScanUtil.getSec()){
+                Log.d("ds8sdv", "onBindViewHolder: "+waybillModel.getId());
             }
         });
 
