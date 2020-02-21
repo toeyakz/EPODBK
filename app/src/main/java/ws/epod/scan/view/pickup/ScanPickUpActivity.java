@@ -35,10 +35,10 @@ import ws.epod.Helper.DatabaseHelper;
 import ws.epod.Helper.NarisBaseValue;
 import ws.epod.R;
 import ws.epod.scan.Util.UtilScan;
-import ws.epod.scan.model.Invoice;
-import ws.epod.scan.model.InvoiceHeader;
+import ws.epod.scan.model.pickup.Invoice;
+import ws.epod.scan.model.pickup.InvoiceHeader;
 
-public class ScanActivity extends AppCompatActivity implements DecoratedBarcodeView.TorchListener, UtilScan.OnInvoiceListener {
+public class ScanPickUpActivity extends AppCompatActivity implements DecoratedBarcodeView.TorchListener, UtilScan.OnInvoiceListener {
 
     private static final int PERMISSIONS_CAMERA = 2;
     private DecoratedBarcodeView barcodeScannerView;
@@ -160,7 +160,7 @@ public class ScanActivity extends AppCompatActivity implements DecoratedBarcodeV
         barcodeScannerView.setTorchListener(this);
         barcodeScannerView.decodeSingle(scanCallback);
 
-        narisv = new NarisBaseValue(ScanActivity.this);
+        narisv = new NarisBaseValue(ScanPickUpActivity.this);
         netCon = new ConnectionDetector(getApplicationContext());
         databaseHelper = new DatabaseHelper(getApplicationContext());
 
@@ -210,7 +210,7 @@ public class ScanActivity extends AppCompatActivity implements DecoratedBarcodeV
         });
 
         imgBack_test.setOnClickListener(v -> {
-            AlertDialog alert = new AlertDialog.Builder(ScanActivity.this).create();
+            AlertDialog alert = new AlertDialog.Builder(ScanPickUpActivity.this).create();
             alert.setTitle("ต้องการยกเลิกการสแกน?");
             alert.setCancelable(false);
             alert.setButton(getString(R.string.confirm), (dialog, which) -> {
@@ -223,7 +223,7 @@ public class ScanActivity extends AppCompatActivity implements DecoratedBarcodeV
         });
 
         btn_cancel.setOnClickListener(v -> {
-            AlertDialog alert = new AlertDialog.Builder(ScanActivity.this).create();
+            AlertDialog alert = new AlertDialog.Builder(ScanPickUpActivity.this).create();
             alert.setTitle("ต้องการยกเลิกการสแกน?");
             alert.setCancelable(false);
             alert.setButton(getString(R.string.confirm), (dialog, which) -> {

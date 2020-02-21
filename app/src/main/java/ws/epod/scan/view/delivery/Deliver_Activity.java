@@ -95,6 +95,11 @@ import ws.epod.Client.Structors.UploadImageInvoice;
 import ws.epod.Helper.ConnectionDetector;
 import ws.epod.Helper.DatabaseHelper;
 import ws.epod.Helper.NarisBaseValue;
+import ws.epod.scan.Util.UtilScan;
+import ws.epod.scan.model.delivery.InvoiceDelivery;
+import ws.epod.scan.model.pickup.Invoice;
+import ws.epod.scan.view.pickup.PinkingUpMaster_Activity;
+import ws.epod.scan.view.pickup.ScanPickUpActivity;
 import ws.epod.signature.delivery.InvoiceDeliver_Activity;
 import ws.epod.Main_Activity;
 import ws.epod.ObjectClass.LanguageClass;
@@ -206,6 +211,16 @@ public class Deliver_Activity extends AppCompatActivity {
         super.onResume();
 
 
+        Log.d("sdasd63sd", "onCreate: ");
+        if(UtilScan.getListDeliveryWaybill() != null){
+            for (InvoiceDelivery waybill : UtilScan.getListDeliveryWaybill()){
+                Log.d("sdasd63sd", "onCreate: "+waybill.getWaybill_no());
+
+                scan(waybill.getWaybill_no());
+            }
+
+        }
+
     }
 
     @Override
@@ -255,6 +270,8 @@ public class Deliver_Activity extends AppCompatActivity {
 
         isSync = getIntent().getExtras().getBoolean("isSync");
         if (isSync) {
+
+            UtilScan.clearHeaderDeliveryWaybillList();
             Upload();
             getSQLite();
         } else {
@@ -270,7 +287,13 @@ public class Deliver_Activity extends AppCompatActivity {
                 Animation animation = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.alpha);
                 imgCameraScan.startAnimation(animation);
                // qrScan.initiateScan();
-                startScan();
+                //startScan();
+
+                UtilScan.clearHeaderDeliveryWaybillList();
+                Intent intents = new Intent(Deliver_Activity.this, ScanDeliveryActivity.class);
+                startActivity(intents);
+
+
             }
         });
 

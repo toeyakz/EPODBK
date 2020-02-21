@@ -1,11 +1,11 @@
-package ws.epod.scan.model;
+package ws.epod.scan.model.delivery;
 
-public class InvoiceHeader {
+public class InvoiceHeaderDelivery {
     private String consignment_no = "";
     private String waybill_no = "";
     private String is_scaned = "";
 
-    public InvoiceHeader(String consignment_no, String waybill_no, String is_scaned) {
+    public InvoiceHeaderDelivery(String consignment_no, String waybill_no, String is_scaned) {
         this.consignment_no = consignment_no;
         this.waybill_no = waybill_no;
         this.is_scaned = is_scaned;
@@ -35,3 +35,4 @@ public class InvoiceHeader {
         this.is_scaned = is_scaned;
     }
 }
+

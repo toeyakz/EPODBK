@@ -1,18 +1,16 @@
-package ws.epod.scan.model;
-
-import android.content.Context;
+package ws.epod.scan.model.delivery;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Locale;
 
-public class Invoice {
+public class InvoiceDelivery {
     private String waybill_no = "";
     private String date = "";
     private double lat;
     private double lon;
 
-    public Invoice(String waybill_no) {
+    public InvoiceDelivery(String waybill_no) {
         this.waybill_no = waybill_no;
         this.date = getdate();
     }

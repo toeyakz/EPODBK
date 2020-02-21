@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/colorAppBG"
-    tools:context=".scan.view.pickup.ScanPickUpActivity">
+    tools:context=".scan.view.delivery.ScanDeliveryActivity">
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar_test"

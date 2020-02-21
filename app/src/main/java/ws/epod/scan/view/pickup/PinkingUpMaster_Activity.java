@@ -104,7 +104,7 @@ import ws.epod.ObjectClass.Var;
 import ws.epod.PlanWork_Activity;
 import ws.epod.R;
 import ws.epod.scan.Util.UtilScan;
-import ws.epod.scan.model.Invoice;
+import ws.epod.scan.model.pickup.Invoice;
 import ws.epod.sync.UploadDataPlan;
 
 public class PinkingUpMaster_Activity extends AppCompatActivity {
@@ -294,14 +294,14 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
                 Upload();
                 getSQLite();
 
-                if(UtilScan.getListWaybill() != null){
-                    for (Invoice waybill : UtilScan.getListWaybill()){
-                        Log.d("sdasd63sd", "onCreate: "+waybill.getWaybill_no());
-
-                        scan(waybill.getWaybill_no());
-                    }
-
-                }
+//                if(UtilScan.getListWaybill() != null){
+//                    for (Invoice waybill : UtilScan.getListWaybill()){
+//                        Log.d("sdasd63sd", "onCreate: "+waybill.getWaybill_no());
+//
+//                        scan(waybill.getWaybill_no());
+//                    }
+//
+//                }
             } else {
 
             }
@@ -335,7 +335,7 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
 
 
                 UtilScan.clearHeaderWaybillList();
-                Intent intents = new Intent(PinkingUpMaster_Activity.this, ScanActivity.class);
+                Intent intents = new Intent(PinkingUpMaster_Activity.this, ScanPickUpActivity.class);
                 startActivity(intents);
             }
         });
