@@ -1,4 +1,4 @@
-package ws.epod;
+package ws.epod.scan.view.delivery;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -87,6 +87,7 @@ import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Response;
 import ws.epod.Adapter.DialogConsAdapter;
+import ws.epod.BuildConfig;
 import ws.epod.Client.APIClient;
 import ws.epod.Client.APIInterface;
 import ws.epod.Client.Structors.UploadImage;
@@ -94,6 +95,8 @@ import ws.epod.Client.Structors.UploadImageInvoice;
 import ws.epod.Helper.ConnectionDetector;
 import ws.epod.Helper.DatabaseHelper;
 import ws.epod.Helper.NarisBaseValue;
+import ws.epod.signature.delivery.InvoiceDeliver_Activity;
+import ws.epod.Main_Activity;
 import ws.epod.ObjectClass.LanguageClass;
 import ws.epod.ObjectClass.LocationTrack;
 import ws.epod.ObjectClass.SQLiteModel.DeliverExpand_Model;
@@ -101,6 +104,8 @@ import ws.epod.ObjectClass.SQLiteModel.Deliver_Model;
 import ws.epod.ObjectClass.SQLiteModel.Dialog_Cons_Detail_Model;
 import ws.epod.ObjectClass.SQLiteModel.Reason_model;
 import ws.epod.ObjectClass.Var;
+import ws.epod.PlanWork_Activity;
+import ws.epod.R;
 import ws.epod.sync.UploadDataPlan;
 
 public class Deliver_Activity extends AppCompatActivity {

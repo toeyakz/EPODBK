@@ -12,6 +12,10 @@
     <color name="OrangeAccent">#FFC518</color>
     <color name="OrangeSubAccent">#ffcd18</color>
 
+    <color name="colorAppDefault">#002a84</color>
+    <color name="colorAppSecond">#fb5b5a</color>
     <!-- Black -->
     <color name="BlackMetal">#B6B6B6</color>
+
+    <color name="colorAppBG">#f2f2f2</color>
 </resources>

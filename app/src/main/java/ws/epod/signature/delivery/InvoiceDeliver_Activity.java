@@ -1,4 +1,4 @@
-package ws.epod;
+package ws.epod.signature.delivery;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -37,11 +37,6 @@ import android.widget.Toast;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.gson.Gson;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -49,10 +44,13 @@ import fr.ganfra.materialspinner.MaterialSpinner;
 import ws.epod.Helper.ConnectionDetector;
 import ws.epod.Helper.DatabaseHelper;
 import ws.epod.Helper.NarisBaseValue;
+import ws.epod.Main_Activity;
 import ws.epod.ObjectClass.LanguageClass;
 import ws.epod.ObjectClass.SQLiteModel.Reason_model;
 import ws.epod.ObjectClass.SQLiteModel.Sign_Model;
 import ws.epod.ObjectClass.SQLiteModel.Sign_i_Model;
+import ws.epod.PlanWork_Activity;
+import ws.epod.R;
 
 public class InvoiceDeliver_Activity extends AppCompatActivity {
 

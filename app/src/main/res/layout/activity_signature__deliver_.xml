@@ -5,7 +5,7 @@
     xmlns:signature="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Signature_Deliver_Activity">
+    tools:context=".signature.delivery.Signature_Deliver_Activity">
 
     <RelativeLayout
         android:layout_width="fill_parent"

@@ -67,7 +67,6 @@ import java.util.HashSet;
 import java.util.Locale;
 
 import io.github.luizgrp.sectionedrecyclerviewadapter.SectionedRecyclerViewAdapter;
-import io.requery.android.database.sqlite.SQLiteDatabase;
 import okhttp3.MediaType;
 import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
@@ -85,6 +84,7 @@ import ws.epod.Helper.NarisBaseValue;
 import ws.epod.ObjectClass.LanguageClass;
 import ws.epod.ObjectClass.SQLiteModel.Plan_model;
 import ws.epod.ObjectClass.Var;
+import ws.epod.scan.ScanOfflineActivity;
 import ws.epod.sync.UploadDataPlan;
 
 
@@ -2183,7 +2183,7 @@ public class PlanWork_Activity extends AppCompatActivity {
             case R.id.scan_menu:
 
                 Toast.makeText(getApplicationContext(), "wow", Toast.LENGTH_SHORT).show();
-                startActivity(new Intent(getApplicationContext(),ScanOfflineActivity.class));
+                startActivity(new Intent(getApplicationContext(), ScanOfflineActivity.class));
 
             default:
                 return super.onOptionsItemSelected(item);

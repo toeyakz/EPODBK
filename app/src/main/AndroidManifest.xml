@@ -6,6 +6,7 @@
     <uses-feature
         android:glEsVersion="0x00020000"
         android:required="true" />
+    <uses-sdk tools:overrideLibrary="com.google.zxing.client.android" />
 
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
@@ -34,10 +35,11 @@
         android:usesCleartextTraffic="true"
         android:windowSoftInputMode="adjustResize|stateAlwaysHidden"
         tools:replace="android:allowBackup">
-        <activity android:name=".ScanOfflineActivity"></activity>
-        <activity android:name=".Signature_Deliver_Activity" />
-        <activity android:name=".InvoiceDeliver_Activity" />
-        <activity android:name=".Invoice_Activity" />
+        <activity android:name=".scan.view.pickup.ScanActivity"></activity>
+        <activity android:name=".scan.ScanOfflineActivity" />
+        <activity android:name=".signature.delivery.Signature_Deliver_Activity" />
+        <activity android:name=".signature.delivery.InvoiceDeliver_Activity" />
+        <activity android:name=".signature.pickup.Invoice_Activity" />
 
         <provider
             android:name="androidx.core.content.FileProvider"
@@ -49,12 +51,12 @@
                 android:resource="@xml/provider_paths" />
         </provider>
 
-        <activity android:name=".Signature_Activity" />
+        <activity android:name=".signature.pickup.Signature_Activity" />
         <activity
-            android:name=".PinkingUpMaster_Activity"
+            android:name=".scan.view.pickup.PinkingUpMaster_Activity"
             android:windowSoftInputMode="adjustResize" />
         <activity
-            android:name=".Deliver_Activity"
+            android:name=".scan.view.delivery.Deliver_Activity"
             android:windowSoftInputMode="adjustResize" />
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.

@@ -1,9 +1,8 @@
-package ws.epod;
+package ws.epod.scan.view.pickup;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.ContentValues;
 import android.content.Context;
@@ -23,15 +22,12 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.provider.MediaStore;
-import android.text.InputType;
 import android.util.Base64;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.inputmethod.InputMethodManager;
@@ -57,7 +53,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.addisonelliott.segmentedbutton.SegmentedButtonGroup;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.zxing.Result;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 
@@ -89,6 +84,7 @@ import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Response;
 import ws.epod.Adapter.DialogConsAdapter;
+import ws.epod.BuildConfig;
 import ws.epod.Client.APIClient;
 import ws.epod.Client.APIInterface;
 import ws.epod.Client.Structors.UploadImage;
@@ -96,14 +92,19 @@ import ws.epod.Client.Structors.UploadImageInvoice;
 import ws.epod.Helper.ConnectionDetector;
 import ws.epod.Helper.DatabaseHelper;
 import ws.epod.Helper.NarisBaseValue;
+import ws.epod.signature.pickup.Invoice_Activity;
+import ws.epod.Main_Activity;
 import ws.epod.ObjectClass.LanguageClass;
 import ws.epod.ObjectClass.LocationTrack;
 import ws.epod.ObjectClass.SQLiteModel.Dialog_Cons_Detail_Model;
 import ws.epod.ObjectClass.SQLiteModel.PickingUpEexpand_Model;
 import ws.epod.ObjectClass.SQLiteModel.PickingUp_Model;
 import ws.epod.ObjectClass.SQLiteModel.Reason_model;
-import ws.epod.ObjectClass.SimpleScannerActivity;
 import ws.epod.ObjectClass.Var;
+import ws.epod.PlanWork_Activity;
+import ws.epod.R;
+import ws.epod.scan.Util.UtilScan;
+import ws.epod.scan.model.Invoice;
 import ws.epod.sync.UploadDataPlan;
 
 public class PinkingUpMaster_Activity extends AppCompatActivity {
@@ -217,6 +218,15 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
         super.onResume();
         //getSQLite();
 
+        Log.d("sdasd63sd", "onCreate: ");
+        if(UtilScan.getListWaybill() != null){
+            for (Invoice waybill : UtilScan.getListWaybill()){
+                Log.d("sdasd63sd", "onCreate: "+waybill.getWaybill_no());
+
+                scan(waybill.getWaybill_no());
+            }
+
+        }
 
         // Upload();
 
@@ -276,16 +286,33 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
         hideLayout = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.hide_layout);
 
 
-        isSync = getIntent().getExtras().getBoolean("isSync");
-        if (isSync) {
-            Upload();
-            getSQLite();
-        } else {
+        if(getIntent().getExtras() != null){
+            isSync = getIntent().getExtras().getBoolean("isSync");
+            if (isSync) {
+                UtilScan.clearHeaderWaybillList();
 
+                Upload();
+                getSQLite();
+
+                if(UtilScan.getListWaybill() != null){
+                    for (Invoice waybill : UtilScan.getListWaybill()){
+                        Log.d("sdasd63sd", "onCreate: "+waybill.getWaybill_no());
+
+                        scan(waybill.getWaybill_no());
+                    }
+
+                }
+            } else {
+
+            }
         }
 
 
+
         onClickFab();
+
+
+
 
 
         bnCloseJobPick.setOnClickListener(view -> {
@@ -304,11 +331,12 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
                 Animation animation = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.alpha);
                 imgCameraScan.startAnimation(animation);
 
-                startScan();
+               // startScan();
 
 
-//                Intent intents = new Intent(PinkingUpMaster_Activity.this, SimpleScannerActivity.class);
-//                startActivityForResult(intents, 112);
+                UtilScan.clearHeaderWaybillList();
+                Intent intents = new Intent(PinkingUpMaster_Activity.this, ScanActivity.class);
+                startActivity(intents);
             }
         });
 
@@ -1270,7 +1298,7 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
         expandableListView.setAdapter(expandableListAdapter);
 //        for (int i = 0; i < expandableListAdapter.getGroupCount(); i++)
 //            expandableListView.expandGroup(i);
-        user_data.edit().clear();
+       // user_data.edit().clear();
     }
 
     private void ToastScan(Bitmap bm, String v) {

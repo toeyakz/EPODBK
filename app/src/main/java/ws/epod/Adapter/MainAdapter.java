@@ -16,12 +16,12 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 
-import ws.epod.Deliver_Activity;
+import ws.epod.scan.view.delivery.Deliver_Activity;
 import ws.epod.Helper.ConnectionDetector;
 import ws.epod.Helper.DatabaseHelper;
 import ws.epod.Helper.NarisBaseValue;
 import ws.epod.ObjectClass.MenuObject;
-import ws.epod.PinkingUpMaster_Activity;
+import ws.epod.scan.view.pickup.PinkingUpMaster_Activity;
 import ws.epod.R;
 
 public class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHolder> {
