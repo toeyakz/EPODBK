@@ -59,8 +59,8 @@ public class ScanOfflineActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
 
-        if(OfflineScanUtil.getWaybillOffline() != null){
-            for (WaybillPoJo jo : OfflineScanUtil.getWaybillOffline()){
+        if (OfflineScanUtil.getWaybillOffline() != null) {
+            for (WaybillPoJo jo : OfflineScanUtil.getWaybillOffline()) {
                 saveWaybill(jo.getWaybill_no());
             }
 
@@ -101,7 +101,6 @@ public class ScanOfflineActivity extends AppCompatActivity {
 
         onClick();
         readData();
-
 
 
     }
@@ -210,7 +209,6 @@ public class ScanOfflineActivity extends AppCompatActivity {
         }*/
 
 
-
     }
 
     @Override
@@ -225,7 +223,7 @@ public class ScanOfflineActivity extends AppCompatActivity {
                 String getScanText = result.getContents();
                 getScanText = getScanText.trim();
 
-               /// saveWaybill(getScanText);
+                /// saveWaybill(getScanText);
 
                 // Toast.makeText(this, getScanText, Toast.LENGTH_SHORT).show();
 
