@@ -6,10 +6,14 @@ import androidx.core.content.ContextCompat;
 
 import android.Manifest;
 import android.app.AlertDialog;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
+import android.media.Ringtone;
+import android.media.RingtoneManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
@@ -110,7 +114,12 @@ public class ScanDeliveryActivity extends AppCompatActivity  implements Decorate
             if (isAdd) {
                 lastText = result.getText();
                 tvCodeScanned.setText(result.getText());
-                beepManager.playBeepSoundAndVibrate();
+              //  beepManager.playBeepSoundAndVibrate();
+
+                //set beep
+                Uri soundUri = Uri.parse(ContentResolver.SCHEME_ANDROID_RESOURCE + "://"+ getApplicationContext().getPackageName() + "/" + R.raw.beep);
+                Ringtone r = RingtoneManager.getRingtone(getApplicationContext(), soundUri);
+                r.play();
 
                 InvoiceDelivery newInvoice = new InvoiceDelivery(result.getText());
                 UtilScan.addInvoiceDelivery(newInvoice);

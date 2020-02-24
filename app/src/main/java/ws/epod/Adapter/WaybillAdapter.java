@@ -47,7 +47,6 @@ public class WaybillAdapter extends RecyclerView.Adapter<WaybillAdapter.ViewHold
                 OfflineScanUtil.addListToDelete(models.get(i));
             }else{
                 OfflineScanUtil.listDelete.remove(models.get(i));
-
             }
 
             for (WaybillModel waybillModel : OfflineScanUtil.getSec()){

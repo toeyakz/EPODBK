@@ -211,8 +211,6 @@ public class ScanOfflineActivity extends AppCompatActivity {
 
 
 
-
-
     }
 
     @Override
