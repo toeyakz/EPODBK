@@ -153,8 +153,6 @@ public class ScanOfflineActivity extends AppCompatActivity {
                 String is_scanned = cursor.getString(cursor.getColumnIndex("is_scanned"));
                 String status_complete = cursor.getString(cursor.getColumnIndex("status_complete"));
 
-                Log.d("s652a9s", "readData: " + waybill_no);
-
                 models.add(new WaybillModel(id, waybill_no, date_scan, lat, lon, is_scanned, status_complete));
 
                 dataWaybill.add(new WaybillModel(id, waybill_no, date_scan, lat, lon, is_scanned, status_complete));
