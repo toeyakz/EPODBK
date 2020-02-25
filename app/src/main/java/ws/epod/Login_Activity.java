@@ -401,7 +401,7 @@ public class Login_Activity extends AppCompatActivity {
                 super.onPreExecute();
 
                 progressDialog.setCancelable(false);
-                progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+                progressDialog.setProgressStyle(ProgressDialog .STYLE_SPINNER);
                 progressDialog.setMessage(getString(R.string.checking));
                 progressDialog.show();
             //    showProgress(true);
