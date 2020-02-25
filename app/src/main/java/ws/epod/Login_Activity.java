@@ -115,6 +115,8 @@ public class Login_Activity extends AppCompatActivity {
 
     ImageView show_pass_btn;
 
+    ProgressDialog progressDialog;
+
     private APIInterface apiInterface;
 
     public android.os.Handler handler = null;
@@ -145,7 +147,7 @@ public class Login_Activity extends AppCompatActivity {
             protected void onPostExecute(Void aVoid) {
 
 
-                CheckDatabaseStructure();
+               // CheckDatabaseStructure();
 
 
                 super.onPostExecute(aVoid);
@@ -257,7 +259,12 @@ public class Login_Activity extends AppCompatActivity {
         isWriteStoragePermissionGranted();
         isCameraePermissionGranted();
 */
-        databaseHelper = new DatabaseHelper(getApplicationContext());
+        if (checkPermissions()) {
+           // CheckDatabaseStructure();
+            databaseHelper = new DatabaseHelper(getApplicationContext());
+            //  permissions  granted.
+        }
+
         narisv = new NarisBaseValue(Login_Activity.this);
 
 
@@ -280,10 +287,7 @@ public class Login_Activity extends AppCompatActivity {
         }
 
 
-        if (checkPermissions()) {
-            CheckDatabaseStructure();
-            //  permissions  granted.
-        }
+
 
         //set serial
         imei = narisv.getSerial();
@@ -386,19 +390,21 @@ public class Login_Activity extends AppCompatActivity {
     @SuppressLint("StaticFieldLeak")
     private void loginSync(final String user, final String pass, final String serail) {
 
+        progressDialog = new ProgressDialog(Login_Activity.this);
         new AsyncTask<Void, Void, Integer>() {
 
-            ProgressDialog progressDialog;
+           // ProgressDialog progressDialog;
 
 
             @Override
             protected void onPreExecute() {
                 super.onPreExecute();
-                progressDialog = new ProgressDialog(Login_Activity.this);
+
                 progressDialog.setCancelable(false);
+                progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
                 progressDialog.setMessage(getString(R.string.checking));
                 progressDialog.show();
-
+            //    showProgress(true);
             }
 
             @Override
@@ -506,7 +512,7 @@ public class Login_Activity extends AppCompatActivity {
                 super.onPostExecute(IsSuccess);
 
                 Log.d("asda56s", IsSuccess + "");
-
+               // progressDialog.dismiss();
                 if (IsSuccess == 1) {
                     SharedPreferences login_get = getSharedPreferences("LOGIN", Context.MODE_PRIVATE);
                     Var.UserLogin.driver_id = login_get.getString("driver_id", "");
@@ -569,7 +575,11 @@ public class Login_Activity extends AppCompatActivity {
                     alert.show();
                 }
 
-                progressDialog.dismiss();
+              //  showProgress(false);
+
+                if (progressDialog.isShowing()) {
+                    progressDialog.dismiss();
+                }
 
             }
         }.execute();
@@ -655,7 +665,7 @@ public class Login_Activity extends AppCompatActivity {
                         }
 
                     }
-                    CheckDatabaseStructure();
+                   // CheckDatabaseStructure();
                     Log.d("TAG", "onRequestPermissionsResult: " + permissionsDenied);
                     // Show permissionsDenied
                     //updateViews();
@@ -680,7 +690,7 @@ public class Login_Activity extends AppCompatActivity {
                 "station_lat Decimal(9,6), station_lon Decimal(8,6), station_area TEXT(255,0), plan_in TEXT(255,0), plan_out TEXT(255,0)" +
                 ", consignment_no TEXT(255,0), order_no TEXT(255,0), activity_type TEXT(255,0), box_no TEXT(255,0), waybill_no TEXT(255,0), weight TEXT(255,0)" +
                 ", actual_seq TEXT(255,0), actual_lat Decimal(9,6), actual_lon Decimal(8,6), time_actual_in TEXT(255,0), time_actual_out TEXT(255,0)" +
-                ", time_begin TEXT(255,0), time_end TEXT(255,0), signature TEXT(255,0), is_scaned TEXT(255,0), is_save TEXT(255,0), status_order_no TEXT(255,0)" +
+                ", time_begin TEXT(255,0), time_end TEXT(255,0), signature TEXT(255,0), is_scaned TEXT(255,0), is_save TEXT(255,0),status_order_no TEXT(255,0)" +
                 ", comment TEXT(255,0), picture1 TEXT(255,0), picture2 TEXT(255,0), picture3 TEXT(255,0), status_upload TEXT(255,0), driver_code TEXT(255,0)" +
                 ", driver_name TEXT(255,0), modified_date TEXT(255,0), trash TEXT(255,0), total_box TEXT(255,0), UNIQUE(id));";
         databaseHelper.execDB(sql);
@@ -1025,8 +1035,8 @@ public class Login_Activity extends AppCompatActivity {
     private void SaveLastLogin() {
 //        String sql1 = "IF NOT EXISTS (INSERT OR REPLACE into Var (Var,Value,Value2,MODIFIED_DATE) values('LASTLOGIN','" + Var.UserLogin.driver_user + "','" + Var.UserLogin.driver_pass + "',datetime('now','localtime')))" +
 //                "BEGIN CREATE TABLE Var ";
-        String sql = "INSERT OR REPLACE into Var (Var,Value,Value2,MODIFIED_DATE) values('LASTLOGIN','" + Var.UserLogin.driver_user + "','" + Var.UserLogin.driver_pass + "',datetime('now','localtime'))";
-        databaseHelper.execDB(sql);
+//        String sql = "INSERT OR REPLACE into Var (Var,Value,Value2,MODIFIED_DATE) values('LASTLOGIN','" + Var.UserLogin.driver_user + "','" + Var.UserLogin.driver_pass + "',datetime('now','localtime'))";
+//        databaseHelper.execDB(sql);
     }
 
     private boolean checkAndRequestPermissions() {
