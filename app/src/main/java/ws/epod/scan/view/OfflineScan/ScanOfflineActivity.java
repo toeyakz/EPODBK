@@ -144,7 +144,7 @@ public class ScanOfflineActivity extends AppCompatActivity {
         cursor.moveToFirst();
         if (cursor.getCount() > 0) {
             do {
-                String id = cursor.getString(cursor.getColumnIndex("id"));
+                String id = cursor. getString(cursor.getColumnIndex("id"));
                 String waybill_no = cursor.getString(cursor.getColumnIndex("waybill_no"));
                 String date_scan = cursor.getString(cursor.getColumnIndex("date_scan"));
                 double lat = cursor.getDouble(cursor.getColumnIndex("lat"));
