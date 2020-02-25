@@ -82,7 +82,6 @@ public class ScanOfflineActivity extends AppCompatActivity {
     private void initial() {
 
         qrScan = new IntentIntegrator(this);
-
         narisv = new NarisBaseValue(ScanOfflineActivity.this);
         netCon = new ConnectionDetector(getApplicationContext());
         databaseHelper = new DatabaseHelper(getApplicationContext());
