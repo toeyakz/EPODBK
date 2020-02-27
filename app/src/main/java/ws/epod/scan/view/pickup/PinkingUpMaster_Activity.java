@@ -182,7 +182,6 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
     boolean isSave = true;
     boolean isSync = false;
 
-    int c = 0;
 
     LocationTrack locationTrack;
 
@@ -218,10 +217,11 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
         super.onResume();
         //getSQLite();
 
+
         Log.d("sdasd63sd", "onCreate: ");
-        if(UtilScan.getListWaybill() != null){
-            for (Invoice waybill : UtilScan.getListWaybill()){
-                Log.d("sdasd63sd", "onCreate: "+waybill.getWaybill_no());
+        if (UtilScan.getListWaybill() != null) {
+            for (Invoice waybill : UtilScan.getListWaybill()) {
+                Log.d("sdasd63sd", "onCreate: " + waybill.getWaybill_no());
 
                 scan(waybill.getWaybill_no());
             }
@@ -286,13 +286,14 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
         hideLayout = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.hide_layout);
 
 
-        if(getIntent().getExtras() != null){
+        if (getIntent().getExtras() != null) {
             isSync = getIntent().getExtras().getBoolean("isSync");
             if (isSync) {
                 UtilScan.clearHeaderWaybillList();
 
                 Upload();
                 getSQLite();
+
 
 //                if(UtilScan.getListWaybill() != null){
 //                    for (Invoice waybill : UtilScan.getListWaybill()){
@@ -308,11 +309,7 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
         }
 
 
-
         onClickFab();
-
-
-
 
 
         bnCloseJobPick.setOnClickListener(view -> {
@@ -331,7 +328,7 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
                 Animation animation = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.alpha);
                 imgCameraScan.startAnimation(animation);
 
-               // startScan();
+                // startScan();
 
 
                 UtilScan.clearHeaderWaybillList();
@@ -566,77 +563,78 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
                                         if (expandableListAdapter == null) {
                                             cancel(true);
                                         } else {
+                                            Log.d("dsjspodgl", "doInBackground: 22222");
 
-                                            int[] position = isCheckSaveBox(expandableListAdapter);
-                                            positionGroup = position[1];
-                                           // if (position[0] == 1) {
-                                                Log.d("checkFail", "doInBackground: save");
-                                                for (int i = 0; i < expandableListAdapter.getGroupCount(); i++) {
-                                                    expandableListAdapter.getChildrenCount(i);
-                                                    final PickingUp_Model picking = (PickingUp_Model) expandableListAdapter.getGroup(i);
-                                                    for (int j = 0; j < expandableListAdapter.getChildrenCount(i); j++) {
-                                                        final PickingUpEexpand_Model expandedList = (PickingUpEexpand_Model) expandableListAdapter.getChild(i, j);
+                                            // int[] position = isCheckSaveBox(expandableListAdapter);
+                                            // positionGroup = position[1];
+                                            // if (position[0] == 1) {
+                                            Log.d("checkFail", "doInBackground: save");
+                                            for (int i = 0; i < expandableListAdapter.getGroupCount(); i++) {
+                                                expandableListAdapter.getChildrenCount(i);
+                                                final PickingUp_Model picking = (PickingUp_Model) expandableListAdapter.getGroup(i);
+                                                for (int j = 0; j < expandableListAdapter.getChildrenCount(i); j++) {
+                                                    final PickingUpEexpand_Model expandedList = (PickingUpEexpand_Model) expandableListAdapter.getChild(i, j);
 
-                                                        Log.d("ASfasdjhfk", "doInBackground: " + expandedList.getConsignment() + "box : " + expandedList.getBox_no() + " status: " +
-                                                                expandedList.getIs_scaned() + " date: " + expandedList.getTime_begin() + "lat: " + expandedList.getActual_lat() + "lon: " +
-                                                                expandedList.getActual_lon());
+                                                    Log.d("ASfasdjhfk", "doInBackground: " + expandedList.getConsignment() + "box : " + expandedList.getBox_no() + " status: " +
+                                                            expandedList.getIs_scaned() + " date: " + expandedList.getTime_begin() + "lat: " + expandedList.getActual_lat() + "lon: " +
+                                                            expandedList.getActual_lon());
 
-                                                        Log.d("ASfasdjhfk", "p1: " + expandedList.getPicture1() + " p2: " + expandedList.getPicture2() + " p3: " + expandedList.getPicture3());
-
-
-                                                        ContentValues cv = new ContentValues();
-
-                                                        cv.put("is_scaned", expandedList.getIs_scaned());
-                                                        cv.put("actual_lat", expandedList.getActual_lat());
-                                                        cv.put("actual_lon", expandedList.getActual_lon());
-                                                        cv.put("time_begin", expandedList.getTime_begin());
-                                                        if (expandedList.getIs_save().equals("2")) {
-                                                            expandedList.setIs_save("1");
-                                                            cv.put("is_save", expandedList.getIs_save());
-                                                        }
-
-                                                        cv.put("status_upload", "0");
-                                                        if (!expandedList.getPicture1().equals("")) {
-                                                            cv.put("picture1", expandedList.getPicture1());
-                                                        }
-                                                        if (!expandedList.getPicture2().equals("")) {
-                                                            cv.put("picture2", expandedList.getPicture2());
-                                                        }
-                                                        if (!expandedList.getPicture3().equals("")) {
-                                                            cv.put("picture3", expandedList.getPicture3());
-                                                        }
-                                                        if (!expandedList.getComment().equals("")) {
-                                                            cv.put("comment", expandedList.getComment());
-                                                        }
-
-                                                        cv.put("modified_date", getdate());
-                                                        databaseHelper.db().update("Plan", cv, "delivery_no= '" + expandedList.getDelivery_no() + "' and plan_seq = '" + expandedList.getPlan_seq() + "' and activity_type = 'LOAD' and " +
-                                                                " consignment_no = '" + expandedList.getConsignment() + "' and box_no = '" + expandedList.getBox_no() + "' and trash = '0'", null);
+                                                    Log.d("ASfasdjhfk", "p1: " + expandedList.getPicture1() + " p2: " + expandedList.getPicture2() + " p3: " + expandedList.getPicture3());
 
 
-                                                        if (!expandedList.getPicture1().equals("")) {
-                                                            String sql = "INSERT INTO image (name_img, status_img) VALUES('" + expandedList.getPicture1() + "','0')";
-                                                            databaseHelper.db().execSQL(sql);
-                                                        }
-                                                        if (!expandedList.getPicture2().equals("")) {
-                                                            String sql = "INSERT INTO image (name_img, status_img) VALUES('" + expandedList.getPicture2() + "','0')";
-                                                            databaseHelper.db().execSQL(sql);
-                                                        }
-                                                        if (!expandedList.getPicture3().equals("")) {
-                                                            String sql = "INSERT INTO image (name_img, status_img) VALUES('" + expandedList.getPicture3() + "','0')";
-                                                            databaseHelper.db().execSQL(sql);
-                                                        }
-                                                        //  databaseHelper.db().insert("image", null, cv2);
+                                                    ContentValues cv = new ContentValues();
 
-
-                                                        lastExpandedPosition = i;
-                                                        IsSuccess = 1;
+                                                    cv.put("is_scaned", expandedList.getIs_scaned());
+                                                    cv.put("actual_lat", expandedList.getActual_lat());
+                                                    cv.put("actual_lon", expandedList.getActual_lon());
+                                                    cv.put("time_begin", expandedList.getTime_begin());
+                                                    if (expandedList.getIs_save().equals("2")) {
+                                                        expandedList.setIs_save("1");
+                                                        cv.put("is_save", expandedList.getIs_save());
                                                     }
-                                                }
 
-                                                Temp1 = new ArrayList<>();
-                                                Temp2 = new ArrayList<>();
-                                                Temp3 = new ArrayList<>();
+                                                    cv.put("status_upload", "0");
+                                                    if (!expandedList.getPicture1().equals("")) {
+                                                        cv.put("picture1", expandedList.getPicture1());
+                                                    }
+                                                    if (!expandedList.getPicture2().equals("")) {
+                                                        cv.put("picture2", expandedList.getPicture2());
+                                                    }
+                                                    if (!expandedList.getPicture3().equals("")) {
+                                                        cv.put("picture3", expandedList.getPicture3());
+                                                    }
+                                                    if (!expandedList.getComment().equals("")) {
+                                                        cv.put("comment", expandedList.getComment());
+                                                    }
+
+                                                    cv.put("modified_date", getdate());
+                                                    databaseHelper.db().update("Plan", cv, "delivery_no= '" + expandedList.getDelivery_no() + "' and plan_seq = '" + expandedList.getPlan_seq() + "' and activity_type = 'LOAD' and " +
+                                                            " consignment_no = '" + expandedList.getConsignment() + "' and waybill_no = '" + expandedList.getWaybil_no() + "' and trash = '0'", null);
+
+
+                                                    if (!expandedList.getPicture1().equals("")) {
+                                                        String sql = "INSERT INTO image (name_img, status_img) VALUES('" + expandedList.getPicture1() + "','0')";
+                                                        databaseHelper.db().execSQL(sql);
+                                                    }
+                                                    if (!expandedList.getPicture2().equals("")) {
+                                                        String sql = "INSERT INTO image (name_img, status_img) VALUES('" + expandedList.getPicture2() + "','0')";
+                                                        databaseHelper.db().execSQL(sql);
+                                                    }
+                                                    if (!expandedList.getPicture3().equals("")) {
+                                                        String sql = "INSERT INTO image (name_img, status_img) VALUES('" + expandedList.getPicture3() + "','0')";
+                                                        databaseHelper.db().execSQL(sql);
+                                                    }
+                                                    //  databaseHelper.db().insert("image", null, cv2);
+
+
+                                                    lastExpandedPosition = i;
+                                                    IsSuccess = 1;
+                                                }
+                                            }
+
+                                            Temp1 = new ArrayList<>();
+                                            Temp2 = new ArrayList<>();
+                                            Temp3 = new ArrayList<>();
 //                                            } else {
 //                                                // Toast.makeText(PinkingUpMaster_Activity.this, "fail.", Toast.LENGTH_SHORT).show();
 //                                                Log.d("checkFail", "doInBackground: save fail");
@@ -734,6 +732,8 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
     private void scan(String value) {
         boolean scannotFind = false;
 
+        int num = 0;
+
         if (INPUT_WAY.equals("CHECK")) {
             for (int i = 0; i < expandableListAdapter.getGroupCount(); i++) {
                 // expandableListView.expandGroup(i);
@@ -751,15 +751,24 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
                             if (!expandedList.getOrder_no().equals("")) {
                                 Toasty.info(getApplicationContext(), "Please un sign this order.", Toast.LENGTH_SHORT, true).show();
                             } else {
+                                // if (!expandedList.getIs_scaned().equals("2")) {
 
+                                if (listTitle.getCount() >= 0) {
+                                    Log.d("llsmf66", "num: " + num + "getnum: " + listTitle.getNum());
 
-                                if (!expandedList.getIs_scaned().equals("2")) {
-                                    if (listTitle.getCount() >= 0) {
-                                        int count = listTitle.getCount() + 1;
-                                        listTitle.setCount(count);
-                                        listTitle.setBox_checked(String.valueOf(listTitle.getCount()));
-                                    }
+                                    int count = listTitle.getCount() + 1;
+                                    listTitle.setCount(count);
+
+                                    int c1 = Integer.parseInt(listTitle.getBox_checked());
+                                    num = c1 + listTitle.getCount();
+
+                                    Log.d("jodsosdgsdooo", "total box: " + num);
+
+                                    listTitle.setNum(num);
+//
                                 }
+                                //  }
+
                                 expandedList.setIs_scaned("1");
                                 expandedList.setTime_begin(getdate());
                                 expandedList.setActual_lat(getlat());
@@ -829,18 +838,31 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
                                 Toasty.info(getApplicationContext(), "Please un sign this order.", Toast.LENGTH_SHORT, true).show();
                             } else {
 
-
                                 //  Log.d("sdfsdf","ก่อนหน้า"+ listTitle.getBox_checked());
                                 if (!listTitle.getBox_checked().equals("0")) {
-                                    int count = listTitle.getCount() - 1;
+                                    // int count = listTitle.getCount() - 1;
                                     // int count2 = listTitle.getCount();
-                                    if (listTitle.getCount() <= 0) {
-                                    } else {
-                                        listTitle.setCount(count);
-                                    }
+                                    Log.d("sadaaaa", "scan:ก่อน" + num);
 
-                                    Log.d("sdfsdf", listTitle.getCount() + "");
-                                    listTitle.setBox_checked(String.valueOf(listTitle.getCount()));
+                                    // num = num - 1;
+                                    int count = listTitle.getCount() - 1;
+                                    listTitle.setCount(count);
+
+                                    int sum = listTitle.getNum() - 1;
+
+                                    Log.d("sadaaaa", "scan:หลัง " + sum);
+
+
+                                    //  int c1 = Integer.parseInt(listTitle.getBox_checked());
+
+
+//                                    if (listTitle.getCount() <= 0) {
+//                                    } else {
+//                                        listTitle.setCount(count);
+//                                    }
+                                    listTitle.setNum(sum);
+//                                    Log.d("sdfsdf", listTitle.getCount() + "");
+//                                    listTitle.setBox_checked(String.valueOf(listTitle.getCount()));
                                 }
 
                                 // Log.d("sdfsdf", listTitle.getBox_checked());
@@ -899,12 +921,23 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
                                 Toasty.info(getApplicationContext(), "Please un sign this order.", Toast.LENGTH_SHORT, true).show();
                             } else {
 
-
-                                if (!expandedList.getIs_scaned().equals("1")) {
+                                // if (!expandedList.getIs_scaned().equals("2")) {
+                                int sum = listTitle.getNum();
+                                //   num += 1;
+                                if (expandedList.getIs_scaned().equals("0")) {
                                     int count = listTitle.getCount() + 1;
                                     listTitle.setCount(count);
-                                    listTitle.setBox_checked(String.valueOf(listTitle.getCount()));
+                                    sum = listTitle.getNum() + 1;
                                 }
+
+
+//                                    int count = listTitle.getCount() + 1;
+//                                    listTitle.setCount(count);
+//                                    listTitle.setBox_checked(String.valueOf(listTitle.getCount()));
+                                //  }
+
+                                listTitle.setNum(sum);
+
                                 expandedList.setIs_scaned("2");
                                 expandedList.setTime_begin(getdate());
                                 expandedList.setActual_lat(getlat());
@@ -942,6 +975,16 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
 
             }
         }//comment
+
+        for (int i = 0; i < expandableListAdapter.getGroupCount(); i++) {
+            final PickingUp_Model listTitle = (PickingUp_Model) expandableListAdapter.getGroup(i);
+            for (int j = 0; j < expandableListAdapter.getChildrenCount(i); j++) {
+                final PickingUpEexpand_Model expandedList = (PickingUpEexpand_Model) expandableListAdapter.getChild(i, j);
+
+                //listTitle.setBox_checked(String.valueOf(num));
+            }
+        }
+
 
         if (!scannotFind) {
             issueScan = "This Waybill No doesn't exist.";
@@ -1206,7 +1249,7 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
 
         String sql = "select (select DISTINCT pl2.consignment_no from Plan pl2 where pl2.activity_type = pl.activity_type and pl2.delivery_no = pl.delivery_no and pl2.plan_seq = pl.plan_seq and pl2.consignment_no = pl.consignment_no and pl2.trash = pl.trash) as consignment\n" +
                 ",(select count(pl2.box_no) from Plan pl2 where pl2.activity_type = pl.activity_type and pl2.delivery_no = pl.delivery_no and pl2.plan_seq = pl.plan_seq and pl2.consignment_no = pl.consignment_no and pl2.trash = pl.trash) as box_total\n" +
-                ",(select count(pl2.box_no) from Plan pl2 where pl2.activity_type = pl.activity_type and pl2.delivery_no = pl.delivery_no and pl2.plan_seq = pl.plan_seq and pl2.is_scaned <> '0' and pl2.consignment_no = pl.consignment_no and pl2.trash = pl.trash) as box_checked\n" +
+                ",(select count(pl2.waybill_no) from Plan pl2 where pl2.activity_type = pl.activity_type and pl2.delivery_no = pl.delivery_no and pl2.plan_seq = pl.plan_seq and pl2.is_scaned <> '0' and pl2.consignment_no = pl.consignment_no and pl2.trash = pl.trash) as box_checked\n" +
                 ",(select pl2.station_name from Plan pl2 where pl2.activity_type = pl.activity_type and pl2.delivery_no = pl.delivery_no and pl2.plan_seq = pl.plan_seq and pl2.consignment_no = pl.consignment_no and pl2.trash = pl.trash) as station_name\n" +
                 ",(select pl2.station_address from Plan pl2 where pl2.activity_type = pl.activity_type and pl2.delivery_no = pl.delivery_no and pl2.plan_seq = pl.plan_seq and pl2.consignment_no = pl.consignment_no and pl2.trash = pl.trash) as station_address\n" +
                 ",(select cm.settlement_method from Plan pl2 where pl2.activity_type = pl.activity_type and pl2.delivery_no = pl.delivery_no and pl2.plan_seq = pl.plan_seq  and pl2.consignment_no = pl.consignment_no and pl2.trash = pl.trash) as pay_type\n" +
@@ -1298,7 +1341,7 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
         expandableListView.setAdapter(expandableListAdapter);
 //        for (int i = 0; i < expandableListAdapter.getGroupCount(); i++)
 //            expandableListView.expandGroup(i);
-       // user_data.edit().clear();
+        // user_data.edit().clear();
     }
 
     private void ToastScan(Bitmap bm, String v) {
@@ -1367,7 +1410,7 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
 
     }
 
-    private void showDialog(){
+    private void showDialog() {
         AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
         LayoutInflater inflater = this.getLayoutInflater();
         View dialogView = inflater.inflate(R.layout.dialog_warning__scan, null);
@@ -1386,8 +1429,6 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
         alertDialog.show();
 
     }
-
-
 
 
     @Override
@@ -1417,8 +1458,8 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
                 scan(getScanText);
                 if (issueScan.equals("This Waybill No doesn't exist.")) {
                     showDialog();
-                  // return;
-                }else{
+                    // return;
+                } else {
                     new Handler().postDelayed(delayScan, 1000);
                 }
 
@@ -1858,11 +1899,17 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
             TextView box = convertView.findViewById(R.id.tvPickingUp_Box);
             TextView tvPickUp_global = convertView.findViewById(R.id.tvPickUp_global);
 
-            if (listTitle.getBox_total().equals("1")) {
-                box.setText(context.getString(R.string.box) + " (" + listTitle.getBox_checked() + " | " + listTitle.getBox_total() + ")");
-            } else {
+            //  listTitle.setNum(Integer.parseInt(listTitle.getBox_checked()));
+//            if (!listTitle.getBox_total().equals("0")) {
+//                box.setText(context.getString(R.string.box) + " (" + listTitle.getNum() + " | " + listTitle.getBox_total() + ")");
+//            } else {
+            if (listTitle.getNum() == 0) {
                 box.setText(context.getString(R.string.boxes) + " (" + listTitle.getBox_checked() + " | " + listTitle.getBox_total() + ")");
+            } else {
+                box.setText(context.getString(R.string.boxes) + " (" + listTitle.getNum() + " | " + listTitle.getBox_total() + ")");
             }
+
+            //  }
 
             tvTotal.setText("Total: " + listTitle.getTotal_b());
 

@@ -525,7 +525,7 @@ public class Deliver_Activity extends AppCompatActivity {
                                                         }
                                                         cv.put("modified_date", getdate());
                                                         databaseHelper.db().update("Plan", cv, "delivery_no= '" + expandedList.getDelivery_no() + "' and plan_seq = '" + expandedList.getPlan_seq() + "' and activity_type = 'UNLOAD' and " +
-                                                                " consignment_no = '" + expandedList.getConsignment() + "' and box_no = '" + expandedList.getBox_no() + "' and trash = '0'", null);
+                                                                " consignment_no = '" + expandedList.getConsignment() + "' and waybill_no = '" + expandedList.getWaybil_no() + "' and trash = '0'", null);
 
                                                         if (!expandedList.getPicture1().equals("")) {
                                                             String sql = "INSERT INTO image (name_img, status_img) VALUES('" + expandedList.getPicture1() + "','0')";

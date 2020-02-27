@@ -13,6 +13,7 @@ public class PickingUp_Model {
     public String price = "";
     public int count = 0;
     private int total_b;
+    private int num = 0;
     //public ArrayList<PickingUpEexpand_Model> list_expand;
 
     public PickingUp_Model( String consignment, String box_total,String box_checked, String global_total, String station_address, String paytype, String global_cancel,String price,int total_b ) {
@@ -25,6 +26,14 @@ public class PickingUp_Model {
         this.global_cancel = global_cancel;
         this.price = price;
         this.total_b = total_b;
+    }
+
+    public int getNum() {
+        return num;
+    }
+
+    public void setNum(int num) {
+        this.num = num;
     }
 
     public int getTotal_b() {

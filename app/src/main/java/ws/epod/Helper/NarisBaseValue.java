@@ -1,6 +1,7 @@
 package ws.epod.Helper;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
@@ -117,6 +118,7 @@ public class NarisBaseValue {
         return phrase.toString();
     }
 
+    @SuppressLint("MissingPermission")
     public String getSerial() {
         String serialNumber = null;
         if ( Build.VERSION.SDK_INT >= Build.VERSION_CODES.O ) {
@@ -610,7 +612,7 @@ public class NarisBaseValue {
 
                                 col_index++;
                             }
-                            statement.execute();
+                             statement.execute();
 
 
                         } catch (JSONException e) {

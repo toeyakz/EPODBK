@@ -14,7 +14,7 @@ import ws.epod.Client.Structors.UploadImageInvoice;
 
 public interface APIInterface {
 
-    /*@POST("/TMS_MSM/services/service.php?func=login")
+    @POST("/TMS_MSM/services/service.php?func=login")
     Call<List<Login>> login(@Query("user") String username, @Query("pass") String password, @Query("serial") String serial );
 
     @POST("/TMS_MSM/services/service.php?func=login")
@@ -54,13 +54,13 @@ public interface APIInterface {
     Call<ResponseBody> reason();
 
     @POST("/TMS_MSM/services/service.php?func=getInvoice")
-    Call<ResponseBody> invoice(@Query("vehicle_id") String vehicle_id);*/
+    Call<ResponseBody> invoice(@Query("vehicle_id") String vehicle_id);
 
 
     //********************************************************************************************
     //ลิง๕์จริง
 
-    @POST("/services/service.php?func=login")
+   /* @POST("/services/service.php?func=login")
     Call<List<Login>> login(@Query("user") String username, @Query("pass") String password, @Query("serial") String serial);
 
     @POST("/services/service.php?func=login")
@@ -101,6 +101,6 @@ public interface APIInterface {
     Call<ResponseBody> reason();
 
     @POST("/services/service.php?func=getInvoice")
-    Call<ResponseBody> invoice(@Query("vehicle_id") String vehicle_id);
+    Call<ResponseBody> invoice(@Query("vehicle_id") String vehicle_id);*/
 
 }
