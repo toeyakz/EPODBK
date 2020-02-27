@@ -569,7 +569,7 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
 
                                             int[] position = isCheckSaveBox(expandableListAdapter);
                                             positionGroup = position[1];
-                                            if (position[0] == 1) {
+                                           // if (position[0] == 1) {
                                                 Log.d("checkFail", "doInBackground: save");
                                                 for (int i = 0; i < expandableListAdapter.getGroupCount(); i++) {
                                                     expandableListAdapter.getChildrenCount(i);
@@ -637,11 +637,11 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
                                                 Temp1 = new ArrayList<>();
                                                 Temp2 = new ArrayList<>();
                                                 Temp3 = new ArrayList<>();
-                                            } else {
-                                                // Toast.makeText(PinkingUpMaster_Activity.this, "fail.", Toast.LENGTH_SHORT).show();
-                                                Log.d("checkFail", "doInBackground: save fail");
-                                                IsSuccess = 0;
-                                            }
+//                                            } else {
+//                                                // Toast.makeText(PinkingUpMaster_Activity.this, "fail.", Toast.LENGTH_SHORT).show();
+//                                                Log.d("checkFail", "doInBackground: save fail");
+//                                                IsSuccess = 0;
+//                                            }
 
 
                                         }

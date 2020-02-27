@@ -488,7 +488,7 @@ public class Deliver_Activity extends AppCompatActivity {
 
                                             int[] position = isCheckSaveBox(expandableListAdapter);
                                             positionGroup = position[1];
-                                            if (position[0] == 1) {
+                                         //   if (position[0] == 1) {
                                                 for (int i = 0; i < expandableListAdapter.getGroupCount(); i++) {
                                                     expandableListAdapter.getChildrenCount(i);
                                                     for (int j = 0; j < expandableListAdapter.getChildrenCount(i); j++) {
@@ -547,10 +547,10 @@ public class Deliver_Activity extends AppCompatActivity {
                                                 Temp1 = new ArrayList<>();
                                                 Temp2 = new ArrayList<>();
                                                 Temp3 = new ArrayList<>();
-                                            } else {
-                                                Log.d("checkFail", "doInBackground: save fail");
-                                                IsSuccess = 0;
-                                            }
+//                                            } else {
+//                                                Log.d("checkFail", "doInBackground: save fail");
+//                                                IsSuccess = 0;
+//                                            }
 
                                         }
 
