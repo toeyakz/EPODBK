@@ -2,6 +2,7 @@ package ws.epod.Adapter;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
@@ -71,8 +72,38 @@ public class PlanSection extends StatelessSection {
         } else {
             itemHolder.tvDrop_deli.setText("0");
         }
-
         itemHolder.tvDrop_Finish.setText(String.valueOf(item.get(i).getFinish()));
+        if(!item.get(i).getFinish().equals("0") && !item.get(i).getDeli().equals("0")){
+            if(item.get(i).getFinish().equals(item.get(i).getDeli())){
+                itemHolder.tvRound_no.setTextColor(Color.parseColor("#1D781F"));
+                itemHolder.tvDrop_planSeq.setTextColor(Color.parseColor("#1D781F"));
+                itemHolder.tvDrop_deli.setTextColor(Color.parseColor("#1D781F"));
+                itemHolder.tvDrop_Finish.setTextColor(Color.parseColor("#1D781F"));
+
+                itemHolder.tvStation_h.setTextColor(Color.parseColor("#1D781F"));
+                itemHolder.deliNo_h.setTextColor(Color.parseColor("#1D781F"));
+                itemHolder.tvDeli_h.setTextColor(Color.parseColor("#1D781F"));
+                itemHolder.tvFinish_h.setTextColor(Color.parseColor("#1D781F"));
+                itemHolder.deliNo_h.setTextColor(Color.parseColor("#1D781F"));
+                itemHolder.view2.setBackgroundColor(Color.parseColor("#1D781F"));
+
+            }else{
+                itemHolder.tvRound_no.setTextColor(Color.parseColor("#696969"));
+                itemHolder.tvDrop_planSeq.setTextColor(Color.parseColor("#696969"));
+                itemHolder.tvDrop_deli.setTextColor(Color.parseColor("#696969"));
+                itemHolder.tvDrop_Finish.setTextColor(Color.parseColor("#696969"));
+
+                itemHolder.tvStation_h.setTextColor(Color.parseColor("#696969"));
+                itemHolder.deliNo_h.setTextColor(Color.parseColor("#696969"));
+                itemHolder.tvDeli_h.setTextColor(Color.parseColor("#696969"));
+                itemHolder.tvFinish_h.setTextColor(Color.parseColor("#696969"));
+                itemHolder.deliNo_h.setTextColor(Color.parseColor("#696969"));
+                itemHolder.view2.setBackgroundColor(Color.parseColor("#696969"));
+            }
+        }
+
+
+
 
         itemHolder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -146,8 +177,10 @@ class HeaderViewHolder extends RecyclerView.ViewHolder {
 }
 
 class ItemViewHolder extends RecyclerView.ViewHolder {
-    public final View rootView;
+    public final View rootView, view2;
     public final TextView tvRound_no, tvDrop_planSeq, tvDrop_pickUp, tvDrop_deli, tvDrop_Finish;
+    public TextView tvStation_h, tvFinish_h, tvDeli_h, deliNo_h;
+
 
     ItemViewHolder(View view) {
         super(view);
@@ -160,6 +193,11 @@ class ItemViewHolder extends RecyclerView.ViewHolder {
         tvDrop_pickUp = itemView.findViewById(R.id.tvDrop_pickUp);
         tvDrop_deli = itemView.findViewById(R.id.tvDrop_deli);
         tvDrop_Finish = itemView.findViewById(R.id.tvDrop_Finish);
+        tvStation_h = itemView.findViewById(R.id.tvStation_h);
+        tvFinish_h = itemView.findViewById(R.id.tvFinish_h);
+        tvDeli_h = itemView.findViewById(R.id.tvDeli_h);
+        deliNo_h = itemView.findViewById(R.id.deliNo_h);
+        view2 = itemView.findViewById(R.id.view2);
 
     }
 

@@ -194,7 +194,6 @@ public class DropPoint_Activity extends AppCompatActivity {
             String delivery = jobList_models.get(i).getDelivery();
 
             if (!pick.equals("0") || !deli.equals("0")) {
-
                 if ((pick.equals(pickup) && !deli.equals("0") && deli.equals(delivery)) ||
                         (deli.equals(delivery) && !pick.equals("0") && pick.equals(pickup))) {
 

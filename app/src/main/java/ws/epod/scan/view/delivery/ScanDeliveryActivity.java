@@ -5,6 +5,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.ContentResolver;
 import android.content.Context;
@@ -14,11 +15,16 @@ import android.database.Cursor;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.PowerManager;
+import android.os.VibrationEffect;
+import android.os.Vibrator;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -56,6 +62,8 @@ public class ScanDeliveryActivity extends AppCompatActivity  implements Decorate
 
     /// Other variable
     private String lastText;
+
+    protected PowerManager.WakeLock mWakeLock;
 
     /// View
     private TextView tvStat;
@@ -121,6 +129,14 @@ public class ScanDeliveryActivity extends AppCompatActivity  implements Decorate
                 Ringtone r = RingtoneManager.getRingtone(getApplicationContext(), soundUri);
                 r.play();
 
+                Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    v.vibrate(VibrationEffect.createOneShot(500, VibrationEffect.DEFAULT_AMPLITUDE));
+                } else {
+                    //deprecated in API 26
+                    v.vibrate(500);
+                }
+
                 InvoiceDelivery newInvoice = new InvoiceDelivery(result.getText());
                 UtilScan.addInvoiceDelivery(newInvoice);
 
@@ -165,6 +181,7 @@ public class ScanDeliveryActivity extends AppCompatActivity  implements Decorate
     }
 
 
+    @SuppressLint("InvalidWakeLockTag")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -185,6 +202,9 @@ public class ScanDeliveryActivity extends AppCompatActivity  implements Decorate
         btn_next = findViewById(R.id.btn_next);
         imgBack_test = findViewById(R.id.imgBack_test);
         btn_cancel = findViewById(R.id.btn_cancel);
+
+        // Always on display
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
         // MARK: This case, Check Permission.
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)

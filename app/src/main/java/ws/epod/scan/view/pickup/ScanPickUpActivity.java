@@ -5,6 +5,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.ContentResolver;
 import android.content.Context;
@@ -14,11 +15,16 @@ import android.database.Cursor;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.PowerManager;
+import android.os.VibrationEffect;
+import android.os.Vibrator;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -50,6 +56,8 @@ public class ScanPickUpActivity extends AppCompatActivity implements DecoratedBa
 
     /// Other variable
     private String lastText;
+
+    protected PowerManager.WakeLock mWakeLock;
 
     /// View
     private TextView tvStat;
@@ -89,7 +97,7 @@ public class ScanPickUpActivity extends AppCompatActivity implements DecoratedBa
         alertDialog = dialogBuilder.create();
         btnCloseDialog.setOnClickListener(v -> {
             alertDialog.dismiss();
-            new Handler().postDelayed(delayScan, 500);
+            new Handler().postDelayed(delayScan, 1000);
         });
 
 
@@ -119,12 +127,25 @@ public class ScanPickUpActivity extends AppCompatActivity implements DecoratedBa
             }
 
             for (int i = 0; i < UtilScan.getListHeaderWaybill().size(); i++) {
+                String is_scanned = UtilScan.getListHeaderWaybill().get(i).getIs_scaned();
+
                 if (result.getText().equals(UtilScan.getListHeaderWaybill().get(i).getWaybill_no())) {
                     scannotFind = true;
                     isAdd = true;
 
                     new Handler().postDelayed(delayScan, 2000);
                 }
+
+                if(!is_scanned.equals("0")){
+                    if(result.getText().equals(is_scanned)){
+                        scannotFind = false;
+                        Log.d("f9s5d2", "barcodeResult: scanned!");
+                    }
+                }
+
+
+
+
             }
 
             if (isAdd) {
@@ -136,6 +157,14 @@ public class ScanPickUpActivity extends AppCompatActivity implements DecoratedBa
                 Uri soundUri = Uri.parse(ContentResolver.SCHEME_ANDROID_RESOURCE + "://"+ getApplicationContext().getPackageName() + "/" + R.raw.beep);
                 Ringtone r = RingtoneManager.getRingtone(getApplicationContext(), soundUri);
                 r.play();
+
+                Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    v.vibrate(VibrationEffect.createOneShot(500, VibrationEffect.DEFAULT_AMPLITUDE));
+                } else {
+                    //deprecated in API 26
+                    v.vibrate(500);
+                }
 
                 Invoice newInvoice = new Invoice(result.getText());
                 UtilScan.addInvoice(newInvoice);
@@ -149,7 +178,7 @@ public class ScanPickUpActivity extends AppCompatActivity implements DecoratedBa
 
                 showDialog();
                 // Toasty.info(getApplicationContext(), "This Waybill No doesn't exist.", Toast.LENGTH_SHORT, true).show();
-                new Handler().postDelayed(delayScan, 2000);
+
             }
 
         }
@@ -160,6 +189,7 @@ public class ScanPickUpActivity extends AppCompatActivity implements DecoratedBa
         }
     };
 
+    @SuppressLint("InvalidWakeLockTag")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -181,6 +211,12 @@ public class ScanPickUpActivity extends AppCompatActivity implements DecoratedBa
         imgBack_test = findViewById(R.id.imgBack_test);
         btn_cancel = findViewById(R.id.btn_cancel);
 
+        // Always on display
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+
+//        final PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
+//        this.mWakeLock = pm.newWakeLock(PowerManager.SCREEN_DIM_WAKE_LOCK, "My Tag");
+//        this.mWakeLock.acquire();
 
         // MARK: This case, Check Permission.
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)

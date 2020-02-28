@@ -311,7 +311,7 @@ public class Invoice_Activity extends AppCompatActivity {
 
                 if (!sign_model.getStatus().equals("") && sign_model.getSignature().equals("")) {
                     signObjectClasses.add(new Sign_Model(sign_model.getConsignment_no(), sign_model.getDeli_note_no(), sign_model.getStatus()
-                            , sign_model.getSignature(), sign_model.getOrder_no(), sign_model.getDelivery_no(), sign_model.getComment()));
+                            , sign_model.getSignature(), sign_model.getOrder_no(), sign_model.getDelivery_no(), sign_model.getComment(), sign_model.getRemark()));
                 }
 
             }
@@ -475,6 +475,7 @@ public class Invoice_Activity extends AppCompatActivity {
                 ",ifnull((select ps2.status_load from pic_sign ps2 where ps2.order_no = pl.order_no) ,'') as status  \n" +
                 ", pl.is_scaned \n" +
                 ", pl.waybill_no \n" +
+                ", cm.detail_remarks " +
                 "from Consignment cm   \n" +
                 "inner join Plan pl on pl.consignment_no = cm.consignment_no   \n" +
                 "LEFT JOIN comment_invoice ci on ci.consignment_no = cm.consignment_no   \n" +
@@ -496,10 +497,11 @@ public class Invoice_Activity extends AppCompatActivity {
                 String order_no = cursor.getString(cursor.getColumnIndex("order_no"));
                 String delivery_no2 = cursor.getString(cursor.getColumnIndex("delivery_no"));
                 String comment = cursor.getString(cursor.getColumnIndex("comment"));
+                String remark = cursor.getString(cursor.getColumnIndex("detail_remarks"));
 
                 Log.d("AsfweosiugE", "setView: " + deli_note_no + ">" + consignment + ">" + status);
 
-                sign_models.add(new Sign_Model(consignment, deli_note_no, status, signature, order_no, delivery_no2, comment));
+                sign_models.add(new Sign_Model(consignment, deli_note_no, status, signature, order_no, delivery_no2, comment, remark));
 
             }
         } while (cursor.moveToNext());
@@ -539,6 +541,8 @@ public class Invoice_Activity extends AppCompatActivity {
             } else if (list.get(position).getStatus().equals("2")) {
                 holder.textView28.setText("Reject");
             }
+
+
 
 //            if (isCheckAll) {
 //                holder.checkBox.setChecked(true);
@@ -612,6 +616,7 @@ public class Invoice_Activity extends AppCompatActivity {
             holder.textView15.setText(context.getString(R.string.order_no) + ": " + list.get(position).getOrder_no());
             holder.textView21.setText(context.getString(R.string.consignment2) + ": " + list.get(position).getConsignment_no());
             holder.textView9.setText(context.getString(R.string.invoice_no) + ": " + list.get(position).getDeli_note_no());
+            holder.tvRemark.setText(context.getString(R.string.remark) + ": " + list.get(position).getRemark());
 
 
             if (!list.get(position).getSignature().equals("")) {
@@ -844,7 +849,7 @@ public class Invoice_Activity extends AppCompatActivity {
         public class ViewHolder extends RecyclerView.ViewHolder {
             CheckBox comCheck, reCheck, reTurnCheck;
             ImageView imgEditBoxNoPickup, imageView11, status_show;
-            TextView tvUseComment, textView21, textView22, textView15, textView9;
+            TextView tvUseComment, textView21, textView22, textView15, textView9, tvRemark;
 
             public ViewHolder(View itemView) {
                 super(itemView);
@@ -860,6 +865,7 @@ public class Invoice_Activity extends AppCompatActivity {
                 imageView11 = itemView.findViewById(R.id.imageView11);
                 reTurnCheck = itemView.findViewById(R.id.reTurnCheck);
                 status_show = itemView.findViewById(R.id.status_show);
+                tvRemark = itemView.findViewById(R.id.tvRemark);
 
             }
         }

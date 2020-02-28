@@ -638,10 +638,11 @@ public class Deliver_Activity extends AppCompatActivity {
         boolean scannotFind = false;
 
         if (INPUT_WAY.equals("CHECK")) {
+
             for (int i = 0; i < expandableListAdapter.getGroupCount(); i++) {
                 // expandableListView.expandGroup(i);
                 final Deliver_Model listTitle = (Deliver_Model) expandableListAdapter.getGroup(i);
-
+                ArrayList<String> count_ = new ArrayList<>();
                 for (int j = 0; j < expandableListAdapter.getChildrenCount(i); j++) {
                     final DeliverExpand_Model expandedList = (DeliverExpand_Model) expandableListAdapter.getChild(i, j);
 
@@ -698,6 +699,24 @@ public class Deliver_Activity extends AppCompatActivity {
 
                     }
                     //   }
+
+
+                    if (expandedList.getIs_scaned().equals("1") || expandedList.getIs_scaned().equals("2")) {
+
+                        count_.add(((DeliverExpand_Model) expandableListAdapter.getChild(i, j)).getIs_scaned());
+                        for (int n = 0; n < count_.size(); n++) {
+                            Log.d("asf3as69", "scan: " + String.valueOf(count_.get(n).length()));
+                            Log.d("asf3as69", "scan:2 " + String.valueOf(count_.get(n)));
+                            Log.d("asf3as69", "scan:3 " + String.valueOf(count_.size()));
+                            listTitle.setBox_checked(String.valueOf(count_.size()));
+                        }
+
+                        expandableListView.setAdapter(expandableListAdapter);
+                       // expandableListView.expandGroup(i);
+                        expandableListAdapter.notifyDataSetChanged();
+                        expandableListView.smoothScrollToPositionFromTop(i, j);
+                        Log.d("fjjpppsp", "scan: " + ((DeliverExpand_Model) expandableListAdapter.getChild(i, j)).getIs_scaned());
+                    }
                 }
 
             }
@@ -707,6 +726,7 @@ public class Deliver_Activity extends AppCompatActivity {
             for (int i = 0; i < expandableListAdapter.getGroupCount(); i++) {
                 //expandableListView.expandGroup(i);
                 final Deliver_Model listTitle = (Deliver_Model) expandableListAdapter.getGroup(i);
+                ArrayList<String> count_ = new ArrayList<>();
                 for (int j = 0; j < expandableListAdapter.getChildrenCount(i); j++) {
                     final DeliverExpand_Model expandedList = (DeliverExpand_Model) expandableListAdapter.getChild(i, j);
 
@@ -762,6 +782,28 @@ public class Deliver_Activity extends AppCompatActivity {
                     }
                     // }
 
+                    if (expandedList.getIs_scaned().equals("1") || expandedList.getIs_scaned().equals("2")) {
+                        // count_ = new ArrayList<>();
+                        count_.add(((DeliverExpand_Model) expandableListAdapter.getChild(i, j)).getIs_scaned() + " waybill: " + expandedList.getWaybil_no());
+                        listTitle.setBox_checked(String.valueOf(count_.size()));
+
+                        Log.d("size array", "scan: " + count_.size());
+                        expandableListView.setAdapter(expandableListAdapter);
+                        // expandableListView.expandGroup(i);
+                        expandableListAdapter.notifyDataSetChanged();
+                        expandableListView.smoothScrollToPositionFromTop(i, j);
+                        Log.d("fjjpppsp", "scan: " + ((DeliverExpand_Model) expandableListAdapter.getChild(i, j)).getIs_scaned());
+                    } else if (expandedList.getIs_scaned().equals("0")) {
+
+                        Log.d("size array", "scan: " + count_.size());
+                        listTitle.setBox_checked(String.valueOf(count_.size()));
+
+                        expandableListView.setAdapter(expandableListAdapter);
+                        // expandableListView.expandGroup(i);
+                        expandableListAdapter.notifyDataSetChanged();
+                        expandableListView.smoothScrollToPositionFromTop(i, j);
+                    }
+
                 }
 
 
@@ -770,6 +812,7 @@ public class Deliver_Activity extends AppCompatActivity {
         if (INPUT_WAY.equals("COMMENT")) {
             for (int i = 0; i < expandableListAdapter.getGroupCount(); i++) {
                 final Deliver_Model listTitle = (Deliver_Model) expandableListAdapter.getGroup(i);
+                ArrayList<String> count_ = new ArrayList<>();
                 for (int j = 0; j < expandableListAdapter.getChildrenCount(i); j++) {
                     final DeliverExpand_Model expandedList = (DeliverExpand_Model) expandableListAdapter.getChild(i, j);
 
@@ -819,6 +862,18 @@ public class Deliver_Activity extends AppCompatActivity {
                     }
 
                 }
+                    if (expandedList.getIs_scaned().equals("1") || expandedList.getIs_scaned().equals("2")) {
+                        //  count_ = new ArrayList<>();
+                        count_.add(((DeliverExpand_Model) expandableListAdapter.getChild(i, j)).getIs_scaned());
+
+                        listTitle.setBox_checked(String.valueOf(count_.size()));
+
+                        expandableListView.setAdapter(expandableListAdapter);
+                        // expandableListView.expandGroup(i);
+                        expandableListAdapter.notifyDataSetChanged();
+                        expandableListView.smoothScrollToPositionFromTop(i, j);
+                        Log.d("fjjpppsp", "scan: " + ((DeliverExpand_Model) expandableListAdapter.getChild(i, j)).getIs_scaned());
+                    }
                 //   }
 
             }

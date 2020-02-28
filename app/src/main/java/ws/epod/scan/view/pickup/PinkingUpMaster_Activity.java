@@ -734,11 +734,13 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
 
         int num = 0;
 
+
         if (INPUT_WAY.equals("CHECK")) {
+
             for (int i = 0; i < expandableListAdapter.getGroupCount(); i++) {
                 // expandableListView.expandGroup(i);
                 final PickingUp_Model listTitle = (PickingUp_Model) expandableListAdapter.getGroup(i);
-
+                ArrayList<String> count_ = new ArrayList<>();
                 for (int j = 0; j < expandableListAdapter.getChildrenCount(i); j++) {
                     final PickingUpEexpand_Model expandedList = (PickingUpEexpand_Model) expandableListAdapter.getChild(i, j);
 
@@ -761,6 +763,18 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
 
                                     int c1 = Integer.parseInt(listTitle.getBox_checked());
                                     num = c1 + listTitle.getCount();
+
+                                    if (expandedList.getIs_scaned().equals("2")) {
+                                        num = num - 1;
+                                    }
+
+//                                    if(expandedList.getIs_scaned().equals("0")){
+//                                        if(num > 0){
+//                                            num = num -1;
+//                                        }
+//
+//                                    }
+
 
                                     Log.d("jodsosdgsdooo", "total box: " + num);
 
@@ -813,6 +827,23 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
                         }
 
                     }
+
+                    if (expandedList.getIs_scaned().equals("1") || expandedList.getIs_scaned().equals("2")) {
+
+                        count_.add(((PickingUpEexpand_Model) expandableListAdapter.getChild(i, j)).getIs_scaned());
+                        for (int n = 0; n < count_.size(); n++) {
+                            Log.d("asf3as69", "scan: " + String.valueOf(count_.get(n).length()));
+                            Log.d("asf3as69", "scan:2 " + String.valueOf(count_.get(n)));
+                            Log.d("asf3as69", "scan:3 " + String.valueOf(count_.size()));
+                            listTitle.setBox_checked(String.valueOf(count_.size()));
+                        }
+
+                        expandableListView.setAdapter(expandableListAdapter);
+                     //   expandableListView.expandGroup(i);
+                        expandableListAdapter.notifyDataSetChanged();
+                        expandableListView.smoothScrollToPositionFromTop(i, j);
+                        Log.d("fjjpppsp", "scan: " + ((PickingUpEexpand_Model) expandableListAdapter.getChild(i, j)).getIs_scaned());
+                    }
                     //   }
 
                 }
@@ -821,9 +852,11 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
 
 
         } else if (INPUT_WAY.equals("UNCHECK")) {
+
             for (int i = 0; i < expandableListAdapter.getGroupCount(); i++) {
                 //expandableListView.expandGroup(i);
                 final PickingUp_Model listTitle = (PickingUp_Model) expandableListAdapter.getGroup(i);
+                ArrayList<String> count_ = new ArrayList<>();
                 for (int j = 0; j < expandableListAdapter.getChildrenCount(i); j++) {
                     final PickingUpEexpand_Model expandedList = (PickingUpEexpand_Model) expandableListAdapter.getChild(i, j);
 
@@ -899,14 +932,39 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
                     }
                     //   }
 
+                    if (expandedList.getIs_scaned().equals("1") || expandedList.getIs_scaned().equals("2")) {
+                        // count_ = new ArrayList<>();
+                        count_.add(((PickingUpEexpand_Model) expandableListAdapter.getChild(i, j)).getIs_scaned() + " waybill: " + expandedList.getWaybil_no());
+                        listTitle.setBox_checked(String.valueOf(count_.size()));
+
+                        Log.d("size array", "scan: " + count_.size());
+                        expandableListView.setAdapter(expandableListAdapter);
+                        // expandableListView.expandGroup(i);
+                        expandableListAdapter.notifyDataSetChanged();
+                        expandableListView.smoothScrollToPositionFromTop(i, j);
+                        Log.d("fjjpppsp", "scan: " + ((PickingUpEexpand_Model) expandableListAdapter.getChild(i, j)).getIs_scaned());
+                    } else if (expandedList.getIs_scaned().equals("0")) {
+
+                        Log.d("size array", "scan: " + count_.size());
+                        listTitle.setBox_checked(String.valueOf(count_.size()));
+
+                        expandableListView.setAdapter(expandableListAdapter);
+                        // expandableListView.expandGroup(i);
+                        expandableListAdapter.notifyDataSetChanged();
+                        expandableListView.smoothScrollToPositionFromTop(i, j);
+                    }
+
+
                 }
 
 
             }
         }
         if (INPUT_WAY.equals("COMMENT")) {
+
             for (int i = 0; i < expandableListAdapter.getGroupCount(); i++) {
                 final PickingUp_Model listTitle = (PickingUp_Model) expandableListAdapter.getGroup(i);
+                ArrayList<String> count_ = new ArrayList<>();
                 for (int j = 0; j < expandableListAdapter.getChildrenCount(i); j++) {
                     final PickingUpEexpand_Model expandedList = (PickingUpEexpand_Model) expandableListAdapter.getChild(i, j);
 
@@ -918,16 +976,28 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
                             scannotFind = true;
                             // lastPosition = i;
                             if (!expandedList.getOrder_no().equals("")) {
-                                Toasty.info(getApplicationContext(), "Please un sign this order.", Toast.LENGTH_SHORT, true).show();
+                                Toasty.info(getApplicationContext(), "P lease un sign this order.", Toast.LENGTH_SHORT, true).show();
                             } else {
 
                                 // if (!expandedList.getIs_scaned().equals("2")) {
                                 int sum = listTitle.getNum();
+//                                if (listTitle.getNum() > 0) {
+//                                    sum = listTitle.getNum() + 1;
+//                                }
                                 //   num += 1;
+
+                                if (expandedList.getIs_scaned().equals("1")) {
+                                    sum = listTitle.getNum();
+                                }
                                 if (expandedList.getIs_scaned().equals("0")) {
+                                    Log.d("fl5s5", "scan: ......");
                                     int count = listTitle.getCount() + 1;
                                     listTitle.setCount(count);
-                                    sum = listTitle.getNum() + 1;
+
+                                    int c1 = Integer.parseInt(listTitle.getBox_checked());
+                                    num = c1 + listTitle.getCount();
+
+                                    sum = num;
                                 }
 
 
@@ -970,20 +1040,22 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
                     }
                     //}
 
+                    if (expandedList.getIs_scaned().equals("1") || expandedList.getIs_scaned().equals("2")) {
+                        //  count_ = new ArrayList<>();
+                        count_.add(((PickingUpEexpand_Model) expandableListAdapter.getChild(i, j)).getIs_scaned());
 
+                        listTitle.setBox_checked(String.valueOf(count_.size()));
+
+                        expandableListView.setAdapter(expandableListAdapter);
+                       // expandableListView.expandGroup(i);
+                        expandableListAdapter.notifyDataSetChanged();
+                        expandableListView.smoothScrollToPositionFromTop(i, j);
+                        Log.d("fjjpppsp", "scan: " + ((PickingUpEexpand_Model) expandableListAdapter.getChild(i, j)).getIs_scaned());
+                    }
                 }
 
             }
         }//comment
-
-        for (int i = 0; i < expandableListAdapter.getGroupCount(); i++) {
-            final PickingUp_Model listTitle = (PickingUp_Model) expandableListAdapter.getGroup(i);
-            for (int j = 0; j < expandableListAdapter.getChildrenCount(i); j++) {
-                final PickingUpEexpand_Model expandedList = (PickingUpEexpand_Model) expandableListAdapter.getChild(i, j);
-
-                //listTitle.setBox_checked(String.valueOf(num));
-            }
-        }
 
 
         if (!scannotFind) {
@@ -1901,13 +1973,13 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
 
             //  listTitle.setNum(Integer.parseInt(listTitle.getBox_checked()));
 //            if (!listTitle.getBox_total().equals("0")) {
-//                box.setText(context.getString(R.string.box) + " (" + listTitle.getNum() + " | " + listTitle.getBox_total() + ")");
+            box.setText(context.getString(R.string.box) + " (" + listTitle.getBox_checked() + " | " + listTitle.getBox_total() + ")");
 //            } else {
-            if (listTitle.getNum() == 0) {
-                box.setText(context.getString(R.string.boxes) + " (" + listTitle.getBox_checked() + " | " + listTitle.getBox_total() + ")");
-            } else {
-                box.setText(context.getString(R.string.boxes) + " (" + listTitle.getNum() + " | " + listTitle.getBox_total() + ")");
-            }
+//            if (listTitle.getBox_checked().equals("1")) {
+//                box.setText(context.getString(R.string.boxes) + " (" + listTitle.getBox_checked() + " | " + listTitle.getBox_total() + ")");
+//            } else {
+//                box.setText(context.getString(R.string.boxes) + " (" + listTitle.getNum() + " | " + listTitle.getBox_total() + ")");
+//            }
 
             //  }
 

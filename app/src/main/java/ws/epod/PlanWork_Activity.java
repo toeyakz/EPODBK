@@ -1896,8 +1896,13 @@ public class PlanWork_Activity extends AppCompatActivity {
 
         });
 
+
+
         for (int i = 0; i < dateArray.size(); i++) {
+
             final ArrayList<Plan_model> item = new ArrayList<>();
+            ArrayList<Plan_model> a1 = new ArrayList<>();
+            ArrayList<Plan_model> a2 = new ArrayList<>();
 
             for (Plan_model planModel : studentArrayList) {
 
@@ -1909,11 +1914,31 @@ public class PlanWork_Activity extends AppCompatActivity {
             }
 
             for (int k = 0; k < item.size(); k++) {
+
+                String finish = item.get(k).getFinish();
+                String deli = item.get(k).getDeli();
+
+                Log.d("fq3fq", "getDataFromSQLite: "+finish+" deli: "+deli);
+                if(!deli.equals("0") && !finish.equals("0")){
+                    if(deli.equals(finish)){
+                        a1.add(item.get(k));
+                    }
+                }
+
                 //  Log.d("fsjkdfaois", "getDataFromSQLite: "+item.get(k).getDelivery_no());
             }
 
+            for (int a = 0; a < a1.size(); a++){
+                item.remove(a1.get(a));
+                Log.d("8s5s92", "getDataFromSQLite: fin: "+a1.get(a).getFinish()+" deli: "+ a1.get(a).getDeli());
 
-            sectionAdapter.addSection(new PlanSection(dateNewFormat(dateArray.get(i)), item, getApplicationContext()));
+            }
+
+            a2.addAll(item);
+            a2.addAll(a1);
+
+
+            sectionAdapter.addSection(new PlanSection(dateNewFormat(dateArray.get(i)), a2, getApplicationContext()));
         }
 
 
