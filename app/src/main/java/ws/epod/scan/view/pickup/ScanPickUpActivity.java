@@ -9,6 +9,7 @@ import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.ContentResolver;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
@@ -97,7 +98,7 @@ public class ScanPickUpActivity extends AppCompatActivity implements DecoratedBa
         alertDialog = dialogBuilder.create();
         btnCloseDialog.setOnClickListener(v -> {
             alertDialog.dismiss();
-            new Handler().postDelayed(delayScan, 1000);
+            new Handler().postDelayed(delayScan, 2000);
         });
 
 
@@ -112,6 +113,11 @@ public class ScanPickUpActivity extends AppCompatActivity implements DecoratedBa
 
             boolean scannotFind = false;
             boolean isAdd = false;
+            boolean un = false;
+
+            Intent intent = getIntent();
+            String INPUT_WAY = intent.getStringExtra("key");
+
 
             if (alertDialog != null) {
                 if (alertDialog.isShowing()) {
@@ -127,8 +133,8 @@ public class ScanPickUpActivity extends AppCompatActivity implements DecoratedBa
             }
 
             for (int i = 0; i < UtilScan.getListHeaderWaybill().size(); i++) {
-                String is_scanned = UtilScan.getListHeaderWaybill().get(i).getIs_scaned();
 
+                String is_scanned = UtilScan.getListHeaderWaybill().get(i).getIs_scaned();
                 if (result.getText().equals(UtilScan.getListHeaderWaybill().get(i).getWaybill_no())) {
                     scannotFind = true;
                     isAdd = true;
@@ -136,25 +142,57 @@ public class ScanPickUpActivity extends AppCompatActivity implements DecoratedBa
                     new Handler().postDelayed(delayScan, 2000);
                 }
 
-                if(!is_scanned.equals("0")){
-                    if(result.getText().equals(is_scanned)){
-                        scannotFind = false;
-                        Log.d("f9s5d2", "barcodeResult: scanned!");
+
+                if (result.getText().equals(UtilScan.getListHeaderWaybill().get(i).getWaybill_no())) {
+                    if (is_scanned.equals("1") || is_scanned.equals("2")) {
+
+                        switch (INPUT_WAY) {
+                            case "UNCHECK":
+                                isAdd = true;
+                                break;
+                            case "COMMENT":
+                                if (!is_scanned.equals("2")) {
+                                    isAdd = true;
+                                } else {
+                                    isAdd = false;
+                                   // Toasty.info(getApplicationContext(), "scanned.", Toast.LENGTH_SHORT, true).show();
+                                }
+                                break;
+                            case "CHECK":
+                                if (!is_scanned.equals("1")) {
+                                    isAdd = true;
+                                } else {
+                                    isAdd = false;
+                                   // Toasty.info(getApplicationContext(), "scanned.", Toast.LENGTH_SHORT, true).show();
+                                }
+
+                                // Toasty.info(getApplicationContext(), "scanned.", Toast.LENGTH_SHORT, true).show();
+                                break;
+                        }
+
+                        new Handler().postDelayed(delayScan, 2000);
+                    } else {
+                        if (INPUT_WAY.equals("UNCHECK")) {
+                            isAdd = false;
+                            un = true;
+                            Log.d("d63fs", "barcodeResult: " + INPUT_WAY);
+
+
+                        }
                     }
                 }
 
-
-
-
             }
+
+
 
             if (isAdd) {
                 lastText = result.getText();
                 tvCodeScanned.setText(result.getText());
-              //  beepManager.playBeepSoundAndVibrate();
+                //  beepManager.playBeepSoundAndVibrate();
 
                 //set beep
-                Uri soundUri = Uri.parse(ContentResolver.SCHEME_ANDROID_RESOURCE + "://"+ getApplicationContext().getPackageName() + "/" + R.raw.beep);
+                Uri soundUri = Uri.parse(ContentResolver.SCHEME_ANDROID_RESOURCE + "://" + getApplicationContext().getPackageName() + "/" + R.raw.beep);
                 Ringtone r = RingtoneManager.getRingtone(getApplicationContext(), soundUri);
                 r.play();
 
@@ -172,6 +210,15 @@ public class ScanPickUpActivity extends AppCompatActivity implements DecoratedBa
                 if (UtilScan.getListWaybill().size() > 0) {
                     tvStat.setText("Have" + " " + UtilScan.getListWaybill().size() + " " + "waybill in list.");
                 }
+            }else{
+                if(un){
+                    Toasty.info(getApplicationContext(), "Un Check.", Toast.LENGTH_SHORT, true).show();
+                    new Handler().postDelayed(delayScan, 2000);
+                }else{
+                    Toasty.info(getApplicationContext(), "scanned.", Toast.LENGTH_SHORT, true).show();
+                    new Handler().postDelayed(delayScan, 2000);
+                }
+
             }
 
             if (!scannotFind) {

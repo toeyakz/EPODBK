@@ -291,6 +291,7 @@ public class Deliver_Activity extends AppCompatActivity {
 
                 UtilScan.clearHeaderDeliveryWaybillList();
                 Intent intents = new Intent(Deliver_Activity.this, ScanDeliveryActivity.class);
+                intents.putExtra("key",INPUT_WAY);
                 startActivity(intents);
 
 

@@ -9,6 +9,7 @@ import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.ContentResolver;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
@@ -96,6 +97,11 @@ public class ScanDeliveryActivity extends AppCompatActivity  implements Decorate
 
             boolean scannotFind = false;
             boolean isAdd = false;
+            boolean un = false;
+
+            Intent intent = getIntent();
+            String INPUT_WAY = intent.getStringExtra("key");
+
 
             if (alertDialog != null) {
                 if (alertDialog.isShowing()) {
@@ -111,12 +117,51 @@ public class ScanDeliveryActivity extends AppCompatActivity  implements Decorate
             }
 
             for (int i = 0; i < UtilScan.getListHeadeDeliveryrWaybill().size(); i++) {
+
+                String is_scanned = UtilScan.getListHeadeDeliveryrWaybill().get(i).getIs_scaned();
                 if (result.getText().equals(UtilScan.getListHeadeDeliveryrWaybill().get(i).getWaybill_no())) {
                     scannotFind = true;
                     isAdd = true;
 
                     new Handler().postDelayed(delayScan, 2000);
                 }
+
+                if (result.getText().equals(UtilScan.getListHeadeDeliveryrWaybill().get(i).getWaybill_no())) {
+                    if (is_scanned.equals("1") || is_scanned.equals("2")) {
+
+                        switch (INPUT_WAY) {
+                            case "UNCHECK":
+                                isAdd = true;
+                                break;
+                            case "COMMENT":
+                                if (!is_scanned.equals("2")) {
+                                    isAdd = true;
+                                } else {
+                                    isAdd = false;
+                                }
+                                break;
+                            case "CHECK":
+                                if (!is_scanned.equals("1")) {
+                                    isAdd = true;
+                                } else {
+                                    isAdd = false;
+                                }
+                                break;
+                        }
+
+                        new Handler().postDelayed(delayScan, 2000);
+                    }else {
+                        if (INPUT_WAY.equals("UNCHECK")) {
+                            isAdd = false;
+                            un = true;
+                            Log.d("d63fs", "barcodeResult: " + INPUT_WAY);
+
+
+                        }
+                    }
+                }
+
+
             }
 
             if (isAdd) {
@@ -143,13 +188,22 @@ public class ScanDeliveryActivity extends AppCompatActivity  implements Decorate
                 if (UtilScan.getListDeliveryWaybill().size() > 0) {
                     tvStat.setText("Have" + " " + UtilScan.getListDeliveryWaybill().size() + " " + "waybill in list.");
                 }
+            }else{
+                if(un){
+                    Toasty.info(getApplicationContext(), "Un Check.", Toast.LENGTH_SHORT, true).show();
+                    new Handler().postDelayed(delayScan, 2000);
+                }else{
+                    Toasty.info(getApplicationContext(), "scanned.", Toast.LENGTH_SHORT, true).show();
+                    new Handler().postDelayed(delayScan, 2000);
+                }
+
             }
 
             if (!scannotFind) {
 
                 showDialog();
                 // Toasty.info(getApplicationContext(), "This Waybill No doesn't exist.", Toast.LENGTH_SHORT, true).show();
-                new Handler().postDelayed(delayScan, 2000);
+               // new Handler().postDelayed(delayScan, 1000);
             }
 
         }

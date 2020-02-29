@@ -333,6 +333,7 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
 
                 UtilScan.clearHeaderWaybillList();
                 Intent intents = new Intent(PinkingUpMaster_Activity.this, ScanPickUpActivity.class);
+                intents.putExtra("key",INPUT_WAY);
                 startActivity(intents);
             }
         });
