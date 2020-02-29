@@ -28,7 +28,7 @@
                     android:layout_width="70dp"
                     android:layout_height="70dp"
                     android:src="@drawable/warning"
-                    android:tint="@color/colorAccent"
+                    android:tint="#CC0000"
                     android:layout_gravity="center_horizontal"
                     android:layout_marginTop="20dp"/>
 
@@ -60,7 +60,7 @@
                     android:layout_marginEnd="25dp"
                     android:layout_marginBottom="20dp"
                     android:textColor="#fff"
-                    android:background="@drawable/bg_custom_button_normal"
+                    android:background="#CC0000"
                     android:text="@string/close" />
             </LinearLayout>
 

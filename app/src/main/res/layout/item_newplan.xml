@@ -32,6 +32,7 @@
     </RelativeLayout>
 
     <androidx.cardview.widget.CardView
+        android:id="@+id/cv2"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="1dp"
@@ -104,35 +105,34 @@
                             android:layout_weight="1"
                             android:gravity="right"
                             android:text="D2019080001"
-                            android:textColor="#9C9C9C"
                             android:textSize="12sp" />
                     </LinearLayout>
 
-<!--                    <LinearLayout-->
-<!--                        android:layout_width="match_parent"-->
-<!--                        android:layout_height="wrap_content"-->
-<!--                        android:orientation="horizontal"-->
-<!--                        android:paddingRight="8dp">-->
+                    <!--                    <LinearLayout-->
+                    <!--                        android:layout_width="match_parent"-->
+                    <!--                        android:layout_height="wrap_content"-->
+                    <!--                        android:orientation="horizontal"-->
+                    <!--                        android:paddingRight="8dp">-->
 
-<!--                        <TextView-->
-<!--                            android:layout_width="wrap_content"-->
-<!--                            android:layout_height="wrap_content"-->
-<!--                            android:layout_marginStart="10dp"-->
-<!--                            android:text="@string/date"-->
-<!--                            android:textSize="14sp" />-->
+                    <!--                        <TextView-->
+                    <!--                            android:layout_width="wrap_content"-->
+                    <!--                            android:layout_height="wrap_content"-->
+                    <!--                            android:layout_marginStart="10dp"-->
+                    <!--                            android:text="@string/date"-->
+                    <!--                            android:textSize="14sp" />-->
 
-<!--                        <TextView-->
-<!--                            android:id="@+id/tvPlanDate"-->
-<!--                            android:layout_width="wrap_content"-->
-<!--                            android:layout_height="wrap_content"-->
-<!--                            android:layout_marginEnd="8dp"-->
-<!--                            android:layout_marginRight="8dp"-->
-<!--                            android:layout_weight="1"-->
-<!--                            android:gravity="right"-->
-<!--                            android:text="27/08/2019"-->
-<!--                            android:textColor="#9C9C9C"-->
-<!--                            android:textSize="12sp" />-->
-<!--                    </LinearLayout>-->
+                    <!--                        <TextView-->
+                    <!--                            android:id="@+id/tvPlanDate"-->
+                    <!--                            android:layout_width="wrap_content"-->
+                    <!--                            android:layout_height="wrap_content"-->
+                    <!--                            android:layout_marginEnd="8dp"-->
+                    <!--                            android:layout_marginRight="8dp"-->
+                    <!--                            android:layout_weight="1"-->
+                    <!--                            android:gravity="right"-->
+                    <!--                            android:text="27/08/2019"-->
+                    <!--                            android:textColor="#9C9C9C"-->
+                    <!--                            android:textSize="12sp" />-->
+                    <!--                    </LinearLayout>-->
 
                     <View
                         android:id="@+id/view2"
@@ -174,7 +174,6 @@
                                 android:layout_marginStart="10dp"
                                 android:layout_marginTop="3dp"
                                 android:text="-"
-                                android:textColor="#9C9C9C"
                                 android:textSize="11sp" />
 
                         </LinearLayout>
@@ -201,7 +200,6 @@
                                 android:layout_marginStart="10dp"
                                 android:layout_marginTop="3dp"
                                 android:text="-"
-                                android:textColor="#9C9C9C"
                                 android:textSize="11sp" />
 
                         </LinearLayout>
@@ -210,9 +208,9 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
-                            android:visibility="gone"
                             android:gravity="center_horizontal"
-                            android:orientation="vertical">
+                            android:orientation="vertical"
+                            android:visibility="gone">
 
                             <TextView
                                 android:layout_width="wrap_content"
@@ -228,7 +226,6 @@
                                 android:layout_marginStart="10dp"
                                 android:layout_marginTop="3dp"
                                 android:text="-"
-                                android:textColor="#9C9C9C"
                                 android:textSize="11sp" />
 
                         </LinearLayout>
@@ -255,7 +252,6 @@
                                 android:layout_marginStart="10dp"
                                 android:layout_marginTop="3dp"
                                 android:text="-"
-                                android:textColor="#9C9C9C"
                                 android:textSize="11sp" />
 
                         </LinearLayout>

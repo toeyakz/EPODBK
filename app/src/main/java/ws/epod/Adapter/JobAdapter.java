@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
 import android.net.Uri;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -13,6 +14,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.text.ParseException;
@@ -59,6 +61,25 @@ public class JobAdapter extends RecyclerView.Adapter<JobAdapter.ViewHolder> {
 
         Log.d("sfasef24", "onBindViewHolder: " + list.get(i).getPlan_seq());
 
+
+        String pick = list.get(i).getPick();
+        String pickup = list.get(i).getPickUp();
+        String deli = list.get(i).getDeli();
+        String delivery = list.get(i).getDelivery();
+
+        if (!pick.equals("0") || !deli.equals("0")) {
+            if ((pick.equals(pickup) && !deli.equals("0") && deli.equals(delivery)) ||
+                    (deli.equals(delivery) && !pick.equals("0") && pick.equals(pickup))) {
+              //  viewHolder.cdBackg.setBackgroundColor(Color.parseColor("#33FF33"));
+                viewHolder.cdBackg.setCardBackgroundColor(Color.parseColor("#7cfc00"));
+                viewHolder.cdBackg.setRadius(15);
+            }else{
+               // viewHolder.cdBackg.setBackgroundColor(Color.parseColor("#ffffff"));
+                viewHolder.cdBackg.setCardBackgroundColor(Color.parseColor("#ffffff"));
+                viewHolder.cdBackg.setRadius(15);
+            }
+
+        }
 
         String plan_out = dateNewFormat(list.get(i).getPlan_out());
         if (i == 0) {
@@ -166,7 +187,7 @@ public class JobAdapter extends RecyclerView.Adapter<JobAdapter.ViewHolder> {
     public static class ViewHolder extends RecyclerView.ViewHolder {
 
         TextView tvCustomer_name_Job, tvStation_address_job, tvPlan_in_Job, tvPlan_seq_Job, tvStatusJob, textView20, textView17;
-
+        CardView cdBackg;
         public ViewHolder(View itemView) {
             super(itemView);
 
@@ -177,6 +198,7 @@ public class JobAdapter extends RecyclerView.Adapter<JobAdapter.ViewHolder> {
             tvStatusJob = itemView.findViewById(R.id.tvStatusJob);
             textView20 = itemView.findViewById(R.id.textView20);
             textView17 = itemView.findViewById(R.id.textView17);
+            cdBackg = itemView.findViewById(R.id.cdBackg);
 
         }
     }

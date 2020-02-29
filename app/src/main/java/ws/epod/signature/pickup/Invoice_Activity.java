@@ -465,22 +465,22 @@ public class Invoice_Activity extends AppCompatActivity {
         String delivery_no = user_data.getString("delivery_no", "");
         String plan_seq = user_data.getString("plan_seq", "");
 
-        String sql = "select cm.deli_note_no   \n" +
-                ", cm.consignment_no   \n" +
-                ", pl.order_no   \n" +
-                ",(SELECT pl.delivery_no) AS delivery_no   \n" +
-                ",ifnull((select ps2.comment_load from pic_sign ps2 where ps2.order_no = pl.order_no) ,'') as comment \n" +
-                ", pl.activity_type  \n" +
-                ",ifnull((select ps2.pic_sign_load from pic_sign ps2 where ps2.order_no = pl.order_no) ,'') as pic_sign_load \n" +
-                ",ifnull((select ps2.status_load from pic_sign ps2 where ps2.order_no = pl.order_no) ,'') as status  \n" +
-                ", pl.is_scaned \n" +
-                ", pl.waybill_no \n" +
-                ", cm.detail_remarks " +
-                "from Consignment cm   \n" +
-                "inner join Plan pl on pl.consignment_no = cm.consignment_no   \n" +
-                "LEFT JOIN comment_invoice ci on ci.consignment_no = cm.consignment_no   \n" +
-                "LEFT JOIN pic_sign ps on ps.consignment_no = cm.consignment_no   \n" +
-                "where pl.delivery_no = '" + delivery_no + "' AND pl.plan_seq = '" + plan_seq + "' AND pl.activity_type = 'LOAD' AND pl.trash = '0'and pl.is_scaned <> '0'  " +
+        String sql = "select cm.deli_note_no    \n" +
+                ", cm.consignment_no    \n" +
+                ", pl.order_no    \n" +
+                ",(SELECT pl.delivery_no) AS delivery_no    \n" +
+                ",ifnull((select ps2.comment_load from pic_sign ps2 where ps2.order_no = pl.order_no and ps2.invoice_no = cm.deli_note_no) ,'') as comment  \n" +
+                ", pl.activity_type   \n" +
+                ",ifnull((select ps2.pic_sign_load from pic_sign ps2 where ps2.order_no = pl.order_no and ps2.invoice_no = cm.deli_note_no) ,'') as pic_sign_load  \n" +
+                ",ifnull((select ps2.status_load from pic_sign ps2 where ps2.order_no = pl.order_no and ps2.invoice_no = cm.deli_note_no) ,'') as status   \n" +
+                ", pl.is_scaned  \n" +
+                ", pl.waybill_no  \n" +
+                ", cm.detail_remarks  \n" +
+                "from Consignment cm    \n" +
+                "inner join Plan pl on pl.consignment_no = cm.consignment_no    \n" +
+                "LEFT JOIN comment_invoice ci on ci.consignment_no = cm.consignment_no    \n" +
+                "LEFT JOIN pic_sign ps on ps.consignment_no = cm.consignment_no    \n" +
+                "where pl.delivery_no = '" + delivery_no + "' AND pl.plan_seq = '" + plan_seq + "' AND pl.activity_type = 'LOAD' AND pl.trash = '0'and pl.is_scaned <> '0'   " +
                 "GROUP by pl.order_no, cm.deli_note_no";
         Cursor cursor = databaseHelper.selectDB(sql);
         Log.d("isMapRoute", "total line " + sql);
@@ -541,7 +541,6 @@ public class Invoice_Activity extends AppCompatActivity {
             } else if (list.get(position).getStatus().equals("2")) {
                 holder.textView28.setText("Reject");
             }
-
 
 
 //            if (isCheckAll) {
@@ -930,7 +929,7 @@ public class Invoice_Activity extends AppCompatActivity {
                                     cv.put("comment_load", "");
                                     cv.put("status_upload_invoice", "0");
                                     // cv.put("delivery_no", "");
-                                    databaseHelper.db().update("pic_sign", cv, "order_no = '" + order_no + "' and pic_sign_load <> ''", null);
+                                    databaseHelper.db().update("pic_sign", cv, "order_no = '" + order_no + "' and invoice_no = '" + deli_note + "' and pic_sign_load <> ''", null);
 
 //                                    ContentValues cv2 = new ContentValues();
 //                                    cv2.put("comment_load", "");

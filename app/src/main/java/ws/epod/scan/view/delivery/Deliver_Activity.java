@@ -281,6 +281,9 @@ public class Deliver_Activity extends AppCompatActivity {
         //getSQLite();
         onClickFab();
 
+
+
+
         imgCameraScan.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -933,7 +936,15 @@ public class Deliver_Activity extends AppCompatActivity {
         String temp = "";
         String pattern = "yyyy-MM-dd kk:mm:ss";
         SimpleDateFormat sdf = new SimpleDateFormat(pattern, new Locale("en", "th"));
-        temp = sdf.format(Calendar.getInstance().getTime());
+
+        if( String.valueOf(sdf).length() > 3){
+            temp = sdf.format(Calendar.getInstance().getTime());
+        }else{
+            Calendar c = Calendar.getInstance();
+            @SuppressLint("SimpleDateFormat") SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            temp = df.format(c.getTime());
+        }
+
 
         return temp;
     }

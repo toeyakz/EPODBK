@@ -98,7 +98,7 @@ public class ScanPickUpActivity extends AppCompatActivity implements DecoratedBa
         alertDialog = dialogBuilder.create();
         btnCloseDialog.setOnClickListener(v -> {
             alertDialog.dismiss();
-            new Handler().postDelayed(delayScan, 2000);
+            new Handler().postDelayed(delayScan, 1000);
         });
 
 
@@ -114,6 +114,7 @@ public class ScanPickUpActivity extends AppCompatActivity implements DecoratedBa
             boolean scannotFind = false;
             boolean isAdd = false;
             boolean un = false;
+            boolean ex = false;
 
             Intent intent = getIntent();
             String INPUT_WAY = intent.getStringExtra("key");
@@ -126,7 +127,6 @@ public class ScanPickUpActivity extends AppCompatActivity implements DecoratedBa
             }
 
             if (result.getText().equals(lastText) || UtilScan.containInvoiceNumber(result.getText())) {
-
                 Toasty.info(getApplicationContext(), "มีในลิสอยู่แล้ว.", Toast.LENGTH_SHORT, true).show();
                 new Handler().postDelayed(delayScan, 2000);
                 return;
@@ -135,13 +135,6 @@ public class ScanPickUpActivity extends AppCompatActivity implements DecoratedBa
             for (int i = 0; i < UtilScan.getListHeaderWaybill().size(); i++) {
 
                 String is_scanned = UtilScan.getListHeaderWaybill().get(i).getIs_scaned();
-                if (result.getText().equals(UtilScan.getListHeaderWaybill().get(i).getWaybill_no())) {
-                    scannotFind = true;
-                    isAdd = true;
-
-                    new Handler().postDelayed(delayScan, 2000);
-                }
-
 
                 if (result.getText().equals(UtilScan.getListHeaderWaybill().get(i).getWaybill_no())) {
                     if (is_scanned.equals("1") || is_scanned.equals("2")) {
@@ -151,39 +144,41 @@ public class ScanPickUpActivity extends AppCompatActivity implements DecoratedBa
                                 isAdd = true;
                                 break;
                             case "COMMENT":
-                                if (!is_scanned.equals("2")) {
-                                    isAdd = true;
-                                } else {
-                                    isAdd = false;
-                                   // Toasty.info(getApplicationContext(), "scanned.", Toast.LENGTH_SHORT, true).show();
-                                }
+                                isAdd = !is_scanned.equals("2");
                                 break;
                             case "CHECK":
-                                if (!is_scanned.equals("1")) {
-                                    isAdd = true;
-                                } else {
-                                    isAdd = false;
-                                   // Toasty.info(getApplicationContext(), "scanned.", Toast.LENGTH_SHORT, true).show();
-                                }
-
-                                // Toasty.info(getApplicationContext(), "scanned.", Toast.LENGTH_SHORT, true).show();
+                                isAdd = !is_scanned.equals("1");
                                 break;
                         }
 
+                        scannotFind = true;
                         new Handler().postDelayed(delayScan, 2000);
-                    } else {
-                        if (INPUT_WAY.equals("UNCHECK")) {
-                            isAdd = false;
-                            un = true;
-                            Log.d("d63fs", "barcodeResult: " + INPUT_WAY);
+                        break;
 
-
+                    } else if (is_scanned.equals("0")) {
+                        switch (INPUT_WAY) {
+                            case "UNCHECK":
+                                isAdd = false;
+                                un = true;
+                                break;
+                            case "CHECK":
+                            case "COMMENT":
+                                isAdd = true;
+                                break;
                         }
+                        scannotFind = true;
+                       // i = UtilScan.getListHeaderWaybill().size();
+                         break;
+                    }
+                } else {
+                    if (UtilScan.getListHeaderWaybill().size() == (i+1)) {
+                        ex = true;
+                        scannotFind = false;
                     }
                 }
 
-            }
 
+            }
 
 
             if (isAdd) {
@@ -210,22 +205,31 @@ public class ScanPickUpActivity extends AppCompatActivity implements DecoratedBa
                 if (UtilScan.getListWaybill().size() > 0) {
                     tvStat.setText("Have" + " " + UtilScan.getListWaybill().size() + " " + "waybill in list.");
                 }
-            }else{
-                if(un){
-                    Toasty.info(getApplicationContext(), "Un Check.", Toast.LENGTH_SHORT, true).show();
-                    new Handler().postDelayed(delayScan, 2000);
-                }else{
-                    Toasty.info(getApplicationContext(), "scanned.", Toast.LENGTH_SHORT, true).show();
-                    new Handler().postDelayed(delayScan, 2000);
+                new Handler().postDelayed(delayScan, 2000);
+                return;
+
+            } else {
+                if (!ex) {
+                    if (un) {
+                        Toasty.info(getApplicationContext(), "Un Check.", Toast.LENGTH_SHORT, true).show();
+                        new Handler().postDelayed(delayScan, 2000);
+                    } else {
+                        Uri soundUri = Uri.parse(ContentResolver.SCHEME_ANDROID_RESOURCE + "://" + getApplicationContext().getPackageName() + "/" + R.raw.scan_dupp);
+                        Ringtone r = RingtoneManager.getRingtone(getApplicationContext(), soundUri);
+                        r.play();
+                        Toasty.info(getApplicationContext(), "scanned.", Toast.LENGTH_SHORT, true).show();
+                        new Handler().postDelayed(delayScan, 2000);
+
+                    }
                 }
 
             }
 
             if (!scannotFind) {
-
+                Uri soundUri = Uri.parse(ContentResolver.SCHEME_ANDROID_RESOURCE + "://" + getApplicationContext().getPackageName() + "/" + R.raw.scan_error);
+                Ringtone r = RingtoneManager.getRingtone(getApplicationContext(), soundUri);
+                r.play();
                 showDialog();
-                // Toasty.info(getApplicationContext(), "This Waybill No doesn't exist.", Toast.LENGTH_SHORT, true).show();
-
             }
 
         }

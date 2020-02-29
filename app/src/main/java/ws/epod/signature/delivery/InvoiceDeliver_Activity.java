@@ -57,7 +57,7 @@ public class InvoiceDeliver_Activity extends AppCompatActivity {
     private RecyclerView rvInv, recyclerView;
     private InvAdapter invAdapter;
 
-    ImageView imgBack_Deliver, imageView22,sign;
+    ImageView imgBack_Deliver, imageView22, sign;
 
     ConnectionDetector netCon;
     DatabaseHelper databaseHelper;
@@ -448,24 +448,24 @@ public class InvoiceDeliver_Activity extends AppCompatActivity {
         String delivery_no = user_data.getString("delivery_no", "");
         String plan_seq = user_data.getString("plan_seq", "");
 
-        String sql = "select cm.deli_note_no   \n" +
-                ", pl.activity_type  \n" +
-                ", cm.consignment_no   \n" +
-                ", pl.plan_seq  \n" +
-                ",ifnull((select ps4.status_load from pic_sign ps4 where ps4.order_no = pl.order_no ),'') as status   \n" +
-                ",ifnull((select ps2.status_delete from pic_sign ps2 where ps2.order_no = pl.order_no) ,'') as status_delete \n" +
-                ",ifnull((select ps4.status_unload from pic_sign ps4 where ps4.order_no = pl.order_no and ps4.pic_sign_unload <> '' ),'') as status_unload   \n" +
-                ", pl.order_no   \n" +
-                ",(SELECT pl.delivery_no) AS delivery_no   \n" +
-                ",ifnull((select ps2.comment_unload from pic_sign ps2 where ps2.order_no = pl.order_no) ,'') as comment_deliver   \n" +
-                ",ifnull((select ps2.pic_sign_load from pic_sign ps2 where ps2.order_no = pl.order_no) ,'') as pic_sign_load   \n" +
-                ",ifnull((select ps2.pic_sign_unload from pic_sign ps2 where ps2.order_no = pl.order_no and ps2.pic_sign_unload <> '' ) ,'') as pic_sign_unload   \n" +
-                ", cm.detail_remarks " +
-                "from Consignment cm   \n" +
-                "inner join Plan pl on pl.consignment_no = cm.consignment_no    \n" +
-                "LEFT JOIN pic_sign ps on ps.consignment_no = cm.consignment_no   \n" +
-                "where pl.delivery_no = '" + delivery_no + "' AND pl.plan_seq = '" + plan_seq + "' AND pl.activity_type = 'UNLOAD' and pl.is_scaned <> '0' and ps.status_load <> '0'  " +
-                "AND pl.trash = '0'  and pl.order_no in (select ps6.order_no from pic_sign ps6 where ps6.pic_sign_load <> '') " +
+        String sql = "select cm.deli_note_no    \n" +
+                ", pl.activity_type   \n" +
+                ", cm.consignment_no    \n" +
+                ", pl.plan_seq   \n" +
+                ",ifnull((select ps4.status_unload from pic_sign ps4 where ps4.order_no = pl.order_no and ps4.invoice_no = cm.deli_note_no ),'') as status    \n" +
+                ",ifnull((select ps2.status_delete from pic_sign ps2 where ps2.order_no = pl.order_no and ps2.invoice_no = cm.deli_note_no) ,'') as status_delete  \n" +
+                ",ifnull((select ps4.status_unload from pic_sign ps4 where ps4.order_no = pl.order_no and ps4.invoice_no = cm.deli_note_no and ps4.pic_sign_unload <> '' ),'') as status_unload    \n" +
+                ", pl.order_no    \n" +
+                ",(SELECT pl.delivery_no) AS delivery_no    \n" +
+                ",ifnull((select ps2.comment_unload from pic_sign ps2 where ps2.order_no = pl.order_no and ps2.invoice_no = cm.deli_note_no) ,'') as comment_deliver    \n" +
+                ",ifnull((select ps2.pic_sign_load from pic_sign ps2 where ps2.order_no = pl.order_no and ps2.invoice_no = cm.deli_note_no) ,'') as pic_sign_load    \n" +
+                ",ifnull((select ps2.pic_sign_unload from pic_sign ps2 where ps2.order_no = pl.order_no and ps2.invoice_no = cm.deli_note_no and ps2.pic_sign_unload <> '' ) ,'') as pic_sign_unload    \n" +
+                ", cm.detail_remarks  \n" +
+                "from Consignment cm    \n" +
+                "inner join Plan pl on pl.consignment_no = cm.consignment_no     \n" +
+                "LEFT JOIN pic_sign ps on ps.consignment_no = cm.consignment_no    \n" +
+                "where pl.delivery_no = '" + delivery_no + "' AND pl.plan_seq = '" + plan_seq + "' AND pl.activity_type = 'UNLOAD' and pl.is_scaned <> '0' and ps.status_load <> '0'   " +
+                "AND pl.trash = '0'  and pl.order_no in (select ps6.order_no from pic_sign ps6 where ps6.pic_sign_load <> '')  \n" +
                 "GROUP by deli_note_no";
         Cursor cursor = databaseHelper.selectDB(sql);
         Log.d("isMapRoute", "total line " + sql);
@@ -618,7 +618,7 @@ public class InvoiceDeliver_Activity extends AppCompatActivity {
                 } else if (list.get(position).getStatus().equals("2")) {
                     holder.status_show.setVisibility(View.VISIBLE);
                     holder.status_show.setImageDrawable(getResources().getDrawable(R.drawable.ic_do_not_disturb_on_black_24dp));
-                } else  {
+                } else {
                     holder.status_show.setVisibility(View.VISIBLE);
                     holder.status_show.setImageDrawable(getResources().getDrawable(R.drawable.img_ret));
                 }
@@ -913,6 +913,7 @@ public class InvoiceDeliver_Activity extends AppCompatActivity {
 //                                    //  cv.put("modified_date", getDate);
 //                                    databaseHelper.db().update("consignment", cv, "consignment_no= '" + cons + "' and deli_note_no = '" + deli_note + "' and trash = '0'", null);
 
+                                    Log.d("8s5sc", "doInBackground: " + deli_note);
                                     ContentValues cv = new ContentValues();
                                     cv.put("pic_sign_unload", "");
                                     cv.put("date_sign_unload", "");
@@ -920,8 +921,29 @@ public class InvoiceDeliver_Activity extends AppCompatActivity {
                                     cv.put("comment_unload", "");
                                     cv.put("status_upload_invoice", "0");
                                     // cv.put("delivery_no", "");
-                                    databaseHelper.db().update("pic_sign", cv, "order_no = '" + order_no + "' and pic_sign_unload <> ''", null);
+                                    databaseHelper.db().update("pic_sign", cv, "order_no = '" + order_no + "' and invoice_no = '" + deli_note + "' and pic_sign_unload <> ''", null);
 
+
+                               /*     String sql = "select * from pic_sign ps" +
+                                            "inner join Plan pl on pl.consignment_no = ps.consignment_no" +
+                                            " where ps.invoice_no = '" + deli_note + "' and  pl.activity_type = 'UNLOAD' and pl.order_no in (select ps2.order_no from pic_sign ps2 where pic_sign_unload <> '')";
+                                    Cursor cursor = databaseHelper.selectDB(sql);
+                                    ArrayList<Sign_Model> sign_models = new ArrayList<>();
+                                    cursor.moveToFirst();
+                                    do {
+                                        if (cursor.getCount() > 0) {
+
+                                            String pic_sign_unload = cursor.getString(cursor.getColumnIndex("pic_sign_unload"));
+                                            String date_sign_unload = cursor.getString(cursor.getColumnIndex("date_sign_unload"));
+                                            String status_unload = cursor.getString(cursor.getColumnIndex("status_unload"));
+                                            String comment_unload = cursor.getString(cursor.getColumnIndex("comment_unload"));
+                                            String status_upload_invoice = cursor.getString(cursor.getColumnIndex("status_upload_invoice"));
+
+                                            Log.d("pic_sign_log", "setView: " + pic_sign_unload + ">" + date_sign_unload + ">" + status_unload+ comment_unload + ">" + status_upload_invoice );
+
+
+                                        }
+                                    } while (cursor.moveToNext());*/
 //                                    ContentValues cv2 = new ContentValues();
 //                                    cv2.put("comment_load", "");
 //                                    cv2.put("status_load", "");
@@ -952,6 +974,7 @@ public class InvoiceDeliver_Activity extends AppCompatActivity {
                             protected void onPostExecute(Void aVoid) {
                                 super.onPostExecute(aVoid);
                                 //invAdapter.notifyDataSetChanged();
+                                Log.d("f9d3fsd5", "onPostExecute: 9gsd4g9sgsdgsdgsdgs");
                                 setView();
                                 rvInv.scrollToPosition(position);
                             }

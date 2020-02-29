@@ -8,6 +8,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
+import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.text.ParseException;
@@ -75,30 +76,37 @@ public class PlanSection extends StatelessSection {
         itemHolder.tvDrop_Finish.setText(String.valueOf(item.get(i).getFinish()));
         if(!item.get(i).getFinish().equals("0") && !item.get(i).getDeli().equals("0")){
             if(item.get(i).getFinish().equals(item.get(i).getDeli())){
-                itemHolder.tvRound_no.setTextColor(Color.parseColor("#1D781F"));
-                itemHolder.tvDrop_planSeq.setTextColor(Color.parseColor("#1D781F"));
-                itemHolder.tvDrop_deli.setTextColor(Color.parseColor("#1D781F"));
-                itemHolder.tvDrop_Finish.setTextColor(Color.parseColor("#1D781F"));
+//                itemHolder.tvRound_no.setTextColor(Color.parseColor("#1D781F"));
+//                itemHolder.tvDrop_planSeq.setTextColor(Color.parseColor("#1D781F"));
+//                itemHolder.tvDrop_deli.setTextColor(Color.parseColor("#1D781F"));
+//                itemHolder.tvDrop_Finish.setTextColor(Color.parseColor("#1D781F"));
+//
+//                itemHolder.tvStation_h.setTextColor(Color.parseColor("#1D781F"));
+//                itemHolder.deliNo_h.setTextColor(Color.parseColor("#1D781F"));
+//                itemHolder.tvDeli_h.setTextColor(Color.parseColor("#1D781F"));
+//                itemHolder.tvFinish_h.setTextColor(Color.parseColor("#1D781F"));
+//                itemHolder.deliNo_h.setTextColor(Color.parseColor("#1D781F"));
+//                itemHolder.view2.setBackgroundColor(Color.parseColor("#1D781F"));
+//
 
-                itemHolder.tvStation_h.setTextColor(Color.parseColor("#1D781F"));
-                itemHolder.deliNo_h.setTextColor(Color.parseColor("#1D781F"));
-                itemHolder.tvDeli_h.setTextColor(Color.parseColor("#1D781F"));
-                itemHolder.tvFinish_h.setTextColor(Color.parseColor("#1D781F"));
-                itemHolder.deliNo_h.setTextColor(Color.parseColor("#1D781F"));
-                itemHolder.view2.setBackgroundColor(Color.parseColor("#1D781F"));
+                itemHolder.cv2.setCardBackgroundColor(Color.parseColor("#adff2f"));
+                itemHolder.cv2.setRadius(30);
 
             }else{
-                itemHolder.tvRound_no.setTextColor(Color.parseColor("#696969"));
-                itemHolder.tvDrop_planSeq.setTextColor(Color.parseColor("#696969"));
-                itemHolder.tvDrop_deli.setTextColor(Color.parseColor("#696969"));
-                itemHolder.tvDrop_Finish.setTextColor(Color.parseColor("#696969"));
 
-                itemHolder.tvStation_h.setTextColor(Color.parseColor("#696969"));
-                itemHolder.deliNo_h.setTextColor(Color.parseColor("#696969"));
-                itemHolder.tvDeli_h.setTextColor(Color.parseColor("#696969"));
-                itemHolder.tvFinish_h.setTextColor(Color.parseColor("#696969"));
-                itemHolder.deliNo_h.setTextColor(Color.parseColor("#696969"));
-                itemHolder.view2.setBackgroundColor(Color.parseColor("#696969"));
+                itemHolder.cv2.setCardBackgroundColor(Color.parseColor("#ffffff"));
+                itemHolder.cv2.setRadius(30);
+//                itemHolder.tvRound_no.setTextColor(Color.parseColor("#696969"));
+//                itemHolder.tvDrop_planSeq.setTextColor(Color.parseColor("#696969"));
+//                itemHolder.tvDrop_deli.setTextColor(Color.parseColor("#696969"));
+//                itemHolder.tvDrop_Finish.setTextColor(Color.parseColor("#696969"));
+//
+//                itemHolder.tvStation_h.setTextColor(Color.parseColor("#696969"));
+//                itemHolder.deliNo_h.setTextColor(Color.parseColor("#696969"));
+//                itemHolder.tvDeli_h.setTextColor(Color.parseColor("#696969"));
+//                itemHolder.tvFinish_h.setTextColor(Color.parseColor("#696969"));
+//                itemHolder.deliNo_h.setTextColor(Color.parseColor("#696969"));
+//                itemHolder.view2.setBackgroundColor(Color.parseColor("#696969"));
             }
         }
 
@@ -180,6 +188,7 @@ class ItemViewHolder extends RecyclerView.ViewHolder {
     public final View rootView, view2;
     public final TextView tvRound_no, tvDrop_planSeq, tvDrop_pickUp, tvDrop_deli, tvDrop_Finish;
     public TextView tvStation_h, tvFinish_h, tvDeli_h, deliNo_h;
+    public CardView cv2;
 
 
     ItemViewHolder(View view) {
@@ -198,6 +207,7 @@ class ItemViewHolder extends RecyclerView.ViewHolder {
         tvDeli_h = itemView.findViewById(R.id.tvDeli_h);
         deliNo_h = itemView.findViewById(R.id.deliNo_h);
         view2 = itemView.findViewById(R.id.view2);
+        cv2 = itemView.findViewById(R.id.cv2);
 
     }
 
