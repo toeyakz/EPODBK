@@ -120,8 +120,6 @@ public class ScanDeliveryActivity extends AppCompatActivity  implements Decorate
 
                 String is_scanned = UtilScan.getListHeadeDeliveryrWaybill().get(i).getIs_scaned();
 
-                Log.d("s9d3s1", "barcodeResult: "+UtilScan.getListHeadeDeliveryrWaybill().get(i).getWaybill_no()+ " result: "+result.getText());
-
                 if (result.getText().equals(UtilScan.getListHeadeDeliveryrWaybill().get(i).getWaybill_no())) {
                     Log.d("s9c59s", "barcodeResult: 2222");
                     if (is_scanned.equals("1") || is_scanned.equals("2")) {
@@ -131,11 +129,9 @@ public class ScanDeliveryActivity extends AppCompatActivity  implements Decorate
                                 isAdd = true;
                                 break;
                             case "COMMENT":
-                                // Toasty.info(getApplicationContext(), "scanned.", Toast.LENGTH_SHORT, true).show();
                                 isAdd = !is_scanned.equals("2");
                                 break;
                             case "CHECK":
-                                // Toasty.info(getApplicationContext(), "scanned.", Toast.LENGTH_SHORT, true).show();
                                 isAdd = !is_scanned.equals("1");
 
                                 // Toasty.info(getApplicationContext(), "scanned.", Toast.LENGTH_SHORT, true).show();
@@ -436,7 +432,6 @@ public class ScanDeliveryActivity extends AppCompatActivity  implements Decorate
     @Override
     public void onPause() {
         super.onPause();
-
         barcodeScannerView.pause();
     }
 }
