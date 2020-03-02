@@ -473,10 +473,10 @@ public class Invoice_Activity extends AppCompatActivity {
                 ", pl.activity_type   \n" +
                 ",ifnull((select ps2.pic_sign_load from pic_sign ps2 where ps2.order_no = pl.order_no and ps2.invoice_no = cm.deli_note_no) ,'') as pic_sign_load  \n" +
                 ",ifnull((select ps2.status_load from pic_sign ps2 where ps2.order_no = pl.order_no and ps2.invoice_no = cm.deli_note_no) ,'') as status   \n" +
-                ", pl.is_scaned  \n" +
-                ", pl.waybill_no  \n" +
-                ", cm.detail_remarks  \n" +
-                "from Consignment cm    \n" +
+                ", pl.is_scaned \n" +
+                ", pl.waybill_no \n" +
+                ", cm.detail_remarks \n" +
+                "from Consignment cm \n" +
                 "inner join Plan pl on pl.consignment_no = cm.consignment_no    \n" +
                 "LEFT JOIN comment_invoice ci on ci.consignment_no = cm.consignment_no    \n" +
                 "LEFT JOIN pic_sign ps on ps.consignment_no = cm.consignment_no    \n" +
