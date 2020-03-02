@@ -337,6 +337,25 @@ public class PlanWork_Activity extends AppCompatActivity {
 
     }
 
+
+    private String getdate() {
+
+        String temp = "";
+        String pattern = "yyyy-MM-dd HH:mm:ss";
+        SimpleDateFormat sdf = new SimpleDateFormat(pattern, new Locale("en", "th"));
+
+        if (String.valueOf(sdf).length() > 3) {
+            temp = sdf.format(Calendar.getInstance().getTime());
+        } else {
+            Calendar c = Calendar.getInstance();
+            @SuppressLint("SimpleDateFormat") SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            temp = df.format(c.getTime());
+        }
+
+
+        return temp;
+    }
+
     private void filterDateDialog() {
 
         View popupInputDialogView = null;
@@ -1213,16 +1232,16 @@ public class PlanWork_Activity extends AppCompatActivity {
                 Log.d("PlanWorkLOG", "MaxModifiedDate : " + max_modified_date);
 
 
-                String pattern = "yyyy-MM-dd%kk:mm:ss";
-                SimpleDateFormat sdf = new SimpleDateFormat(pattern, new Locale("en", "th"));
-                String getDate = sdf.format(Calendar.getInstance().getTime());
+//                String pattern = "yyyy-MM-dd%kk:mm:ss";
+//                SimpleDateFormat sdf = new SimpleDateFormat(pattern, new Locale("en", "th"));
+//                String getDate = sdf.format(Calendar.getInstance().getTime());
 
 //                String url = Var.WEBSERVICE2 + "func=getPlan&vehicle_id=" + Var.UserLogin.driver_vehicle_id + "&driver_id=" + Var.UserLogin.driver_id + "&serial=" +
 //                        Var.UserLogin.driver_serial + "&phone_date=" + getDate + "&date+";
 //                Log.d("PlanWorkLOG", url);
                 // JSONArray GETJSON = narisv.getJsonFromUrl_reJsonArray(url);
 
-                Call<ResponseBody> call = apiInterface.downloadWork(Var.UserLogin.driver_vehicle_id, Var.UserLogin.driver_id, Var.UserLogin.driver_serial, getDate, max_modified_date);
+                Call<ResponseBody> call = apiInterface.downloadWork(Var.UserLogin.driver_vehicle_id, Var.UserLogin.driver_id, Var.UserLogin.driver_serial, getdate(), max_modified_date);
                 //Call<ResponseBody> call = apiInterface.downloadWork(Var.UserLogin.driver_vehicle_id, Var.UserLogin.driver_id, "4AB5F216", getDate, max_modified_date);
                 Response<ResponseBody> response = call.execute();
                 if (response.code() == 200) {
@@ -1297,19 +1316,20 @@ public class PlanWork_Activity extends AppCompatActivity {
                                                                                 if (cursor.getCount() > 0) {
                                                                                     String count_delivery = cursor.getString(cursor.getColumnIndex("count_delivery"));
                                                                                     if (count_delivery.equals("0")) {
-                                                                                        Log.d("d8s2ds", "doInBackground: 1");
+
                                                                                         String sql = "INSERT OR REPLACE INTO pic_sign (delivery_no, consignment_no, order_no, invoice_no, pic_sign_load, pic_sign_unload" +
                                                                                                 ", comment_load, comment_unload, date_sign_load, date_sign_unload, status_load, status_unload, status_upload_invoice" +
-                                                                                                ", status_delete) VALUES('" + jsonArrayInvoice.getJSONObject(o).getString("delivery_no") + "'" +
+                                                                                                ", status_delete, create_date) VALUES('" + jsonArrayInvoice.getJSONObject(o).getString("delivery_no") + "'" +
                                                                                                 ",'" + jsonArrayInvoice.getJSONObject(o).getString("consignment_no") + "'" +
                                                                                                 ", '" + jsonArrayInvoice.getJSONObject(o).getString("order_no") + "', '" + jsonArrayInvoice.getJSONObject(o).getString("invoice_no") + "'" +
                                                                                                 ", '" + jsonArrayInvoice.getJSONObject(o).getString("pic_sign_load") + "', '" + jsonArrayInvoice.getJSONObject(o).getString("pic_sign_unload") + "'" +
                                                                                                 ", '" + jsonArrayInvoice.getJSONObject(o).getString("comment_load") + "', '" + jsonArrayInvoice.getJSONObject(o).getString("comment_unload") + "'" +
                                                                                                 ", '" + jsonArrayInvoice.getJSONObject(o).getString("date_sign_load") + "', '" + jsonArrayInvoice.getJSONObject(o).getString("date_sign_unload") + "'" +
-                                                                                                ", '" + jsonArrayInvoice.getJSONObject(o).getString("status_load") + "', '" + jsonArrayInvoice.getJSONObject(o).getString("status_unload") + "','1','0')";
+                                                                                                ", '" + jsonArrayInvoice.getJSONObject(o).getString("status_load") + "', '" + jsonArrayInvoice.getJSONObject(o).getString("status_unload") + "','1','0','" + getdate() + "')";
                                                                                         databaseHelper.db().execSQL(sql);
+
                                                                                     } else {
-                                                                                        Log.d("d8s2ds", "doInBackground: 2");
+
                                                                                         ContentValues cv = new ContentValues();
                                                                                         cv.put("pic_sign_load", jsonArrayInvoice.getJSONObject(o).getString("pic_sign_load"));
                                                                                         cv.put("pic_sign_unload", jsonArrayInvoice.getJSONObject(o).getString("pic_sign_unload"));
