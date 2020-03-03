@@ -1,4 +1,4 @@
-package ws.epod.Adapter;
+package ws.epod.scan.view.OfflineScan.adapter;
 
 import android.content.Context;
 import android.util.Log;
@@ -17,21 +17,21 @@ import ws.epod.ObjectClass.SQLiteModel.WaybillModel;
 import ws.epod.R;
 import ws.epod.scan.Util.OfflineScanUtil;
 
-public class WaybillAdapter extends RecyclerView.Adapter<WaybillAdapter.ViewHolder> {
+public class WaybillUnScannedAdapter extends RecyclerView.Adapter<WaybillUnScannedAdapter.ViewHolder> {
 
     ArrayList<WaybillModel> models;
     Context context;
 
-    public WaybillAdapter(ArrayList<WaybillModel> models, Context context) {
+    public WaybillUnScannedAdapter(ArrayList<WaybillModel> models, Context context) {
         this.models = models;
         this.context = context;
     }
 
     @NonNull
     @Override
-    public WaybillAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public WaybillUnScannedAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_waybill, parent, false);
-        WaybillAdapter.ViewHolder viewHolder = new WaybillAdapter.ViewHolder(view);
+        WaybillUnScannedAdapter.ViewHolder viewHolder = new WaybillUnScannedAdapter.ViewHolder(view);
         return viewHolder;
     }
 

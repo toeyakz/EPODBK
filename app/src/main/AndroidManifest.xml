@@ -37,10 +37,10 @@
         android:usesCleartextTraffic="true"
         android:windowSoftInputMode="adjustResize|stateAlwaysHidden"
         tools:replace="android:allowBackup">
-        <activity android:name=".scan.view.OfflineScan.ScanViewActivity"></activity>
+        <activity android:name=".scan.view.OfflineScan.activity.ScanViewActivity"></activity>
         <activity android:name=".scan.view.delivery.ScanDeliveryActivity" />
         <activity android:name=".scan.view.pickup.ScanPickUpActivity" />
-        <activity android:name=".scan.view.OfflineScan.ScanOfflineActivity" />
+        <activity android:name=".scan.view.OfflineScan.activity.ScanOfflineActivity" />
         <activity android:name=".signature.delivery.Signature_Deliver_Activity" />
         <activity android:name=".signature.delivery.InvoiceDeliver_Activity" />
         <activity android:name=".signature.pickup.Invoice_Activity" />

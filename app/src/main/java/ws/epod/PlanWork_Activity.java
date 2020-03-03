@@ -84,7 +84,7 @@ import ws.epod.Helper.NarisBaseValue;
 import ws.epod.ObjectClass.LanguageClass;
 import ws.epod.ObjectClass.SQLiteModel.Plan_model;
 import ws.epod.ObjectClass.Var;
-import ws.epod.scan.view.OfflineScan.ScanOfflineActivity;
+import ws.epod.scan.view.OfflineScan.activity.ScanOfflineActivity;
 import ws.epod.sync.UploadDataPlan;
 
 
@@ -1031,7 +1031,7 @@ public class PlanWork_Activity extends AppCompatActivity {
 
                                                                 // เปิดทีหลัง
                                                                 ContentValues cv = new ContentValues();
-                                                                cv.put("status_img", "1");
+                                                                 cv.put("status_img", "1");
                                                                 databaseHelper.db().update("image", cv, "name_img= '" + json_data + "'", null);
 
                                                             }
@@ -2256,8 +2256,6 @@ public class PlanWork_Activity extends AppCompatActivity {
 
                 return true;
             case R.id.scan_menu:
-
-                Toast.makeText(getApplicationContext(), "wow", Toast.LENGTH_SHORT).show();
                 startActivity(new Intent(getApplicationContext(), ScanOfflineActivity.class));
 
             default:

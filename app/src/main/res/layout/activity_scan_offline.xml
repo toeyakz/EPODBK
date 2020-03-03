@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".scan.view.OfflineScan.ScanOfflineActivity">
+    tools:context=".scan.view.OfflineScan.activity.ScanOfflineActivity">
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar_test"
@@ -40,6 +40,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="right"
             android:padding="8dp"
+            android:visibility="gone"
             android:src="@drawable/ic_delete_black_24dp" />
 
         <TextView
@@ -58,32 +59,54 @@
 
     </androidx.appcompat.widget.Toolbar>
 
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rvScan"
-        android:layout_width="0dp"
+    <FrameLayout
+        android:id="@+id/frame_container"
+        android:layout_width="match_parent"
         android:layout_height="0dp"
-        tools:itemCount="5"
-        tools:listitem="@layout/item_waybill"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        app:layout_constraintBottom_toTopOf="@+id/nav_bar"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/toolbar_test" />
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/fabScan"
-        android:layout_width="wrap_content"
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/nav_bar"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="bottom|end"
-        android:layout_marginEnd="16dp"
-        android:layout_marginBottom="16dp"
-        android:src="@drawable/barcodescanner"
-        android:tint="#fff"
-        app:elevation="0dp"
+        android:layout_alignParentBottom="true"
+        app:itemHorizontalTranslationEnabled="true"
+        app:itemIconSize="24dp"
+        app:labelVisibilityMode="auto"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:menu="@menu/bottom_nav_menu" />
+
+<!--    <androidx.recyclerview.widget.RecyclerView-->
+<!--        android:id="@+id/rvScan"-->
+<!--        android:layout_width="0dp"-->
+<!--        android:layout_height="0dp"-->
+<!--        tools:itemCount="5"-->
+<!--        tools:listitem="@layout/item_waybill"-->
+<!--        app:layout_constraintBottom_toBottomOf="parent"-->
+<!--        app:layout_constraintEnd_toEndOf="parent"-->
+<!--        app:layout_constraintStart_toStartOf="parent"-->
+<!--        app:layout_constraintTop_toBottomOf="@+id/toolbar_test" />-->
+
+<!--    <com.google.android.material.floatingactionbutton.FloatingActionButton-->
+<!--        android:id="@+id/fabScan"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_gravity="bottom|end"-->
+<!--        android:layout_marginEnd="16dp"-->
+<!--        android:layout_marginBottom="16dp"-->
+<!--        android:src="@drawable/barcodescanner"-->
+<!--        android:tint="#fff"-->
+<!--        app:elevation="0dp"-->
+<!--        app:layout_constraintBottom_toBottomOf="parent"-->
+<!--        app:layout_constraintEnd_toEndOf="parent"-->
+<!--        app:layout_constraintHorizontal_bias="1.0"-->
+<!--        app:layout_constraintStart_toStartOf="parent" />-->
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

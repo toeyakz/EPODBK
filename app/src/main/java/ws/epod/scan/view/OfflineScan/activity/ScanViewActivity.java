@@ -1,4 +1,4 @@
-package ws.epod.scan.view.OfflineScan;
+package ws.epod.scan.view.OfflineScan.activity;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
@@ -6,15 +6,11 @@ import androidx.core.content.ContextCompat;
 
 import android.Manifest;
 import android.app.AlertDialog;
-import android.app.NotificationManager;
 import android.content.ContentResolver;
-import android.content.Context;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
-import android.media.AudioManager;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
-import android.media.ToneGenerator;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -32,20 +28,20 @@ import com.journeyapps.barcodescanner.BarcodeCallback;
 import com.journeyapps.barcodescanner.BarcodeResult;
 import com.journeyapps.barcodescanner.DecoratedBarcodeView;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.List;
+import java.util.Locale;
 
 import es.dmoral.toasty.Toasty;
 import ws.epod.Helper.ConnectionDetector;
 import ws.epod.Helper.DatabaseHelper;
 import ws.epod.Helper.NarisBaseValue;
-import ws.epod.ObjectClass.SQLiteModel.WaybillModel;
+import ws.epod.ObjectClass.LocationTrack;
 import ws.epod.R;
 import ws.epod.scan.Util.OfflineScanUtil;
-import ws.epod.scan.Util.UtilScan;
 import ws.epod.scan.model.OfflineScan.WaybillHeader;
 import ws.epod.scan.model.OfflineScan.WaybillPoJo;
-import ws.epod.scan.model.pickup.Invoice;
-import ws.epod.scan.view.pickup.ScanPickUpActivity;
 
 public class ScanViewActivity extends AppCompatActivity implements DecoratedBarcodeView.TorchListener {
 
@@ -70,6 +66,8 @@ public class ScanViewActivity extends AppCompatActivity implements DecoratedBarc
     AlertDialog.Builder dialogBuilder;
     AlertDialog alertDialog;
 
+    private LocationTrack locationTrack;
+
     private Runnable delayScan = new Runnable() {
         @Override
         public void run() {
@@ -81,6 +79,8 @@ public class ScanViewActivity extends AppCompatActivity implements DecoratedBarc
     public void onBackPressed() {
 
     }
+
+
 
     private void showDialog() {
         dialogBuilder = new AlertDialog.Builder(this);
@@ -144,7 +144,7 @@ public class ScanViewActivity extends AppCompatActivity implements DecoratedBarc
                 Ringtone r = RingtoneManager.getRingtone(getApplicationContext(), soundUri);
                 r.play();
 
-                WaybillPoJo invoice = new WaybillPoJo(result.getText());
+                WaybillPoJo invoice = new WaybillPoJo(result.getText(), getdate(), getlat(), getlon());
                 OfflineScanUtil.addWaybill(invoice);
 
                 if (OfflineScanUtil.getWaybillOffline().size() > 0) {
@@ -174,6 +174,8 @@ public class ScanViewActivity extends AppCompatActivity implements DecoratedBarc
         narisv = new NarisBaseValue(ScanViewActivity.this);
         netCon = new ConnectionDetector(getApplicationContext());
         databaseHelper = new DatabaseHelper(getApplicationContext());
+
+        locationTrack = new LocationTrack(ScanViewActivity.this);
 
         beepManager = new BeepManager(this);
 
@@ -262,6 +264,47 @@ public class ScanViewActivity extends AppCompatActivity implements DecoratedBarc
 
             } while (cursor.moveToNext());
         }
+    }
+
+    private String getdate() {
+
+        String temp = "";
+        String pattern = "yyyy-MM-dd kk:mm:ss";
+        SimpleDateFormat sdf = new SimpleDateFormat(pattern, new Locale("en", "th"));
+        temp = sdf.format(Calendar.getInstance().getTime());
+
+        return temp;
+    }
+
+    private String getlat() {
+
+        String lat = "";
+        if (locationTrack.canGetLocation()) {
+
+            double latitude = locationTrack.getLatitude();
+            lat = String.valueOf(latitude);
+
+        } else {
+
+            locationTrack.showSettingsAlert();
+        }
+
+        return lat;
+    }
+
+    private String getlon() {
+
+        String lon = "";
+        if (locationTrack.canGetLocation()) {
+
+            double longitude = locationTrack.getLongitude();
+            lon = String.valueOf(longitude);
+        } else {
+
+            locationTrack.showSettingsAlert();
+        }
+
+        return lon;
     }
 
     @Override
