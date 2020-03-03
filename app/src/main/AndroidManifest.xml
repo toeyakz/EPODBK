@@ -57,7 +57,7 @@
 
         <activity android:name=".signature.pickup.Signature_Activity" />
         <activity
-            android:name=".scan.view.pickup.PinkingUpMaster_Activity"
+            android:name=".scan.view.pickup.Pickup_Activity"
             android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".scan.view.delivery.Deliver_Activity"

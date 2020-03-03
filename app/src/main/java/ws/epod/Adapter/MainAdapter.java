@@ -21,7 +21,7 @@ import ws.epod.Helper.ConnectionDetector;
 import ws.epod.Helper.DatabaseHelper;
 import ws.epod.Helper.NarisBaseValue;
 import ws.epod.ObjectClass.MenuObject;
-import ws.epod.scan.view.pickup.PinkingUpMaster_Activity;
+import ws.epod.scan.view.pickup.Pickup_Activity;
 import ws.epod.R;
 
 public class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHolder> {
@@ -85,7 +85,7 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHolder> {
                 if (list.get(i).TEXT.equals("Picking Up")) {
 
                     // Toast.makeText(context, "Pick", Toast.LENGTH_SHORT).show();
-                    Intent intent = new Intent(context, PinkingUpMaster_Activity.class);
+                    Intent intent = new Intent(context, Pickup_Activity.class);
                     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                     intent.putExtra("isSync",true);
                     context.startActivity(intent);

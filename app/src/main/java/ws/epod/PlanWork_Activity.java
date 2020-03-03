@@ -2185,7 +2185,6 @@ public class PlanWork_Activity extends AppCompatActivity {
         switch (item.getItemId()) {
             case R.id.logout_menu:
 
-
                 Log.d("NARISLOG", "Logout Alert..");
 
                 if (netCon.isConnectingToInternet()) {

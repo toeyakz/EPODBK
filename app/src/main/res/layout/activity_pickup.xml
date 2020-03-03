@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".scan.view.pickup.PinkingUpMaster_Activity">
+    tools:context=".scan.view.pickup.Pickup_Activity">
 
     <ExpandableListView
         android:id="@+id/exPandDeli"
@@ -188,6 +188,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="right"
             android:padding="8dp"
+            android:visibility="gone"
             android:src="@drawable/ic_autorenew_black_24dp" />
 
         <ImageView
@@ -228,6 +229,7 @@
             android:paddingTop="15dp"
             android:paddingRight="5dp"
             android:paddingBottom="15dp"
+            android:visibility="gone"
             android:text="@string/confirm2"
             android:textColor="#fff"
             android:textStyle="bold" />

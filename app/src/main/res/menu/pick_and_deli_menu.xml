@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".scan.view.pickup.Pickup_Activity">
+
+    <item
+        android:id="@+id/item_more"
+        android:icon="@drawable/ic_more_vert_black_24dp"
+        android:title=""
+        app:showAsAction="always">
+
+        <menu>
+            <item
+                android:id="@+id/item_sync"
+                android:enabled="true"
+                android:icon="@drawable/ic_autorenew_black_24dp"
+                android:title="@string/sync"/>
+
+                <item
+                    android:id="@+id/item_confirm"
+                    android:enabled="true"
+                    android:icon="@drawable/signature"
+                    android:title="@string/confirm"/>
+
+                <item
+                    android:id="@+id/item_import_waybill"
+                    android:enabled="true"
+                    android:icon="@drawable/ic_input_black_24dp"
+                    android:title="Import Waybill"/>
+        </menu>
+    </item>
+
+</menu>

@@ -15,6 +15,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Typeface;
+import android.graphics.drawable.Drawable;
 import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -26,6 +27,8 @@ import android.util.Base64;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
@@ -44,9 +47,12 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.ColorRes;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.FileProvider;
+import androidx.core.graphics.drawable.DrawableCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -107,7 +113,7 @@ import ws.epod.scan.Util.UtilScan;
 import ws.epod.scan.model.pickup.Invoice;
 import ws.epod.sync.UploadDataPlan;
 
-public class PinkingUpMaster_Activity extends AppCompatActivity {
+public class Pickup_Activity extends AppCompatActivity {
 
     ExpandableListView expandableListView;
     PickingUpAdapter expandableListAdapter;
@@ -212,6 +218,9 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
         }
     };
 
+    private Toolbar mTopToolbar;
+
+
     @Override
     protected void onResume() {
         super.onResume();
@@ -246,13 +255,13 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         LanguageClass.setLanguage(getApplicationContext());
-        setContentView(R.layout.activity_picking_up_master);
+        setContentView(R.layout.activity_pickup);
 
 
-        narisv = new NarisBaseValue(PinkingUpMaster_Activity.this);
+        narisv = new NarisBaseValue(Pickup_Activity.this);
         netCon = new ConnectionDetector(getApplicationContext());
         databaseHelper = new DatabaseHelper(getApplicationContext());
-        uploadDataPlan = new UploadDataPlan(PinkingUpMaster_Activity.this);
+        uploadDataPlan = new UploadDataPlan(Pickup_Activity.this);
 
         // progressDialog = new ProgressDialog(getApplicationContext());
 
@@ -262,7 +271,7 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
 
         qrScan = new IntentIntegrator(this);
 
-        locationTrack = new LocationTrack(PinkingUpMaster_Activity.this);
+        locationTrack = new LocationTrack(Pickup_Activity.this);
 
 
         imageView8 = findViewById(R.id.imageView8);
@@ -282,6 +291,10 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
         expandableListView = findViewById(R.id.exPandDeli);
 
 
+        mTopToolbar = findViewById(R.id.toolbar_test);
+        setSupportActionBar(mTopToolbar);
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
+
         showLayout = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.show_layout);
         hideLayout = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.hide_layout);
 
@@ -291,7 +304,7 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
             if (isSync) {
                 UtilScan.clearHeaderWaybillList();
 
-               Upload();
+                Upload();
                 getSQLite();
 
 
@@ -332,8 +345,8 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
 
 
                 UtilScan.clearHeaderWaybillList();
-                Intent intents = new Intent(PinkingUpMaster_Activity.this, ScanPickUpActivity.class);
-                intents.putExtra("key",INPUT_WAY);
+                Intent intents = new Intent(Pickup_Activity.this, ScanPickUpActivity.class);
+                intents.putExtra("key", INPUT_WAY);
                 startActivity(intents);
             }
         });
@@ -437,7 +450,6 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
                         hideAll();
                         fabHome.setVisibility(View.GONE);
                         break;
-
                 }
             }
 
@@ -447,7 +459,51 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
             }
         });
 
+    }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.pick_and_deli_menu, menu);
+
+        MenuItem item_sync = menu.findItem(R.id.item_sync);
+        MenuItem item_confirm = menu.findItem(R.id.item_confirm);
+        MenuItem item_import_waybill = menu.findItem(R.id.item_import_waybill);
+
+        if (item_sync != null) {
+            tintMenuIcon(Pickup_Activity.this, item_sync, android.R.color.background_dark);
+            tintMenuIcon(Pickup_Activity.this, item_confirm, android.R.color.background_dark);
+            tintMenuIcon(Pickup_Activity.this, item_import_waybill, android.R.color.background_dark);
+        }
+
+
+        return true;
+    }
+
+    public static void tintMenuIcon(Context context, MenuItem item, @ColorRes int color) {
+        Drawable normalDrawable = item.getIcon();
+        Drawable wrapDrawable = DrawableCompat.wrap(normalDrawable);
+        DrawableCompat.setTint(wrapDrawable, context.getResources().getColor(color));
+        item.setIcon(wrapDrawable);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+
+
+        if (id == R.id.item_confirm) {
+            saveCheckConFirm();
+            return true;
+        }else if(id == R.id.item_sync){
+            hideAll();
+            saveCheck();
+            return true;
+        }else if(id == R.id.item_import_waybill){
+
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 
     private void startScan() {
@@ -548,7 +604,7 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
                                 @Override
                                 protected void onPreExecute() {
                                     super.onPreExecute();
-                                    pd = new ProgressDialog(PinkingUpMaster_Activity.this);
+                                    pd = new ProgressDialog(Pickup_Activity.this);
                                     pd.setCancelable(false);
                                     pd.setMessage("Saving data..");
                                     pd.show();
@@ -661,7 +717,7 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
                                     pd.dismiss();
 
                                     if (IsSuccess == 1) {
-                                        Toast.makeText(PinkingUpMaster_Activity.this, "Saved.", Toast.LENGTH_SHORT).show();
+                                        Toast.makeText(Pickup_Activity.this, "Saved.", Toast.LENGTH_SHORT).show();
                                         getSQLite();
 
                                     } else {
@@ -680,7 +736,7 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
 
 
                                         }
-                                        Toast.makeText(PinkingUpMaster_Activity.this, "can't save.", Toast.LENGTH_SHORT).show();
+                                        Toast.makeText(Pickup_Activity.this, "can't save.", Toast.LENGTH_SHORT).show();
                                     }
                                 }
                             }.execute();
@@ -840,7 +896,7 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
                         }
 
                         expandableListView.setAdapter(expandableListAdapter);
-                     //   expandableListView.expandGroup(i);
+                        //   expandableListView.expandGroup(i);
                         expandableListAdapter.notifyDataSetChanged();
                         expandableListView.smoothScrollToPositionFromTop(i, j);
                         Log.d("fjjpppsp", "scan: " + ((PickingUpEexpand_Model) expandableListAdapter.getChild(i, j)).getIs_scaned());
@@ -1048,7 +1104,7 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
                         listTitle.setBox_checked(String.valueOf(count_.size()));
 
                         expandableListView.setAdapter(expandableListAdapter);
-                       // expandableListView.expandGroup(i);
+                        // expandableListView.expandGroup(i);
                         expandableListAdapter.notifyDataSetChanged();
                         expandableListView.smoothScrollToPositionFromTop(i, j);
                         Log.d("fjjpppsp", "scan: " + ((PickingUpEexpand_Model) expandableListAdapter.getChild(i, j)).getIs_scaned());
@@ -1109,9 +1165,9 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
         String pattern = "yyyy-MM-dd HH:mm:ss";
         SimpleDateFormat sdf = new SimpleDateFormat(pattern, new Locale("en", "th"));
 
-        if( String.valueOf(sdf).length() > 3){
+        if (String.valueOf(sdf).length() > 3) {
             temp = sdf.format(Calendar.getInstance().getTime());
-        }else{
+        } else {
             Calendar c = Calendar.getInstance();
             @SuppressLint("SimpleDateFormat") SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             temp = df.format(c.getTime());
@@ -1281,7 +1337,7 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
 //            String resultCode = result.getText();
 //
 //
-//            //setContentView(R.layout.activity_picking_up_master);
+//            //setContentView(R.layout.activity_pickup);
 //            //scannerView.stopCamera();
 //            Intent intent = new Intent(getApplicationContext(), PinkingUpMaster_Activity.class);
 //            intent.putExtra("publicKey", result.getText());
@@ -2670,7 +2726,7 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
                                         imgNewPick01.setVisibility(View.GONE);
                                         imgDeletePick01.setVisibility(View.GONE);
                                         imgCommentPick_01.setEnabled(true);
-                                        Toast.makeText(PinkingUpMaster_Activity.this, "Successfully deleted.", Toast.LENGTH_SHORT).show();
+                                        Toast.makeText(Pickup_Activity.this, "Successfully deleted.", Toast.LENGTH_SHORT).show();
 
                                     }
                                 });
@@ -2787,7 +2843,7 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
                                         imgNewPick02.setVisibility(View.GONE);
                                         imgDeletePick02.setVisibility(View.GONE);
                                         imgCommentPick_02.setEnabled(true);
-                                        Toast.makeText(PinkingUpMaster_Activity.this, "Successfully deleted.", Toast.LENGTH_SHORT).show();
+                                        Toast.makeText(Pickup_Activity.this, "Successfully deleted.", Toast.LENGTH_SHORT).show();
 
                                     }
                                 });
@@ -2902,7 +2958,7 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
                                         imgNewPick03.setVisibility(View.GONE);
                                         imgDeletePick03.setVisibility(View.GONE);
                                         imgCommentPick_03.setEnabled(true);
-                                        Toast.makeText(PinkingUpMaster_Activity.this, "Successfully deleted.", Toast.LENGTH_SHORT).show();
+                                        Toast.makeText(Pickup_Activity.this, "Successfully deleted.", Toast.LENGTH_SHORT).show();
 
                                     }
                                 });
@@ -3089,10 +3145,10 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
     @SuppressLint("StaticFieldLeak")
     public void Upload() {
 
-        narisv = new NarisBaseValue(PinkingUpMaster_Activity.this);
+        narisv = new NarisBaseValue(Pickup_Activity.this);
         apiInterface = APIClient.getClient().create(APIInterface.class);
-        netCon = new ConnectionDetector(PinkingUpMaster_Activity.this);
-        databaseHelper = new DatabaseHelper(PinkingUpMaster_Activity.this);
+        netCon = new ConnectionDetector(Pickup_Activity.this);
+        databaseHelper = new DatabaseHelper(Pickup_Activity.this);
 
 
         new AsyncTask<String, Integer, String>() {
@@ -3103,7 +3159,7 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
             protected void onPreExecute() {
                 super.onPreExecute();
 
-                progressDialog = new ProgressDialog(PinkingUpMaster_Activity.this);
+                progressDialog = new ProgressDialog(Pickup_Activity.this);
                 progressDialog.setCancelable(false);
                 progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
                 progressDialog.setMessage(getString(R.string.sync_data));
@@ -3364,7 +3420,7 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
                     case -1:
                         mess = "Synced (not found data)";
 
-                        Toast.makeText(PinkingUpMaster_Activity.this, mess, Toast.LENGTH_SHORT).show();
+                        Toast.makeText(Pickup_Activity.this, mess, Toast.LENGTH_SHORT).show();
 
 //                        Snackbar.make(viewFab, mess, Snackbar.LENGTH_LONG)
 //                                .setAction("Action", null).show();
@@ -3377,7 +3433,7 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
                         break;
                     case 2:
                         mess = "Sync error!!";
-                        Toast.makeText(PinkingUpMaster_Activity.this, mess, Toast.LENGTH_SHORT).show();
+                        Toast.makeText(Pickup_Activity.this, mess, Toast.LENGTH_SHORT).show();
 //                        Snackbar.make(viewFab, mess, Snackbar.LENGTH_LONG)
 //                                .setAction("Action", null).show();
                         break;
@@ -3818,7 +3874,7 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
 //                    Snackbar.make(viewFab, mess, Snackbar.LENGTH_LONG)
 //                            .setAction("Action", null).show();
 
-                    Toast.makeText(PinkingUpMaster_Activity.this, mess, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(Pickup_Activity.this, mess, Toast.LENGTH_SHORT).show();
                     Var.synced = 1;
                     break;
                 case 2:
@@ -3826,7 +3882,7 @@ public class PinkingUpMaster_Activity extends AppCompatActivity {
 //                    Snackbar.make(viewFab, mess, Snackbar.LENGTH_LONG)
 //                            .setAction("Action", null).show();
 
-                    Toast.makeText(PinkingUpMaster_Activity.this, mess, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(Pickup_Activity.this, mess, Toast.LENGTH_SHORT).show();
 
                     // rvPlanWork.setAdapter(sectionAdapter);
                     //// planWorkAdapter.notifyDataSetChanged();
