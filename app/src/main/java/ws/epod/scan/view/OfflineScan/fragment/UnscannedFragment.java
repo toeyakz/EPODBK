@@ -146,7 +146,7 @@ public class UnscannedFragment extends Fragment {
         ArrayList<WaybillModel> models = new ArrayList<>();
 
         dataWaybill = new ArrayList<>();
-        String sql = "select * from header_waybill where status_complete = '0'";
+        String sql = "select id,waybill_no,date_scan,lat,lon,is_scanned,status_complete from header_waybill where status_complete = '0'";
         Cursor cursor = databaseHelper.selectDB(sql);
 
         cursor.moveToFirst();
@@ -188,7 +188,7 @@ public class UnscannedFragment extends Fragment {
         cv.put("lat", lat);
         cv.put("lon", lon);
         cv.put("is_scanned", "1");
-        cv.put("status_complete", "1");
+        cv.put("status_complete", "0");
         databaseHelper.db().insert("header_waybill", null, cv);
 
         readData();

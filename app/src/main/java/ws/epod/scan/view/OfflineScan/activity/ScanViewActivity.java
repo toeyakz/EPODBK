@@ -256,10 +256,14 @@ public class ScanViewActivity extends AppCompatActivity implements DecoratedBarc
             do {
 
                 String waybill_no = cursor.getString(cursor.getColumnIndex("waybill_no"));
+                String status_complete = cursor.getString(cursor.getColumnIndex("status_complete"));
 
                 Log.d("a2f8a9", "getSQLite: " + waybill_no);
 
-                OfflineScanUtil.addWaybillHeader(new WaybillHeader(waybill_no));
+                if(status_complete.equals("0")){
+                    OfflineScanUtil.addWaybillHeader(new WaybillHeader(waybill_no));
+                }
+
 
 
             } while (cursor.moveToNext());

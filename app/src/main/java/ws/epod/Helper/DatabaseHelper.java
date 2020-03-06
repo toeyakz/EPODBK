@@ -35,6 +35,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
 
+
     @Override
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
 
@@ -107,6 +108,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
 
 
+    }
+
+    public static File getPathDB(Context context) {
+        return context.getDatabasePath(DATABASE_NAME);
     }
 
 

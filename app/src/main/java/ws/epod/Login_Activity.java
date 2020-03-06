@@ -19,6 +19,7 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.os.Environment;
 import android.os.PersistableBundle;
 import android.text.Editable;
 import android.text.TextUtils;
@@ -51,9 +52,13 @@ import org.json.JSONArray;
 import org.json.JSONException;
 
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.nio.channels.FileChannel;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -130,16 +135,17 @@ public class Login_Activity extends AppCompatActivity {
         }
     }
 
-
     @Override
-    protected void onResume() {
-        super.onResume();
+    protected void onStart() {
+        super.onStart();
 
         new AsyncTask<Void, Void, Void>() {
             @Override
             protected Void doInBackground(Void... voids) {
 
                 checkPermissions();
+
+                databaseHelper = new DatabaseHelper(getApplicationContext());
                 return null;
             }
 
@@ -147,32 +153,18 @@ public class Login_Activity extends AppCompatActivity {
             protected void onPostExecute(Void aVoid) {
 
 
-               // CheckDatabaseStructure();
+                // CheckDatabaseStructure();
 
 
                 super.onPostExecute(aVoid);
             }
         }.execute();
+    }
 
-        SharedPreferences login_data = getSharedPreferences("LOGIN", Context.MODE_PRIVATE);
-        String status_login = login_data.getString("status_login", null);
-        if (status_login != null) {
-            if (status_login.equals("1")) {
+    @Override
+    protected void onResume() {
+        super.onResume();
 
-                Var.UserLogin.driver_id = login_data.getString("driver_id", "");
-                Var.UserLogin.driver_user = login_data.getString("username", "");
-                Var.UserLogin.driver_pass = login_data.getString("pass", "");
-                Var.UserLogin.driver_serial = login_data.getString("serial", "");
-                Var.UserLogin.driver_brand = login_data.getString("driver_brand", "");
-                Var.UserLogin.driver_truck_license = login_data.getString("vehicle_name", "");
-                Var.UserLogin.driver_fname = login_data.getString("driver_fname", "");
-                Var.UserLogin.driver_lname = login_data.getString("driver_lname", "");
-                Var.UserLogin.driver_vehicle_id = login_data.getString("vehicle_id", "");
-                Var.UserLogin.driver_status_login = login_data.getString("status_login", "");
-                Intent intent = new Intent(getApplicationContext(), PlanWork_Activity.class);
-                startActivity(intent);
-            }
-        }
 
 //        isLogin();
 
@@ -226,6 +218,26 @@ public class Login_Activity extends AppCompatActivity {
 
         }.start();
 
+        SharedPreferences login_data = getSharedPreferences("LOGIN", Context.MODE_PRIVATE);
+        String status_login = login_data.getString("status_login", null);
+        if (status_login != null) {
+            if (status_login.equals("1")) {
+
+                Var.UserLogin.driver_id = login_data.getString("driver_id", "");
+                Var.UserLogin.driver_user = login_data.getString("username", "");
+                Var.UserLogin.driver_pass = login_data.getString("pass", "");
+                Var.UserLogin.driver_serial = login_data.getString("serial", "");
+                Var.UserLogin.driver_brand = login_data.getString("driver_brand", "");
+                Var.UserLogin.driver_truck_license = login_data.getString("vehicle_name", "");
+                Var.UserLogin.driver_fname = login_data.getString("driver_fname", "");
+                Var.UserLogin.driver_lname = login_data.getString("driver_lname", "");
+                Var.UserLogin.driver_vehicle_id = login_data.getString("vehicle_id", "");
+                Var.UserLogin.driver_status_login = login_data.getString("status_login", "");
+                Intent intent = new Intent(getApplicationContext(), PlanWork_Activity.class);
+                startActivity(intent);
+            }
+        }
+
         serial = findViewById(R.id.tvSerial);
         btnLogin = findViewById(R.id.btnLogin);
         show_pass_btn = findViewById(R.id.show_pass_btn);
@@ -260,8 +272,8 @@ public class Login_Activity extends AppCompatActivity {
         isCameraePermissionGranted();
 */
         if (checkPermissions()) {
-           // CheckDatabaseStructure();
-            databaseHelper = new DatabaseHelper(getApplicationContext());
+            // CheckDatabaseStructure();
+//            databaseHelper = new DatabaseHelper(getApplicationContext());
             //  permissions  granted.
         }
 
@@ -285,8 +297,6 @@ public class Login_Activity extends AppCompatActivity {
 
             }
         }
-
-
 
 
         //set serial
@@ -393,7 +403,7 @@ public class Login_Activity extends AppCompatActivity {
         progressDialog = new ProgressDialog(Login_Activity.this);
         new AsyncTask<Void, Void, Integer>() {
 
-           // ProgressDialog progressDialog;
+            // ProgressDialog progressDialog;
 
 
             @Override
@@ -401,10 +411,10 @@ public class Login_Activity extends AppCompatActivity {
                 super.onPreExecute();
 
                 progressDialog.setCancelable(false);
-                progressDialog.setProgressStyle(ProgressDialog .STYLE_SPINNER);
+                progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
                 progressDialog.setMessage(getString(R.string.checking));
                 progressDialog.show();
-            //    showProgress(true);
+                //    showProgress(true);
             }
 
             @Override
@@ -512,7 +522,7 @@ public class Login_Activity extends AppCompatActivity {
                 super.onPostExecute(IsSuccess);
 
                 Log.d("asda56s", IsSuccess + "");
-               // progressDialog.dismiss();
+                // progressDialog.dismiss();
                 if (IsSuccess == 1) {
                     SharedPreferences login_get = getSharedPreferences("LOGIN", Context.MODE_PRIVATE);
                     Var.UserLogin.driver_id = login_get.getString("driver_id", "");
@@ -575,7 +585,7 @@ public class Login_Activity extends AppCompatActivity {
                     alert.show();
                 }
 
-              //  showProgress(false);
+                //  showProgress(false);
 
                 if (progressDialog.isShowing()) {
                     progressDialog.dismiss();
@@ -665,7 +675,7 @@ public class Login_Activity extends AppCompatActivity {
                         }
 
                     }
-                   // CheckDatabaseStructure();
+                    // CheckDatabaseStructure();
                     Log.d("TAG", "onRequestPermissionsResult: " + permissionsDenied);
                     // Show permissionsDenied
                     //updateViews();
@@ -1285,6 +1295,9 @@ public class Login_Activity extends AppCompatActivity {
         switch (item.getItemId()) {
             case R.id.export_data_menu:
                 Toast.makeText(this, "ส่งออกฐานข้อมูล", Toast.LENGTH_SHORT).show();
+
+                exportDB();
+
                 return true;
             case R.id.import_data_menu:
                 Toast.makeText(this, "นำเข้าฐานข้อมูล", Toast.LENGTH_SHORT).show();
@@ -1327,4 +1340,97 @@ public class Login_Activity extends AppCompatActivity {
                 return super.onOptionsItemSelected(item);
         }
     }
+
+    @SuppressLint("StaticFieldLeak")
+    private void exportDB() {
+
+        pd = new ProgressDialog(Login_Activity.this);
+        pd.setCancelable(false);
+        pd.setMessage(getString(R.string.checking));
+        pd.show();
+
+        File DB_PATH = DatabaseHelper.getPathDB(getApplicationContext());
+        File file = new File(Environment.getExternalStorageDirectory().getPath() + "/Android/data/ws.epod/files/DATABASE");
+        if (!file.exists()) {
+            file.mkdirs();
+        }
+
+
+        String vehicle_name = "";
+        String sql = "select ifnull(replace(vehicle_name, ' ', ''),'') as vehicle_name from Plan limit 1";
+        Cursor cursor = databaseHelper.selectDB(sql);
+
+        cursor.moveToFirst();
+        if (cursor.getCount() > 0) {
+            do {
+                vehicle_name = cursor.getString(cursor.getColumnIndex("vehicle_name"));
+            } while (cursor.moveToNext());
+        }
+        boolean isExportDB = exportDB_(DB_PATH.getPath(), file.getAbsolutePath() + "/" + vehicle_name + "_" + Var.getDateUploadDB() + ".db");
+
+        if (isExportDB) {
+            File new_db_file = new File(file.getAbsolutePath() +  "/" + vehicle_name + "_" + Var.getDateUploadDB() + ".db");
+
+            new AsyncTask<Void, Void, String>() {
+
+                @SuppressLint("WrongThread")
+                @Override
+                protected String doInBackground(Void... voids) {
+
+                    return narisv.uploadFileDB(getApplicationContext(), new_db_file);
+                   // return null;
+                }
+
+                @Override
+                protected void onPostExecute(String s) {
+                    super.onPostExecute(s);
+
+                    if (s != null) {
+                        Toast.makeText(getApplicationContext(), s, Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(getApplicationContext(), "null", Toast.LENGTH_SHORT).show();
+                    }
+
+                    if (pd.isShowing()) {
+                        pd.dismiss();
+                    }
+
+                }
+            }.execute();
+
+        } else {
+
+        }
+
+    }
+
+    public boolean exportDB_(String... params) {
+        try {
+            File sd = Environment.getExternalStorageDirectory();
+            File data = Environment.getDataDirectory();
+
+            if (sd.canWrite()) {
+                File currentDB = new File(params[0]);//path db root
+                File backupDB = new File(params[1]);//new path db
+
+                if (currentDB.exists()) {
+                    FileChannel src = new FileInputStream(currentDB).getChannel();
+                    FileChannel dst = new FileOutputStream(backupDB).getChannel();
+                    dst.transferFrom(src, 0, src.size());
+                    src.close();
+                    dst.close();
+                    Toast.makeText(getApplicationContext(), "Copy To : " + backupDB.toString(), Toast.LENGTH_LONG).show();
+                    return true;
+                } else {
+                    Toast.makeText(getApplicationContext(), "currentDB Path:" + currentDB.exists(), Toast.LENGTH_LONG).show();
+                }
+            }
+        } catch (Exception e) {
+            Toast.makeText(getApplicationContext(), e.toString(), Toast.LENGTH_LONG).show();
+            //  Log.d(TAG, "exportDB: " + e.toString());
+        }
+        return false;
+    }
+
+
 }

@@ -2,6 +2,7 @@ package ws.epod.Helper;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
@@ -17,6 +18,7 @@ import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
 import android.graphics.Shader;
 import android.os.Build;
+
 import androidx.core.app.ActivityCompat;
 
 import android.text.TextUtils;
@@ -40,6 +42,10 @@ import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.DataOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
@@ -56,15 +62,16 @@ import ws.epod.ObjectClass.Var;
 
 public class NarisBaseValue {
     Context context;
-    DatabaseHelper databaseHelper;
+    @SuppressLint("StaticFieldLeak")
+    static DatabaseHelper databaseHelper;
     SQLiteDatabase sqlite;
 
     public static int firstlogin;
 
-    public NarisBaseValue( Context context ) {
+    public NarisBaseValue(Context context) {
         try {
             databaseHelper = new DatabaseHelper(context);
-            if ( ActivityCompat.checkSelfPermission(context, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(context, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED ) {
+            if (ActivityCompat.checkSelfPermission(context, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(context, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
                 // TODO: Consider calling
                 //    ActivityCompat#requestPermissions
                 // here to request the missing permissions, and then overriding
@@ -87,17 +94,249 @@ public class NarisBaseValue {
 //		return telephonyManager.getDeviceId();
 //	}
 
+    public String uploadFileDB(Context context, File file) {
+
+        HttpURLConnection conn = null;
+        DataOutputStream dos = null;
+        String lineEnd = "\r\n";
+        String twoHyphens = "--";
+        String boundary = "*****";
+        int bytesRead, bytesAvailable, bufferSize;
+        byte[] buffer;
+        int maxBufferSize = 1024 * 1024;
+
+        if (!file.isFile()) {
+            Log.e("Huzza", "Source File Does not exist");
+            return null;
+        }
+
+        int serverResponseCode = 0;
+        try {
+            FileInputStream fileInputStream = new FileInputStream(file);
+            URL url = new URL(Var.host + "/services/upload_epod_db.php");//path url service
+            conn = (HttpURLConnection) url.openConnection();
+            conn.setDoInput(true); // Allow Inputs
+            conn.setDoOutput(true); // Allow Outputs
+            conn.setUseCaches(false); // Don't use a Cached Copy
+            conn.setRequestMethod("POST");
+            conn.setRequestProperty("Connection", "Keep-Alive");
+            conn.setRequestProperty("ENCTYPE", "multipart/form-data");
+            conn.setRequestProperty("Content-Type", "multipart/form-data;boundary=" + boundary);
+            conn.setRequestProperty("uploaded_file", file.getAbsolutePath());
+
+            dos = new DataOutputStream(conn.getOutputStream());
+            dos.writeBytes(twoHyphens + boundary + lineEnd);
+            dos.writeBytes("Content-Disposition: form-data; name=\"uploaded_file\";filename=\"" + file.getAbsolutePath() + "\"" + lineEnd);
+            dos.writeBytes(lineEnd);
+
+            bytesAvailable = fileInputStream.available();
+            Log.i("Huzza", "Initial .available : " + bytesAvailable);
+
+            bufferSize = Math.min(bytesAvailable, maxBufferSize);
+            buffer = new byte[bufferSize];
+
+            bytesRead = fileInputStream.read(buffer, 0, bufferSize);
+
+            while (bytesRead > 0) {
+                dos.write(buffer, 0, bufferSize);
+                bytesAvailable = fileInputStream.available();
+                bufferSize = Math.min(bytesAvailable, maxBufferSize);
+                bytesRead = fileInputStream.read(buffer, 0, bufferSize);
+            }
+
+            dos.writeBytes(lineEnd);
+            dos.writeBytes(twoHyphens + boundary + twoHyphens + lineEnd);
+
+            serverResponseCode = conn.getResponseCode();
+            Log.d("TAG", "uploadVideo ResponseCode: " + serverResponseCode);
+
+            fileInputStream.close();
+            dos.flush();
+            dos.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        if (serverResponseCode == 200) {
+            StringBuilder sb = new StringBuilder();
+            try {
+                BufferedReader rd = new BufferedReader(new InputStreamReader(conn
+                        .getInputStream()));
+                String line;
+                while ((line = rd.readLine()) != null) {
+                    sb.append(line);
+                }
+                rd.close();
+            } catch (IOException ignored) {
+            }
+
+            try {
+                boolean deleted = file.delete();
+                if (deleted)
+                    Log.d("s8a2s9as", "deleted: " + deleted);
+                else Log.d("s8a2s9as", "deleted: " + deleted);
+            } catch (Exception e) {
+                Log.e("s8a2s9as", "onPostExecute: ", e);
+            }
+
+            Log.d("s8a2s9as", "Response: " + sb.toString());
+            return sb.toString();
+        } else {
+            return "Could not upload";
+        }
+    }//end upload
+
+
+    @SuppressLint("WrongConstant")
+    public static void insertPlan(JSONArray json) {
+        databaseHelper.db().beginTransaction();
+        try {
+            ContentValues values = new ContentValues();
+
+            for (int i = 0; i < json.length(); i++) {
+
+                JSONObject json_data = json.getJSONObject(i);
+                values.put("id", json_data.getString("id"));
+                values.put("delivery_date", json_data.getString("delivery_date"));
+                values.put("vehicle_name", json_data.getString("vehicle_name"));
+                values.put("blackbox", json_data.getString("blackbox"));
+                values.put("delivery_no", json_data.getString("delivery_no"));
+                values.put("plan_seq", json_data.getString("plan_seq"));
+                values.put("station_code", json_data.getString("station_code"));
+                values.put("station_name", json_data.getString("station_name"));
+                values.put("station_address", json_data.getString("station_address"));
+                values.put("station_lat", json_data.getString("station_lat"));
+                values.put("station_lon", json_data.getString("station_lon"));
+                values.put("station_area", json_data.getString("station_area"));
+                values.put("plan_in", json_data.getString("plan_in"));
+                values.put("plan_out", json_data.getString("plan_out"));
+                values.put("consignment_no", json_data.getString("consignment_no"));
+                values.put("order_no", json_data.getString("order_no"));
+                values.put("activity_type", json_data.getString("activity_type"));
+                values.put("box_no", json_data.getString("box_no"));
+                values.put("waybill_no", json_data.getString("waybill_no"));
+                values.put("weight", json_data.getString("weight"));
+                values.put("actual_seq", json_data.getString("actual_seq"));
+                values.put("actual_lat", json_data.getString("actual_lat"));
+                values.put("actual_lon", json_data.getString("actual_lon"));
+                values.put("time_actual_in", json_data.getString("time_actual_in"));
+                values.put("time_actual_out", json_data.getString("time_actual_out"));
+                values.put("time_begin", json_data.getString("time_begin"));
+                values.put("time_end", json_data.getString("time_end"));
+                values.put("signature", json_data.getString("signature"));
+                values.put("is_scaned", json_data.getString("is_scaned"));
+                values.put("is_save", json_data.getString("is_save"));
+                values.put("comment", json_data.getString("comment"));
+                values.put("picture1", json_data.getString("picture1"));
+                values.put("picture2", json_data.getString("picture2"));
+                values.put("picture3", json_data.getString("picture3"));
+                values.put("status_upload", json_data.getString("status_upload"));
+                values.put("driver_code", json_data.getString("driver_code"));
+                values.put("driver_name", json_data.getString("driver_name"));
+                values.put("modified_date", json_data.getString("modified_date"));
+                values.put("trash", json_data.getString("trash"));
+                values.put("total_box", json_data.getString("total_box"));
+
+                databaseHelper.db().insertWithOnConflict("Plan",
+                        null, values, SQLiteDatabase.CONFLICT_REPLACE);
+            }
+
+            databaseHelper.db().setTransactionSuccessful();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        } finally {
+            databaseHelper.db().endTransaction();
+        }
+        databaseHelper.db().close();
+    }
+
+    @SuppressLint("WrongConstant")
+    public static void insertConsignment(JSONArray json) {
+        databaseHelper.db().beginTransaction();
+        try {
+            ContentValues values = new ContentValues();
+
+            for (int i = 0; i < json.length(); i++) {
+
+                JSONObject json_data = json.getJSONObject(i);
+                values.put("id", json_data.getString("id"));
+                values.put("item_code", json_data.getString("item_code"));
+                values.put("item_send_time", json_data.getString("item_send_time"));
+                values.put("consignment_no", json_data.getString("consignment_no"));
+                values.put("subsidiary_cd", json_data.getString("subsidiary_cd"));
+                values.put("deli_note_no", json_data.getString("deli_note_no"));
+                values.put("crd", json_data.getString("crd"));
+                values.put("ship_plan_date", json_data.getString("ship_plan_date"));
+                values.put("settlement_method", json_data.getString("settlement_method"));
+                values.put("cust_shipmode", json_data.getString("cust_shipmode"));
+                values.put("cust_cd", json_data.getString("cust_cd"));
+                values.put("ship_to_cd", json_data.getString("ship_to_cd"));
+                values.put("shipto_name", json_data.getString("shipto_name"));
+                values.put("ship_mode", json_data.getString("ship_mode"));
+                values.put("ship_to_postal_cd", json_data.getString("ship_to_postal_cd"));
+                values.put("item_remarks", json_data.getString("item_remarks"));
+                values.put("so_voucher_no", json_data.getString("so_voucher_no"));
+                values.put("global_no", json_data.getString("global_no"));
+                values.put("header_ref", json_data.getString("header_ref"));
+                values.put("deli_note_amount_price", json_data.getString("deli_note_amount_price"));
+                values.put("comet_seq", json_data.getString("comet_seq"));
+                values.put("warehouse", json_data.getString("warehouse"));
+                values.put("detail_remarks", json_data.getString("detail_remarks"));
+                values.put("isPlan", json_data.getString("isPlan"));
+                values.put("status", json_data.getString("status"));
+                values.put("activity_type", json_data.getString("activity_type"));
+                values.put("trash", json_data.getString("trash"));
+
+                databaseHelper.db().insertWithOnConflict("consignment",
+                        null, values, SQLiteDatabase.CONFLICT_REPLACE);
+            }
+
+            databaseHelper.db().setTransactionSuccessful();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        } finally {
+            databaseHelper.db().endTransaction();
+        }
+        databaseHelper.db().close();
+    }
+
+    @SuppressLint("WrongConstant")
+    public static void insertReason(JSONArray json) {
+        databaseHelper.db().beginTransaction();
+        try {
+            ContentValues values = new ContentValues();
+
+            for (int i = 0; i < json.length(); i++) {
+
+                JSONObject json_data = json.getJSONObject(i);
+                values.put("id", json_data.getString("id"));
+                values.put("name", json_data.getString("name"));
+
+
+                databaseHelper.db().insertWithOnConflict("reason",
+                        null, values, SQLiteDatabase.CONFLICT_REPLACE);
+            }
+
+            databaseHelper.db().setTransactionSuccessful();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        } finally {
+            databaseHelper.db().endTransaction();
+        }
+        databaseHelper.db().close();
+    }
+
     public static String getDeviceName() {
         String manufacturer = Build.MANUFACTURER;
         String model = Build.MODEL;
-        if ( model.startsWith(manufacturer) ) {
+        if (model.startsWith(manufacturer)) {
             return capitalize(model);
         }
         return capitalize(manufacturer) + " " + model;
     }
 
-    private static String capitalize( String str ) {
-        if ( TextUtils.isEmpty(str) ) {
+    private static String capitalize(String str) {
+        if (TextUtils.isEmpty(str)) {
             return str;
         }
         char[] arr = str.toCharArray();
@@ -105,11 +344,11 @@ public class NarisBaseValue {
 
         StringBuilder phrase = new StringBuilder();
         for (char c : arr) {
-            if ( capitalizeNext && Character.isLetter(c) ) {
+            if (capitalizeNext && Character.isLetter(c)) {
                 phrase.append(Character.toUpperCase(c));
                 capitalizeNext = false;
                 continue;
-            } else if ( Character.isWhitespace(c) ) {
+            } else if (Character.isWhitespace(c)) {
                 capitalizeNext = true;
             }
             phrase.append(c);
@@ -121,9 +360,9 @@ public class NarisBaseValue {
     @SuppressLint("MissingPermission")
     public String getSerial() {
         String serialNumber = null;
-        if ( Build.VERSION.SDK_INT >= Build.VERSION_CODES.O ) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             serialNumber = Build.getSerial();
-        } else if ( Build.VERSION.SDK_INT < Build.VERSION_CODES.O ) {
+        } else if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
             serialNumber = android.os.Build.SERIAL;
         }
         //serialNumber = ( serialNumber == android.os.Build.SERIAL ) ? null : serialNumber;
@@ -131,14 +370,14 @@ public class NarisBaseValue {
     }
 
 
-    public String get_value( String SQL, String col_name ) {
+    public String get_value(String SQL, String col_name) {
 
         String value = null;
         Cursor c0 = databaseHelper.selectDB(SQL);
 
-        if ( c0 != null ) {
+        if (c0 != null) {
             int round = 0;
-            if ( c0.moveToFirst() ) {
+            if (c0.moveToFirst()) {
                 value = c0.getString(c0.getColumnIndex(col_name));
 
             }
@@ -146,12 +385,12 @@ public class NarisBaseValue {
         return value;
     }
 
-    public String[] get_values( String SQL, String col_name ) {
+    public String[] get_values(String SQL, String col_name) {
 
         String value[];
         Cursor c0 = databaseHelper.selectDB(SQL);
         value = new String[c0.getCount()];
-        if ( c0 != null ) {
+        if (c0 != null) {
             c0.moveToFirst();
             while (!c0.isAfterLast()) {
                 value[c0.getPosition()] = c0.getString(c0
@@ -166,11 +405,11 @@ public class NarisBaseValue {
         return value;
     }
 
-    public ArrayList<String> get_values_arraylist( String SQL, String col_name ) {
+    public ArrayList<String> get_values_arraylist(String SQL, String col_name) {
 
         ArrayList<String> value = new ArrayList<String>();
         Cursor c0 = databaseHelper.selectDB(SQL);
-        if ( c0.getCount() > 0 ) {
+        if (c0.getCount() > 0) {
             c0.moveToFirst();
             while (!c0.isAfterLast()) {
                 value.add(c0.getString(c0.getColumnIndex(col_name)));
@@ -185,7 +424,7 @@ public class NarisBaseValue {
 
     final protected static char[] hexArray = "0123456789ABCDEF".toCharArray();
 
-    public static String bytesToHex( byte[] bytes ) {
+    public static String bytesToHex(byte[] bytes) {
         char[] hexChars = new char[bytes.length * 2];
         for (int j = 0; j < bytes.length; j++) {
             int v = bytes[j] & 0xFF;
@@ -201,15 +440,15 @@ public class NarisBaseValue {
         return df_b.format(new Date()).toString();
     }
 
-    public String get_date( int day ) {
+    public String get_date(int day) {
         SimpleDateFormat df_b = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         Date d = new Date();
-        d.setTime(d.getTime() + ( day * 1000 * 60 * 60 * 24 ));
+        d.setTime(d.getTime() + (day * 1000 * 60 * 60 * 24));
 
         return df_b.format(d).toString();
     }
 
-    public JSONObject SendAndGetJson_reJsonObject( JSONObject json_send, String url ) {
+    public JSONObject SendAndGetJson_reJsonObject(JSONObject json_send, String url) {
         try {
             HttpParams myParams = new BasicHttpParams();
             HttpConnectionParams.setConnectionTimeout(myParams, 20000);
@@ -241,7 +480,7 @@ public class NarisBaseValue {
 
     }
 
-    public JSONArray sendImageBase64( JSONObject jsonObject, String url_ ) {
+    public JSONArray sendImageBase64(JSONObject jsonObject, String url_) {
 
         try {
             String data = jsonObject.toString();
@@ -266,7 +505,7 @@ public class NarisBaseValue {
                     in, "UTF-8"));
             StringBuilder sb = new StringBuilder();
             String line = null;
-            while (( line = reader.readLine() ) != null) {
+            while ((line = reader.readLine()) != null) {
                 sb.append(line);
             }
             in.close();
@@ -282,7 +521,7 @@ public class NarisBaseValue {
         }
     }
 
-    public JSONObject SendAndGetJson_reJsonObject( JSONArray json_send, String url ) {
+    public JSONObject SendAndGetJson_reJsonObject(JSONArray json_send, String url) {
         try {
             HttpParams myParams = new BasicHttpParams();
             HttpConnectionParams.setConnectionTimeout(myParams, 20000);
@@ -313,7 +552,7 @@ public class NarisBaseValue {
     }
 
 
-    public JSONArray SendAndGetJson_reJsonArray( JSONObject json_send, String url ) {
+    public JSONArray SendAndGetJson_reJsonArray(JSONObject json_send, String url) {
         try {
             HttpParams myParams = new BasicHttpParams();
             HttpConnectionParams.setConnectionTimeout(myParams, 20000);
@@ -344,7 +583,7 @@ public class NarisBaseValue {
 
     }
 
-    public JSONArray SendAndGetJson_reJsonArray( JSONArray json_send, String url ) {
+    public JSONArray SendAndGetJson_reJsonArray(JSONArray json_send, String url) {
         try {
             HttpParams myParams = new BasicHttpParams();
             HttpConnectionParams.setConnectionTimeout(myParams, 100000);
@@ -372,7 +611,7 @@ public class NarisBaseValue {
 
     }
 
-    public JSONArray getJsonFromUrl_reJsonArray( String url ) {
+    public JSONArray getJsonFromUrl_reJsonArray(String url) {
         try {
             HttpParams myParams = new BasicHttpParams();
             HttpConnectionParams.setConnectionTimeout(myParams, 100000);
@@ -399,7 +638,7 @@ public class NarisBaseValue {
 //	}
 
 
-    public JSONArray getJsonFromUrl_reJsonArray2( String url ) {
+    public JSONArray getJsonFromUrl_reJsonArray2(String url) {
         try {
             HttpParams myParams = new BasicHttpParams();
             HttpConnectionParams.setConnectionTimeout(myParams, 100000);
@@ -419,7 +658,7 @@ public class NarisBaseValue {
 
     }
 
-    public JSONObject getJsonFromUrl_reJsonObject( String url ) {
+    public JSONObject getJsonFromUrl_reJsonObject(String url) {
         try {
             HttpParams myParams = new BasicHttpParams();
             HttpConnectionParams.setConnectionTimeout(myParams, 100000);
@@ -444,9 +683,9 @@ public class NarisBaseValue {
     }
 
 
-    public JSONArray getJsonFromCursor( Cursor c ) throws JSONException {
+    public JSONArray getJsonFromCursor(Cursor c) throws JSONException {
         JSONArray row = new JSONArray();
-        if ( c.getCount() > 0 ) {
+        if (c.getCount() > 0) {
             c.moveToFirst();
             while (!c.isAfterLast()) {
                 JSONObject col = new JSONObject();
@@ -463,7 +702,7 @@ public class NarisBaseValue {
     }
 
 
-    public boolean isPackageInstalled( String packagename, Context context ) {
+    public boolean isPackageInstalled(String packagename, Context context) {
         PackageManager pm = context.getPackageManager();
         try {
             pm.getPackageInfo(packagename, PackageManager.GET_ACTIVITIES);
@@ -473,12 +712,12 @@ public class NarisBaseValue {
         }
     }
 
-    public boolean INSERT_AS_SQL( String tablename, JSONArray json, String sqlfordelete ) {
+    public boolean INSERT_AS_SQL(String tablename, JSONArray json, String sqlfordelete) {
         try {
             Log.d("NARIS_KEY", "START");
-            if ( json.length() > 0 ) {
+            if (json.length() > 0) {
 
-                if ( json.getJSONObject(0).isNull("requeststatus") ) {
+                if (json.getJSONObject(0).isNull("requeststatus")) {
 
 
                     //if(sqlfordelete != null) databaseHelper.execDB(sqlfordelete);
@@ -499,7 +738,7 @@ public class NarisBaseValue {
                         SQL1 = SQL1.concat(key);
                         SQL2 = SQL2.concat("?");
 
-                        if ( keysToCopyIterator.hasNext() ) {
+                        if (keysToCopyIterator.hasNext()) {
                             SQL1 = SQL1.concat(",");
                             SQL2 = SQL2.concat(",");
                         }
@@ -557,12 +796,12 @@ public class NarisBaseValue {
 
     }
 
-    public boolean INSERT_AS_SQL_NO_REPLACE( String tablename, JSONArray json, String sqlfordelete ) {
+    public boolean INSERT_AS_SQL_NO_REPLACE(String tablename, JSONArray json, String sqlfordelete) {
         try {
             Log.d("NARIS_KEY", "START");
-            if ( json.length() > 0 ) {
+            if (json.length() > 0) {
 
-                if ( json.getJSONObject(0).isNull("requeststatus") ) {
+                if (json.getJSONObject(0).isNull("requeststatus")) {
 
 
                     //if(sqlfordelete != null) databaseHelper.execDB(sqlfordelete);
@@ -583,7 +822,7 @@ public class NarisBaseValue {
                         SQL1 = SQL1.concat(key);
                         SQL2 = SQL2.concat("?");
 
-                        if ( keysToCopyIterator.hasNext() ) {
+                        if (keysToCopyIterator.hasNext()) {
                             SQL1 = SQL1.concat(",");
                             SQL2 = SQL2.concat(",");
                         }
@@ -612,7 +851,7 @@ public class NarisBaseValue {
 
                                 col_index++;
                             }
-                             statement.execute();
+                            statement.execute();
 
 
                         } catch (JSONException e) {
@@ -641,11 +880,11 @@ public class NarisBaseValue {
 
     }
 
-    public boolean INSERT_AS_SQL_exceptcol( String tablename, JSONArray json, String sqlfordelete, ArrayList<String> col ) {
+    public boolean INSERT_AS_SQL_exceptcol(String tablename, JSONArray json, String sqlfordelete, ArrayList<String> col) {
         try {
-            if ( json.length() > 0 ) {
+            if (json.length() > 0) {
 
-                if ( json.getJSONObject(0).isNull("requeststatus") ) {
+                if (json.getJSONObject(0).isNull("requeststatus")) {
 
 
                     //if(sqlfordelete != null) databaseHelper.execDB(sqlfordelete);
@@ -660,11 +899,11 @@ public class NarisBaseValue {
 
                     while (keysToCopyIterator.hasNext()) {
                         String key = (String) keysToCopyIterator.next();
-                        if ( col.indexOf(key) == -1 ) {
+                        if (col.indexOf(key) == -1) {
                             SQL1 = SQL1.concat(key);
                             SQL2 = SQL2.concat("?");
 
-                            if ( keysToCopyIterator.hasNext() ) {
+                            if (keysToCopyIterator.hasNext()) {
                                 SQL1 = SQL1.concat(",");
                                 SQL2 = SQL2.concat(",");
                             }
@@ -687,7 +926,7 @@ public class NarisBaseValue {
                             int col_index = 1;
                             while (column.hasNext()) {
                                 String col_key = (String) column.next();
-                                if ( col.indexOf(col_key) == -1 ) {
+                                if (col.indexOf(col_key) == -1) {
                                     statement.bindString(col_index, c1.getString(col_key));
                                     col_index++;
                                 }
@@ -715,7 +954,7 @@ public class NarisBaseValue {
 
     }
 
-    public Bitmap getRefelection( Bitmap image ) {
+    public Bitmap getRefelection(Bitmap image) {
 
 
         // The gap we want between the reflection and the original image
@@ -738,7 +977,7 @@ public class NarisBaseValue {
                 height / 2, width, height / 2, matrix, false);
 
         // Create a new bitmap with same width but taller to fit reflection
-        Bitmap bitmapWithReflection = Bitmap.createBitmap(width, ( height + height / 2 ), Bitmap.Config.ARGB_8888);
+        Bitmap bitmapWithReflection = Bitmap.createBitmap(width, (height + height / 2), Bitmap.Config.ARGB_8888);
         // Create a new Canvas with the bitmap that's big enough for
         // the image plus gap plus reflection
         Canvas canvas = new Canvas(bitmapWithReflection);
@@ -759,11 +998,11 @@ public class NarisBaseValue {
         // Draw a rectangle using the paint with our linear gradient
         canvas.drawRect(0, height, width, bitmapWithReflection.getHeight()
                 + reflectionGap, paint);
-        if ( originalImage != null && originalImage.isRecycled() ) {
+        if (originalImage != null && originalImage.isRecycled()) {
             originalImage.recycle();
             originalImage = null;
         }
-        if ( reflectionImage != null && reflectionImage.isRecycled() ) {
+        if (reflectionImage != null && reflectionImage.isRecycled()) {
             reflectionImage.recycle();
             reflectionImage = null;
         }

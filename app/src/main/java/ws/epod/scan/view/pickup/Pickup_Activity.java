@@ -98,6 +98,7 @@ import ws.epod.Client.Structors.UploadImageInvoice;
 import ws.epod.Helper.ConnectionDetector;
 import ws.epod.Helper.DatabaseHelper;
 import ws.epod.Helper.NarisBaseValue;
+import ws.epod.ObjectClass.SQLiteModel.WaybillModel;
 import ws.epod.signature.pickup.Invoice_Activity;
 import ws.epod.Main_Activity;
 import ws.epod.ObjectClass.LanguageClass;
@@ -232,7 +233,7 @@ public class Pickup_Activity extends AppCompatActivity {
             for (Invoice waybill : UtilScan.getListWaybill()) {
                 Log.d("sdasd63sd", "onCreate: " + waybill.getWaybill_no());
 
-                scan(waybill.getWaybill_no());
+                scan(waybill.getWaybill_no(), "", "", "");
             }
 
         }
@@ -385,7 +386,7 @@ public class Pickup_Activity extends AppCompatActivity {
                     switch (keyCode) {
                         case KeyEvent.KEYCODE_DPAD_CENTER:
                         case KeyEvent.KEYCODE_ENTER:
-                            scan(edtFineWaybillPick.getText().toString());
+                            scan(edtFineWaybillPick.getText().toString(), "", "", "");
                             edtFineWaybillPick.setText("");
                             return true;
                         default:
@@ -421,7 +422,7 @@ public class Pickup_Activity extends AppCompatActivity {
                 btnEnterWaybillNo.startAnimation(animation);
 
                 String getScanText = edtFineWaybillPick.getText().toString();
-                scan(getScanText);
+                scan(getScanText, "", "", "");
                 edtFineWaybillPick.setText("");
 
 
@@ -494,17 +495,90 @@ public class Pickup_Activity extends AppCompatActivity {
         if (id == R.id.item_confirm) {
             saveCheckConFirm();
             return true;
-        }else if(id == R.id.item_sync){
+        } else if (id == R.id.item_sync) {
             hideAll();
             saveCheck();
             return true;
-        }else if(id == R.id.item_import_waybill){
-
+        } else if (id == R.id.item_import_waybill) {
+            import_waybill();
             return true;
         }
 
         return super.onOptionsItemSelected(item);
     }
+
+    private void import_waybill() {
+
+        final SharedPreferences user_data = getSharedPreferences("DATA_DETAIL_PICK", Context.MODE_PRIVATE);
+        final String delivery_no = user_data.getString("delivery_no", "");
+        final String plan_seq = user_data.getString("plan_seq", "");
+
+        String sql = "select id,waybill_no,date_scan,lat,lon,is_scanned,status_complete from header_waybill where status_complete = '0'";
+        Cursor cursor = databaseHelper.selectDB(sql);
+
+        cursor.moveToFirst();
+        if (cursor.getCount() > 0) {
+            do {
+
+                String waybill_no = cursor.getString(cursor.getColumnIndex("waybill_no"));
+                String date_scan = cursor.getString(cursor.getColumnIndex("date_scan"));
+                double lat = cursor.getDouble(cursor.getColumnIndex("lat"));
+                double lon = cursor.getDouble(cursor.getColumnIndex("lon"));
+
+                String lat_ = String.valueOf(lat);
+                String lon_ = String.valueOf(lon);
+
+                scan(waybill_no, date_scan, lat_, lon_);
+
+
+                /*String select_plan = "select \n" +
+                        "(select DISTINCT pl2.consignment_no from Plan pl2 where pl2.activity_type = pl.activity_type and pl2.delivery_no = pl.delivery_no and pl2.plan_seq = pl.plan_seq and pl2.consignment_no = pl.consignment_no and pl2.trash = pl.trash) as consignment \n" +
+                        "from Plan pl\n" +
+                        "inner join consignment cm on cm.consignment_no = pl.consignment_no \n" +
+                        "where pl.delivery_no = '" + delivery_no + "' and  pl.plan_seq = '" + plan_seq + "' and pl.activity_type = 'LOAD' and pl.trash = '0' " +
+                        "GROUP BY pl.delivery_no, pl.consignment_no";
+                Cursor cursor_plan = databaseHelper.selectDB(select_plan);
+
+                cursor_plan.moveToFirst();
+                if (cursor_plan.getCount() > 0) {
+                    do {
+
+                        String consignment = cursor_plan.getString(cursor_plan.getColumnIndex("consignment"));
+                        String select_plan2 = "select pl.waybill_no  \n" +
+                                ", pl.is_scaned  \n" +
+                                ", ROW_NUMBER() OVER(ORDER BY pl.box_no) as row_number   \n" +
+                                "  from Plan pl where pl.consignment_no = '" + consignment + "' and pl.activity_type = 'LOAD' and pl.delivery_no = '" + delivery_no + "' and pl.plan_seq = '" + plan_seq + "' and pl.trash = '0'   " +
+                                "order by row_number";
+                        Cursor cursor_plan2 = databaseHelper.selectDB(select_plan2);
+
+                        cursor_plan2.moveToFirst();
+                        if (cursor_plan2.getCount() > 0) {
+                            do {
+                                String waybill_no_ = cursor_plan2.getString(cursor_plan2.getColumnIndex("waybill_no"));
+                                String is_scaned = cursor_plan2.getString(cursor_plan2.getColumnIndex("is_scaned"));
+                                String row_number = cursor_plan2.getString(cursor_plan2.getColumnIndex("row_number"));
+
+                                if (waybill_no.equals(waybill_no_)) {
+
+                                    ContentValues cv = new ContentValues();
+                                    cv.put("status_complete", "1");
+                                    databaseHelper.db().update("header_waybill", cv, "waybill_no = '" + waybill_no_ + "'", null);
+
+                                }
+                            } while (cursor_plan2.moveToNext());
+                        }
+
+
+                    } while (cursor_plan.moveToNext());
+                }
+*/
+
+            } while (cursor.moveToNext());
+        }
+
+
+    }
+
 
     private void startScan() {
         qrScan.setPrompt("Scan a barcode or qr code");
@@ -702,6 +776,7 @@ public class Pickup_Activity extends AppCompatActivity {
                                         }
 
                                     } catch (Exception e) {
+                                        e.printStackTrace();
                                         IsSuccess = 0;
                                     }
 
@@ -718,7 +793,9 @@ public class Pickup_Activity extends AppCompatActivity {
 
                                     if (IsSuccess == 1) {
                                         Toast.makeText(Pickup_Activity.this, "Saved.", Toast.LENGTH_SHORT).show();
+                                        updateWaybill();
                                         getSQLite();
+
 
                                     } else {
                                         if (positionGroup != -1) {
@@ -765,6 +842,75 @@ public class Pickup_Activity extends AppCompatActivity {
         }
     }
 
+    private void updateWaybill() {
+
+        final SharedPreferences user_data = getSharedPreferences("DATA_DETAIL_PICK", Context.MODE_PRIVATE);
+        final String delivery_no = user_data.getString("delivery_no", "");
+        final String plan_seq = user_data.getString("plan_seq", "");
+
+        String sql = "select id,waybill_no,date_scan,lat,lon,is_scanned,status_complete from header_waybill where status_complete = '0'";
+        Cursor cursor = databaseHelper.selectDB(sql);
+
+        cursor.moveToFirst();
+        if (cursor.getCount() > 0) {
+            do {
+
+                String waybill_no = cursor.getString(cursor.getColumnIndex("waybill_no"));
+                String date_scan = cursor.getString(cursor.getColumnIndex("date_scan"));
+                double lat = cursor.getDouble(cursor.getColumnIndex("lat"));
+                double lon = cursor.getDouble(cursor.getColumnIndex("lon"));
+
+                String lat_ = String.valueOf(lat);
+                String lon_ = String.valueOf(lon);
+
+                scan(waybill_no, date_scan, lat_, lon_);
+
+                String select_plan = "select \n" +
+                        "(select DISTINCT pl2.consignment_no from Plan pl2 where pl2.activity_type = pl.activity_type and pl2.delivery_no = pl.delivery_no and pl2.plan_seq = pl.plan_seq and pl2.consignment_no = pl.consignment_no and pl2.trash = pl.trash) as consignment \n" +
+                        "from Plan pl\n" +
+                        "inner join consignment cm on cm.consignment_no = pl.consignment_no \n" +
+                        "where pl.delivery_no = '" + delivery_no + "' and  pl.plan_seq = '" + plan_seq + "' and pl.activity_type = 'LOAD' and pl.trash = '0' " +
+                        "GROUP BY pl.delivery_no, pl.consignment_no";
+                Cursor cursor_plan = databaseHelper.selectDB(select_plan);
+
+                cursor_plan.moveToFirst();
+                if (cursor_plan.getCount() > 0) {
+                    do {
+
+                        String consignment = cursor_plan.getString(cursor_plan.getColumnIndex("consignment"));
+                        String select_plan2 = "select pl.waybill_no  \n" +
+                                ", pl.is_scaned  \n" +
+                                ", ROW_NUMBER() OVER(ORDER BY pl.box_no) as row_number   \n" +
+                                "  from Plan pl where pl.consignment_no = '" + consignment + "' and pl.activity_type = 'LOAD' and pl.delivery_no = '" + delivery_no + "' and pl.plan_seq = '" + plan_seq + "' and pl.trash = '0'   " +
+                                "order by row_number";
+                        Cursor cursor_plan2 = databaseHelper.selectDB(select_plan2);
+
+                        cursor_plan2.moveToFirst();
+                        if (cursor_plan2.getCount() > 0) {
+                            do {
+                                String waybill_no_ = cursor_plan2.getString(cursor_plan2.getColumnIndex("waybill_no"));
+                                String is_scaned = cursor_plan2.getString(cursor_plan2.getColumnIndex("is_scaned"));
+                                String row_number = cursor_plan2.getString(cursor_plan2.getColumnIndex("row_number"));
+
+                                if (waybill_no.equals(waybill_no_)) {
+
+                                    ContentValues cv = new ContentValues();
+                                    cv.put("status_complete", "1");
+                                    databaseHelper.db().update("header_waybill", cv, "waybill_no = '" + waybill_no_ + "'", null);
+
+                                }
+                            } while (cursor_plan2.moveToNext());
+                        }
+
+
+                    } while (cursor_plan.moveToNext());
+                }
+
+
+            } while (cursor.moveToNext());
+        }
+    }
+
     private boolean isCheckIntent(int statusComment, int isComment, int statusCheck) {
 
         if (statusComment != 0 || isComment != 0 || statusCheck != 0) {
@@ -786,7 +932,7 @@ public class Pickup_Activity extends AppCompatActivity {
         return true;
     }
 
-    private void scan(String value) {
+    private void scan(String value, String date, String lat, String lon) {
         boolean scannotFind = false;
 
         int num = 0;
@@ -840,15 +986,28 @@ public class Pickup_Activity extends AppCompatActivity {
                                 }
                                 //  }
 
-                                expandedList.setIs_scaned("1");
-                                expandedList.setTime_begin(getdate());
-                                expandedList.setActual_lat(getlat());
-                                expandedList.setActual_lon(getlon());
-                                expandedList.setIs_save("2");
-                                expandedList.setComment("");
-                                expandedList.setPicture1("");
-                                expandedList.setPicture2("");
-                                expandedList.setPicture3("");
+                                if (!date.equals("")) {
+                                    expandedList.setIs_scaned("1");
+                                    expandedList.setTime_begin(date);
+                                    expandedList.setActual_lat(lat);
+                                    expandedList.setActual_lon(lon);
+                                    expandedList.setIs_save("2");
+                                    expandedList.setComment("");
+                                    expandedList.setPicture1("");
+                                    expandedList.setPicture2("");
+                                    expandedList.setPicture3("");
+                                } else {
+                                    expandedList.setIs_scaned("1");
+                                    expandedList.setTime_begin(getdate());
+                                    expandedList.setActual_lat(getlat());
+                                    expandedList.setActual_lon(getlon());
+                                    expandedList.setIs_save("2");
+                                    expandedList.setComment("");
+                                    expandedList.setPicture1("");
+                                    expandedList.setPicture2("");
+                                    expandedList.setPicture3("");
+                                }
+
 
                                 Log.d("Asjkljkksdf", "(1)scan: " + getdate() + " lat:" + getlat() + " lon:" + getlon() + " scan:" + expandedList.getIs_scaned());
 
@@ -1243,7 +1402,6 @@ public class Pickup_Activity extends AppCompatActivity {
             hideAll();
             saveCheck();
 
-
         });
 
     }
@@ -1592,7 +1750,7 @@ public class Pickup_Activity extends AppCompatActivity {
                 String getScanText = result.getContents();
                 getScanText = getScanText.trim();
 
-                scan(getScanText);
+                scan(getScanText, "", "", "");
                 if (issueScan.equals("This Waybill No doesn't exist.")) {
                     showDialog();
                     // return;
@@ -3723,7 +3881,111 @@ public class Pickup_Activity extends AppCompatActivity {
 //                Log.d("PlanWorkLOG", url);
                 // JSONArray GETJSON = narisv.getJsonFromUrl_reJsonArray(url);
 
-                Call<ResponseBody> call = apiInterface.downloadWork(Var.UserLogin.driver_vehicle_id, Var.UserLogin.driver_id, Var.UserLogin.driver_serial, getDate, max_modified_date);
+
+                Call<ResponseBody> call = apiInterface.downloadWork(Var.UserLogin.driver_vehicle_id, Var.UserLogin.driver_id, Var.UserLogin.driver_serial, getdate(), max_modified_date);
+                //Call<ResponseBody> call = apiInterface.downloadWork(Var.UserLogin.driver_vehicle_id, Var.UserLogin.driver_id, "4AB5F216", getDate, max_modified_date);
+                Response<ResponseBody> response = call.execute();
+                if (response.code() == 200) {
+                    String responseRecieved = response.body().string();
+                    if (responseRecieved != null) {
+                        if (!responseRecieved.equals("")) {
+                            JSONArray jsonArray = new JSONArray(responseRecieved);
+
+                            NarisBaseValue.insertPlan(jsonArray);
+
+                            Call<ResponseBody> callCons = apiInterface.downloadConsignment(Var.UserLogin.driver_vehicle_id, "");
+                            Response<ResponseBody> responseCons = callCons.execute();
+                            if (responseCons.code() == 200) {
+                                String responseRecievedCons = responseCons.body().string();
+                                if (!responseRecieved.equals("")) {
+                                    JSONArray jsonArrayCons = new JSONArray(responseRecievedCons);
+                                    NarisBaseValue.insertConsignment(jsonArrayCons);
+
+                                    Call<ResponseBody> reaSon = apiInterface.reason();
+                                    Response<ResponseBody> responseReason = reaSon.execute();
+                                    if (responseReason.code() == 200) {
+                                        String recievedReason = responseReason.body().string();
+                                        if (recievedReason != null) {
+                                            if (!responseRecieved.equals("")) {
+                                                JSONArray jsonArrayReason = new JSONArray(recievedReason);
+
+                                                NarisBaseValue.insertReason(jsonArrayReason);
+
+                                                Call<ResponseBody> inVoice = apiInterface.invoice(Var.UserLogin.driver_vehicle_id);
+                                                Response<ResponseBody> responseInvoice = inVoice.execute();
+                                                if (responseInvoice.code() == 200) {
+                                                    String recievedInvoice = responseInvoice.body().string();
+
+                                                    //  Log.d("S5s52a9", "doInBackground: "+recievedInvoice);
+                                                    if (recievedInvoice != null) {
+                                                        if (!recievedInvoice.equals("")) {
+
+                                                            JSONArray jsonArrayInvoice = new JSONArray(recievedInvoice);
+
+                                                            for (int o = 0; o < jsonArrayInvoice.length(); o++) {
+
+
+                                                                String delivery_no = jsonArrayInvoice.getJSONObject(o).getString("delivery_no");
+                                                                String order_no = jsonArrayInvoice.getJSONObject(o).getString("order_no");
+                                                                String consignment_no = jsonArrayInvoice.getJSONObject(o).getString("consignment_no");
+                                                                String invoice_no = jsonArrayInvoice.getJSONObject(o).getString("invoice_no");
+
+                                                                String sql_expand = "select count(delivery_no) as count_delivery\n" +
+                                                                        " from pic_sign\n" +
+                                                                        " where delivery_no = '" + delivery_no + "' and order_no = '" + order_no + "' and consignment_no = '" + consignment_no + "' and invoice_no = '" + invoice_no + "'";
+                                                                Cursor cursor = databaseHelper.selectDB(sql_expand);
+
+                                                                cursor.moveToFirst();
+                                                                if (cursor.getCount() > 0) {
+                                                                    String count_delivery = cursor.getString(cursor.getColumnIndex("count_delivery"));
+                                                                    if (count_delivery.equals("0")) {
+
+                                                                        String sql = "INSERT OR REPLACE INTO pic_sign (delivery_no, consignment_no, order_no, invoice_no, pic_sign_load, pic_sign_unload" +
+                                                                                ", comment_load, comment_unload, date_sign_load, date_sign_unload, status_load, status_unload, status_upload_invoice" +
+                                                                                ", status_delete, create_date) VALUES('" + jsonArrayInvoice.getJSONObject(o).getString("delivery_no") + "'" +
+                                                                                ",'" + jsonArrayInvoice.getJSONObject(o).getString("consignment_no") + "'" +
+                                                                                ", '" + jsonArrayInvoice.getJSONObject(o).getString("order_no") + "', '" + jsonArrayInvoice.getJSONObject(o).getString("invoice_no") + "'" +
+                                                                                ", '" + jsonArrayInvoice.getJSONObject(o).getString("pic_sign_load") + "', '" + jsonArrayInvoice.getJSONObject(o).getString("pic_sign_unload") + "'" +
+                                                                                ", '" + jsonArrayInvoice.getJSONObject(o).getString("comment_load") + "', '" + jsonArrayInvoice.getJSONObject(o).getString("comment_unload") + "'" +
+                                                                                ", '" + jsonArrayInvoice.getJSONObject(o).getString("date_sign_load") + "', '" + jsonArrayInvoice.getJSONObject(o).getString("date_sign_unload") + "'" +
+                                                                                ", '" + jsonArrayInvoice.getJSONObject(o).getString("status_load") + "', '" + jsonArrayInvoice.getJSONObject(o).getString("status_unload") + "','1','0','" + getdate() + "')";
+                                                                        databaseHelper.db().execSQL(sql);
+
+                                                                    } else {
+
+                                                                        ContentValues cv = new ContentValues();
+                                                                        cv.put("pic_sign_load", jsonArrayInvoice.getJSONObject(o).getString("pic_sign_load"));
+                                                                        cv.put("pic_sign_unload", jsonArrayInvoice.getJSONObject(o).getString("pic_sign_unload"));
+                                                                        cv.put("date_sign_load", jsonArrayInvoice.getJSONObject(o).getString("date_sign_load"));
+                                                                        cv.put("date_sign_unload", jsonArrayInvoice.getJSONObject(o).getString("date_sign_unload"));
+                                                                        cv.put("comment_load", jsonArrayInvoice.getJSONObject(o).getString("comment_load"));
+                                                                        cv.put("comment_unload", jsonArrayInvoice.getJSONObject(o).getString("comment_unload"));
+                                                                        cv.put("status_load", jsonArrayInvoice.getJSONObject(o).getString("status_load"));
+                                                                        cv.put("status_unload", jsonArrayInvoice.getJSONObject(o).getString("status_unload"));
+                                                                        cv.put("status_upload_invoice", "1");
+                                                                        cv.put("status_delete", "0");
+                                                                        databaseHelper.db().update("pic_sign", cv, "delivery_no = '" + delivery_no + "' and order_no = '" + order_no + "' " +
+                                                                                "and consignment_no = '" + consignment_no + "' and invoice_no = '" + invoice_no + "'", null);
+
+                                                                    }
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                }
+
+                                            }
+                                        }
+                                    }
+
+
+                                }
+                            }
+                        }
+                    }
+                }
+
+/*                Call<ResponseBody> call = apiInterface.downloadWork(Var.UserLogin.driver_vehicle_id, Var.UserLogin.driver_id, Var.UserLogin.driver_serial, getDate, max_modified_date);
                 Response<ResponseBody> response = call.execute();
                 if (response.code() == 200) {
                     String responseRecieved = response.body().string();
@@ -3848,10 +4110,10 @@ public class Pickup_Activity extends AppCompatActivity {
 
                         }
                     }
-                }
+                }*/
 
-            } catch (
-                    Exception e) {
+            } catch (Exception e) {
+                IsSuccess = 2;
                 e.printStackTrace();
             }
 
