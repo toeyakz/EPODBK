@@ -1294,10 +1294,24 @@ public class Login_Activity extends AppCompatActivity {
         SharedPreferences Language_Locale = this.getSharedPreferences("PREFERENCE_LANGUAGE", Context.MODE_PRIVATE);
         switch (item.getItemId()) {
             case R.id.export_data_menu:
-                Toast.makeText(this, "ส่งออกฐานข้อมูล", Toast.LENGTH_SHORT).show();
+               // Toast.makeText(this, "ส่งออกฐานข้อมูล", Toast.LENGTH_SHORT).show();
 
-                exportDB();
+                AlertDialog alert = new AlertDialog.Builder(Login_Activity.this).create();
+                alert.setTitle("Export Database.");
+                alert.setMessage("Confirm database export?");
+                alert.setButton(getString(R.string.confirm), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        exportDB();
+                    }
+                });
+                alert.setButton2(getString(R.string.cancel), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
 
+                    }
+                });
+                alert.show();
                 return true;
             case R.id.import_data_menu:
                 Toast.makeText(this, "นำเข้าฐานข้อมูล", Toast.LENGTH_SHORT).show();
