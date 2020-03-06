@@ -434,7 +434,9 @@ public class PlanWork_Activity extends AppCompatActivity {
                 edtToDate.setText(sdf.format(Calendar.getInstance().getTime()));
                 edtFromDate.setSelection(edtFromDate.getText().length());
                 if (!edtFromDate.getText().toString().trim().equals("")) {
+
                     textView18.setVisibility(View.GONE);
+
                 }
             }, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH));
             datePickerDialog.show();
