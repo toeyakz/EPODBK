@@ -119,7 +119,7 @@ public class Invoice_Activity extends AppCompatActivity {
         layoutJobToday = findViewById(R.id.layoutJobToday);
         fabJobHome = findViewById(R.id.fabJobHome);
         fabJobToday = findViewById(R.id.fabJobToday);
-        selectAllBtn = findViewById(R.id.selectAllBtn);
+        selectAllBtn = findViewById(R.id.btnSelect);
 
 
         showLayout = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.show_layout);

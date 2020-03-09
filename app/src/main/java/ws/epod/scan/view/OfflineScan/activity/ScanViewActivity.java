@@ -81,7 +81,6 @@ public class ScanViewActivity extends AppCompatActivity implements DecoratedBarc
     }
 
 
-
     private void showDialog() {
         dialogBuilder = new AlertDialog.Builder(this);
         LayoutInflater inflater = this.getLayoutInflater();
@@ -136,11 +135,10 @@ public class ScanViewActivity extends AppCompatActivity implements DecoratedBarc
                 tvCodeScanned.setText(result.getText());
 
 
-
- //               beepManager.playBeepSoundAndVibrate();
+                //               beepManager.playBeepSoundAndVibrate();
 
                 //set beep
-                Uri soundUri = Uri.parse(ContentResolver.SCHEME_ANDROID_RESOURCE + "://"+ getApplicationContext().getPackageName() + "/" + R.raw.beep);
+                Uri soundUri = Uri.parse(ContentResolver.SCHEME_ANDROID_RESOURCE + "://" + getApplicationContext().getPackageName() + "/" + R.raw.beep);
                 Ringtone r = RingtoneManager.getRingtone(getApplicationContext(), soundUri);
                 r.play();
 
@@ -248,23 +246,15 @@ public class ScanViewActivity extends AppCompatActivity implements DecoratedBarc
 
     private void getSQLite() {
 
-        String sql = "select * from header_waybill";
+        String sql = "select * from header_waybill where status_complete = '0'";
         Cursor cursor = databaseHelper.selectDB(sql);
 
         cursor.moveToFirst();
         if (cursor.getCount() > 0) {
             do {
-
                 String waybill_no = cursor.getString(cursor.getColumnIndex("waybill_no"));
-                String status_complete = cursor.getString(cursor.getColumnIndex("status_complete"));
 
-                Log.d("a2f8a9", "getSQLite: " + waybill_no);
-
-                if(status_complete.equals("0")){
-                    OfflineScanUtil.addWaybillHeader(new WaybillHeader(waybill_no));
-                }
-
-
+                OfflineScanUtil.addWaybillHeader(new WaybillHeader(waybill_no));
 
             } while (cursor.moveToNext());
         }

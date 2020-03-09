@@ -1,8 +1,10 @@
 package ws.epod.scan.view.OfflineScan.fragment;
 
+import android.app.AlertDialog;
 import android.database.Cursor;
 import android.os.Bundle;
 
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -11,20 +13,28 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.widget.ImageView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
+import es.dmoral.toasty.Toasty;
 import ws.epod.Helper.DatabaseHelper;
+import ws.epod.ObjectClass.SQLiteModel.Sign_Model;
 import ws.epod.ObjectClass.SQLiteModel.WaybillModel;
 import ws.epod.R;
+import ws.epod.scan.Util.OfflineScanUtil;
 import ws.epod.scan.view.OfflineScan.adapter.WaybillScannedAdapter;
 import ws.epod.scan.view.OfflineScan.adapter.WaybillUnScannedAdapter;
 
 public class ScannedFragment extends Fragment {
 
     private DatabaseHelper databaseHelper;
-
     private RecyclerView rvScan;
+    private ConstraintLayout btnSelect, btnUnSelect;
+    private ImageView btnDeleteWaybill;
 
     private WaybillScannedAdapter adapter;
 
@@ -50,11 +60,76 @@ public class ScannedFragment extends Fragment {
         databaseHelper = new DatabaseHelper(getContext());
 
         rvScan = view.findViewById(R.id.rvScan);
+        btnSelect = view.findViewById(R.id.btnSelect);
+        btnUnSelect = view.findViewById(R.id.btnUnSelect);
+        btnDeleteWaybill = view.findViewById(R.id.btnDeleteWaybill);
 
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext());
         rvScan.setLayoutManager(layoutManager);
 
         readData();
+        onclick();
+
+    }
+
+    private void onclick() {
+
+        btnDeleteWaybill.setOnClickListener(v -> {
+            Animation animation = AnimationUtils.loadAnimation(getContext(), R.anim.alpha);
+            btnDeleteWaybill.startAnimation(animation);
+            dialogDelete();
+        });
+
+        btnSelect.setOnClickListener(v -> {
+            Animation animation = AnimationUtils.loadAnimation(getContext(), R.anim.alpha);
+            btnSelect.startAnimation(animation);
+            boolean isSelectAll = true;
+
+            for (int i = 0; i < adapter.getItemCount(); i++) {
+                WaybillModel model = adapter.models.get(i);
+                if (model.getInto().equals("0")) {
+                    isSelectAll = true;
+                    break;
+                } else {
+                    isSelectAll = false;
+                }
+
+            }
+
+            if (isSelectAll) {
+
+                for (int i = 0; i < adapter.getItemCount(); i++) {
+                    WaybillModel model = adapter.models.get(i);
+                    model.setInto("1");
+                }
+            } else {
+                for (int i = 0; i < adapter.getItemCount(); i++) {
+                    WaybillModel model = adapter.models.get(i);
+                    model.setInto("0");
+                }
+            }
+            rvScan.setAdapter(adapter);
+
+
+        });
+
+    }
+
+    private void dialogDelete() {
+
+        AlertDialog alert = new AlertDialog.Builder(getContext()).create();
+        alert.setTitle("ยืนยันการลบ Waybill?");
+        alert.setCancelable(false);
+        alert.setButton(getString(R.string.confirm), (dialog, which) -> {
+            for (int i = 0; i < OfflineScanUtil.getSec().size(); i++) {
+                Toasty.success(getContext(), OfflineScanUtil.getSec().size() + " items deleted!", Toast.LENGTH_SHORT, true).show();
+                databaseHelper.db().delete("header_waybill", "id=?", new String[]{OfflineScanUtil.getSec().get(i).getId()});
+
+            }
+            readData();
+        });
+        alert.setButton2(getString(R.string.cancel), (dialog, which) -> alert.dismiss());
+        alert.show();
     }
 
     private void readData() {

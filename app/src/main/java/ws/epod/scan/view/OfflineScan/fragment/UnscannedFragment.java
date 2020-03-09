@@ -1,20 +1,26 @@
 package ws.epod.scan.view.OfflineScan.fragment;
 
 import android.app.AlertDialog;
+import android.app.FragmentManager;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -25,6 +31,8 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Locale;
 
+import es.dmoral.toasty.Toasty;
+import ws.epod.scan.view.OfflineScan.activity.ScanOfflineActivity;
 import ws.epod.scan.view.OfflineScan.adapter.WaybillUnScannedAdapter;
 import ws.epod.Helper.ConnectionDetector;
 import ws.epod.Helper.DatabaseHelper;
@@ -48,6 +56,7 @@ public class UnscannedFragment extends Fragment {
     private NarisBaseValue narisv;
     private LocationTrack locationTrack;
     BottomNavigationView nav_bar;
+    private ConstraintLayout btnSelect;
 
 
     private RecyclerView rvScan;
@@ -65,6 +74,8 @@ public class UnscannedFragment extends Fragment {
     public UnscannedFragment() {
         // Required empty public constructor
     }
+
+
 
     @Override
     public void onResume() {
@@ -89,6 +100,7 @@ public class UnscannedFragment extends Fragment {
 
         initial(view);
 
+
         return view;
     }
 
@@ -103,6 +115,9 @@ public class UnscannedFragment extends Fragment {
 
         fabScan = view.findViewById(R.id.fabScan);
         rvScan = view.findViewById(R.id.rvScan);
+        btnDeleteWaybill = view.findViewById(R.id.btnDeleteWaybill);
+        imgBack_scan = view.findViewById(R.id.imgBack_scan);
+        btnSelect = view.findViewById(R.id.btnSelect);
 
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext());
         rvScan.setLayoutManager(layoutManager);
@@ -112,7 +127,41 @@ public class UnscannedFragment extends Fragment {
 
     }
 
+
+
     private void onClick(View view) {
+
+        btnSelect.setOnClickListener(v -> {
+            Animation animation = AnimationUtils.loadAnimation(getContext(), R.anim.alpha);
+            btnSelect.startAnimation(animation);
+            boolean isSelectAll = true;
+
+            for (int i = 0; i < adapter.getItemCount(); i++) {
+                WaybillModel model = adapter.models.get(i);
+                if (model.getInto().equals("0")) {
+                    isSelectAll = true;
+                    break;
+                } else {
+                    isSelectAll = false;
+                }
+
+            }
+
+            if (isSelectAll) {
+
+                for (int i = 0; i < adapter.getItemCount(); i++) {
+                    WaybillModel model = adapter.models.get(i);
+                    model.setInto("1");
+                }
+            } else {
+                for (int i = 0; i < adapter.getItemCount(); i++) {
+                    WaybillModel model = adapter.models.get(i);
+                    model.setInto("0");
+                }
+            }
+            rvScan.setAdapter(adapter);
+
+        });
 
         fabScan.setOnClickListener(v -> {
 
@@ -121,9 +170,19 @@ public class UnscannedFragment extends Fragment {
             //startScan();
         });
 
-        //  btnDeleteWaybill.setOnClickListener(v -> dialogDelete());
+          btnDeleteWaybill.setOnClickListener(v -> {
+              Animation animation = AnimationUtils.loadAnimation(getContext(), R.anim.alpha);
+              btnDeleteWaybill.startAnimation(animation);
+              dialogDelete();
+          });
 
-        // imgBack_scan.setOnClickListener(v -> finish());
+         imgBack_scan.setOnClickListener(v ->{
+             Animation animation = AnimationUtils.loadAnimation(getContext(), R.anim.alpha);
+             imgBack_scan.startAnimation(animation);
+             if(getActivity() != null) {
+                 getActivity().finish();
+             }
+         });
     }
 
     private void dialogDelete() {
@@ -133,6 +192,7 @@ public class UnscannedFragment extends Fragment {
         alert.setCancelable(false);
         alert.setButton(getString(R.string.confirm), (dialog, which) -> {
             for (int i = 0; i < OfflineScanUtil.getSec().size(); i++) {
+                Toasty.success(getContext(), OfflineScanUtil.getSec().size() + " items deleted!", Toast.LENGTH_SHORT, true).show();
                 databaseHelper.db().delete("header_waybill", "id=?", new String[]{OfflineScanUtil.getSec().get(i).getId()});
             }
             readData();

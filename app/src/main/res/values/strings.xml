@@ -103,6 +103,8 @@
     <string name="job_operation">Job Operation</string>
     <string name="station">Station</string>
     <string name="sync">Sync</string>
+    <string name="unselect_all">Unselect All</string>
+    <string name="not_selected">Not Selected!</string>
 
 
 </resources>

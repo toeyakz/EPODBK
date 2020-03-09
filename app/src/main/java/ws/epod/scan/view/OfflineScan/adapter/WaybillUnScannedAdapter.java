@@ -12,18 +12,17 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
-
 import ws.epod.ObjectClass.SQLiteModel.WaybillModel;
 import ws.epod.R;
 import ws.epod.scan.Util.OfflineScanUtil;
 
 public class WaybillUnScannedAdapter extends RecyclerView.Adapter<WaybillUnScannedAdapter.ViewHolder> {
 
-    ArrayList<WaybillModel> models;
+    public static ArrayList<WaybillModel> models;
     Context context;
 
     public WaybillUnScannedAdapter(ArrayList<WaybillModel> models, Context context) {
-        this.models = models;
+        WaybillUnScannedAdapter.models = models;
         this.context = context;
     }
 
@@ -39,8 +38,20 @@ public class WaybillUnScannedAdapter extends RecyclerView.Adapter<WaybillUnScann
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int i) {
 
+        if(models.get(i).getInto().equals("1")){
+            holder.checkBox_scan.setChecked(true);
+        }else{
+            holder.checkBox_scan.setChecked(false);
+        }
+
         holder.tvWaybillOffline.setText("Waybill No:" + models.get(i).getWaybill_no());
         holder.tvDateScanOffline.setText("Date Scan:" + models.get(i).getDate_Scan());
+
+        if(holder.checkBox_scan.isChecked()){
+            OfflineScanUtil.addListToDelete(models.get(i));
+        }else{
+            OfflineScanUtil.listDelete.remove(models.get(i));
+        }
 
         holder.checkBox_scan.setOnClickListener(v -> {
             if(holder.checkBox_scan.isChecked()){
@@ -74,7 +85,6 @@ public class WaybillUnScannedAdapter extends RecyclerView.Adapter<WaybillUnScann
             tvWaybillOffline = itemView.findViewById(R.id.tvWaybillOffline);
             tvDateScanOffline = itemView.findViewById(R.id.tvDateScanOffline);
             checkBox_scan = itemView.findViewById(R.id.checkBox_scan);
-
 
         }
     }

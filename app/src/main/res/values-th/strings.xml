@@ -98,4 +98,6 @@
     <string name="job_operation">การดำเนินงาน</string>
     <string name="station">สถานี</string>
     <string name="sync">ซิงค์</string>
+    <string name="unselect_all">ไม่เลือกทั้งหมด</string>
+    <string name="not_selected">ไม่ได้เลือก!</string>
 </resources>

@@ -9,6 +9,7 @@ public class WaybillModel {
     private double lon;
     private String is_scanned = "";
     private String status_complete = "";
+    private String into = "0";
 
 
     public WaybillModel(String id, String waybill_no, String date_Scan, double lat, double lon, String is_scanned, String status_complete) {
@@ -19,6 +20,14 @@ public class WaybillModel {
         this.lon = lon;
         this.is_scanned = is_scanned;
         this.status_complete = status_complete;
+    }
+
+    public String getInto() {
+        return into;
+    }
+
+    public void setInto(String into) {
+        this.into = into;
     }
 
     public String getId() {

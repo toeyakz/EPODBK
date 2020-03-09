@@ -55,7 +55,7 @@ import androidx.core.content.FileProvider;
 import androidx.core.graphics.drawable.DrawableCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
+import ws.epod.BuildConfig;
 import com.addisonelliott.segmentedbutton.SegmentedButtonGroup;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -90,7 +90,6 @@ import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Response;
 import ws.epod.Adapter.DialogConsAdapter;
-import ws.epod.BuildConfig;
 import ws.epod.Client.APIClient;
 import ws.epod.Client.APIInterface;
 import ws.epod.Client.Structors.UploadImage;
@@ -189,6 +188,7 @@ public class Pickup_Activity extends AppCompatActivity {
     boolean isSave = true;
     boolean isSync = false;
 
+    ArrayList<String> imWaibill = new ArrayList<>();
 
     LocationTrack locationTrack;
 
@@ -500,6 +500,7 @@ public class Pickup_Activity extends AppCompatActivity {
             saveCheck();
             return true;
         } else if (id == R.id.item_import_waybill) {
+            imWaibill = new ArrayList<>();
             import_waybill();
             return true;
         }
@@ -508,6 +509,7 @@ public class Pickup_Activity extends AppCompatActivity {
     }
 
     private void import_waybill() {
+
 
         final SharedPreferences user_data = getSharedPreferences("DATA_DETAIL_PICK", Context.MODE_PRIVATE);
         final String delivery_no = user_data.getString("delivery_no", "");
@@ -575,6 +577,8 @@ public class Pickup_Activity extends AppCompatActivity {
 
             } while (cursor.moveToNext());
         }
+
+        Toasty.success(getApplicationContext(), "Checked " + imWaibill.size()+ " Waybill!", Toast.LENGTH_SHORT, true).show();
 
 
     }
@@ -793,8 +797,8 @@ public class Pickup_Activity extends AppCompatActivity {
 
                                     if (IsSuccess == 1) {
                                         Toast.makeText(Pickup_Activity.this, "Saved.", Toast.LENGTH_SHORT).show();
-                                        updateWaybill();
                                         getSQLite();
+                                        updateWaybill();
 
 
                                     } else {
@@ -863,7 +867,7 @@ public class Pickup_Activity extends AppCompatActivity {
                 String lat_ = String.valueOf(lat);
                 String lon_ = String.valueOf(lon);
 
-                scan(waybill_no, date_scan, lat_, lon_);
+                //scan(waybill_no, date_scan, lat_, lon_);
 
                 String select_plan = "select \n" +
                         "(select DISTINCT pl2.consignment_no from Plan pl2 where pl2.activity_type = pl.activity_type and pl2.delivery_no = pl.delivery_no and pl2.plan_seq = pl.plan_seq and pl2.consignment_no = pl.consignment_no and pl2.trash = pl.trash) as consignment \n" +
@@ -936,8 +940,7 @@ public class Pickup_Activity extends AppCompatActivity {
         boolean scannotFind = false;
 
         int num = 0;
-
-
+        Log.d("s6s3d5", "scan: 1");
         if (INPUT_WAY.equals("CHECK")) {
 
             for (int i = 0; i < expandableListAdapter.getGroupCount(); i++) {
@@ -971,22 +974,14 @@ public class Pickup_Activity extends AppCompatActivity {
                                         num = num - 1;
                                     }
 
-//                                    if(expandedList.getIs_scaned().equals("0")){
-//                                        if(num > 0){
-//                                            num = num -1;
-//                                        }
-//
-//                                    }
-
-
-                                    Log.d("jodsosdgsdooo", "total box: " + num);
-
                                     listTitle.setNum(num);
 //
                                 }
                                 //  }
 
+                                //ถ้า date ไม่ว่าง คือ type import waybill
                                 if (!date.equals("")) {
+                                    imWaibill.add(value);
                                     expandedList.setIs_scaned("1");
                                     expandedList.setTime_begin(date);
                                     expandedList.setActual_lat(lat);
@@ -1006,24 +1001,22 @@ public class Pickup_Activity extends AppCompatActivity {
                                     expandedList.setPicture1("");
                                     expandedList.setPicture2("");
                                     expandedList.setPicture3("");
+                                    Toasty.success(getApplicationContext(), "Checked!", Toast.LENGTH_SHORT, true).show();
                                 }
 
 
                                 Log.d("Asjkljkksdf", "(1)scan: " + getdate() + " lat:" + getlat() + " lon:" + getlon() + " scan:" + expandedList.getIs_scaned());
 
 
-                                Toasty.success(getApplicationContext(), "Checked!", Toast.LENGTH_SHORT, true).show();
+
 
                                 //ToastScan(icon,"Checked.");
 
                                 expandableListView.setAdapter(expandableListAdapter);
-                                Log.d("sa52c", "1");
                                 expandableListView.expandGroup(i);
-                                Log.d("sa52c", "2");
                                 expandableListAdapter.notifyDataSetChanged();
-                                Log.d("sa52c", "3");
                                 expandableListView.smoothScrollToPositionFromTop(i, j);
-                                Log.d("sa52c", "4");
+
                             }
                         } else {
 
@@ -1276,8 +1269,14 @@ public class Pickup_Activity extends AppCompatActivity {
 
         if (!scannotFind) {
             issueScan = "This Waybill No doesn't exist.";
-            Toasty.info(getApplicationContext(), "This Waybill No doesn't exist.", Toast.LENGTH_SHORT, true).show();
+            if(date.equals("")){
+                Toasty.info(getApplicationContext(), "This Waybill No doesn't exist.", Toast.LENGTH_SHORT, true).show();
+               //Toasty.success(getApplicationContext(), "Checked "+ imWaibill.size() +" Waybill.", Toast.LENGTH_SHORT, true).show();
+            }
         }
+
+
+
     }
 
     private String getlat() {
