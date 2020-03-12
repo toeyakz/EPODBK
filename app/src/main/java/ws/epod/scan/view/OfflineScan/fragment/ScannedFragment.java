@@ -34,7 +34,7 @@ public class ScannedFragment extends Fragment {
     private DatabaseHelper databaseHelper;
     private RecyclerView rvScan;
     private ConstraintLayout btnSelect, btnUnSelect;
-    private ImageView btnDeleteWaybill;
+    private ImageView btnDeleteWaybill, imgBack_scan;
 
     private WaybillScannedAdapter adapter;
 
@@ -63,6 +63,7 @@ public class ScannedFragment extends Fragment {
         btnSelect = view.findViewById(R.id.btnSelect);
         btnUnSelect = view.findViewById(R.id.btnUnSelect);
         btnDeleteWaybill = view.findViewById(R.id.btnDeleteWaybill);
+        imgBack_scan = view.findViewById(R.id.imgBack_scan);
 
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext());
         rvScan.setLayoutManager(layoutManager);
@@ -111,6 +112,14 @@ public class ScannedFragment extends Fragment {
             rvScan.setAdapter(adapter);
 
 
+        });
+
+        imgBack_scan.setOnClickListener(v ->{
+            Animation animation = AnimationUtils.loadAnimation(getContext(), R.anim.alpha);
+            imgBack_scan.startAnimation(animation);
+            if(getActivity() != null) {
+                getActivity().finish();
+            }
         });
 
     }

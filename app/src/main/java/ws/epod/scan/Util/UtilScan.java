@@ -48,8 +48,19 @@ public class UtilScan {
         UtilScan.listInvoiceHeader.add(list);
     }
 
+    public static void clearInvoiceHeader() {
+       // UtilScan.listInvoiceHeader.clear();
+        listInvoiceHeader = new ArrayList<>();
+       // listInvoiceHeader.onInvoiceSet(UtilScan.listInvoice);
+    }
+
     public static void addInvoiceHeaderDelivery(InvoiceHeaderDelivery list) {
         UtilScan.listInvoiceHeaderDelivery.add(list);
+    }
+
+    public static void clearInvoiceHeaderDelivery() {
+        listInvoiceHeaderDelivery = new ArrayList<>();
+        //   invoiceListener.onInvoiceSet(null);
     }
 
     public static ArrayList<InvoiceHeader> getListHeaderWaybill() {

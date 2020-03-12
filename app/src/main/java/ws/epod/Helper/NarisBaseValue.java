@@ -301,6 +301,40 @@ public class NarisBaseValue {
     }
 
     @SuppressLint("WrongConstant")
+    public static void insertLogin(JSONArray json) {
+        databaseHelper.db().beginTransaction();
+        try {
+            ContentValues values = new ContentValues();
+
+            for (int i = 0; i < json.length(); i++) {
+
+                JSONObject json_data = json.getJSONObject(i);
+
+               // values.put("id", json_data.getString("id"));
+                values.put("username", json_data.getString("username"));
+                values.put("pass", json_data.getString("pass"));
+                values.put("serial", json_data.getString("serial"));
+                values.put("driver_id", json_data.getString("driver_id"));
+                values.put("driver_fname", json_data.getString("driver_fname"));
+                values.put("driver_lname", json_data.getString("driver_lname"));
+                values.put("vehicle_id", json_data.getString("vehicle_id"));
+                values.put("vehicle_name", json_data.getString("vehicle_name"));
+                values.put("status_login", json_data.getString("status_login"));
+
+                databaseHelper.db().insertWithOnConflict("login",
+                        null, values, SQLiteDatabase.CONFLICT_REPLACE);
+            }
+
+            databaseHelper.db().setTransactionSuccessful();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        } finally {
+            databaseHelper.db().endTransaction();
+        }
+        databaseHelper.db().close();
+    }
+
+    @SuppressLint("WrongConstant")
     public static void insertReason(JSONArray json) {
         databaseHelper.db().beginTransaction();
         try {

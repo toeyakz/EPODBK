@@ -111,126 +111,142 @@ public class ScanPickUpActivity extends AppCompatActivity implements DecoratedBa
         @Override
         public void barcodeResult(BarcodeResult result) {
 
-            boolean scannotFind = false;
-            boolean isAdd = false;
-            boolean un = false;
-            boolean ex = false;
-
-            Intent intent = getIntent();
-            String INPUT_WAY = intent.getStringExtra("key");
+            try {
+                boolean scannotFind = false;
+                boolean isAdd = false;
+                boolean un = false;
+                boolean ex = false;
 
 
-            if (alertDialog != null) {
-                if (alertDialog.isShowing()) {
+                Intent intent = getIntent();
+                String INPUT_WAY = intent.getStringExtra("key");
+
+
+                if (alertDialog != null) {
+                    if (alertDialog.isShowing()) {
+                        return;
+                    }
+                }
+
+                if (result.getText().equals(lastText) || UtilScan.containInvoiceNumber(result.getText())) {
+                    Toasty.info(getApplicationContext(), "มีในลิสอยู่แล้ว.", Toast.LENGTH_SHORT, true).show();
+                    new Handler().postDelayed(delayScan, 2000);
                     return;
                 }
-            }
 
-            if (result.getText().equals(lastText) || UtilScan.containInvoiceNumber(result.getText())) {
-                Toasty.info(getApplicationContext(), "มีในลิสอยู่แล้ว.", Toast.LENGTH_SHORT, true).show();
-                new Handler().postDelayed(delayScan, 2000);
-                return;
-            }
+                for (int i = 0; i < UtilScan.getListHeaderWaybill().size(); i++) {
 
-            for (int i = 0; i < UtilScan.getListHeaderWaybill().size(); i++) {
+                    String is_scanned = UtilScan.getListHeaderWaybill().get(i).getIs_scaned();
 
-                String is_scanned = UtilScan.getListHeaderWaybill().get(i).getIs_scaned();
+                    if (result.getText().equals(UtilScan.getListHeaderWaybill().get(i).getWaybill_no())) {
+                        Log.d("s82s", "barcodeResult: 0");
+                        Log.d("s82s", "is_scanned: " + is_scanned);
+                        if (is_scanned.equals("1") || is_scanned.equals("2")) {
 
-                if (result.getText().equals(UtilScan.getListHeaderWaybill().get(i).getWaybill_no())) {
-                    if (is_scanned.equals("1") || is_scanned.equals("2")) {
+                            switch (INPUT_WAY) {
+                                case "UNCHECK":
+                                    isAdd = true;
+                                    Log.d("s82s", "barcodeResult: 1");
+                                    //  un = false;
+                                    break;
+                                case "COMMENT":
+                                    isAdd = !is_scanned.equals("2");
+                                    break;
+                                case "CHECK":
+                                    Log.d("s82s", "barcodeResult: CHECK - 1 หรือ 2");
+                                    isAdd = !is_scanned.equals("1");
+                                    break;
+                            }
 
-                        switch (INPUT_WAY) {
-                            case "UNCHECK":
-                                isAdd = true;
-                                break;
-                            case "COMMENT":
-                                isAdd = !is_scanned.equals("2");
-                                break;
-                            case "CHECK":
-                                isAdd = !is_scanned.equals("1");
-                                break;
+                            scannotFind = true;
+                            new Handler().postDelayed(delayScan, 2000);
+                            break;
+
+                        } else if (is_scanned.equals("0")) {
+                            switch (INPUT_WAY) {
+                                case "UNCHECK":
+                                    Log.d("s82s", "barcodeResult: 2");
+                                    isAdd = false;
+                                    un = true;
+                                    break;
+                                case "CHECK":
+                                case "COMMENT":
+                                    Log.d("s82s", "barcodeResult: CHECK 0");
+                                    isAdd = true;
+                                    break;
+                            }
+                            scannotFind = true;
+                            // i = UtilScan.getListHeaderWaybill().size();
+                            break;
                         }
-
-                        scannotFind = true;
-                        new Handler().postDelayed(delayScan, 2000);
-                        break;
-
-                    } else if (is_scanned.equals("0")) {
-                        switch (INPUT_WAY) {
-                            case "UNCHECK":
-                                isAdd = false;
-                                un = true;
-                                break;
-                            case "CHECK":
-                            case "COMMENT":
-                                isAdd = true;
-                                break;
-                        }
-                        scannotFind = true;
-                       // i = UtilScan.getListHeaderWaybill().size();
-                         break;
-                    }
-                } else {
-                    if (UtilScan.getListHeaderWaybill().size() == (i+1)) {
-                        ex = true;
-                        scannotFind = false;
-                    }
-                }
-
-
-            }
-
-
-            if (isAdd) {
-                lastText = result.getText();
-                tvCodeScanned.setText(result.getText());
-                //  beepManager.playBeepSoundAndVibrate();
-
-                //set beep
-                Uri soundUri = Uri.parse(ContentResolver.SCHEME_ANDROID_RESOURCE + "://" + getApplicationContext().getPackageName() + "/" + R.raw.beep);
-                Ringtone r = RingtoneManager.getRingtone(getApplicationContext(), soundUri);
-                r.play();
-
-                Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                    v.vibrate(VibrationEffect.createOneShot(500, VibrationEffect.DEFAULT_AMPLITUDE));
-                } else {
-                    //deprecated in API 26
-                    v.vibrate(500);
-                }
-
-                Invoice newInvoice = new Invoice(result.getText());
-                UtilScan.addInvoice(newInvoice);
-
-                if (UtilScan.getListWaybill().size() > 0) {
-                    tvStat.setText("Have" + " " + UtilScan.getListWaybill().size() + " " + "waybill in list.");
-                }
-                new Handler().postDelayed(delayScan, 2000);
-                return;
-
-            } else {
-                if (!ex) {
-                    if (un) {
-                        Toasty.info(getApplicationContext(), "Un Check.", Toast.LENGTH_SHORT, true).show();
-                        new Handler().postDelayed(delayScan, 2000);
                     } else {
-                        Uri soundUri = Uri.parse(ContentResolver.SCHEME_ANDROID_RESOURCE + "://" + getApplicationContext().getPackageName() + "/" + R.raw.scan_dupp);
-                        Ringtone r = RingtoneManager.getRingtone(getApplicationContext(), soundUri);
-                        r.play();
-                        Toasty.info(getApplicationContext(), "scanned.", Toast.LENGTH_SHORT, true).show();
-                        new Handler().postDelayed(delayScan, 2000);
-
+                        if (UtilScan.getListHeaderWaybill().size() == (i + 1)) {
+                            ex = true;
+                            scannotFind = false;
+                        }
                     }
+
+
                 }
 
+
+                if (isAdd) {
+                    lastText = result.getText();
+                    tvCodeScanned.setText(result.getText());
+                    //  beepManager.playBeepSoundAndVibrate();
+
+                    //set beep
+                    Uri soundUri = Uri.parse(ContentResolver.SCHEME_ANDROID_RESOURCE + "://" + getApplicationContext().getPackageName() + "/" + R.raw.beep);
+                    Ringtone r = RingtoneManager.getRingtone(getApplicationContext(), soundUri);
+                    r.play();
+
+                    Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                        v.vibrate(VibrationEffect.createOneShot(500, VibrationEffect.DEFAULT_AMPLITUDE));
+                    } else {
+                        //deprecated in API 26
+                        v.vibrate(500);
+                    }
+
+                    Invoice newInvoice = new Invoice(result.getText());
+                    UtilScan.addInvoice(newInvoice);
+
+                    if (UtilScan.getListWaybill().size() > 0) {
+                        tvStat.setText("Have" + " " + UtilScan.getListWaybill().size() + " " + "waybill in list.");
+                    }
+
+                    getSQLite();
+                    new Handler().postDelayed(delayScan, 2000);
+
+                    return;
+
+                } else {
+                    if (!ex) {
+                        if (un) {
+                            Toasty.info(getApplicationContext(), "Un Check.", Toast.LENGTH_SHORT, true).show();
+                            new Handler().postDelayed(delayScan, 2000);
+                        } else {
+                            Uri soundUri = Uri.parse(ContentResolver.SCHEME_ANDROID_RESOURCE + "://" + getApplicationContext().getPackageName() + "/" + R.raw.scan_dupp);
+                            Ringtone r = RingtoneManager.getRingtone(getApplicationContext(), soundUri);
+                            r.play();
+                            Toasty.info(getApplicationContext(), "scanned.", Toast.LENGTH_SHORT, true).show();
+                            new Handler().postDelayed(delayScan, 2000);
+
+                        }
+                    }
+
+                }
+
+                if (!scannotFind) {
+                    Uri soundUri = Uri.parse(ContentResolver.SCHEME_ANDROID_RESOURCE + "://" + getApplicationContext().getPackageName() + "/" + R.raw.scan_error);
+                    Ringtone r = RingtoneManager.getRingtone(getApplicationContext(), soundUri);
+                    r.play();
+                    showDialog();
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
             }
 
-            if (!scannotFind) {
-                Uri soundUri = Uri.parse(ContentResolver.SCHEME_ANDROID_RESOURCE + "://" + getApplicationContext().getPackageName() + "/" + R.raw.scan_error);
-                Ringtone r = RingtoneManager.getRingtone(getApplicationContext(), soundUri);
-                r.play();
-                showDialog();
-            }
 
         }
 
@@ -265,6 +281,8 @@ public class ScanPickUpActivity extends AppCompatActivity implements DecoratedBa
         // Always on display
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
+
+        getSQLite();
 //        final PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
 //        this.mWakeLock = pm.newWakeLock(PowerManager.SCREEN_DIM_WAKE_LOCK, "My Tag");
 //        this.mWakeLock.acquire();
@@ -335,111 +353,87 @@ public class ScanPickUpActivity extends AppCompatActivity implements DecoratedBa
 
 
     private void getSQLite() {
-        final SharedPreferences user_data = getSharedPreferences("DATA_DETAIL_PICK", Context.MODE_PRIVATE);
-        final String delivery_no = user_data.getString("delivery_no", "");
-        final String plan_seq = user_data.getString("plan_seq", "");
 
-        String sql = "select (select DISTINCT pl2.consignment_no from Plan pl2 where pl2.activity_type = pl.activity_type and pl2.delivery_no = pl.delivery_no and pl2.plan_seq = pl.plan_seq and pl2.consignment_no = pl.consignment_no and pl2.trash = pl.trash) as consignment\n" +
-                ",(select count(pl2.box_no) from Plan pl2 where pl2.activity_type = pl.activity_type and pl2.delivery_no = pl.delivery_no and pl2.plan_seq = pl.plan_seq and pl2.consignment_no = pl.consignment_no and pl2.trash = pl.trash) as box_total\n" +
-                ",(select count(pl2.box_no) from Plan pl2 where pl2.activity_type = pl.activity_type and pl2.delivery_no = pl.delivery_no and pl2.plan_seq = pl.plan_seq and pl2.is_scaned <> '0' and pl2.consignment_no = pl.consignment_no and pl2.trash = pl.trash) as box_checked\n" +
-                ",(select pl2.station_name from Plan pl2 where pl2.activity_type = pl.activity_type and pl2.delivery_no = pl.delivery_no and pl2.plan_seq = pl.plan_seq and pl2.consignment_no = pl.consignment_no and pl2.trash = pl.trash) as station_name\n" +
-                ",(select pl2.station_address from Plan pl2 where pl2.activity_type = pl.activity_type and pl2.delivery_no = pl.delivery_no and pl2.plan_seq = pl.plan_seq and pl2.consignment_no = pl.consignment_no and pl2.trash = pl.trash) as station_address\n" +
-                ",(select cm.settlement_method from Plan pl2 where pl2.activity_type = pl.activity_type and pl2.delivery_no = pl.delivery_no and pl2.plan_seq = pl.plan_seq  and pl2.consignment_no = pl.consignment_no and pl2.trash = pl.trash) as pay_type\n" +
-                ",(select cm.deli_note_amount_price from consignment cm where cm.consignment_no = pl.consignment_no) as price\n" +
-                ",(select count(DISTINCT cm.global_no) from consignment cm where cm.consignment_no = pl.consignment_no) as global_total\n" +
-                ",(select count(DISTINCT cm.global_no) from consignment cm where cm.consignment_no = pl.consignment_no and cm.detail_remarks <> null) as global_cancel\n" +
-                ",(select pl2.total_box from Plan pl2 where pl2.activity_type = pl.activity_type and pl2.delivery_no = pl.delivery_no and pl2.plan_seq = pl.plan_seq and pl2.consignment_no = pl.consignment_no and pl2.trash = pl.trash LIMIT 1) as total_b " +
-                "from Plan pl\n" +
-                "inner join consignment cm on cm.consignment_no = pl.consignment_no\n" +
-                "where pl.delivery_no = '" + delivery_no + "' and  pl.plan_seq = '" + plan_seq + "' and pl.activity_type = 'LOAD' and pl.trash = '0'" +
-                "GROUP BY pl.delivery_no, pl.consignment_no";
-        Cursor cursor = databaseHelper.selectDB(sql);
-        Log.d("PickingUpLOG", "total line " + cursor.getCount());
+        try {
+            UtilScan.clearInvoiceHeader();
 
-        // expandableListDetail = new HashMap<>();
-        // list = new ArrayList<>();
+            final SharedPreferences user_data = getSharedPreferences("DATA_DETAIL_PICK", Context.MODE_PRIVATE);
+            final String delivery_no = user_data.getString("delivery_no", "");
+            final String plan_seq = user_data.getString("plan_seq", "");
 
-        cursor.moveToFirst();
-        if (cursor.getCount() > 0) {
-            do {
-                String consignment = cursor.getString(cursor.getColumnIndex("consignment"));
-                String box_total = cursor.getString(cursor.getColumnIndex("box_total"));
-                String box_checked = cursor.getString(cursor.getColumnIndex("box_checked"));
-                String station_name = cursor.getString(cursor.getColumnIndex("station_name"));
-                String station_address = cursor.getString(cursor.getColumnIndex("station_address"));
-                String pay_type = cursor.getString(cursor.getColumnIndex("pay_type"));
-                String global_total = cursor.getString(cursor.getColumnIndex("global_total"));
-                String global_cancel = cursor.getString(cursor.getColumnIndex("global_cancel"));
-                String price = cursor.getString(cursor.getColumnIndex("price"));
-                int total_b = cursor.getInt(cursor.getColumnIndex("total_b"));
+            String sql = "select (select DISTINCT pl2.consignment_no from Plan pl2 where pl2.activity_type = pl.activity_type and pl2.delivery_no = pl.delivery_no and pl2.plan_seq = pl.plan_seq and pl2.consignment_no = pl.consignment_no and pl2.trash = pl.trash) as consignment\n" +
+                    ",(select count(pl2.box_no) from Plan pl2 where pl2.activity_type = pl.activity_type and pl2.delivery_no = pl.delivery_no and pl2.plan_seq = pl.plan_seq and pl2.consignment_no = pl.consignment_no and pl2.trash = pl.trash) as box_total\n" +
+                    ",(select count(pl2.box_no) from Plan pl2 where pl2.activity_type = pl.activity_type and pl2.delivery_no = pl.delivery_no and pl2.plan_seq = pl.plan_seq and pl2.is_scaned <> '0' and pl2.consignment_no = pl.consignment_no and pl2.trash = pl.trash) as box_checked\n" +
+                    ",(select pl2.station_name from Plan pl2 where pl2.activity_type = pl.activity_type and pl2.delivery_no = pl.delivery_no and pl2.plan_seq = pl.plan_seq and pl2.consignment_no = pl.consignment_no and pl2.trash = pl.trash) as station_name\n" +
+                    ",(select pl2.station_address from Plan pl2 where pl2.activity_type = pl.activity_type and pl2.delivery_no = pl.delivery_no and pl2.plan_seq = pl.plan_seq and pl2.consignment_no = pl.consignment_no and pl2.trash = pl.trash) as station_address\n" +
+                    ",(select cm.settlement_method from Plan pl2 where pl2.activity_type = pl.activity_type and pl2.delivery_no = pl.delivery_no and pl2.plan_seq = pl.plan_seq  and pl2.consignment_no = pl.consignment_no and pl2.trash = pl.trash) as pay_type\n" +
+                    ",(select cm.deli_note_amount_price from consignment cm where cm.consignment_no = pl.consignment_no) as price\n" +
+                    ",(select count(DISTINCT cm.global_no) from consignment cm where cm.consignment_no = pl.consignment_no) as global_total\n" +
+                    ",(select count(DISTINCT cm.global_no) from consignment cm where cm.consignment_no = pl.consignment_no and cm.detail_remarks <> null) as global_cancel\n" +
+                    ",(select pl2.total_box from Plan pl2 where pl2.activity_type = pl.activity_type and pl2.delivery_no = pl.delivery_no and pl2.plan_seq = pl.plan_seq and pl2.consignment_no = pl.consignment_no and pl2.trash = pl.trash LIMIT 1) as total_b " +
+                    "from Plan pl\n" +
+                    "inner join consignment cm on cm.consignment_no = pl.consignment_no\n" +
+                    "where pl.delivery_no = '" + delivery_no + "' and  pl.plan_seq = '" + plan_seq + "' and pl.activity_type = 'LOAD' and pl.trash = '0'" +
+                    "GROUP BY pl.delivery_no, pl.consignment_no";
+            Cursor cursor = databaseHelper.selectDB(sql);
+            Log.d("PickingUpLOG", "total line " + cursor.getCount());
 
-                Log.d("PickingUpLOG", "onCreate: " + "==>" + global_cancel);
+            // expandableListDetail = new HashMap<>();
+            // list = new ArrayList<>();
 
-                //  list.add(new PickingUp_Model(consignment, box_total, box_checked, global_total, station_address, pay_type, global_cancel, price, total_b));
+            cursor.moveToFirst();
+            if (cursor.getCount() > 0) {
+                do {
+                    String consignment = cursor.getString(cursor.getColumnIndex("consignment"));
+                    String sql_expand = "select pl.delivery_no \n" +
+                            ", pl.plan_seq \n" +
+                            ", pl.box_no \n" +
+                            ", pl.waybill_no \n" +
+                            ", pl.is_scaned \n" +
+                            ", pl.comment \n" +
+                            ", pl.picture1 \n" +
+                            ", pl.picture2 \n" +
+                            ", pl.picture3 \n" +
+                            ", pl.time_begin \n" +
+                            ", pl.is_save \n" +
+                            ", pl.status_upload \n" +
+                            ", ROW_NUMBER() OVER(ORDER BY pl.box_no) as row_number \n" +
+                            ", ifnull((select pl2.order_no from Plan pl2 where pl2.consignment_no = pl.consignment_no and pl2. delivery_no = pl.delivery_no and pl2.plan_seq = pl.plan_seq  \n" +
+                            " and pl2.order_no = pl.order_no and pl2.order_no in (select ps.order_no from pic_sign ps where pic_sign_load <> '' )),'') as order_no  \n" +
+                            "  from Plan pl where pl.consignment_no = '" + consignment + "' and pl.activity_type = 'LOAD' and pl.delivery_no = '" + delivery_no + "' and pl.plan_seq = '" + plan_seq + "' and pl.trash = '0'  " +
+                            "  order by row_number";
+                    Cursor cursor_expand = databaseHelper.selectDB(sql_expand);
+                    Log.d("PickingUpLOG", "total line " + cursor_expand.getColumnCount());
 
+                    // list_expand = new ArrayList<>();
 
-                String sql_expand = "select pl.delivery_no \n" +
-                        ", pl.plan_seq \n" +
-                        ", pl.box_no \n" +
-                        ", pl.waybill_no \n" +
-                        ", pl.is_scaned \n" +
-                        ", pl.comment \n" +
-                        ", pl.picture1 \n" +
-                        ", pl.picture2 \n" +
-                        ", pl.picture3 \n" +
-                        ", pl.time_begin \n" +
-                        ", pl.is_save \n" +
-                        ", pl.status_upload \n" +
-                        ", ROW_NUMBER() OVER(ORDER BY pl.box_no) as row_number \n" +
-                        ", ifnull((select pl2.order_no from Plan pl2 where pl2.consignment_no = pl.consignment_no and pl2. delivery_no = pl.delivery_no and pl2.plan_seq = pl.plan_seq  \n" +
-                        " and pl2.order_no = pl.order_no and pl2.order_no in (select ps.order_no from pic_sign ps where pic_sign_load <> '' )),'') as order_no  \n" +
-                        "  from Plan pl where pl.consignment_no = '" + consignment + "' and pl.activity_type = 'LOAD' and pl.delivery_no = '" + delivery_no + "' and pl.plan_seq = '" + plan_seq + "' and pl.trash = '0'  " +
-                        "  order by row_number";
-                Cursor cursor_expand = databaseHelper.selectDB(sql_expand);
-                Log.d("PickingUpLOG", "total line " + cursor_expand.getColumnCount());
+                    cursor_expand.moveToFirst();
+                    if (cursor_expand.getCount() > 0) {
+                        do {
 
-                // list_expand = new ArrayList<>();
+                            String waybill_no = cursor_expand.getString(cursor_expand.getColumnIndex("waybill_no"));
+                            String is_scaned = cursor_expand.getString(cursor_expand.getColumnIndex("is_scaned"));
 
-                cursor_expand.moveToFirst();
-                if (cursor_expand.getCount() > 0) {
-                    do {
-                        String box_no = cursor_expand.getString(cursor_expand.getColumnIndex("box_no"));
-                        String waybill_no = cursor_expand.getString(cursor_expand.getColumnIndex("waybill_no"));
-                        String is_scaned = cursor_expand.getString(cursor_expand.getColumnIndex("is_scaned"));
-                        String row_number = cursor_expand.getString(cursor_expand.getColumnIndex("row_number"));
-                        String delivery_no2 = cursor_expand.getString(cursor_expand.getColumnIndex("delivery_no"));
-                        String plan_seq2 = cursor_expand.getString(cursor_expand.getColumnIndex("plan_seq"));
-                        String comment = cursor_expand.getString(cursor_expand.getColumnIndex("comment"));
-                        String picture1 = cursor_expand.getString(cursor_expand.getColumnIndex("picture1"));
-                        String picture2 = cursor_expand.getString(cursor_expand.getColumnIndex("picture2"));
-                        String picture3 = cursor_expand.getString(cursor_expand.getColumnIndex("picture3"));
-                        String time_begin = cursor_expand.getString(cursor_expand.getColumnIndex("time_begin"));
-                        String is_save = cursor_expand.getString(cursor_expand.getColumnIndex("is_save"));
-                        String status_upload = cursor_expand.getString(cursor_expand.getColumnIndex("status_upload"));
-                        String order_no = cursor_expand.getString(cursor_expand.getColumnIndex("order_no"));
+                            Log.d("a8s2a9", "getSQLite: " + consignment + ">" + waybill_no + ">" + is_scaned);
 
-                        Log.d("a8s2a9", "getSQLite: " + consignment + ">" + waybill_no + ">" + is_scaned);
+                            UtilScan.addInvoiceHeader(new InvoiceHeader(consignment, waybill_no, is_scaned));
 
-                        UtilScan.addInvoiceHeader(new InvoiceHeader(consignment, waybill_no, is_scaned));
+                        } while (cursor_expand.moveToNext());
+                    }
 
-                        //  list_expand.add(new PickingUpEexpand_Model(box_no, waybill_no, is_scaned, row_number, consignment, delivery_no2, plan_seq2, comment, picture1, picture2, picture3, time_begin, is_save, status_upload, order_no));
-                    } while (cursor_expand.moveToNext());
-                }
-
-
-                //   expandableListDetail.put(consignment, list_expand);
-            } while (cursor.moveToNext());
+                } while (cursor.moveToNext());
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
 
-//        for (int i = 0; i < expandableListAdapter.getGroupCount(); i++)
-//            expandableListView.expandGroup(i);
-        // user_data.edit().clear();
+
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        getSQLite();
+
         barcodeScannerView.resume();
     }
 

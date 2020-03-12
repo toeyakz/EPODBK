@@ -139,6 +139,22 @@ public class Login_Activity extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
 
+
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+
+//        isLogin();
+
+    }
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
         new AsyncTask<Void, Void, Void>() {
             @Override
             protected Void doInBackground(Void... voids) {
@@ -159,20 +175,7 @@ public class Login_Activity extends AppCompatActivity {
                 super.onPostExecute(aVoid);
             }
         }.execute();
-    }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-
-
-//        isLogin();
-
-    }
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
 
         netCon = new ConnectionDetector(getApplicationContext());
 
@@ -437,11 +440,7 @@ public class Login_Activity extends AppCompatActivity {
                                     jsonArray.getJSONObject(0).remove("status");
                                     Log.d("NARISLOG", "####" + jsonArray.toString());
 
-                                    if (narisv.INSERT_AS_SQL("login", jsonArray, "")) {
-                                        Log.d("insertLogin", "success: ");
-                                    } else {
-                                        Log.d("insertLogin", "fial: ");
-                                    }
+                                    NarisBaseValue.insertLogin(jsonArray);
 
                                     SharedPreferences login_data = getSharedPreferences("LOGIN", Context.MODE_PRIVATE);
                                     Log.d("login_data", "####" + jsonArray.getJSONObject(0).getString("driver_id"));
@@ -457,35 +456,10 @@ public class Login_Activity extends AppCompatActivity {
                                     login_data.edit().putString("vehicle_id", jsonArray.getJSONObject(0).getString("vehicle_id")).apply();
                                     login_data.edit().putString("status_login", jsonArray.getJSONObject(0).getString("status_login")).apply();
 
-
                                     SaveLastLogin();
+
                                     IsSuccess = 1;
 
-
-//                                    if ( narisv.INSERT_AS_SQL_NO_REPLACE("login", jsonArray, "") ) {
-//                                        Log.d("NARISLOG", "INSERT JSON SUCCESS");
-//
-//                                        String sql = "INSERT OR REPLACE into login (driver_brand) values('" + Build.BRAND + "')";
-//                                        databaseHelper.execDB(sql);
-
-//                                        Var.UserLogin.driver_id = jsonArray.getJSONObject(0).getString("driver_id");
-//                                        Var.UserLogin.driver_user = jsonArray.getJSONObject(0).getString("username");
-//                                        Var.UserLogin.driver_pass = jsonArray.getJSONObject(0).getString("pass");
-//                                        Var.UserLogin.driver_serial = jsonArray.getJSONObject(0).getString("serial");
-//                                        Var.UserLogin.driver_brand = android.os.Build.BRAND;
-//                                        Var.UserLogin.driver_truck_license = jsonArray.getJSONObject(0).getString("vehicle_name");
-//                                        Var.UserLogin.driver_fname = jsonArray.getJSONObject(0).getString("driver_fname");
-//                                        Var.UserLogin.driver_lname = jsonArray.getJSONObject(0).getString("driver_lname");
-//                                        Var.UserLogin.driver_vehicle_id = jsonArray.getJSONObject(0).getString("vehicle_id");
-//                                        Var.UserLogin.driver_status_login = jsonArray.getJSONObject(0).getString("status_login");
-//
-//                                        SaveLastLogin();
-//                                        IsSuccess = 1;
-//                                    } else {
-//                                        Log.d("NARISLOG", "INSERT JSON FAIL");
-//                                        Log.d("isSuccess_0", "_01");
-//                                        IsSuccess = 0; //0 sakito_config
-//                                    }
                                 } else if (jsonArray.getJSONObject(0).getString("status").equals("N") && jsonArray.getJSONObject(0).getString("type").equals("U")) { // fail
                                     Log.d("NARISLOG", "NOT FOUND USER : " + jsonArray.getJSONObject(0).getString("message"));
                                     IsSuccess = -1; //-1
@@ -509,7 +483,7 @@ public class Login_Activity extends AppCompatActivity {
                     e.printStackTrace();
                 } catch (JSONException e) {
                     IsSuccess = 0;
-                    Log.d("isSuccess_0", "000");
+                    Log.d("isSuccess_0", e.getMessage());
                     e.printStackTrace();
                 }
 
@@ -535,6 +509,8 @@ public class Login_Activity extends AppCompatActivity {
                     Var.UserLogin.driver_lname = login_get.getString("driver_lname", "");
                     Var.UserLogin.driver_vehicle_id = login_get.getString("vehicle_id", "");
                     Var.UserLogin.driver_status_login = login_get.getString("status_login", "");
+
+
 
                     // login_get.edit().clear();
 
@@ -1043,10 +1019,10 @@ public class Login_Activity extends AppCompatActivity {
     }
 
     private void SaveLastLogin() {
-//        String sql1 = "IF NOT EXISTS (INSERT OR REPLACE into Var (Var,Value,Value2,MODIFIED_DATE) values('LASTLOGIN','" + Var.UserLogin.driver_user + "','" + Var.UserLogin.driver_pass + "',datetime('now','localtime')))" +
-//                "BEGIN CREATE TABLE Var ";
-//        String sql = "INSERT OR REPLACE into Var (Var,Value,Value2,MODIFIED_DATE) values('LASTLOGIN','" + Var.UserLogin.driver_user + "','" + Var.UserLogin.driver_pass + "',datetime('now','localtime'))";
-//        databaseHelper.execDB(sql);
+        String sql1 = "IF NOT EXISTS (INSERT OR REPLACE into Var (Var,Value,Value2,MODIFIED_DATE) values('LASTLOGIN','" + Var.UserLogin.driver_user + "','" + Var.UserLogin.driver_pass + "',datetime('now','localtime')))" +
+                "BEGIN CREATE TABLE Var ";
+        String sql = "INSERT OR REPLACE into Var (Var,Value,Value2,MODIFIED_DATE) values('LASTLOGIN','" + Var.UserLogin.driver_user + "','" + Var.UserLogin.driver_pass + "',datetime('now','localtime'))";
+        databaseHelper.execDB(sql);
     }
 
     private boolean checkAndRequestPermissions() {
