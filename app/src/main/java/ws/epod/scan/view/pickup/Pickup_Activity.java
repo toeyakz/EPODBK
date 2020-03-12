@@ -232,12 +232,12 @@ public class Pickup_Activity extends AppCompatActivity {
         if (UtilScan.getListWaybill() != null) {
             getSQLite();
             for (Invoice waybill : UtilScan.getListWaybill()) {
-                Log.d("sdasd63sd", "onCreate: " + waybill.getWaybill_no());
 
                 scan(waybill.getWaybill_no(), "", "", "");
-                UtilScan.clearHeaderWaybillList();
-            }
 
+            }
+            UtilScan.clearHeaderWaybillList();
+            //prefs.edit().clear().apply();
         }
 
         // Upload();
@@ -373,6 +373,8 @@ public class Pickup_Activity extends AppCompatActivity {
                 savePickingUp.startAnimation(animation);
 
                 isSave();
+                SharedPreferences prefs = getSharedPreferences("status_scan", Context.MODE_PRIVATE);
+                prefs.edit().clear().apply();
 
             }
         });
@@ -941,6 +943,7 @@ public class Pickup_Activity extends AppCompatActivity {
     private void scan(String value, String date, String lat, String lon) {
         boolean scannotFind = false;
 
+        SharedPreferences prefs = getSharedPreferences("status_scan", Context.MODE_PRIVATE);
         int num = 0;
         Log.d("s6s3d5", "scan: 1");
         if (INPUT_WAY.equals("CHECK")) {
@@ -1004,13 +1007,10 @@ public class Pickup_Activity extends AppCompatActivity {
                                     expandedList.setPicture2("");
                                     expandedList.setPicture3("");
                                     Toasty.success(getApplicationContext(), "Checked!", Toast.LENGTH_SHORT, true).show();
+
+                                    prefs.edit().putString("Is_scaned", expandedList.getIs_scaned()).apply();
+
                                 }
-
-
-                                Log.d("Asjkljkksdf", "(1)scan: " + getdate() + " lat:" + getlat() + " lon:" + getlon() + " scan:" + expandedList.getIs_scaned());
-
-
-
 
                                 //ToastScan(icon,"Checked.");
 
@@ -1032,6 +1032,7 @@ public class Pickup_Activity extends AppCompatActivity {
                                 Toasty.info(getApplicationContext(), "Please un sign this order.", Toast.LENGTH_SHORT, true).show();
                             } else {
                                 Toasty.info(getApplicationContext(), "Scanned.", Toast.LENGTH_SHORT, true).show();
+                                prefs.edit().putString("Is_scaned", "1").apply();
                             }
                             //Toasty.info(getApplicationContext(), "Scanned.", Toast.LENGTH_SHORT, true).show();
 
@@ -1121,6 +1122,8 @@ public class Pickup_Activity extends AppCompatActivity {
                                 expandedList.setPicture2("");
                                 expandedList.setPicture3("");
 
+                                prefs.edit().putString("Is_scaned", expandedList.getIs_scaned()).apply();
+
                                 Toasty.success(getApplicationContext(), "Un Check!", Toast.LENGTH_SHORT, true).show();
 
                                 expandableListView.setAdapter(expandableListAdapter);
@@ -1134,7 +1137,7 @@ public class Pickup_Activity extends AppCompatActivity {
 
                         if (value.equals(expandedList.getWaybil_no())) {
                             scannotFind = true;
-
+                            prefs.edit().putString("Is_scaned", "0").apply();
                             Toasty.info(getApplicationContext(), "Un scan.", Toast.LENGTH_SHORT, true).show();
 
                         }
@@ -1225,6 +1228,10 @@ public class Pickup_Activity extends AppCompatActivity {
                                 expandedList.setActual_lon(getlon());
                                 expandedList.setIs_save("2");
 
+                                prefs.edit().putString("Is_scaned", expandedList.getIs_scaned()).apply();
+                                prefs.edit().putString("consignment", expandedList.getConsignment()).apply();
+                                prefs.edit().putString("waybill", expandedList.getIs_scaned()).apply();
+
                                 Log.d("Asjkljkksdf", "(2)scan: " + getdate() + " lat:" + getlat() + " lon:" + getlon());
 
                                 Toasty.success(getApplicationContext(), "Please comment!", Toast.LENGTH_SHORT, true).show();
@@ -1243,9 +1250,10 @@ public class Pickup_Activity extends AppCompatActivity {
                             if (!expandedList.getOrder_no().equals("")) {
                                 Toasty.info(getApplicationContext(), "Please un sign this order.", Toast.LENGTH_SHORT, true).show();
                             } else {
+                                prefs.edit().putString("Is_scaned", "2").apply();
                                 Toasty.info(getApplicationContext(), "Scanned.", Toast.LENGTH_SHORT, true).show();
                             }
-                            //Toasty.info(getApplicationContext(), "Scanned.", Toast.LENGTH_SHORT, true).show();
+
                         }
 
                     }

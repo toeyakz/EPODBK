@@ -96,6 +96,9 @@ public class ScanDeliveryActivity extends AppCompatActivity implements Decorated
         public void barcodeResult(BarcodeResult result) {
 
             try {
+
+                SharedPreferences prefs = getSharedPreferences("status_scan_delivery", Context.MODE_PRIVATE);
+
                 boolean scannotFind = false;
                 boolean isAdd = false;
                 boolean un = false;
@@ -121,41 +124,80 @@ public class ScanDeliveryActivity extends AppCompatActivity implements Decorated
 
                     String is_scanned = UtilScan.getListHeadeDeliveryrWaybill().get(i).getIs_scaned();
 
+                    String log_IsScanned = prefs.getString("Is_scaned", "");
+
                     if (result.getText().equals(UtilScan.getListHeadeDeliveryrWaybill().get(i).getWaybill_no())) {
-                        Log.d("s9c59s", "barcodeResult: 2222");
-                        if (is_scanned.equals("1") || is_scanned.equals("2")) {
 
-                            switch (INPUT_WAY) {
-                                case "UNCHECK":
-                                    isAdd = true;
-                                    break;
-                                case "COMMENT":
-                                    isAdd = !is_scanned.equals("2");
-                                    break;
-                                case "CHECK":
-                                    isAdd = !is_scanned.equals("1");
+                        if(!log_IsScanned.equals("")){
+                            if (log_IsScanned.equals("1") || log_IsScanned.equals("2")) {
 
-                                    // Toasty.info(getApplicationContext(), "scanned.", Toast.LENGTH_SHORT, true).show();
-                                    break;
+                                switch (INPUT_WAY) {
+                                    case "UNCHECK":
+                                        isAdd = true;
+                                        break;
+                                    case "COMMENT":
+                                        isAdd = !log_IsScanned.equals("2");
+                                        break;
+                                    case "CHECK":
+                                        isAdd = !log_IsScanned.equals("1");
+
+                                        // Toasty.info(getApplicationContext(), "scanned.", Toast.LENGTH_SHORT, true).show();
+                                        break;
+                                }
+                                scannotFind = true;
+                                new Handler().postDelayed(delayScan, 2000);
+                                break;
+                            } else if (log_IsScanned.equals("0")) {
+                                switch (INPUT_WAY) {
+                                    case "UNCHECK":
+                                        isAdd = false;
+                                        un = true;
+                                        break;
+                                    case "CHECK":
+                                    case "COMMENT":
+                                        isAdd = true;
+                                        break;
+                                }
+                                scannotFind = true;
+                                // i = UtilScan.getListHeaderWaybill().size();
+                                break;
                             }
-                            scannotFind = true;
-                            new Handler().postDelayed(delayScan, 2000);
-                            break;
-                        } else if (is_scanned.equals("0")) {
-                            switch (INPUT_WAY) {
-                                case "UNCHECK":
-                                    isAdd = false;
-                                    un = true;
-                                    break;
-                                case "CHECK":
-                                case "COMMENT":
-                                    isAdd = true;
-                                    break;
+                        }else{
+                            if (is_scanned.equals("1") || is_scanned.equals("2")) {
+
+                                switch (INPUT_WAY) {
+                                    case "UNCHECK":
+                                        isAdd = true;
+                                        break;
+                                    case "COMMENT":
+                                        isAdd = !is_scanned.equals("2");
+                                        break;
+                                    case "CHECK":
+                                        isAdd = !is_scanned.equals("1");
+
+                                        // Toasty.info(getApplicationContext(), "scanned.", Toast.LENGTH_SHORT, true).show();
+                                        break;
+                                }
+                                scannotFind = true;
+                                new Handler().postDelayed(delayScan, 2000);
+                                break;
+                            } else if (is_scanned.equals("0")) {
+                                switch (INPUT_WAY) {
+                                    case "UNCHECK":
+                                        isAdd = false;
+                                        un = true;
+                                        break;
+                                    case "CHECK":
+                                    case "COMMENT":
+                                        isAdd = true;
+                                        break;
+                                }
+                                scannotFind = true;
+                                // i = UtilScan.getListHeaderWaybill().size();
+                                break;
                             }
-                            scannotFind = true;
-                            // i = UtilScan.getListHeaderWaybill().size();
-                            break;
                         }
+
                     } else {
                         // Log.d("f2d9", "barcodeResult: i" + i + " size: " + UtilScan.getListHeadeDeliveryrWaybill().size());
                         if (UtilScan.getListHeadeDeliveryrWaybill().size() == (i + 1)) {

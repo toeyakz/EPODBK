@@ -105,6 +105,7 @@
     <string name="sync">Sync</string>
     <string name="unselect_all">Unselect All</string>
     <string name="not_selected">Not Selected!</string>
+    <string name="saving">Saving..</string>
 
 
 </resources>

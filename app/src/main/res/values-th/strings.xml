@@ -100,4 +100,5 @@
     <string name="sync">ซิงค์</string>
     <string name="unselect_all">ไม่เลือกทั้งหมด</string>
     <string name="not_selected">ไม่ได้เลือก!</string>
+    <string name="saving">กำลังบันทึก..</string>
 </resources>

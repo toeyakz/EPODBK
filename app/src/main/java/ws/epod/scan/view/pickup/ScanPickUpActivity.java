@@ -117,6 +117,7 @@ public class ScanPickUpActivity extends AppCompatActivity implements DecoratedBa
                 boolean un = false;
                 boolean ex = false;
 
+                SharedPreferences prefs = getSharedPreferences("status_scan", Context.MODE_PRIVATE);
 
                 Intent intent = getIntent();
                 String INPUT_WAY = intent.getStringExtra("key");
@@ -138,47 +139,92 @@ public class ScanPickUpActivity extends AppCompatActivity implements DecoratedBa
 
                     String is_scanned = UtilScan.getListHeaderWaybill().get(i).getIs_scaned();
 
+                    String log_IsScanned = prefs.getString("Is_scaned", "");
+
                     if (result.getText().equals(UtilScan.getListHeaderWaybill().get(i).getWaybill_no())) {
                         Log.d("s82s", "barcodeResult: 0");
                         Log.d("s82s", "is_scanned: " + is_scanned);
-                        if (is_scanned.equals("1") || is_scanned.equals("2")) {
 
-                            switch (INPUT_WAY) {
-                                case "UNCHECK":
-                                    isAdd = true;
-                                    Log.d("s82s", "barcodeResult: 1");
-                                    //  un = false;
-                                    break;
-                                case "COMMENT":
-                                    isAdd = !is_scanned.equals("2");
-                                    break;
-                                case "CHECK":
-                                    Log.d("s82s", "barcodeResult: CHECK - 1 หรือ 2");
-                                    isAdd = !is_scanned.equals("1");
-                                    break;
+                        if(!log_IsScanned.equals("")){
+                            if (log_IsScanned.equals("1") || log_IsScanned.equals("2")) {
+
+                                switch (INPUT_WAY) {
+                                    case "UNCHECK":
+                                        isAdd = true;
+                                        Log.d("s82s", "barcodeResult: 1");
+                                        //  un = false;
+                                        break;
+                                    case "COMMENT":
+                                        isAdd = !log_IsScanned.equals("2");
+                                        break;
+                                    case "CHECK":
+                                        Log.d("s82s", "barcodeResult: CHECK - 1 หรือ 2");
+                                        isAdd = !log_IsScanned.equals("1");
+                                        break;
+                                }
+
+                                scannotFind = true;
+                                new Handler().postDelayed(delayScan, 2000);
+                                break;
+
+                            } else if (log_IsScanned.equals("0")) {
+                                switch (INPUT_WAY) {
+                                    case "UNCHECK":
+                                        Log.d("s82s", "barcodeResult: 2");
+                                        isAdd = false;
+                                        un = true;
+                                        break;
+                                    case "CHECK":
+                                    case "COMMENT":
+                                        Log.d("s82s", "barcodeResult: CHECK 0");
+                                        isAdd = true;
+                                        break;
+                                }
+                                scannotFind = true;
+                                // i = UtilScan.getListHeaderWaybill().size();
+                                break;
                             }
+                        }else{
+                            if (is_scanned.equals("1") || is_scanned.equals("2")) {
 
-                            scannotFind = true;
-                            new Handler().postDelayed(delayScan, 2000);
-                            break;
+                                switch (INPUT_WAY) {
+                                    case "UNCHECK":
+                                        isAdd = true;
+                                        Log.d("s82s", "barcodeResult: 1");
+                                        //  un = false;
+                                        break;
+                                    case "COMMENT":
+                                        isAdd = !is_scanned.equals("2");
+                                        break;
+                                    case "CHECK":
+                                        Log.d("s82s", "barcodeResult: CHECK - 1 หรือ 2");
+                                        isAdd = !is_scanned.equals("1");
+                                        break;
+                                }
 
-                        } else if (is_scanned.equals("0")) {
-                            switch (INPUT_WAY) {
-                                case "UNCHECK":
-                                    Log.d("s82s", "barcodeResult: 2");
-                                    isAdd = false;
-                                    un = true;
-                                    break;
-                                case "CHECK":
-                                case "COMMENT":
-                                    Log.d("s82s", "barcodeResult: CHECK 0");
-                                    isAdd = true;
-                                    break;
+                                scannotFind = true;
+                                new Handler().postDelayed(delayScan, 2000);
+                                break;
+
+                            } else if (is_scanned.equals("0")) {
+                                switch (INPUT_WAY) {
+                                    case "UNCHECK":
+                                        Log.d("s82s", "barcodeResult: 2");
+                                        isAdd = false;
+                                        un = true;
+                                        break;
+                                    case "CHECK":
+                                    case "COMMENT":
+                                        Log.d("s82s", "barcodeResult: CHECK 0");
+                                        isAdd = true;
+                                        break;
+                                }
+                                scannotFind = true;
+                                // i = UtilScan.getListHeaderWaybill().size();
+                                break;
                             }
-                            scannotFind = true;
-                            // i = UtilScan.getListHeaderWaybill().size();
-                            break;
                         }
+
                     } else {
                         if (UtilScan.getListHeaderWaybill().size() == (i + 1)) {
                             ex = true;

@@ -217,17 +217,44 @@ public class Deliver_Activity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
 
-
-        Log.d("sdasd63sd", "onCreate: ");
         if (UtilScan.getListDeliveryWaybill() != null) {
             getSQLite();
             for (InvoiceDelivery waybill : UtilScan.getListDeliveryWaybill()) {
                 scan(waybill.getWaybill_no());
-                UtilScan.clearHeaderDeliveryWaybillList();
             }
-
+            UtilScan.clearHeaderDeliveryWaybillList();
         }
 
+
+    }
+
+    private class processAutoSave extends AsyncTask<Void, Void, Void>{
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+
+            progressDialog = new ProgressDialog(Deliver_Activity.this);
+            progressDialog.setCancelable(false);
+            progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+            progressDialog.setMessage(getString(R.string.saving));
+            progressDialog.show();
+        }
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+
+
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            if(progressDialog.isShowing()){
+                progressDialog.dismiss();
+            }
+        }
     }
 
     @Override
@@ -335,6 +362,9 @@ public class Deliver_Activity extends AppCompatActivity {
                 imgSave_dialog_Deli.startAnimation(animation);
 
                 isSave();
+
+                SharedPreferences prefs = getSharedPreferences("status_scan_delivery", Context.MODE_PRIVATE);
+                prefs.edit().clear().apply();
 
             }
         });
@@ -697,6 +727,9 @@ public class Deliver_Activity extends AppCompatActivity {
     private void scan(String value) {
         boolean scannotFind = false;
 
+        SharedPreferences prefs = getSharedPreferences("status_scan_delivery", Context.MODE_PRIVATE);
+
+
         if (INPUT_WAY.equals("CHECK")) {
 
             for (int i = 0; i < expandableListAdapter.getGroupCount(); i++) {
@@ -733,6 +766,8 @@ public class Deliver_Activity extends AppCompatActivity {
                                 expandedList.setPicture2("");
                                 expandedList.setPicture3("");
 
+                                prefs.edit().putString("Is_scaned", expandedList.getIs_scaned()).apply();
+
 
                                 Toasty.success(getApplicationContext(), "Checked!", Toast.LENGTH_SHORT, true).show();
 
@@ -753,6 +788,7 @@ public class Deliver_Activity extends AppCompatActivity {
                             if (!expandedList.getOrder_no().equals("")) {
                                 Toasty.info(getApplicationContext(), "Please un sign this order.", Toast.LENGTH_SHORT, true).show();
                             } else {
+                                prefs.edit().putString("Is_scaned", "1").apply();
                                 Toasty.info(getApplicationContext(), "Scanned.", Toast.LENGTH_SHORT, true).show();
                             }
                         }
@@ -823,6 +859,8 @@ public class Deliver_Activity extends AppCompatActivity {
                                 expandedList.setPicture2("");
                                 expandedList.setPicture3("");
 
+                                prefs.edit().putString("Is_scaned", expandedList.getIs_scaned()).apply();
+
                                 Toasty.success(getApplicationContext(), "Un Check!", Toast.LENGTH_SHORT, true).show();
 
                                 expandableListView.setAdapter(expandableListAdapter);
@@ -835,6 +873,7 @@ public class Deliver_Activity extends AppCompatActivity {
                     } else {
                         if (value.equals(expandedList.getWaybil_no())) {
                             scannotFind = true;
+                            prefs.edit().putString("Is_scaned", "0").apply();
                             Toasty.info(getApplicationContext(), "Un scan.", Toast.LENGTH_SHORT, true).show();
                         }
 
@@ -900,6 +939,8 @@ public class Deliver_Activity extends AppCompatActivity {
                                 expandedList.setActual_lon(getlon());
                                 expandedList.setIs_save("2");
 
+                                prefs.edit().putString("Is_scaned", expandedList.getIs_scaned()).apply();
+
                                 Toasty.success(getApplicationContext(), "Please reason!", Toast.LENGTH_SHORT, true).show();
 
                                 expandableListView.setAdapter(expandableListAdapter);
@@ -917,6 +958,7 @@ public class Deliver_Activity extends AppCompatActivity {
                             if (!expandedList.getOrder_no().equals("")) {
                                 Toasty.info(getApplicationContext(), "Please un sign this order.", Toast.LENGTH_SHORT, true).show();
                             } else {
+                                prefs.edit().putString("Is_scaned", "2").apply();
                                 Toasty.info(getApplicationContext(), "Scanned.", Toast.LENGTH_SHORT, true).show();
                             }
                         }
