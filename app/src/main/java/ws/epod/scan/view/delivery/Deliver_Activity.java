@@ -220,10 +220,10 @@ public class Deliver_Activity extends AppCompatActivity {
 
         Log.d("sdasd63sd", "onCreate: ");
         if (UtilScan.getListDeliveryWaybill() != null) {
+            getSQLite();
             for (InvoiceDelivery waybill : UtilScan.getListDeliveryWaybill()) {
-                Log.d("sdasd63sd", "onCreate: " + waybill.getWaybill_no());
-
                 scan(waybill.getWaybill_no());
+                UtilScan.clearHeaderDeliveryWaybillList();
             }
 
         }

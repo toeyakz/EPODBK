@@ -230,10 +230,12 @@ public class Pickup_Activity extends AppCompatActivity {
 
         Log.d("sdasd63sd", "onCreate: ");
         if (UtilScan.getListWaybill() != null) {
+            getSQLite();
             for (Invoice waybill : UtilScan.getListWaybill()) {
                 Log.d("sdasd63sd", "onCreate: " + waybill.getWaybill_no());
 
                 scan(waybill.getWaybill_no(), "", "", "");
+                UtilScan.clearHeaderWaybillList();
             }
 
         }
