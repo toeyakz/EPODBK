@@ -174,6 +174,7 @@ public class UnscannedFragment extends Fragment {
               Animation animation = AnimationUtils.loadAnimation(getContext(), R.anim.alpha);
               btnDeleteWaybill.startAnimation(animation);
               dialogDelete();
+
           });
 
          imgBack_scan.setOnClickListener(v ->{
@@ -195,6 +196,7 @@ public class UnscannedFragment extends Fragment {
                 Toasty.success(getContext(), OfflineScanUtil.getSec().size() + " items deleted!", Toast.LENGTH_SHORT, true).show();
                 databaseHelper.db().delete("header_waybill", "id=?", new String[]{OfflineScanUtil.getSec().get(i).getId()});
             }
+            OfflineScanUtil.clearDeleteSec();
             readData();
         });
         alert.setButton2(getString(R.string.cancel), (dialog, which) -> alert.dismiss());

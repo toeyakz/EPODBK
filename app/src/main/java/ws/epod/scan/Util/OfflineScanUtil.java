@@ -64,8 +64,8 @@ public class OfflineScanUtil {
         OfflineScanUtil.listDelete.add(model);
     }
 
-    public static void deleteSec(int id) {
-        OfflineScanUtil.listDelete.remove(id);
+    public static void clearDeleteSec() {
+        listDelete = new ArrayList<>();
     }
 
     public static ArrayList<WaybillModel> getSec () {

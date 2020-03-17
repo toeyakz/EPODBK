@@ -338,45 +338,34 @@ public class Pickup_Activity extends AppCompatActivity {
 //            startActivity(intent);
         });
 
-        imgCameraScan.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Animation animation = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.alpha);
-                imgCameraScan.startAnimation(animation);
+        imgCameraScan.setOnClickListener(view -> {
+            Animation animation = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.alpha);
+            imgCameraScan.startAnimation(animation);
 
-                // startScan();
-
-
-                UtilScan.clearHeaderWaybillList();
-                Intent intents = new Intent(Pickup_Activity.this, ScanPickUpActivity.class);
-                intents.putExtra("key", INPUT_WAY);
-                startActivity(intents);
-            }
+            // startScan();
+            UtilScan.clearHeaderWaybillList();
+            Intent intents = new Intent(Pickup_Activity.this, ScanPickUpActivity.class);
+            intents.putExtra("key", INPUT_WAY);
+            startActivity(intents);
         });
 
-        imgBack_test.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Animation animation = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.alpha);
-                imgBack_test.startAnimation(animation);
-                checkBackCon();
-                finish();
-            }
+        imgBack_test.setOnClickListener(view -> {
+            Animation animation = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.alpha);
+            imgBack_test.startAnimation(animation);
+            checkBackCon();
+            finish();
         });
 
 
-        savePickingUp.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(final View view) {
+        savePickingUp.setOnClickListener(view -> {
 
-                Animation animation = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.alpha);
-                savePickingUp.startAnimation(animation);
+            Animation animation = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.alpha);
+            savePickingUp.startAnimation(animation);
 
-                isSave();
-                SharedPreferences prefs = getSharedPreferences("status_scan", Context.MODE_PRIVATE);
-                prefs.edit().clear().apply();
+            isSave();
+            SharedPreferences prefs = getSharedPreferences("status_scan", Context.MODE_PRIVATE);
+            prefs.edit().clear().apply();
 
-            }
         });
 
         edtFineWaybillPick.requestFocus();
@@ -401,39 +390,33 @@ public class Pickup_Activity extends AppCompatActivity {
             }
         });
 
-        imageView8.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
+        imageView8.setOnClickListener(view -> {
 
-                if (INPUT_WAY.equals("CHECK")) {
-                    INPUT_WAY = "COMMENT";
-                    imageView8.setImageResource(R.drawable.ic_indeterminate_check_box_black_24dp);
-                } else if (INPUT_WAY.equals("COMMENT")) {
-                    INPUT_WAY = "UNCHECK";
-                    imageView8.setImageResource(R.drawable.ic_check_box_uncheck);
-                } else if (INPUT_WAY.equals("UNCHECK")) {
-                    INPUT_WAY = "CHECK";
-                    imageView8.setImageResource(R.drawable.ic_check_box_checked);
-                }
+            if (INPUT_WAY.equals("CHECK")) {
+                INPUT_WAY = "COMMENT";
+                imageView8.setImageResource(R.drawable.ic_indeterminate_check_box_black_24dp);
+            } else if (INPUT_WAY.equals("COMMENT")) {
+                INPUT_WAY = "UNCHECK";
+                imageView8.setImageResource(R.drawable.ic_check_box_uncheck);
+            } else if (INPUT_WAY.equals("UNCHECK")) {
+                INPUT_WAY = "CHECK";
+                imageView8.setImageResource(R.drawable.ic_check_box_checked);
             }
         });
 
-        btnEnterWaybillNo.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
+        btnEnterWaybillNo.setOnClickListener(view -> {
 
-                Animation animation = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.alpha);
-                btnEnterWaybillNo.startAnimation(animation);
+            Animation animation = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.alpha);
+            btnEnterWaybillNo.startAnimation(animation);
 
-                String getScanText = edtFineWaybillPick.getText().toString();
-                scan(getScanText, "", "", "");
-                edtFineWaybillPick.setText("");
+            String getScanText = edtFineWaybillPick.getText().toString();
+            scan(getScanText, "", "", "");
+            edtFineWaybillPick.setText("");
 
 
-                // edtFineWaybillPick.setText("");
+            // edtFineWaybillPick.setText("");
 
 
-            }
         });
 
         expandableListView.setOnScrollListener(new AbsListView.OnScrollListener() {

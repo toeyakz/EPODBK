@@ -354,6 +354,7 @@ public class PlanWork_Activity extends AppCompatActivity {
             String pattern = "yyyy-MM-dd";
             SimpleDateFormat sdf = new SimpleDateFormat(pattern, new Locale("th", "th"));
             String today = sdf.format(Calendar.getInstance().getTime());
+
             getDataFromSQLite(today, "", "");
             tvFilterStatus.setText("Filter by: Today");
 

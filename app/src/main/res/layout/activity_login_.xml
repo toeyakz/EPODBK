@@ -170,7 +170,7 @@
         android:id="@+id/textView12"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text=": 1.1.0"
+        android:text=": 1.2.0"
         android:textSize="12sp"
         app:layout_constraintBottom_toTopOf="@+id/tvSerial"
         app:layout_constraintEnd_toEndOf="parent"

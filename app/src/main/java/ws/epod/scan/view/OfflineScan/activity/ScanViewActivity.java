@@ -129,6 +129,9 @@ public class ScanViewActivity extends AppCompatActivity implements DecoratedBarc
             }
 
             if (isAdd) {
+                Uri soundUri = Uri.parse(ContentResolver.SCHEME_ANDROID_RESOURCE + "://" + getApplicationContext().getPackageName() + "/" + R.raw.scan_dupp);
+                Ringtone r = RingtoneManager.getRingtone(getApplicationContext(), soundUri);
+                r.play();
                 Toasty.info(getApplicationContext(), "เคยเพิ่ม Waybill นี้ไปแล้ว.", Toast.LENGTH_SHORT, true).show();
             } else {
                 lastText = result.getText();
@@ -148,6 +151,7 @@ public class ScanViewActivity extends AppCompatActivity implements DecoratedBarc
                 if (OfflineScanUtil.getWaybillOffline().size() > 0) {
                     tvStat.setText("Have" + " " + OfflineScanUtil.getWaybillOffline().size() + " " + "waybill in list.");
                 }
+                new Handler().postDelayed(delayScan, 2000);
             }
 
 

@@ -136,6 +136,7 @@ public class PlanSection extends StatelessSection {
         return new HeaderViewHolder(view);
     }
 
+
     @Override
     public void onBindHeaderViewHolder(RecyclerView.ViewHolder holder) {
         HeaderViewHolder headerHolder = (HeaderViewHolder) holder;
