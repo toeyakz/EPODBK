@@ -2,6 +2,7 @@ package ws.epod.Helper;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.pm.PackageManager;
@@ -394,16 +395,18 @@ public class NarisBaseValue {
     }
 
     @SuppressLint({"MissingPermission", "HardwareIds"})
-    public String getSerial() {
+    public String getSerial(Activity activity) {
         String serialNumber;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            serialNumber = Build.getSerial();
-        } else {
-            serialNumber = android.os.Build.SERIAL;
-        }
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+//            serialNumber = Build.getSerial();
+//        } else {
+//            serialNumber = android.os.Build.SERIAL;
+//        }
 //        serialNumber = Settings.Secure.getString(context.getContentResolver(),
 //                Settings.Secure.ANDROID_ID);;
 
+         serialNumber = Settings.Secure.getString(activity.getContentResolver(),
+                Settings.Secure.ANDROID_ID);
       //  if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) Build.getSerial(); else Build.SERIAL;
         //serialNumber = ( serialNumber == android.os.Build.SERIAL ) ? null : serialNumber;
         return serialNumber;
