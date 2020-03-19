@@ -231,14 +231,13 @@ public class Pickup_Activity extends AppCompatActivity {
         super.onResume();
         //getSQLite();
 
-
-        Log.d("sdasd63sd", "onCreate: ");
-        if (UtilScan.getListWaybill() != null) {
+        //Log.d("sdasd63sd", "onCreate: ");
+        if (UtilScan.getListWaybill().size() != 0) {
+            Log.d("sdasd63sd", "onCreate: "+UtilScan.getListWaybill().size());
             getSQLite();
             for (Invoice waybill : UtilScan.getListWaybill()) {
-
+                Log.d("sdasd63sd", "onCreate: "+ waybill.getWaybill_no());
                 scan(waybill.getWaybill_no(), "", "", "");
-
             }
             UtilScan.clearHeaderWaybillList();
             //prefs.edit().clear().apply();
@@ -2720,19 +2719,15 @@ public class Pickup_Activity extends AppCompatActivity {
 
                 if (!picture1.equals("") || !picture2.equals("") || !picture3.equals("") || !commentOfspinner.equals("")) {
                     cv.put("is_scaned", "2");
+                    cv.put("comment", commentOfspinner);
+
                     picking.setComment(commentOfspinner);
                     // picking.setIs_scaned("2");
                     picking.setTime_begin(getdate());
                     picking.setActual_lat(getlat());
                     picking.setActual_lon(getlon());
-//                        if (listTitle.getCount() >= 0) {
-//                            int count = listTitle.getCount() + 1;
-//                            listTitle.setCount(count);
-//                            Log.d("asdad", "onClick: " + listTitle.getCount());
-//                        }
-//                        listTitle.setBox_checked(String.valueOf(listTitle.getCount()));
 
-                    cv.put("comment", commentOfspinner);
+
                 } else {
                     cv.put("comment", "");
                     cv.put("is_scaned", "0");
@@ -2742,11 +2737,7 @@ public class Pickup_Activity extends AppCompatActivity {
                     picking.setTime_begin("");
                     picking.setActual_lat("");
                     picking.setActual_lon("");
-//                        if (!listTitle.getBox_checked().equals("0")) {
-//                            int count = listTitle.getCount() - 1;
-//                            listTitle.setCount(count);
-//                        }
-//                        listTitle.setBox_checked(String.valueOf(listTitle.getCount()));
+
                 }
 
 
@@ -2784,7 +2775,7 @@ public class Pickup_Activity extends AppCompatActivity {
 //            Cursor cursor = databaseHelper.selectDB(sql);
 //            cursor.moveToFirst();
 //            if (cursor.getCount() > 0) {
-//                do {
+//                do { an_pas
 
 //                    String comment = cursor.getString(cursor.getColumnIndex("comment"));
 //                    picture1 = cursor.getString(cursor.getColumnIndex("picture1"));

@@ -1369,17 +1369,17 @@ public class PlanWork_Activity extends AppCompatActivity {
                                                 }
                                             }
                                             IsSuccess = 1;
-                                        }else{
+                                        } else {
                                             IsSuccess = 0;
                                         }
 
                                     }
-                                }else{
+                                } else {
                                     IsSuccess = 0;
                                 }
 
 
-                            }else{
+                            } else {
                                 IsSuccess = 0;
                             }
 
@@ -1500,7 +1500,7 @@ public class PlanWork_Activity extends AppCompatActivity {
 
                         }
                     }
-                }else{
+                } else {
                     IsSuccess = 0;
                 }
 
@@ -1539,6 +1539,7 @@ public class PlanWork_Activity extends AppCompatActivity {
                     //   }
                     break;
                 case 2:
+                case 0:
                     mess = "Sync error!!";
                     Snackbar.make(viewFab, mess, Snackbar.LENGTH_LONG)
                             .setAction("Action", null).show();

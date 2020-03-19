@@ -217,7 +217,7 @@ public class Deliver_Activity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
 
-        if (UtilScan.getListDeliveryWaybill() != null) {
+        if (UtilScan.getListDeliveryWaybill().size() != 0) {
             getSQLite();
             for (InvoiceDelivery waybill : UtilScan.getListDeliveryWaybill()) {
                 scan(waybill.getWaybill_no());
@@ -2268,7 +2268,6 @@ public class Deliver_Activity extends AppCompatActivity {
                     Log.d("ASdasdasd", "onClick: " + commentOfspinner);
 
                     for (int i = 0; i < deleteImage.size(); i++) {
-
                         File file = new File(deleteImage.get(i));
                         file.delete();
                     }
