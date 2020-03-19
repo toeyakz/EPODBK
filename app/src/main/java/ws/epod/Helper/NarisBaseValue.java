@@ -21,6 +21,8 @@ import android.os.Build;
 
 import androidx.core.app.ActivityCompat;
 
+import android.provider.Settings;
+import android.telephony.TelephonyManager;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -391,14 +393,18 @@ public class NarisBaseValue {
         return phrase.toString();
     }
 
-    @SuppressLint("MissingPermission")
+    @SuppressLint({"MissingPermission", "HardwareIds"})
     public String getSerial() {
-        String serialNumber = null;
+        String serialNumber;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             serialNumber = Build.getSerial();
-        } else if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
+        } else {
             serialNumber = android.os.Build.SERIAL;
         }
+//        serialNumber = Settings.Secure.getString(context.getContentResolver(),
+//                Settings.Secure.ANDROID_ID);;
+
+      //  if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) Build.getSerial(); else Build.SERIAL;
         //serialNumber = ( serialNumber == android.os.Build.SERIAL ) ? null : serialNumber;
         return serialNumber;
     }

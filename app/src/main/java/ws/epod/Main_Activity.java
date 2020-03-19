@@ -97,15 +97,12 @@ public class Main_Activity extends LocalizationActivity {
 
         imgBack_Job_Main = findViewById(R.id.imgBack_Job_Main);
         headerTxt_Main = findViewById(R.id.headerTxt_Main);
-        imgBack_Job_Main.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Animation animation = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.alpha);
-                imgBack_Job_Main.startAnimation(animation);
-                finish();
-                // checkBackCon();
+        imgBack_Job_Main.setOnClickListener(view -> {
+            Animation animation = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.alpha);
+            imgBack_Job_Main.startAnimation(animation);
+            finish();
+            // checkBackCon();
 
-            }
         });
 
         rvMain = findViewById(R.id.rvMain);

@@ -97,7 +97,7 @@ public class Login_Activity extends AppCompatActivity {
     private UserLoginTask mAuthTask = null;
 
     private Toolbar toolbar;
-    private TextView serial;
+    private TextView serial, textView12;
     private Button btnLogin;
     private EditText edtUsername, edtPassword;
     private String Username = "", password = "";
@@ -151,6 +151,7 @@ public class Login_Activity extends AppCompatActivity {
 
     }
 
+    @SuppressLint("SetTextI18n")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -242,6 +243,7 @@ public class Login_Activity extends AppCompatActivity {
         }
 
         serial = findViewById(R.id.tvSerial);
+        textView12 = findViewById(R.id.textView12);
         btnLogin = findViewById(R.id.btnLogin);
         show_pass_btn = findViewById(R.id.show_pass_btn);
 
@@ -293,7 +295,6 @@ public class Login_Activity extends AppCompatActivity {
             } else {
                 try {
                     Thread.sleep(15000);
-
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -305,6 +306,7 @@ public class Login_Activity extends AppCompatActivity {
         //set serial
         imei = narisv.getSerial();
         serial.setText(": " + imei);
+        textView12.setText(": " + BuildConfig.VERSION_NAME);
 
 
         edtPassword.setOnEditorActionListener(new TextView.OnEditorActionListener() {

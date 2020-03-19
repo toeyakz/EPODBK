@@ -839,9 +839,10 @@ public class PlanWork_Activity extends AppCompatActivity {
     }
 
 
+    @SuppressLint("StaticFieldLeak")
     public class UploadWork2ND extends AsyncTask<String, Integer, String> {
 
-        int IsSuccess = 1;
+        int IsSuccess = 0;
 
         @Override
         protected void onPreExecute() {
@@ -940,6 +941,7 @@ public class PlanWork_Activity extends AppCompatActivity {
 
                         } catch (JSONException e) {
                             e.printStackTrace();
+                            return null;
                         }
 
                     } while (cursor.moveToNext());
@@ -1096,13 +1098,12 @@ public class PlanWork_Activity extends AppCompatActivity {
 
 
                 } else {
-
-//                    new DownloadWork().execute();
                     IsSuccess = 1;
                 }
 
             } catch (Exception e) {
                 e.printStackTrace();
+                return null;
             }
 
             return null;
@@ -1124,7 +1125,7 @@ public class PlanWork_Activity extends AppCompatActivity {
                     new uploadInvoice().execute();
                     new DownloadWork().execute();
                     break;
-                case 2:
+                default:
                     mess = "Sync error!!";
                     Snackbar.make(viewFab, mess, Snackbar.LENGTH_LONG)
                             .setAction("Action", null).show();
@@ -1244,7 +1245,7 @@ public class PlanWork_Activity extends AppCompatActivity {
 
     public class DownloadWork extends AsyncTask<String, String, String> {
 
-        int IsSuccess = 1;
+        int IsSuccess = 0;
 
         @Override
         protected String doInBackground(String... strings) {
@@ -1367,12 +1368,19 @@ public class PlanWork_Activity extends AppCompatActivity {
                                                     }
                                                 }
                                             }
+                                            IsSuccess = 1;
+                                        }else{
+                                            IsSuccess = 0;
                                         }
 
                                     }
+                                }else{
+                                    IsSuccess = 0;
                                 }
 
 
+                            }else{
+                                IsSuccess = 0;
                             }
 
 
@@ -1492,16 +1500,20 @@ public class PlanWork_Activity extends AppCompatActivity {
 
                         }
                     }
+                }else{
+                    IsSuccess = 0;
                 }
 
             } catch (Exception e) {
                 IsSuccess = 2;
                 e.printStackTrace();
+                return null;
             }
 
             return null;
         }
 
+        @SuppressLint("ApplySharedPref")
         @Override
         protected void onPostExecute(String s) {
             super.onPostExecute(s);
@@ -1539,7 +1551,7 @@ public class PlanWork_Activity extends AppCompatActivity {
                     break;
             }
             SharedPreferences getDateFilter = getSharedPreferences("getDateFilter", Context.MODE_PRIVATE);
-            getDateFilter.edit().clear().commit();
+            getDateFilter.edit().clear().apply();
 
 
         }

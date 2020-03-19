@@ -2868,10 +2868,9 @@ public class Deliver_Activity extends AppCompatActivity {
         netCon = new ConnectionDetector(Deliver_Activity.this);
         databaseHelper = new DatabaseHelper(Deliver_Activity.this);
 
-
         new AsyncTask<String, Integer, String>() {
 
-            int IsSuccess = 1;
+            int IsSuccess = 0;
 
             @Override
             protected void onPreExecute() {
@@ -3124,6 +3123,7 @@ public class Deliver_Activity extends AppCompatActivity {
 
                 } catch (Exception e) {
                     e.printStackTrace();
+                    return null;
                 }
 
                 return null;
@@ -3133,6 +3133,7 @@ public class Deliver_Activity extends AppCompatActivity {
             protected void onPostExecute(String s) {
                 super.onPostExecute(s);
 
+                Log.d("as8da", String.valueOf(IsSuccess));
                 String mess = "";
                 switch (IsSuccess) {
                     case -1:
@@ -3151,11 +3152,15 @@ public class Deliver_Activity extends AppCompatActivity {
                         break;
                     case 2:
                         mess = "Sync error!!";
+                        if(progressDialog.isShowing()){
+                            progressDialog.dismiss();
+                        }
                         Toast.makeText(Deliver_Activity.this, mess, Toast.LENGTH_SHORT).show();
 //                        Snackbar.make(viewFab, mess, Snackbar.LENGTH_LONG)
 //                                .setAction("Action", null).show();
                         break;
                 }
+
 
             }
 
@@ -3402,7 +3407,7 @@ public class Deliver_Activity extends AppCompatActivity {
 
     public class DownloadWork extends AsyncTask<String, String, String> {
 
-        int IsSuccess = 1;
+        int IsSuccess = 0;
 
         @Override
         protected String doInBackground(String... strings) {
@@ -3518,161 +3523,38 @@ public class Deliver_Activity extends AppCompatActivity {
                                                                         databaseHelper.db().update("pic_sign", cv, "delivery_no = '" + delivery_no + "' and order_no = '" + order_no + "' " +
                                                                                 "and consignment_no = '" + consignment_no + "' and invoice_no = '" + invoice_no + "'", null);
 
+
                                                                     }
                                                                 }
                                                             }
                                                         }
                                                     }
+                                                    IsSuccess = 1;
+                                                }else{
+                                                    IsSuccess = 2;
                                                 }
 
                                             }
                                         }
+                                    }else{
+                                        IsSuccess = 2;
                                     }
 
 
                                 }
-                            }
-                        }
-                    }
-                }
-
-//                String url = Var.WEBSERVICE2 + "func=getPlan&vehicle_id=" + Var.UserLogin.driver_vehicle_id + "&driver_id=" + Var.UserLogin.driver_id + "&serial=" +
-//                        Var.UserLogin.driver_serial + "&phone_date=" + getDate + "&date+";
-//                Log.d("PlanWorkLOG", url);
-                // JSONArray GETJSON = narisv.getJsonFromUrl_reJsonArray(url);
-
-               /* Call<ResponseBody> call = apiInterface.downloadWork(Var.UserLogin.driver_vehicle_id, Var.UserLogin.driver_id, Var.UserLogin.driver_serial, getDate, max_modified_date);
-                Response<ResponseBody> response = call.execute();
-                if (response.code() == 200) {
-                    String responseRecieved = response.body().string();
-                    if (responseRecieved != null) {
-                        if (!responseRecieved.equals("")) {
-                            Log.d("getPlanLog", "doInBackground: " + responseRecieved);
-
-                            JSONArray jsonArray = new JSONArray(responseRecieved);
-//                            for (int i = 0; i < jsonArray.length(); i++) {
-//
-//                                JSONObject json_data = jsonArray.getJSONObject(i);
-//
-//                            }
-
-
-                            if (narisv.INSERT_AS_SQL("Plan", jsonArray, "")) {
-                                Log.d("PlanWorkLOG", "SAVED INVOICE HEADER");
-
-                                String url_consign = Var.WEBSERVICE2 + "func=getConsignment&vehicle_id=" + Var.UserLogin.driver_vehicle_id;
-
-                                // JSONArray GETJSON_CONSIGN = narisv.getJsonFromUrl_reJsonArray(url_consign);
-
-                                Call<ResponseBody> callCons = apiInterface.downloadConsignment(Var.UserLogin.driver_vehicle_id, "");
-                                Response<ResponseBody> responseCons = callCons.execute();
-                                if (responseCons.code() == 200) {
-                                    String responseRecievedCons = responseCons.body().string();
-                                    if (responseRecieved != null) {
-                                        if (!responseRecieved.equals("")) {
-                                            JSONArray jsonArrayCons = new JSONArray(responseRecievedCons);
-                                            if (narisv.INSERT_AS_SQL("consignment", jsonArrayCons, "")) {
-                                                Log.d("PlanWorkLOG", "SAVED Consignment.");
-
-                                                Call<ResponseBody> reaSon = apiInterface.reason();
-                                                Response<ResponseBody> responseReason = reaSon.execute();
-                                                if (responseReason.code() == 200) {
-                                                    String recievedReason = responseReason.body().string();
-                                                    if (recievedReason != null) {
-                                                        if (!responseRecieved.equals("")) {
-                                                            JSONArray jsonArrayReason = new JSONArray(recievedReason);
-                                                            if (narisv.INSERT_AS_SQL("reason", jsonArrayReason, "")) {
-                                                                Log.d("PlanWorkLOG", "SAVED reason.");
-
-                                                                Call<ResponseBody> inVoice = apiInterface.invoice(Var.UserLogin.driver_vehicle_id);
-                                                                Response<ResponseBody> responseInvoice = inVoice.execute();
-                                                                if (responseInvoice.code() == 200) {
-                                                                    String recievedInvoice = responseInvoice.body().string();
-                                                                    if (recievedInvoice != null) {
-                                                                        if (!recievedInvoice.equals("")) {
-                                                                            JSONArray jsonArrayInvoice = new JSONArray(recievedInvoice);
-                                                                            for (int o = 0; o < jsonArrayInvoice.length(); o++) {
-
-
-                                                                                String delivery_no = jsonArrayInvoice.getJSONObject(o).getString("delivery_no");
-                                                                                String order_no = jsonArrayInvoice.getJSONObject(o).getString("order_no");
-                                                                                String consignment_no = jsonArrayInvoice.getJSONObject(o).getString("consignment_no");
-                                                                                String invoice_no = jsonArrayInvoice.getJSONObject(o).getString("invoice_no");
-
-                                                                                String sql_expand = "select count(delivery_no) as count_delivery\n" +
-                                                                                        " from pic_sign\n" +
-                                                                                        " where delivery_no = '" + delivery_no + "' and order_no = '" + order_no + "' and consignment_no = '" + consignment_no + "' and invoice_no = '" + invoice_no + "'";
-                                                                                Cursor cursor = databaseHelper.selectDB(sql_expand);
-
-                                                                                cursor.moveToFirst();
-                                                                                if (cursor.getCount() > 0) {
-                                                                                    String count_delivery = cursor.getString(cursor.getColumnIndex("count_delivery"));
-                                                                                    if (count_delivery.equals("0")) {
-
-                                                                                        String sql = "INSERT OR REPLACE INTO pic_sign (delivery_no, consignment_no, order_no, invoice_no, pic_sign_load, pic_sign_unload" +
-                                                                                                ", comment_load, comment_unload, date_sign_load, date_sign_unload, status_load, status_unload, status_upload_invoice" +
-                                                                                                ", status_delete, create_date) VALUES('" + jsonArrayInvoice.getJSONObject(o).getString("delivery_no") + "'" +
-                                                                                                ",'" + jsonArrayInvoice.getJSONObject(o).getString("consignment_no") + "'" +
-                                                                                                ", '" + jsonArrayInvoice.getJSONObject(o).getString("order_no") + "', '" + jsonArrayInvoice.getJSONObject(o).getString("invoice_no") + "'" +
-                                                                                                ", '" + jsonArrayInvoice.getJSONObject(o).getString("pic_sign_load") + "', '" + jsonArrayInvoice.getJSONObject(o).getString("pic_sign_unload") + "'" +
-                                                                                                ", '" + jsonArrayInvoice.getJSONObject(o).getString("comment_load") + "', '" + jsonArrayInvoice.getJSONObject(o).getString("comment_unload") + "'" +
-                                                                                                ", '" + jsonArrayInvoice.getJSONObject(o).getString("date_sign_load") + "', '" + jsonArrayInvoice.getJSONObject(o).getString("date_sign_unload") + "'" +
-                                                                                                ", '" + jsonArrayInvoice.getJSONObject(o).getString("status_load") + "', '" + jsonArrayInvoice.getJSONObject(o).getString("status_unload") + "','1','0','" + getdate() + "')";
-                                                                                        databaseHelper.db().execSQL(sql);
-
-                                                                                    } else {
-
-                                                                                        ContentValues cv = new ContentValues();
-                                                                                        cv.put("pic_sign_load", jsonArrayInvoice.getJSONObject(o).getString("pic_sign_load"));
-                                                                                        cv.put("pic_sign_unload", jsonArrayInvoice.getJSONObject(o).getString("pic_sign_unload"));
-                                                                                        cv.put("date_sign_load", jsonArrayInvoice.getJSONObject(o).getString("date_sign_load"));
-                                                                                        cv.put("date_sign_unload", jsonArrayInvoice.getJSONObject(o).getString("date_sign_unload"));
-                                                                                        cv.put("comment_load", jsonArrayInvoice.getJSONObject(o).getString("comment_load"));
-                                                                                        cv.put("comment_unload", jsonArrayInvoice.getJSONObject(o).getString("comment_unload"));
-                                                                                        cv.put("status_load", jsonArrayInvoice.getJSONObject(o).getString("status_load"));
-                                                                                        cv.put("status_unload", jsonArrayInvoice.getJSONObject(o).getString("status_unload"));
-                                                                                        cv.put("status_upload_invoice", "1");
-                                                                                        cv.put("status_delete", "0");
-                                                                                        databaseHelper.db().update("pic_sign", cv, "delivery_no = '" + delivery_no + "' and order_no = '" + order_no + "' " +
-                                                                                                "and consignment_no = '" + consignment_no + "' and invoice_no = '" + invoice_no + "'", null);
-
-                                                                                    }
-                                                                                }
-                                                                            }
-                                                                        }
-                                                                    }
-                                                                }
-
-
-                                                            } else {
-                                                                Log.d("PlanWorkLOG", "FAIL save reason.");
-                                                            }
-                                                        }
-                                                    }
-                                                }
-
-
-                                            } else {
-                                                Log.d("PlanWorkLOG", "FAIL save consignment.");
-                                            }
-                                            IsSuccess = 1;
-                                        }
-                                    }
-                                }
-
-
-                            } else {
-                                Log.d("PlanWorkLOG", "FAIL");
+                            }else {
                                 IsSuccess = 2;
                             }
-
                         }
                     }
-                }*/
+                }else{
+                    IsSuccess = 2;
+                }
 
             } catch (Exception e) {
                 IsSuccess = 2;
                 e.printStackTrace();
+                return null;
             }
 
             return null;
@@ -3682,33 +3564,28 @@ public class Deliver_Activity extends AppCompatActivity {
         protected void onPostExecute(String s) {
             super.onPostExecute(s);
 
+            if (progressDialog.isShowing()) {
+                progressDialog.dismiss();
+            }
+            Log.d("8sssssfs", ":"+ IsSuccess);
             String mess = "";
             switch (IsSuccess) {
                 case 1:
                     mess = "Synced";
-                    if (progressDialog.isShowing()) {
-                        progressDialog.dismiss();
-                    }
                     getSQLite();
                     isSync = false;
-//                    Snackbar.make(viewFab, mess, Snackbar.LENGTH_LONG)
-//                            .setAction("Action", null).show();
-
                     Toast.makeText(Deliver_Activity.this, mess, Toast.LENGTH_SHORT).show();
                     Var.synced = 1;
                     break;
                 case 2:
                     mess = "Sync error!!";
-//                    Snackbar.make(viewFab, mess, Snackbar.LENGTH_LONG)
-//                            .setAction("Action", null).show();
-
                     Toast.makeText(Deliver_Activity.this, mess, Toast.LENGTH_SHORT).show();
-
-                    // rvPlanWork.setAdapter(sectionAdapter);
-                    //// planWorkAdapter.notifyDataSetChanged();
-
+                    break;
+                default:
+                    Log.d("8sssssfs", String.valueOf(IsSuccess));
                     break;
             }
+
 
 
         }
