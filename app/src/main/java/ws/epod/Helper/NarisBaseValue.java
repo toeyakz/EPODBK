@@ -407,8 +407,7 @@ public class NarisBaseValue {
 
          serialNumber = Settings.Secure.getString(activity.getContentResolver(),
                 Settings.Secure.ANDROID_ID);
-      //  if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) Build.getSerial(); else Build.SERIAL;
-        //serialNumber = ( serialNumber == android.os.Build.SERIAL ) ? null : serialNumber;
+
         return serialNumber;
     }
 
