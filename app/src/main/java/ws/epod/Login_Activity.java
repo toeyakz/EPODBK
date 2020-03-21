@@ -309,7 +309,7 @@ public class Login_Activity extends AppCompatActivity {
 
 
 
-
+        imei = narisv.getSerial(this);
         serial.setText(": " + narisv.getSerial(this));
         textView12.setText(": " + BuildConfig.VERSION_NAME);
 
