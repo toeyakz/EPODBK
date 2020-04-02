@@ -1176,7 +1176,7 @@ public class Pickup_Activity extends AppCompatActivity {
                             scannotFind = true;
                             // lastPosition = i;
                             if (!expandedList.getOrder_no().equals("")) {
-                                Toasty.info(getApplicationContext(), "P lease un sign this order.", Toast.LENGTH_SHORT, true).show();
+                                Toasty.info(getApplicationContext(), "Please un sign this order.", Toast.LENGTH_SHORT, true).show();
                             } else {
 
                                 // if (!expandedList.getIs_scaned().equals("2")) {

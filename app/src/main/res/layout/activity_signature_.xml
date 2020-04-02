@@ -12,9 +12,9 @@
         android:layout_above="@+id/saassaasas">
 
         <com.github.gcacace.signaturepad.views.SignaturePad
+            android:id="@+id/signature_pad"
             android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            android:id="@+id/signature_pad" />
+            android:layout_height="fill_parent" />
 
         <ImageView
             android:id="@+id/showImageSig"

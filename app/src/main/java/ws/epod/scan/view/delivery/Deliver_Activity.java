@@ -486,8 +486,9 @@ public class Deliver_Activity extends AppCompatActivity {
             itemToHide.setVisible(false);
             return true;
         } else if (id == R.id.item_confirm) {
-            Intent intent = new Intent(getApplicationContext(), InvoiceDeliver_Activity.class);
-            startActivity(intent);
+//            Intent intent = new Intent(getApplicationContext(), InvoiceDeliver_Activity.class);
+//            startActivity(intent);
+            saveCheckConFirm();
             return true;
         } else if (id == R.id.item_sync) {
             hideAll();
@@ -1079,6 +1080,73 @@ public class Deliver_Activity extends AppCompatActivity {
 
         });
 
+    }
+
+    @SuppressLint("StaticFieldLeak")
+    private void saveCheckConFirm() {
+        boolean isSaved = true;
+
+        for (int i = 0; i < expandableListAdapter.getGroupCount(); i++) {
+            Deliver_Model groupView = (Deliver_Model) expandableListAdapter.getGroup(i);
+            for (int j = 0; j < expandableListAdapter.getChildrenCount(i); j++) {
+                DeliverExpand_Model childView = (DeliverExpand_Model) expandableListAdapter.getChild(i, j);
+
+                if (childView.getIs_save().equals("2")) {
+                    isSaved = false;
+                }
+            }
+
+        }
+
+
+        if (isSaved) {
+            if (checkTotalScan()) {
+                Intent intent = new Intent(getApplicationContext(), InvoiceDeliver_Activity.class);
+                startActivity(intent);
+                // Toast.makeText(getApplicationContext(), "ไปได้", Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(getApplicationContext(), "No enter.", Toast.LENGTH_SHORT).show();
+            }
+            // Toast.makeText(getApplicationContext(), "saved.", Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(getApplicationContext(), "Please save job.", Toast.LENGTH_SHORT).show();
+        }
+
+    }
+
+    private boolean checkTotalScan() {
+
+
+        ArrayList<String> total = new ArrayList<>();
+        int sum = 0;
+        int sum_scan = 0;
+        for (int i = 0; i < expandableListAdapter.getGroupCount(); i++) {
+            Deliver_Model groupView = (Deliver_Model) expandableListAdapter.getGroup(i);
+
+            sum = sum + groupView.getTotal_b();
+            Log.d("dfsdfwee", "con : " + groupView.getConsignment_no() + " total: " + groupView.getTotal_b());
+
+            for (int j = 0; j < expandableListAdapter.getChildrenCount(i); j++) {
+                DeliverExpand_Model childView = (DeliverExpand_Model) expandableListAdapter.getChild(i, j);
+
+                if (!childView.getIs_scaned().equals("0")) {
+                    total.add(childView.getIs_scaned());
+                }
+
+
+            }
+
+        }
+        sum_scan = sum_scan + total.size();
+
+        Log.d("dfsdfwee", "Is Scan: " + sum_scan);
+        Log.d("dfsdfwee", "checkTotalScan: " + sum);
+
+        if (sum_scan != sum) {
+            return false;
+        } else {
+            return true;
+        }
     }
 
     private void saveCheck() {
