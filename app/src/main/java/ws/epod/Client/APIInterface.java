@@ -58,9 +58,9 @@ public interface APIInterface {
 
 
     //********************************************************************************************
-    //ลิง๕์จริง
+    //ลิงค์จริง
 
-/*    @POST("/services/service.php?func=login")
+   /* @POST("/services/service.php?func=login")
     Call<List<Login>> login(@Query("user") String username, @Query("pass") String password, @Query("serial") String serial);
 
     @POST("/services/service.php?func=login")
