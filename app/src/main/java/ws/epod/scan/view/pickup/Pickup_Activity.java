@@ -19,7 +19,6 @@ import android.graphics.drawable.Drawable;
 import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
@@ -58,7 +57,6 @@ import androidx.core.graphics.drawable.DrawableCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import retrofit2.Callback;
 import ws.epod.BuildConfig;
 
 import com.addisonelliott.segmentedbutton.SegmentedButtonGroup;
@@ -85,10 +83,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 
 import es.dmoral.toasty.Toasty;
 import fr.ganfra.materialspinner.MaterialSpinner;
@@ -106,8 +101,6 @@ import ws.epod.Client.Structors.UploadImageInvoice;
 import ws.epod.Helper.ConnectionDetector;
 import ws.epod.Helper.DatabaseHelper;
 import ws.epod.Helper.NarisBaseValue;
-import ws.epod.ObjectClass.SQLiteModel.WaybillModel;
-import ws.epod.scan.view.delivery.Deliver_Activity;
 import ws.epod.signature.pickup.Invoice_Activity;
 import ws.epod.Main_Activity;
 import ws.epod.ObjectClass.LanguageClass;
@@ -120,7 +113,6 @@ import ws.epod.ObjectClass.Var;
 import ws.epod.PlanWork_Activity;
 import ws.epod.R;
 import ws.epod.scan.Util.UtilScan;
-import ws.epod.scan.model.pickup.Invoice;
 import ws.epod.sync.UploadDataPlan;
 
 public class Pickup_Activity extends AppCompatActivity {
@@ -235,35 +227,29 @@ public class Pickup_Activity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        //getSQLite();
 
-        //Log.d("sdasd63sd", "onCreate: ");
-        if (UtilScan.getListWaybill().size() != 0) {
-            Log.d("sdasd63sd", "onCreate: " + UtilScan.getListWaybill().size());
+        SharedPreferences p1 = getSharedPreferences("status_refresh", Context.MODE_PRIVATE);
+        String status_refresh = p1.getString("status", "");
+
+
+        if (status_refresh.equals("1")) {
             getSQLite();
-            for (Invoice waybill : UtilScan.getListWaybill()) {
-                Log.d("sdasd63sd", "onCreate: " + waybill.getWaybill_no());
-                scan(waybill.getWaybill_no(), "", "", "");
+            SharedPreferences preferences = getSharedPreferences("status_refresh", Context.MODE_PRIVATE);
+            SharedPreferences.Editor editor = preferences.edit();
+            editor.clear().apply();
+        }
+        if (UtilScan.meMapArrayPickup.size() != 0) {
+            for (HashMap<String, String> map : UtilScan.meMapArrayPickup) {
+                scan2(map.get("waybill"), map.get("is_scanned"), "", "", "");
             }
-            UtilScan.clearHeaderWaybillList();
-            UtilScan.clearPickArray();
-            //prefs.edit().clear().apply();
-        } else {
-            getSQLite();
+
+            SharedPreferences preferences = getSharedPreferences("ccsac", Context.MODE_PRIVATE);
+            SharedPreferences.Editor editor = preferences.edit();
+            editor.clear().apply();
+            UtilScan.meMapArrayPickup = new ArrayList<>();
         }
 
 
-            for (HashMap<String, String> map : UtilScan.meMapArray) {
-
-                Log.d("Asd6asd", "value:" + map.get("waybill")+" > "+ map.get("is_scanned"));
-            }
-
-
-        // Upload();
-
-//        scannerView.setResultHandler(new ZXingScannerResultHandler());
-        // Start camera on resume
-//        scannerView.startCamera();
     }
 
 
@@ -389,6 +375,7 @@ public class Pickup_Activity extends AppCompatActivity {
             prefsEditor.commit();
 
             UtilScan.meMap = new HashMap<>();
+            UtilScan.meMapArrayPickup = new ArrayList<>();
 
             new ScanPickUpActivity().getAdapterInScan(expandableListAdapter);
             UtilScan.clearHeaderWaybillList();
@@ -973,6 +960,354 @@ public class Pickup_Activity extends AppCompatActivity {
         return true;
     }
 
+    private void scan2(String value, String is_scanned, String date, String lat, String lon) {
+        boolean scannotFind = false;
+
+        SharedPreferences prefs = getSharedPreferences("status_scan", Context.MODE_PRIVATE);
+        int num = 0;
+        Log.d("s6s3d5", "scan: 1");
+        if (INPUT_WAY.equals("CHECK")) {
+
+            for (int i = 0; i < expandableListAdapter.getGroupCount(); i++) {
+                // expandableListView.expandGroup(i);
+                final PickingUp_Model listTitle = (PickingUp_Model) expandableListAdapter.getGroup(i);
+                ArrayList<String> count_ = new ArrayList<>();
+                for (int j = 0; j < expandableListAdapter.getChildrenCount(i); j++) {
+                    final PickingUpEexpand_Model expandedList = (PickingUpEexpand_Model) expandableListAdapter.getChild(i, j);
+
+                    //   if (expandedList.getIs_save().equals("0") || expandedList.getIs_save().equals("2")) {
+                    if (is_scanned.equals("0") || is_scanned.equals("2")) {
+                        if (value.equals(expandedList.getWaybil_no())) {
+
+                            scannotFind = true;
+
+                            if (!expandedList.getOrder_no().equals("")) {
+                                Toasty.info(getApplicationContext(), "Please un sign this order.", Toast.LENGTH_SHORT, true).show();
+                            } else {
+                                // if (!expandedList.getIs_scaned().equals("2")) {
+
+                                if (listTitle.getCount() >= 0) {
+                                    Log.d("llsmf66", "num: " + num + "getnum: " + listTitle.getNum());
+
+                                    int count = listTitle.getCount() + 1;
+                                    listTitle.setCount(count);
+
+                                    int c1 = Integer.parseInt(listTitle.getBox_checked());
+                                    num = c1 + listTitle.getCount();
+
+                                    if (is_scanned.equals("2")) {
+                                        num = num - 1;
+                                    }
+
+                                    listTitle.setNum(num);
+//
+                                }
+                                //  }
+
+                                //ถ้า date ไม่ว่าง คือ type import waybill
+                                if (!date.equals("")) {
+                                    imWaibill.add(value);
+                                    expandedList.setIs_scaned("1");
+                                    expandedList.setTime_begin(date);
+                                    expandedList.setActual_lat(lat);
+                                    expandedList.setActual_lon(lon);
+                                    expandedList.setIs_save("2");
+                                    expandedList.setComment("");
+                                    expandedList.setPicture1("");
+                                    expandedList.setPicture2("");
+                                    expandedList.setPicture3("");
+                                } else {
+                                    expandedList.setIs_scaned("1");
+                                    expandedList.setTime_begin(getdate());
+                                    expandedList.setActual_lat(getlat());
+                                    expandedList.setActual_lon(getlon());
+                                    expandedList.setIs_save("2");
+                                    expandedList.setComment("");
+                                    expandedList.setPicture1("");
+                                    expandedList.setPicture2("");
+                                    expandedList.setPicture3("");
+                                    Toasty.success(getApplicationContext(), "Checked!", Toast.LENGTH_SHORT, true).show();
+
+                                    //  prefs.edit().putString("Is_scaned", expandedList.getIs_scaned()).apply();
+
+                                }
+
+                                //ToastScan(icon,"Checked.");
+
+                                expandableListView.setAdapter(expandableListAdapter);
+                                expandableListView.expandGroup(i);
+                                expandableListAdapter.notifyDataSetChanged();
+                                expandableListView.smoothScrollToPositionFromTop(i, j);
+
+                            }
+                        } else {
+
+                        }
+                    } else {
+
+                        if (value.equals(expandedList.getWaybil_no())) {
+                            // ToastScan(null,"Scanned.");
+                            scannotFind = true;
+                            if (!expandedList.getOrder_no().equals("")) {
+                                Toasty.info(getApplicationContext(), "Please un sign this order.", Toast.LENGTH_SHORT, true).show();
+                            } else {
+                                Toasty.info(getApplicationContext(), "Scanned.", Toast.LENGTH_SHORT, true).show();
+                                prefs.edit().putString("Is_scaned", "1").apply();
+                            }
+                            //Toasty.info(getApplicationContext(), "Scanned.", Toast.LENGTH_SHORT, true).show();
+
+                        }
+
+                    }
+
+                    if (expandedList.getIs_scaned().equals("1") || expandedList.getIs_scaned().equals("2")) {
+
+                        count_.add(expandedList.getIs_scaned());
+                        for (int n = 0; n < count_.size(); n++) {
+                            Log.d("asf3as69", "scan: " + String.valueOf(count_.get(n).length()));
+                            Log.d("asf3as69", "scan:2 " + String.valueOf(count_.get(n)));
+                            Log.d("asf3as69", "scan:3 " + String.valueOf(count_.size()));
+                            listTitle.setBox_checked(String.valueOf(count_.size()));
+                        }
+
+                        expandableListView.setAdapter(expandableListAdapter);
+                        //   expandableListView.expandGroup(i);
+                        expandableListAdapter.notifyDataSetChanged();
+                        expandableListView.smoothScrollToPositionFromTop(i, j);
+                        Log.d("fjjpppsp", "scan: " + is_scanned);
+                    }
+                    //   }
+
+                }
+
+            }
+
+
+        } else if (INPUT_WAY.equals("UNCHECK")) {
+
+            for (int i = 0; i < expandableListAdapter.getGroupCount(); i++) {
+                //expandableListView.expandGroup(i);
+                final PickingUp_Model listTitle = (PickingUp_Model) expandableListAdapter.getGroup(i);
+                ArrayList<String> count_ = new ArrayList<>();
+                for (int j = 0; j < expandableListAdapter.getChildrenCount(i); j++) {
+                    final PickingUpEexpand_Model expandedList = (PickingUpEexpand_Model) expandableListAdapter.getChild(i, j);
+
+                    //  if (expandedList.getIs_save().equals("0") || expandedList.getIs_save().equals("2")) {
+                    // เป็น 1 หรือ 2
+                    if (!is_scanned.equals("0")) {
+                        if (value.equals(expandedList.getWaybil_no())) {
+
+                            scannotFind = true;
+
+                            if (!expandedList.getOrder_no().equals("")) {
+                                Toasty.info(getApplicationContext(), "Please un sign this order.", Toast.LENGTH_SHORT, true).show();
+                            } else {
+
+                                //  Log.d("sdfsdf","ก่อนหน้า"+ listTitle.getBox_checked());
+                                if (!listTitle.getBox_checked().equals("0")) {
+                                    // int count = listTitle.getCount() - 1;
+                                    // int count2 = listTitle.getCount();
+                                    Log.d("sadaaaa", "scan:ก่อน" + num);
+
+                                    // num = num - 1;
+                                    int count = listTitle.getCount() - 1;
+                                    listTitle.setCount(count);
+
+                                    int sum = listTitle.getNum() - 1;
+
+                                    Log.d("sadaaaa", "scan:หลัง " + sum);
+
+
+                                    //  int c1 = Integer.parseInt(listTitle.getBox_checked());
+
+
+//                                    if (listTitle.getCount() <= 0) {
+//                                    } else {
+//                                        listTitle.setCount(count);
+//                                    }
+                                    listTitle.setNum(sum);
+//                                    Log.d("sdfsdf", listTitle.getCount() + "");
+//                                    listTitle.setBox_checked(String.valueOf(listTitle.getCount()));
+                                }
+
+                                // Log.d("sdfsdf", listTitle.getBox_checked());
+
+                                expandedList.setIs_scaned("0");
+                                expandedList.setTime_begin("");
+                                expandedList.setActual_lat("");
+                                expandedList.setActual_lon("");
+                                expandedList.setIs_save("0");
+                                expandedList.setComment("");
+                                expandedList.setPicture1("");
+                                expandedList.setPicture2("");
+                                expandedList.setPicture3("");
+
+                                //  prefs.edit().putString("Is_scaned", expandedList.getIs_scaned()).apply();
+
+                                Toasty.success(getApplicationContext(), "Un Check!", Toast.LENGTH_SHORT, true).show();
+
+                                expandableListView.setAdapter(expandableListAdapter);
+                                expandableListView.expandGroup(i);
+                                expandableListAdapter.notifyDataSetChanged();
+                                expandableListView.smoothScrollToPositionFromTop(i, j);
+                            }
+                        } else {
+                        }
+                    } else {
+
+                        if (value.equals(expandedList.getWaybil_no())) {
+                            scannotFind = true;
+                            prefs.edit().putString("Is_scaned", "0").apply();
+                            Toasty.info(getApplicationContext(), "Un scan.", Toast.LENGTH_SHORT, true).show();
+
+                        }
+
+                        //toastScan("Change the lower button to scan.");
+                    }
+                    //   }
+
+                    if (expandedList.getIs_scaned().equals("1") || expandedList.getIs_scaned().equals("2")) {
+                        // count_ = new ArrayList<>();
+                        count_.add(expandedList.getIs_scaned() + " waybill: " + expandedList.getWaybil_no());
+                        listTitle.setBox_checked(String.valueOf(count_.size()));
+
+                        Log.d("size array", "scan: " + count_.size());
+                        expandableListView.setAdapter(expandableListAdapter);
+                        // expandableListView.expandGroup(i);
+                        expandableListAdapter.notifyDataSetChanged();
+                        expandableListView.smoothScrollToPositionFromTop(i, j);
+                        Log.d("fjjpppsp", "scan: " + is_scanned);
+                    } else if (expandedList.getIs_scaned().equals("0")) {
+
+                        Log.d("size array", "scan: " + count_.size());
+                        listTitle.setBox_checked(String.valueOf(count_.size()));
+
+                        expandableListView.setAdapter(expandableListAdapter);
+                        // expandableListView.expandGroup(i);
+                        expandableListAdapter.notifyDataSetChanged();
+                        expandableListView.smoothScrollToPositionFromTop(i, j);
+                    }
+
+
+                }
+
+
+            }
+        }
+        if (INPUT_WAY.equals("COMMENT")) {
+
+            for (int i = 0; i < expandableListAdapter.getGroupCount(); i++) {
+                final PickingUp_Model listTitle = (PickingUp_Model) expandableListAdapter.getGroup(i);
+                ArrayList<String> count_ = new ArrayList<>();
+                for (int j = 0; j < expandableListAdapter.getChildrenCount(i); j++) {
+                    final PickingUpEexpand_Model expandedList = (PickingUpEexpand_Model) expandableListAdapter.getChild(i, j);
+
+                    // if (expandedList.getIs_save().equals("0") || expandedList.getIs_save().equals("2")) {
+                    if (is_scanned.equals("0")
+                            || is_scanned.equals("1")) {
+                        if (value.equals(expandedList.getWaybil_no())) {
+
+                            scannotFind = true;
+                            // lastPosition = i;
+                            if (!expandedList.getOrder_no().equals("")) {
+                                Toasty.info(getApplicationContext(), "Please un sign this order.", Toast.LENGTH_SHORT, true).show();
+                            } else {
+
+                                // if (!expandedList.getIs_scaned().equals("2")) {
+                                int sum = listTitle.getNum();
+//                                if (listTitle.getNum() > 0) {
+//                                    sum = listTitle.getNum() + 1;
+//                                }
+                                //   num += 1;
+
+                                if (is_scanned.equals("1")) {
+                                    sum = listTitle.getNum();
+                                }
+                                if (is_scanned.equals("0")) {
+                                    Log.d("fl5s5", "scan: ......");
+                                    int count = listTitle.getCount() + 1;
+                                    listTitle.setCount(count);
+
+                                    int c1 = Integer.parseInt(listTitle.getBox_checked());
+                                    num = c1 + listTitle.getCount();
+
+                                    sum = num;
+                                }
+
+
+//                                    int count = listTitle.getCount() + 1;
+//                                    listTitle.setCount(count);
+//                                    listTitle.setBox_checked(String.valueOf(listTitle.getCount()));
+                                //  }
+
+                                listTitle.setNum(sum);
+
+                                expandedList.setIs_scaned("2");
+                                expandedList.setTime_begin(getdate());
+                                expandedList.setActual_lat(getlat());
+                                expandedList.setActual_lon(getlon());
+                                expandedList.setIs_save("2");
+
+//                                prefs.edit().putString("Is_scaned", expandedList.getIs_scaned()).apply();
+//                                prefs.edit().putString("consignment", expandedList.getConsignment()).apply();
+//                                prefs.edit().putString("waybill", expandedList.getIs_scaned()).apply();
+
+                                Log.d("Asjkljkksdf", "(2)scan: " + getdate() + " lat:" + getlat() + " lon:" + getlon());
+
+                                Toasty.success(getApplicationContext(), "Please comment!", Toast.LENGTH_SHORT, true).show();
+
+                                expandableListView.setAdapter(expandableListAdapter);
+                                expandableListView.expandGroup(i);
+                                expandableListAdapter.notifyDataSetChanged();
+                                expandableListView.smoothScrollToPositionFromTop(i, j);
+                            }
+                        } else {
+
+                        }
+                    } else {
+                        if (value.equals(expandedList.getWaybil_no())) {
+                            scannotFind = true;
+                            if (!expandedList.getOrder_no().equals("")) {
+                                Toasty.info(getApplicationContext(), "Please un sign this order.", Toast.LENGTH_SHORT, true).show();
+                            } else {
+                                prefs.edit().putString("Is_scaned", "2").apply();
+                                Toasty.info(getApplicationContext(), "Scanned.", Toast.LENGTH_SHORT, true).show();
+                            }
+
+                        }
+
+                    }
+                    //}
+
+                    if (expandedList.getIs_scaned().equals("1") || expandedList.getIs_scaned().equals("2")) {
+                        //  count_ = new ArrayList<>();
+                        count_.add(expandedList.getIs_scaned());
+
+                        listTitle.setBox_checked(String.valueOf(count_.size()));
+
+                        expandableListView.setAdapter(expandableListAdapter);
+                        // expandableListView.expandGroup(i);
+                        expandableListAdapter.notifyDataSetChanged();
+                        expandableListView.smoothScrollToPositionFromTop(i, j);
+                        Log.d("fjjpppsp", "scan: " + expandedList.getIs_scaned());
+                    }
+                }
+
+            }
+        }//comment
+
+
+        if (!scannotFind) {
+            issueScan = "This Waybill No doesn't exist.";
+            if (date.equals("")) {
+                Toasty.info(getApplicationContext(), "This Waybill No doesn't exist.", Toast.LENGTH_SHORT, true).show();
+                //Toasty.success(getApplicationContext(), "Checked "+ imWaibill.size() +" Waybill.", Toast.LENGTH_SHORT, true).show();
+            }
+        }
+
+
+    }
+
     private void scan(String value, String date, String lat, String lon) {
         boolean scannotFind = false;
 
@@ -1467,6 +1802,7 @@ public class Pickup_Activity extends AppCompatActivity {
         if (isSaved) {
             if (checkTotalScan()) {
                 Intent intent = new Intent(getApplicationContext(), Invoice_Activity.class);
+                //   intent.putExtra("status_refresh", "0");
                 startActivity(intent);
                 // Toast.makeText(getApplicationContext(), "ไปได้", Toast.LENGTH_SHORT).show();
             } else {
@@ -3374,7 +3710,7 @@ public class Pickup_Activity extends AppCompatActivity {
 
                 try {
 
-                    String sql = "select * from Plan where is_scaned <> '0' and status_upload= '0' and trash = '0' ";
+                    String sql = "select * from Plan where status_upload= '0' and trash = '0' ";
                     Cursor cursor = databaseHelper.selectDB(sql);
 
                     JSONArray ContactArray = new JSONArray();
@@ -3466,7 +3802,9 @@ public class Pickup_Activity extends AppCompatActivity {
 //
                                         for (int pic = 0; pic < jsonArray.getJSONObject(0).getJSONArray("returnId").length(); pic++) {
 
+
                                             String json_data = jsonArray.getJSONObject(0).getJSONArray("returnId").getString(pic);
+                                            Log.d("askdas5d", json_data);
                                             //เปิดดทีหลัง
                                             ContentValues cv = new ContentValues();
                                             cv.put("status_upload", "1");
@@ -3475,12 +3813,15 @@ public class Pickup_Activity extends AppCompatActivity {
 
                                         }
 
-                                        String sql_getPicture = "select pl.id" +
-                                                ", ifnull((select im.name_img from image im where im.name_img = pl.picture1 and im.status_img = '0'), '') as picture1" +
-                                                ", ifnull((select im.name_img from image im where im.name_img = pl.picture2 and im.status_img = '0'), '') as picture2" +
-                                                ", ifnull((select im.name_img from image im where im.name_img = pl.picture3 and im.status_img = '0'), '') as picture3 " +
-                                                "from plan pl " +
-                                                "where pl.is_scaned = '2'";
+                                        String sql_getPicture = "select pl.id \n" +
+                                                ", ifnull((select im.name_img from image im where  im.name_img = pl.picture1  and im.status_img = '0'), '') as picture1 \n" +
+                                                ", ifnull((select im.name_img from image im where im.name_img = pl.picture2 and im.status_img = '0'), '') as picture2 \n" +
+                                                ", ifnull((select im.name_img from image im where im.name_img = pl.picture3 and im.status_img = '0'), '') as picture3  \n" +
+                                                "from plan pl  \n" +
+                                                "where pl.is_scaned = '2' and (ifnull(pl.picture1, '') <> '' or ifnull(pl.picture2, '') <> '' or ifnull(pl.picture3, '') <> '')\n" +
+                                                "and (exists(select im.name_img from image im where im.name_img = pl.picture1  and im.status_img = '0')\n" +
+                                                "or exists(select im.name_img from image im where im.name_img = pl.picture2  and im.status_img = '0')\n" +
+                                                "or exists(select im.name_img from image im where im.name_img = pl.picture3  and im.status_img = '0') )";
                                         Cursor cursor_getPicture = databaseHelper.selectDB(sql_getPicture);
 
                                         int j = 0;
@@ -3549,11 +3890,8 @@ public class Pickup_Activity extends AppCompatActivity {
 
                                             Log.d("kksksks", "doInBackground: " + uploadImage.get(0).toString());
 
-
                                             if (data != null) {
-
                                                 Call<ResponseBody> callImg = apiInterface.uploadPicture(data);
-
                                                 Response<ResponseBody> responseImg = callImg.execute();
                                                 if (responseImg.code() == 200) {
                                                     String responseRecievedImg = responseImg.body().string();
@@ -3583,8 +3921,9 @@ public class Pickup_Activity extends AppCompatActivity {
                                                         }
                                                     }
                                                 }
+                                            }
 
-                                            }//pic1
+
                                         }
                                         //publishProgress();
                                         IsSuccess = 1;
@@ -3652,6 +3991,7 @@ public class Pickup_Activity extends AppCompatActivity {
     }
 
 
+    @SuppressLint("StaticFieldLeak")
     public class uploadInvoice extends AsyncTask<String, String, String> {
         int IsSuccess = 1;
 

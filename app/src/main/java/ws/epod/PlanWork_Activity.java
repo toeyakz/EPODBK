@@ -873,7 +873,7 @@ public class PlanWork_Activity extends AppCompatActivity {
 //            String urlPic1 = "http://www.wisasoft.com:8997/TMS_MSM/resources/function/php/service.php?func=setImg";
             try {
 
-                String sql = "select * from Plan where is_scaned <> '0' and status_upload= '0' and trash = '0' ";
+                String sql = "select * from Plan where status_upload= '0' and trash = '0' ";
                 Cursor cursor = databaseHelper.selectDB(sql);
 
                 JSONArray ContactArray = new JSONArray();
@@ -977,12 +977,15 @@ public class PlanWork_Activity extends AppCompatActivity {
 
                                     }
 
-                                    String sql_getPicture = "select pl.id" +
-                                            ", ifnull((select im.name_img from image im where im.name_img = pl.picture1 and im.status_img = '0'), '') as picture1" +
-                                            ", ifnull((select im.name_img from image im where im.name_img = pl.picture2 and im.status_img = '0'), '') as picture2" +
-                                            ", ifnull((select im.name_img from image im where im.name_img = pl.picture3 and im.status_img = '0'), '') as picture3 " +
-                                            "from plan pl " +
-                                            "where pl.is_scaned = '2'";
+                                    String sql_getPicture = "select pl.id \n" +
+                                            ", ifnull((select im.name_img from image im where  im.name_img = pl.picture1  and im.status_img = '0'), '') as picture1 \n" +
+                                            ", ifnull((select im.name_img from image im where im.name_img = pl.picture2 and im.status_img = '0'), '') as picture2 \n" +
+                                            ", ifnull((select im.name_img from image im where im.name_img = pl.picture3 and im.status_img = '0'), '') as picture3  \n" +
+                                            "from plan pl  \n" +
+                                            "where pl.is_scaned = '2' and (ifnull(pl.picture1, '') <> '' or ifnull(pl.picture2, '') <> '' or ifnull(pl.picture3, '') <> '')\n" +
+                                            "and (exists(select im.name_img from image im where im.name_img = pl.picture1  and im.status_img = '0')\n" +
+                                            "or exists(select im.name_img from image im where im.name_img = pl.picture2  and im.status_img = '0')\n" +
+                                            "or exists(select im.name_img from image im where im.name_img = pl.picture3  and im.status_img = '0') )";
                                     Cursor cursor_getPicture = databaseHelper.selectDB(sql_getPicture);
 
                                     int j = 0;

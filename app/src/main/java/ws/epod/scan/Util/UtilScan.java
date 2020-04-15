@@ -24,7 +24,8 @@ public class UtilScan {
     //    public static void setInvoiceDeliveryListener(OnInvoiceListener listener) {
 //        UtilScan.invoiceListener = listener;
 //    }
-    public static ArrayList<HashMap<String, String>> meMapArray = new ArrayList<>();
+    public static ArrayList<HashMap<String, String>> meMapArrayPickup = new ArrayList<>();
+    public static ArrayList<HashMap<String, String>> meMapArrayDelivery = new ArrayList<>();
     public static HashMap<String,String> meMap = new HashMap<>();
 
     //MARK: Lists of invoice data
@@ -40,8 +41,13 @@ public class UtilScan {
       //  meMapArray.add(meMap);
     }
 
-    public static void addArMap(HashMap<String,String> meMap) {
-        UtilScan.meMapArray.add(meMap);
+    public static void addArMapPickup(HashMap<String,String> meMap) {
+        UtilScan.meMapArrayPickup.add(meMap);
+        //  meMapArray.add(meMap);
+    }
+
+    public static void addArMapDelivery(HashMap<String,String> meMap) {
+        UtilScan.meMapArrayDelivery.add(meMap);
         //  meMapArray.add(meMap);
     }
 

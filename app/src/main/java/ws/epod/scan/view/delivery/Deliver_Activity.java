@@ -23,6 +23,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
+import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 import android.util.Base64;
 import android.util.Log;
@@ -61,6 +62,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.addisonelliott.segmentedbutton.SegmentedButtonGroup;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.gson.Gson;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 
@@ -217,18 +219,34 @@ public class Deliver_Activity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
 
-        if (UtilScan.getListDeliveryWaybill().size() != 0) {
+        SharedPreferences p1 = getSharedPreferences("status_refresh_delivery", Context.MODE_PRIVATE);
+        String status_refresh = p1.getString("status", "");
+
+
+        if (status_refresh.equals("1")) {
             getSQLite();
-            for (InvoiceDelivery waybill : UtilScan.getListDeliveryWaybill()) {
-                scan(waybill.getWaybill_no());
+            SharedPreferences preferences = getSharedPreferences("status_refresh_delivery", Context.MODE_PRIVATE);
+            SharedPreferences.Editor editor = preferences.edit();
+            editor.clear().apply();
+        }
+
+        if (UtilScan.meMapArrayDelivery.size() != 0) {
+            for (HashMap<String, String> map : UtilScan.meMapArrayDelivery) {
+                scan2(map.get("waybill"), map.get("is_scanned"));
+
+                Log.d("As9dasd", map.get("waybill") + "  Status: " + map.get("is_scanned"));
             }
-            UtilScan.clearHeaderDeliveryWaybillList();
+
+            SharedPreferences preferences = getSharedPreferences("ccsac2", Context.MODE_PRIVATE);
+            SharedPreferences.Editor editor = preferences.edit();
+            editor.clear().apply();
+            UtilScan.meMapArrayDelivery = new ArrayList<>();
         }
 
 
     }
 
-    private class processAutoSave extends AsyncTask<Void, Void, Void>{
+    private class processAutoSave extends AsyncTask<Void, Void, Void> {
 
         @Override
         protected void onPreExecute() {
@@ -251,7 +269,7 @@ public class Deliver_Activity extends AppCompatActivity {
         @Override
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
-            if(progressDialog.isShowing()){
+            if (progressDialog.isShowing()) {
                 progressDialog.dismiss();
             }
         }
@@ -326,7 +344,31 @@ public class Deliver_Activity extends AppCompatActivity {
                 Animation animation = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.alpha);
                 imgCameraScan.startAnimation(animation);
                 // qrScan.initiateScan();
-                //startScan();
+
+
+                ArrayList<DeliverExpand_Model> signObjectClasses = new ArrayList<>();
+
+
+                for (int n = 0; n < expandableListAdapter.getGroupCount(); n++) {
+                    // expandableListView.expandGroup(i);
+                    final Deliver_Model listTitle = (Deliver_Model) expandableListAdapter.getGroup(n);
+                    ArrayList<String> count_ = new ArrayList<>();
+                    for (int j = 0; j < expandableListAdapter.getChildrenCount(n); j++) {
+                        final DeliverExpand_Model expandedList = (DeliverExpand_Model) expandableListAdapter.getChild(n, j);
+                        Log.d("sas74das2", "waybill: " + expandedList.getWaybil_no() + ": " + expandedList.getIs_scaned());
+                        signObjectClasses.add(expandedList);
+                    }
+                }
+
+                SharedPreferences appSharedPrefs = PreferenceManager
+                        .getDefaultSharedPreferences(getApplicationContext());
+                SharedPreferences.Editor prefsEditor = appSharedPrefs.edit();
+                Gson gson = new Gson();
+                String json = gson.toJson(signObjectClasses);
+                prefsEditor.putString("ccsac2", json);
+                prefsEditor.commit();
+
+                UtilScan.meMapArrayDelivery = new ArrayList<>();
 
                 UtilScan.clearHeaderDeliveryWaybillList();
                 Intent intents = new Intent(Deliver_Activity.this, ScanDeliveryActivity.class);
@@ -488,6 +530,7 @@ public class Deliver_Activity extends AppCompatActivity {
         } else if (id == R.id.item_confirm) {
 //            Intent intent = new Intent(getApplicationContext(), InvoiceDeliver_Activity.class);
 //            startActivity(intent);
+
             saveCheckConFirm();
             return true;
         } else if (id == R.id.item_sync) {
@@ -723,6 +766,246 @@ public class Deliver_Activity extends AppCompatActivity {
         }
 
         return true;
+    }
+
+    private void scan2(String value, String is_scanned) {
+        boolean scannotFind = false;
+
+        SharedPreferences prefs = getSharedPreferences("status_scan", Context.MODE_PRIVATE);
+        int num = 0;
+        Log.d("s6s3d5", "scan: 1");
+        if (INPUT_WAY.equals("CHECK")) {
+
+            for (int i = 0; i < expandableListAdapter.getGroupCount(); i++) {
+                // expandableListView.expandGroup(i);
+                final Deliver_Model listTitle = (Deliver_Model) expandableListAdapter.getGroup(i);
+                ArrayList<String> count_ = new ArrayList<>();
+                for (int j = 0; j < expandableListAdapter.getChildrenCount(i); j++) {
+                    final DeliverExpand_Model expandedList = (DeliverExpand_Model) expandableListAdapter.getChild(i, j);
+
+                    //   if (expandedList.getIs_save().equals("0") || expandedList.getIs_save().equals("2")) {
+                    if (is_scanned.equals("0") || is_scanned.equals("2")) {
+                        if (value.equals(expandedList.getWaybil_no())) {
+
+                            scannotFind = true;
+
+                            if (!expandedList.getOrder_no().equals("")) {
+                                Toasty.info(getApplicationContext(), "Please un sign this order.", Toast.LENGTH_SHORT, true).show();
+                            } else {
+                                expandedList.setIs_scaned("1");
+                                expandedList.setTime_begin(getdate());
+                                expandedList.setActual_lat(getlat());
+                                expandedList.setActual_lon(getlon());
+                                expandedList.setIs_save("2");
+                                expandedList.setComment("");
+                                expandedList.setPicture1("");
+                                expandedList.setPicture2("");
+                                expandedList.setPicture3("");
+                                Toasty.success(getApplicationContext(), "Checked!", Toast.LENGTH_SHORT, true).show();
+
+                                expandableListView.setAdapter(expandableListAdapter);
+                                expandableListView.expandGroup(i);
+                                expandableListAdapter.notifyDataSetChanged();
+                                expandableListView.smoothScrollToPositionFromTop(i, j);
+
+                            }
+                        } else {
+
+                        }
+                    } else {
+
+                        if (value.equals(expandedList.getWaybil_no())) {
+                            // ToastScan(null,"Scanned.");
+                            scannotFind = true;
+                            if (!expandedList.getOrder_no().equals("")) {
+                                Toasty.info(getApplicationContext(), "Please un sign this order.", Toast.LENGTH_SHORT, true).show();
+                            } else {
+                                Toasty.info(getApplicationContext(), "Scanned.", Toast.LENGTH_SHORT, true).show();
+                                prefs.edit().putString("Is_scaned", "1").apply();
+                            }
+                            //Toasty.info(getApplicationContext(), "Scanned.", Toast.LENGTH_SHORT, true).show();
+
+                        }
+
+                    }
+
+                    if (expandedList.getIs_scaned().equals("1") || expandedList.getIs_scaned().equals("2")) {
+
+                        count_.add(expandedList.getIs_scaned());
+                        for (int n = 0; n < count_.size(); n++) {
+                            Log.d("asf3as69", "scan: " + String.valueOf(count_.get(n).length()));
+                            Log.d("asf3as69", "scan:2 " + String.valueOf(count_.get(n)));
+                            Log.d("asf3as69", "scan:3 " + String.valueOf(count_.size()));
+                            listTitle.setBox_checked(String.valueOf(count_.size()));
+                        }
+
+                        expandableListView.setAdapter(expandableListAdapter);
+                        //   expandableListView.expandGroup(i);
+                        expandableListAdapter.notifyDataSetChanged();
+                        expandableListView.smoothScrollToPositionFromTop(i, j);
+                        Log.d("fjjpppsp", "scan: " + is_scanned);
+                    }
+                    //   }
+
+                }
+
+            }
+
+
+        } else if (INPUT_WAY.equals("UNCHECK")) {
+
+            for (int i = 0; i < expandableListAdapter.getGroupCount(); i++) {
+                //expandableListView.expandGroup(i);
+                final Deliver_Model listTitle = (Deliver_Model) expandableListAdapter.getGroup(i);
+                ArrayList<String> count_ = new ArrayList<>();
+                for (int j = 0; j < expandableListAdapter.getChildrenCount(i); j++) {
+                    final DeliverExpand_Model expandedList = (DeliverExpand_Model) expandableListAdapter.getChild(i, j);
+
+                    //  if (expandedList.getIs_save().equals("0") || expandedList.getIs_save().equals("2")) {
+                    // เป็น 1 หรือ 2
+                    if (!is_scanned.equals("0")) {
+                        if (value.equals(expandedList.getWaybil_no())) {
+
+                            scannotFind = true;
+
+                            if (!expandedList.getOrder_no().equals("")) {
+                                Toasty.info(getApplicationContext(), "Please un sign this order.", Toast.LENGTH_SHORT, true).show();
+                            } else {
+
+                                expandedList.setIs_scaned("0");
+                                expandedList.setTime_begin("");
+                                expandedList.setActual_lat("");
+                                expandedList.setActual_lon("");
+                                expandedList.setIs_save("0");
+                                expandedList.setComment("");
+                                expandedList.setPicture1("");
+                                expandedList.setPicture2("");
+                                expandedList.setPicture3("");
+
+                                Toasty.success(getApplicationContext(), "Un Check!", Toast.LENGTH_SHORT, true).show();
+
+                                expandableListView.setAdapter(expandableListAdapter);
+                                expandableListView.expandGroup(i);
+                                expandableListAdapter.notifyDataSetChanged();
+                                expandableListView.smoothScrollToPositionFromTop(i, j);
+                            }
+                        } else {
+                        }
+                    } else {
+
+                        if (value.equals(expandedList.getWaybil_no())) {
+                            scannotFind = true;
+                            prefs.edit().putString("Is_scaned", "0").apply();
+                            Toasty.info(getApplicationContext(), "Un scan.", Toast.LENGTH_SHORT, true).show();
+
+                        }
+
+                        //toastScan("Change the lower button to scan.");
+                    }
+                    //   }
+
+                    if (expandedList.getIs_scaned().equals("1") || expandedList.getIs_scaned().equals("2")) {
+                        // count_ = new ArrayList<>();
+                        count_.add(expandedList.getIs_scaned() + " waybill: " + expandedList.getWaybil_no());
+                        listTitle.setBox_checked(String.valueOf(count_.size()));
+
+                        Log.d("size array", "scan: " + count_.size());
+                        expandableListView.setAdapter(expandableListAdapter);
+                        // expandableListView.expandGroup(i);
+                        expandableListAdapter.notifyDataSetChanged();
+                        expandableListView.smoothScrollToPositionFromTop(i, j);
+                        Log.d("fjjpppsp", "scan: " + is_scanned);
+                    } else if (expandedList.getIs_scaned().equals("0")) {
+
+                        Log.d("size array", "scan: " + count_.size());
+                        listTitle.setBox_checked(String.valueOf(count_.size()));
+
+                        expandableListView.setAdapter(expandableListAdapter);
+                        // expandableListView.expandGroup(i);
+                        expandableListAdapter.notifyDataSetChanged();
+                        expandableListView.smoothScrollToPositionFromTop(i, j);
+                    }
+
+
+                }
+
+
+            }
+        }
+        if (INPUT_WAY.equals("COMMENT")) {
+
+            for (int i = 0; i < expandableListAdapter.getGroupCount(); i++) {
+                final Deliver_Model listTitle = (Deliver_Model) expandableListAdapter.getGroup(i);
+                ArrayList<String> count_ = new ArrayList<>();
+                for (int j = 0; j < expandableListAdapter.getChildrenCount(i); j++) {
+                    final DeliverExpand_Model expandedList = (DeliverExpand_Model) expandableListAdapter.getChild(i, j);
+
+                    // if (expandedList.getIs_save().equals("0") || expandedList.getIs_save().equals("2")) {
+                    if (is_scanned.equals("0")
+                            || is_scanned.equals("1")) {
+                        if (value.equals(expandedList.getWaybil_no())) {
+
+                            scannotFind = true;
+                            // lastPosition = i;
+                            if (!expandedList.getOrder_no().equals("")) {
+                                Toasty.info(getApplicationContext(), "Please un sign this order.", Toast.LENGTH_SHORT, true).show();
+                            } else {
+
+                                expandedList.setIs_scaned("2");
+                                expandedList.setTime_begin(getdate());
+                                expandedList.setActual_lat(getlat());
+                                expandedList.setActual_lon(getlon());
+                                expandedList.setIs_save("2");
+
+                                Toasty.success(getApplicationContext(), "Please comment!", Toast.LENGTH_SHORT, true).show();
+
+                                expandableListView.setAdapter(expandableListAdapter);
+                                expandableListView.expandGroup(i);
+                                expandableListAdapter.notifyDataSetChanged();
+                                expandableListView.smoothScrollToPositionFromTop(i, j);
+                            }
+                        } else {
+
+                        }
+                    } else {
+                        if (value.equals(expandedList.getWaybil_no())) {
+                            scannotFind = true;
+                            if (!expandedList.getOrder_no().equals("")) {
+                                Toasty.info(getApplicationContext(), "Please un sign this order.", Toast.LENGTH_SHORT, true).show();
+                            } else {
+                                prefs.edit().putString("Is_scaned", "2").apply();
+                                Toasty.info(getApplicationContext(), "Scanned.", Toast.LENGTH_SHORT, true).show();
+                            }
+
+                        }
+
+                    }
+                    //}
+
+                    if (expandedList.getIs_scaned().equals("1") || expandedList.getIs_scaned().equals("2")) {
+                        //  count_ = new ArrayList<>();
+                        count_.add(expandedList.getIs_scaned());
+
+                        listTitle.setBox_checked(String.valueOf(count_.size()));
+
+                        expandableListView.setAdapter(expandableListAdapter);
+                        // expandableListView.expandGroup(i);
+                        expandableListAdapter.notifyDataSetChanged();
+                        expandableListView.smoothScrollToPositionFromTop(i, j);
+                        Log.d("fjjpppsp", "scan: " + expandedList.getIs_scaned());
+                    }
+                }
+
+            }
+        }//comment
+
+
+        if (!scannotFind) {
+            issueScan = "This Waybill No doesn't exist.";
+            Toasty.info(getApplicationContext(), "This Waybill No doesn't exist.", Toast.LENGTH_SHORT, true).show();
+        }
+
+
     }
 
     private void scan(String value) {
@@ -2959,7 +3242,7 @@ public class Deliver_Activity extends AppCompatActivity {
 
                 try {
 
-                    String sql = "select * from Plan where is_scaned <> '0' and status_upload= '0' and trash = '0' ";
+                    String sql = "select * from Plan where status_upload= '0' and trash = '0' ";
                     Cursor cursor = databaseHelper.selectDB(sql);
 
                     JSONArray ContactArray = new JSONArray();
@@ -3060,12 +3343,15 @@ public class Deliver_Activity extends AppCompatActivity {
 
                                         }
 
-                                        String sql_getPicture = "select pl.id" +
-                                                ", ifnull((select im.name_img from image im where im.name_img = pl.picture1 and im.status_img = '0'), '') as picture1" +
-                                                ", ifnull((select im.name_img from image im where im.name_img = pl.picture2 and im.status_img = '0'), '') as picture2" +
-                                                ", ifnull((select im.name_img from image im where im.name_img = pl.picture3 and im.status_img = '0'), '') as picture3 " +
-                                                "from plan pl " +
-                                                "where pl.is_scaned = '2'";
+                                        String sql_getPicture = "select pl.id \n" +
+                                                ", ifnull((select im.name_img from image im where  im.name_img = pl.picture1  and im.status_img = '0'), '') as picture1 \n" +
+                                                ", ifnull((select im.name_img from image im where im.name_img = pl.picture2 and im.status_img = '0'), '') as picture2 \n" +
+                                                ", ifnull((select im.name_img from image im where im.name_img = pl.picture3 and im.status_img = '0'), '') as picture3  \n" +
+                                                "from plan pl  \n" +
+                                                "where pl.is_scaned = '2' and (ifnull(pl.picture1, '') <> '' or ifnull(pl.picture2, '') <> '' or ifnull(pl.picture3, '') <> '')\n" +
+                                                "and (exists(select im.name_img from image im where im.name_img = pl.picture1  and im.status_img = '0')\n" +
+                                                "or exists(select im.name_img from image im where im.name_img = pl.picture2  and im.status_img = '0')\n" +
+                                                "or exists(select im.name_img from image im where im.name_img = pl.picture3  and im.status_img = '0') )";
                                         Cursor cursor_getPicture = databaseHelper.selectDB(sql_getPicture);
 
                                         int j = 0;
@@ -3219,7 +3505,7 @@ public class Deliver_Activity extends AppCompatActivity {
                         break;
                     case 2:
                         mess = "Sync error!!";
-                        if(progressDialog.isShowing()){
+                        if (progressDialog.isShowing()) {
                             progressDialog.dismiss();
                         }
                         Toast.makeText(Deliver_Activity.this, mess, Toast.LENGTH_SHORT).show();
@@ -3597,24 +3883,24 @@ public class Deliver_Activity extends AppCompatActivity {
                                                         }
                                                     }
                                                     IsSuccess = 1;
-                                                }else{
+                                                } else {
                                                     IsSuccess = 2;
                                                 }
 
                                             }
                                         }
-                                    }else{
+                                    } else {
                                         IsSuccess = 2;
                                     }
 
 
                                 }
-                            }else {
+                            } else {
                                 IsSuccess = 2;
                             }
                         }
                     }
-                }else{
+                } else {
                     IsSuccess = 2;
                 }
 
@@ -3634,7 +3920,7 @@ public class Deliver_Activity extends AppCompatActivity {
             if (progressDialog.isShowing()) {
                 progressDialog.dismiss();
             }
-            Log.d("8sssssfs", ":"+ IsSuccess);
+            Log.d("8sssssfs", ":" + IsSuccess);
             String mess = "";
             switch (IsSuccess) {
                 case 1:
@@ -3652,7 +3938,6 @@ public class Deliver_Activity extends AppCompatActivity {
                     Log.d("8sssssfs", String.valueOf(IsSuccess));
                     break;
             }
-
 
 
         }

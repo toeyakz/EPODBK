@@ -94,6 +94,15 @@ public class InvoiceDeliver_Activity extends AppCompatActivity {
 
     }
 
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        SharedPreferences preferences = getSharedPreferences("status_refresh_delivery", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putString("status","1").apply();
+        finish();
+    }
+
     @SuppressLint("StaticFieldLeak")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -121,7 +130,9 @@ public class InvoiceDeliver_Activity extends AppCompatActivity {
         imgBack_Deliver.setOnClickListener(view -> {
             Animation animation = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.alpha);
             imgBack_Deliver.startAnimation(animation);
-
+            SharedPreferences preferences = getSharedPreferences("status_refresh_delivery", Context.MODE_PRIVATE);
+            SharedPreferences.Editor editor = preferences.edit();
+            editor.putString("status","1").apply();
             finish();
         });
 

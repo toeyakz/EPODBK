@@ -76,10 +76,10 @@ public interface APIInterface {
     @POST("/services/service.php?func=setComment")
     Call<ResponseBody> uploadComment(@Body RequestBody body);
 
-    @POST("/services/service.php?func=setImgInvoice")
+    @POST("/services/service.php?func=setImg")
     Call<ResponseBody> uploadPicture(@Body UploadImage root);
 
-    @POST("/services/service.php?func=setImg")
+    @POST("/services/service.php?func=setImgInvoice")
     Call<ResponseBody> uploadPictureInvoice(@Body UploadImageInvoice root);
 
     @POST("/services/service.php?func=getPlan")
@@ -122,10 +122,10 @@ public interface APIInterface {
     @POST("services/service.php?func=setComment")
     Call<ResponseBody> uploadComment(@Body RequestBody body);
 
-    @POST("services/service.php?func=setImgInvoice")
+    @POST("services/service.php?func=setImg")
     Call<ResponseBody> uploadPicture(@Body UploadImage root);
 
-    @POST("services/service.php?func=setImg")
+    @POST("services/service.php?func=setImgInvoice")
     Call<ResponseBody> uploadPictureInvoice(@Body UploadImageInvoice root);
 
     @POST("services/service.php?func=getPlan")

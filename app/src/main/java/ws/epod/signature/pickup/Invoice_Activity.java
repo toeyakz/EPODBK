@@ -52,6 +52,7 @@ import ws.epod.ObjectClass.SQLiteModel.Sign_Model;
 import ws.epod.ObjectClass.SQLiteModel.Sign_i_Model;
 import ws.epod.PlanWork_Activity;
 import ws.epod.R;
+import ws.epod.scan.view.pickup.Pickup_Activity;
 
 public class Invoice_Activity extends AppCompatActivity {
 
@@ -101,6 +102,21 @@ public class Invoice_Activity extends AppCompatActivity {
 
     }
 
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+
+        SharedPreferences preferences = getSharedPreferences("status_refresh", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putString("status","1").apply();
+
+
+//        Intent intent = new Intent(getApplicationContext(), Pickup_Activity.class);
+//        intent.putExtra("status_refresh", "1");
+//        startActivity(intent);
+        finish();
+    }
+
     @SuppressLint("StaticFieldLeak")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -130,6 +146,9 @@ public class Invoice_Activity extends AppCompatActivity {
             Animation animation = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.alpha);
             imgBack_Deliver.startAnimation(animation);
 
+            SharedPreferences preferences = getSharedPreferences("status_refresh", Context.MODE_PRIVATE);
+            SharedPreferences.Editor editor = preferences.edit();
+            editor.putString("status","1").apply();
             finish();
         });
 

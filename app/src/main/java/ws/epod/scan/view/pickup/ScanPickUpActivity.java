@@ -43,7 +43,6 @@ import com.journeyapps.barcodescanner.DecoratedBarcodeView;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 
 import es.dmoral.toasty.Toasty;
@@ -52,7 +51,6 @@ import ws.epod.Helper.DatabaseHelper;
 import ws.epod.Helper.NarisBaseValue;
 import ws.epod.ObjectClass.SQLiteModel.PickingUpEexpand_Model;
 import ws.epod.ObjectClass.SQLiteModel.PickingUp_Model;
-import ws.epod.ObjectClass.SQLiteModel.Sign_Model;
 import ws.epod.R;
 import ws.epod.scan.Util.UtilScan;
 import ws.epod.scan.model.pickup.Invoice;
@@ -117,7 +115,7 @@ public class ScanPickUpActivity extends AppCompatActivity implements DecoratedBa
 
     public void getAdapterInScan(Pickup_Activity.PickingUpAdapter adapter) {
 
-        if(expandableListAdapter == null){
+        if (expandableListAdapter == null) {
             expandableListAdapter = adapter;
         }
 
@@ -169,7 +167,6 @@ public class ScanPickUpActivity extends AppCompatActivity implements DecoratedBa
                 SharedPreferences prefs = getSharedPreferences("status_scan", Context.MODE_PRIVATE);
 
 
-
                 Intent intent = getIntent();
                 String INPUT_WAY = intent.getStringExtra("key");
 
@@ -207,66 +204,72 @@ public class ScanPickUpActivity extends AppCompatActivity implements DecoratedBa
 
 
                 HashMap<String, String> mMap = new HashMap<>();
+                String status_scan = "";
                 for (int p = 0; p < arrayList.size(); p++) {
                     Log.d("As9df6asd", arrayList.get(p).getWaybil_no() + ": " + arrayList.get(p).getIs_scaned());
 
-                  //  for (int i = 0; i < UtilScan.getListHeaderWaybill().size(); i++) {
+                    //  for (int i = 0; i < UtilScan.getListHeaderWaybill().size(); i++) {
 
 
-                      //  String is_scanned = UtilScan.getListHeaderWaybill().get(i).getIs_scaned();
-                        String log_IsScanned = prefs.getString("Is_scaned", "");
+                    //  String is_scanned = UtilScan.getListHeaderWaybill().get(i).getIs_scaned();
+                    String log_IsScanned = prefs.getString("Is_scaned", "");
 
 
-                        if (result.getText().equals(arrayList.get(p).getWaybil_no())) {
-                            Log.d("s82s", "barcodeResult: 0");
-                          //  Log.d("s82s", "is_scanned: " + is_scanned);
-                            Log.d("s82s", "log_IsScanned: " + log_IsScanned);
+                    if (result.getText().equals(arrayList.get(p).getWaybil_no())) {
+                        Log.d("s82s", "barcodeResult: 0");
+                        //  Log.d("s82s", "is_scanned: " + is_scanned);
+                        Log.d("s82s", "log_IsScanned: " + log_IsScanned);
 
 
-                            // if (!arrayList.get(p).getIs_scaned().equals("")) {
-                            if (arrayList.get(p).getIs_scaned().equals("1") || arrayList.get(p).getIs_scaned().equals("2")) {
+                        // if (!arrayList.get(p).getIs_scaned().equals("")) {
+                        if (arrayList.get(p).getIs_scaned().equals("1") || arrayList.get(p).getIs_scaned().equals("2")) {
 
-                                switch (INPUT_WAY) {
-                                    case "UNCHECK":
-                                        isAdd = true;
-                                        Log.d("s82s", "barcodeResult: 1");
-                                        //  un = false;
-                                        break;
-                                    case "COMMENT":
-                                        isAdd = !arrayList.get(p).getIs_scaned().equals("2");
-                                        break;
-                                    case "CHECK":
-                                        Log.d("s82s", "barcodeResult: CHECK - 1 หรือ 2");
-                                        isAdd = !arrayList.get(p).getIs_scaned().equals("1");
+                            switch (INPUT_WAY) {
+                                case "UNCHECK":
+                                    isAdd = true;
+                                    status_scan = arrayList.get(p).getIs_scaned();
+                                    Log.d("s82s", "barcodeResult: 1");
+                                    //  un = false;
+                                    break;
+                                case "COMMENT":
+                                    isAdd = !arrayList.get(p).getIs_scaned().equals("2");
+                                    status_scan = arrayList.get(p).getIs_scaned();
+                                    break;
+                                case "CHECK":
+                                    Log.d("s82s", "barcodeResult: CHECK - 1 หรือ 2");
+                                    status_scan = arrayList.get(p).getIs_scaned();
+                                    isAdd = !arrayList.get(p).getIs_scaned().equals("1");
 
-                                        // UtilScan.addMap("is_scanned", "1");
-                                        break;
-                                }
-
-                                scannotFind = true;
-                                new Handler().postDelayed(delayScan, 2000);
-                                break;
-
-                            } else if (arrayList.get(p).getIs_scaned().equals("0")) {
-                                switch (INPUT_WAY) {
-                                    case "UNCHECK":
-                                        Log.d("s82s", "barcodeResult: 2");
-                                        isAdd = false;
-                                        un = true;
-                                        break;
-                                    case "CHECK":
-                                    case "COMMENT":
-                                        Log.d("s82s", "barcodeResult: CHECK 0");
-                                      //  UtilScan.addMap("waybill", result.getText());
-
-
-                                        isAdd = true;
-                                        break;
-                                }
-                                scannotFind = true;
-                                // i = UtilScan.getListHeaderWaybill().size();
-                                break;
+                                    // UtilScan.addMap("is_scanned", "1");
+                                    break;
                             }
+
+                            scannotFind = true;
+                            new Handler().postDelayed(delayScan, 2000);
+                            break;
+
+                        } else if (arrayList.get(p).getIs_scaned().equals("0")) {
+                            switch (INPUT_WAY) {
+                                case "UNCHECK":
+                                    Log.d("s82s", "barcodeResult: 2");
+                                    isAdd = false;
+                                    status_scan = arrayList.get(p).getIs_scaned();
+                                    un = true;
+                                    break;
+                                case "CHECK":
+                                case "COMMENT":
+                                    Log.d("s82s", "barcodeResult: CHECK 0");
+                                    //  UtilScan.addMap("waybill", result.getText());
+
+
+                                    isAdd = true;
+                                    status_scan = arrayList.get(p).getIs_scaned();
+                                    break;
+                            }
+                            scannotFind = true;
+                            // i = UtilScan.getListHeaderWaybill().size();
+                            break;
+                        }
 //                            } else {
 //                                if (is_scanned.equals("1") || is_scanned.equals("2")) {
 //
@@ -309,15 +312,15 @@ public class ScanPickUpActivity extends AppCompatActivity implements DecoratedBa
 //                            }
 
 
-                        } else {
-                            if (arrayList.size() == (p + 1)) {
-                                ex = true;
-                                scannotFind = false;
-                            }
+                    } else {
+                        if (arrayList.size() == (p + 1)) {
+                            ex = true;
+                            scannotFind = false;
                         }
+                    }
 
 
-                 //   }
+                    //   }
 
                 }
                 if (isAdd) {
@@ -342,21 +345,18 @@ public class ScanPickUpActivity extends AppCompatActivity implements DecoratedBa
                     UtilScan.addInvoice(newInvoice);
 
 
-                    if(INPUT_WAY.equals("CHECK")){
+                    if (INPUT_WAY.equals("CHECK")) {
                         mMap.put("waybill", result.getText());
-                        mMap.put("is_scanned", "1");
-                    }else if(INPUT_WAY.equals("UNCHECK")){
+                        mMap.put("is_scanned", status_scan);
+                    } else if (INPUT_WAY.equals("UNCHECK")) {
                         mMap.put("waybill", result.getText());
-                        mMap.put("is_scanned", "0");
-                    }else {
+                        mMap.put("is_scanned", status_scan);
+                    } else {
                         mMap.put("waybill", result.getText());
-                        mMap.put("is_scanned", "2");
+                        mMap.put("is_scanned", status_scan);
                     }
 
-                    UtilScan.addArMap(mMap);
-
-
-
+                    UtilScan.addArMapPickup(mMap);
 
 
 //                    for (String key : UtilScan.getMeMap().keySet()) {
@@ -366,11 +366,11 @@ public class ScanPickUpActivity extends AppCompatActivity implements DecoratedBa
 //                        Log.d("Asd6asd", "size: " + UtilScan.getMeMap().size() );
 //                        //  Toast.makeText(getApplicationContext(), "Key: " + key + " Value: " + value, Toast.LENGTH_LONG).show();
 //                    }
-                  //  Log.d("AS6as3d", ""+UtilScan.getMeMap().size());
+                    //  Log.d("AS6as3d", ""+UtilScan.getMeMap().size());
 
 
-                    if (UtilScan.getListWaybill().size() > 0) {
-                        tvStat.setText("Have" + " " + UtilScan.getListWaybill().size() + " " + "waybill in list.");
+                    if (UtilScan.meMapArrayPickup.size() > 0) {
+                        tvStat.setText("Have" + " " + UtilScan.meMapArrayPickup.size() + " " + "waybill in list.");
                     }
 
                     getSQLite();
@@ -490,6 +490,11 @@ public class ScanPickUpActivity extends AppCompatActivity implements DecoratedBa
                 UtilScan.clearWaybillList();
                 UtilScan.clearPickArray();
                 UtilScan.meMap = new HashMap<>();
+
+                UtilScan.meMapArrayPickup = new ArrayList<>();
+                SharedPreferences preferences = getSharedPreferences("ccsac", Context.MODE_PRIVATE);
+                SharedPreferences.Editor editor = preferences.edit();
+                editor.clear().apply();
                 finish();
             });
             alert.setButton2(getString(R.string.cancel), (dialog, which) -> alert.dismiss());
@@ -505,6 +510,12 @@ public class ScanPickUpActivity extends AppCompatActivity implements DecoratedBa
                 UtilScan.clearWaybillList();
                 UtilScan.clearPickArray();
                 UtilScan.meMap = new HashMap<>();
+
+                UtilScan.meMapArrayPickup = new ArrayList<>();
+                SharedPreferences preferences = getSharedPreferences("ccsac", Context.MODE_PRIVATE);
+                SharedPreferences.Editor editor = preferences.edit();
+                editor.clear().apply();
+                finish();
                 finish();
             });
             alert.setButton2(getString(R.string.cancel), (dialog, which) -> alert.dismiss());

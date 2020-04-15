@@ -22,6 +22,7 @@ import android.os.Handler;
 import android.os.PowerManager;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -31,12 +32,15 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.google.zxing.ResultPoint;
 import com.google.zxing.client.android.BeepManager;
 import com.journeyapps.barcodescanner.BarcodeCallback;
 import com.journeyapps.barcodescanner.BarcodeResult;
 import com.journeyapps.barcodescanner.DecoratedBarcodeView;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -107,6 +111,13 @@ public class ScanDeliveryActivity extends AppCompatActivity implements Decorated
                 Intent intent = getIntent();
                 String INPUT_WAY = intent.getStringExtra("key");
 
+                SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+                Gson gson = new Gson();
+                String json = sharedPrefs.getString("ccsac2", "");
+                Type type = new TypeToken<ArrayList<DeliverExpand_Model>>() {
+                }.getType();
+
+                ArrayList<DeliverExpand_Model> arrayList = gson.fromJson(json, type);
 
                 if (alertDialog != null) {
                     if (alertDialog.isShowing()) {
@@ -120,93 +131,159 @@ public class ScanDeliveryActivity extends AppCompatActivity implements Decorated
                     return;
                 }
 
-                for (int i = 0; i < UtilScan.getListHeadeDeliveryrWaybill().size(); i++) {
+                HashMap<String, String> mMap = new HashMap<>();
+                String status_scan = "";
 
-                    String is_scanned = UtilScan.getListHeadeDeliveryrWaybill().get(i).getIs_scaned();
+//                for (int i = 0; i < UtilScan.getListHeadeDeliveryrWaybill().size(); i++) {
+//
+//                    String is_scanned = UtilScan.getListHeadeDeliveryrWaybill().get(i).getIs_scaned();
+//
+//                    String log_IsScanned = prefs.getString("Is_scaned", "");
+//
+//                    if (result.getText().equals(UtilScan.getListHeadeDeliveryrWaybill().get(i).getWaybill_no())) {
+//
+//                        if(!log_IsScanned.equals("")){
+//                            if (log_IsScanned.equals("1") || log_IsScanned.equals("2")) {
+//
+//                                switch (INPUT_WAY) {
+//                                    case "UNCHECK":
+//                                        isAdd = true;
+//                                        break;
+//                                    case "COMMENT":
+//                                        isAdd = !log_IsScanned.equals("2");
+//                                        break;
+//                                    case "CHECK":
+//                                        isAdd = !log_IsScanned.equals("1");
+//
+//                                        // Toasty.info(getApplicationContext(), "scanned.", Toast.LENGTH_SHORT, true).show();
+//                                        break;
+//                                }
+//                                scannotFind = true;
+//                                new Handler().postDelayed(delayScan, 2000);
+//                                break;
+//                            } else if (log_IsScanned.equals("0")) {
+//                                switch (INPUT_WAY) {
+//                                    case "UNCHECK":
+//                                        isAdd = false;
+//                                        un = true;
+//                                        break;
+//                                    case "CHECK":
+//                                    case "COMMENT":
+//                                        isAdd = true;
+//                                        break;
+//                                }
+//                                scannotFind = true;
+//                                // i = UtilScan.getListHeaderWaybill().size();
+//                                break;
+//                            }
+//                        }else{
+//                            if (is_scanned.equals("1") || is_scanned.equals("2")) {
+//
+//                                switch (INPUT_WAY) {
+//                                    case "UNCHECK":
+//                                        isAdd = true;
+//                                        break;
+//                                    case "COMMENT":
+//                                        isAdd = !is_scanned.equals("2");
+//                                        break;
+//                                    case "CHECK":
+//                                        isAdd = !is_scanned.equals("1");
+//
+//                                        // Toasty.info(getApplicationContext(), "scanned.", Toast.LENGTH_SHORT, true).show();
+//                                        break;
+//                                }
+//                                scannotFind = true;
+//                                new Handler().postDelayed(delayScan, 2000);
+//                                break;
+//                            } else if (is_scanned.equals("0")) {
+//                                switch (INPUT_WAY) {
+//                                    case "UNCHECK":
+//                                        isAdd = false;
+//                                        un = true;
+//                                        break;
+//                                    case "CHECK":
+//                                    case "COMMENT":
+//                                        isAdd = true;
+//                                        break;
+//                                }
+//                                scannotFind = true;
+//                                // i = UtilScan.getListHeaderWaybill().size();
+//                                break;
+//                            }
+//                        }
+//
+//                    } else {
+//                        // Log.d("f2d9", "barcodeResult: i" + i + " size: " + UtilScan.getListHeadeDeliveryrWaybill().size());
+//                        if (UtilScan.getListHeadeDeliveryrWaybill().size() == (i + 1)) {
+//                            //isAdd = false;
+//                            Log.d("f2d9", "barcodeResult: 222");
+//                            ex = true;
+//                            scannotFind = false;
+//                        }
+//                    }
+//
+//                }
+
+                for (int p = 0; p < arrayList.size(); p++) {
 
                     String log_IsScanned = prefs.getString("Is_scaned", "");
 
-                    if (result.getText().equals(UtilScan.getListHeadeDeliveryrWaybill().get(i).getWaybill_no())) {
+                    Log.d("AS9dasd", arrayList.get(p).getWaybil_no());
 
-                        if(!log_IsScanned.equals("")){
-                            if (log_IsScanned.equals("1") || log_IsScanned.equals("2")) {
+                    if (result.getText().equals(arrayList.get(p).getWaybil_no())) {
+                        if (arrayList.get(p).getIs_scaned().equals("1") || arrayList.get(p).getIs_scaned().equals("2")) {
 
-                                switch (INPUT_WAY) {
-                                    case "UNCHECK":
-                                        isAdd = true;
-                                        break;
-                                    case "COMMENT":
-                                        isAdd = !log_IsScanned.equals("2");
-                                        break;
-                                    case "CHECK":
-                                        isAdd = !log_IsScanned.equals("1");
-
-                                        // Toasty.info(getApplicationContext(), "scanned.", Toast.LENGTH_SHORT, true).show();
-                                        break;
-                                }
-                                scannotFind = true;
-                                new Handler().postDelayed(delayScan, 2000);
-                                break;
-                            } else if (log_IsScanned.equals("0")) {
-                                switch (INPUT_WAY) {
-                                    case "UNCHECK":
-                                        isAdd = false;
-                                        un = true;
-                                        break;
-                                    case "CHECK":
-                                    case "COMMENT":
-                                        isAdd = true;
-                                        break;
-                                }
-                                scannotFind = true;
-                                // i = UtilScan.getListHeaderWaybill().size();
-                                break;
+                            switch (INPUT_WAY) {
+                                case "UNCHECK":
+                                    isAdd = true;
+                                    status_scan = arrayList.get(p).getIs_scaned();
+                                    Log.d("s82s", "barcodeResult: 1");
+                                    //  un = false;
+                                    break;
+                                case "COMMENT":
+                                    isAdd = !arrayList.get(p).getIs_scaned().equals("2");
+                                    status_scan = arrayList.get(p).getIs_scaned();
+                                    break;
+                                case "CHECK":
+                                    Log.d("s82s", "barcodeResult: CHECK - 1 หรือ 2");
+                                    status_scan = arrayList.get(p).getIs_scaned();
+                                    isAdd = !arrayList.get(p).getIs_scaned().equals("1");
+                                    break;
                             }
-                        }else{
-                            if (is_scanned.equals("1") || is_scanned.equals("2")) {
 
-                                switch (INPUT_WAY) {
-                                    case "UNCHECK":
-                                        isAdd = true;
-                                        break;
-                                    case "COMMENT":
-                                        isAdd = !is_scanned.equals("2");
-                                        break;
-                                    case "CHECK":
-                                        isAdd = !is_scanned.equals("1");
+                            scannotFind = true;
+                            new Handler().postDelayed(delayScan, 2000);
+                            break;
 
-                                        // Toasty.info(getApplicationContext(), "scanned.", Toast.LENGTH_SHORT, true).show();
-                                        break;
-                                }
-                                scannotFind = true;
-                                new Handler().postDelayed(delayScan, 2000);
-                                break;
-                            } else if (is_scanned.equals("0")) {
-                                switch (INPUT_WAY) {
-                                    case "UNCHECK":
-                                        isAdd = false;
-                                        un = true;
-                                        break;
-                                    case "CHECK":
-                                    case "COMMENT":
-                                        isAdd = true;
-                                        break;
-                                }
-                                scannotFind = true;
-                                // i = UtilScan.getListHeaderWaybill().size();
-                                break;
+                        } else if (arrayList.get(p).getIs_scaned().equals("0")) {
+                            switch (INPUT_WAY) {
+                                case "UNCHECK":
+                                    Log.d("s82s", "barcodeResult: 2");
+                                    isAdd = false;
+                                    status_scan = arrayList.get(p).getIs_scaned();
+                                    un = true;
+                                    break;
+                                case "CHECK":
+                                case "COMMENT":
+                                    Log.d("s82s", "barcodeResult: CHECK 0");
+                                    //  UtilScan.addMap("waybill", result.getText());
+
+
+                                    isAdd = true;
+                                    status_scan = arrayList.get(p).getIs_scaned();
+                                    break;
                             }
+                            scannotFind = true;
+                            break;
                         }
 
                     } else {
-                        // Log.d("f2d9", "barcodeResult: i" + i + " size: " + UtilScan.getListHeadeDeliveryrWaybill().size());
-                        if (UtilScan.getListHeadeDeliveryrWaybill().size() == (i + 1)) {
-                            //isAdd = false;
-                            Log.d("f2d9", "barcodeResult: 222");
+                        if (arrayList.size() == (p + 1)) {
                             ex = true;
                             scannotFind = false;
                         }
                     }
+
 
                 }
 
@@ -231,8 +308,21 @@ public class ScanDeliveryActivity extends AppCompatActivity implements Decorated
                     InvoiceDelivery newInvoice = new InvoiceDelivery(result.getText());
                     UtilScan.addInvoiceDelivery(newInvoice);
 
-                    if (UtilScan.getListDeliveryWaybill().size() > 0) {
-                        tvStat.setText("Have" + " " + UtilScan.getListDeliveryWaybill().size() + " " + "waybill in list.");
+                    if (INPUT_WAY.equals("CHECK")) {
+                        mMap.put("waybill", result.getText());
+                        mMap.put("is_scanned", status_scan);
+                    } else if (INPUT_WAY.equals("UNCHECK")) {
+                        mMap.put("waybill", result.getText());
+                        mMap.put("is_scanned", status_scan);
+                    } else {
+                        mMap.put("waybill", result.getText());
+                        mMap.put("is_scanned", status_scan);
+                    }
+
+                    UtilScan.addArMapDelivery(mMap);
+
+                    if (UtilScan.meMapArrayDelivery.size() > 0) {
+                        tvStat.setText("Have" + " " + UtilScan.meMapArrayDelivery.size() + " " + "waybill in list.");
                     }
                     new Handler().postDelayed(delayScan, 2000);
                     return;
@@ -352,6 +442,11 @@ public class ScanDeliveryActivity extends AppCompatActivity implements Decorated
             alert.setButton(getString(R.string.confirm), (dialog, which) -> {
                 UtilScan.clearHeaderDeliveryWaybillList();
                 // UtilScan.clearWaybillList();
+                UtilScan.meMapArrayDelivery = new ArrayList<>();
+                SharedPreferences preferences = getSharedPreferences("ccsac2", Context.MODE_PRIVATE);
+                SharedPreferences.Editor editor = preferences.edit();
+                editor.clear().apply();
+
                 finish();
             });
             alert.setButton2(getString(R.string.cancel), (dialog, which) -> alert.dismiss());
@@ -365,6 +460,10 @@ public class ScanDeliveryActivity extends AppCompatActivity implements Decorated
             alert.setButton(getString(R.string.confirm), (dialog, which) -> {
                 UtilScan.clearHeaderDeliveryWaybillList();
                 //  UtilScan.clearWaybillList();
+                UtilScan.meMapArrayDelivery = new ArrayList<>();
+                SharedPreferences preferences = getSharedPreferences("ccsac2", Context.MODE_PRIVATE);
+                SharedPreferences.Editor editor = preferences.edit();
+                editor.clear().apply();
                 finish();
             });
             alert.setButton2(getString(R.string.cancel), (dialog, which) -> alert.dismiss());
