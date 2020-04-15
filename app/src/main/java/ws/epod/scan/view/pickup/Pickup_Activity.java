@@ -19,9 +19,11 @@ import android.graphics.drawable.Drawable;
 import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
+import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 import android.util.Base64;
 import android.util.Log;
@@ -62,6 +64,7 @@ import ws.epod.BuildConfig;
 import com.addisonelliott.segmentedbutton.SegmentedButtonGroup;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.gson.Gson;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 
@@ -82,7 +85,10 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import es.dmoral.toasty.Toasty;
 import fr.ganfra.materialspinner.MaterialSpinner;
@@ -233,15 +239,25 @@ public class Pickup_Activity extends AppCompatActivity {
 
         //Log.d("sdasd63sd", "onCreate: ");
         if (UtilScan.getListWaybill().size() != 0) {
-            Log.d("sdasd63sd", "onCreate: "+UtilScan.getListWaybill().size());
+            Log.d("sdasd63sd", "onCreate: " + UtilScan.getListWaybill().size());
             getSQLite();
             for (Invoice waybill : UtilScan.getListWaybill()) {
-                Log.d("sdasd63sd", "onCreate: "+ waybill.getWaybill_no());
+                Log.d("sdasd63sd", "onCreate: " + waybill.getWaybill_no());
                 scan(waybill.getWaybill_no(), "", "", "");
             }
             UtilScan.clearHeaderWaybillList();
+            UtilScan.clearPickArray();
             //prefs.edit().clear().apply();
+        } else {
+            getSQLite();
         }
+
+
+            for (HashMap<String, String> map : UtilScan.meMapArray) {
+
+                Log.d("Asd6asd", "value:" + map.get("waybill")+" > "+ map.get("is_scanned"));
+            }
+
 
         // Upload();
 
@@ -309,6 +325,8 @@ public class Pickup_Activity extends AppCompatActivity {
             isSync = getIntent().getExtras().getBoolean("isSync");
             if (isSync) {
                 UtilScan.clearHeaderWaybillList();
+                UtilScan.clearPickArray();
+
 
                 Upload();
                 getSQLite();
@@ -346,10 +364,39 @@ public class Pickup_Activity extends AppCompatActivity {
             imgCameraScan.startAnimation(animation);
 
             // startScan();
+
+            ArrayList<PickingUpEexpand_Model> signObjectClasses = new ArrayList<>();
+
+            PickingUpAdapter picking = expandableListAdapter;
+
+            for (int n = 0; n < expandableListAdapter.getGroupCount(); n++) {
+                // expandableListView.expandGroup(i);
+                final PickingUp_Model listTitle = (PickingUp_Model) expandableListAdapter.getGroup(n);
+                ArrayList<String> count_ = new ArrayList<>();
+                for (int j = 0; j < expandableListAdapter.getChildrenCount(n); j++) {
+                    final PickingUpEexpand_Model expandedList = (PickingUpEexpand_Model) expandableListAdapter.getChild(n, j);
+                    Log.d("sas74das2", "waybill: " + expandedList.getWaybil_no() + ": " + expandedList.getIs_scaned());
+                    signObjectClasses.add(expandedList);
+                }
+            }
+
+            SharedPreferences appSharedPrefs = PreferenceManager
+                    .getDefaultSharedPreferences(this.getApplicationContext());
+            SharedPreferences.Editor prefsEditor = appSharedPrefs.edit();
+            Gson gson = new Gson();
+            String json = gson.toJson(signObjectClasses);
+            prefsEditor.putString("ccsac", json);
+            prefsEditor.commit();
+
+            UtilScan.meMap = new HashMap<>();
+
+            new ScanPickUpActivity().getAdapterInScan(expandableListAdapter);
             UtilScan.clearHeaderWaybillList();
             Intent intents = new Intent(Pickup_Activity.this, ScanPickUpActivity.class);
             intents.putExtra("key", INPUT_WAY);
             startActivity(intents);
+
+
         });
 
         imgBack_test.setOnClickListener(view -> {
@@ -1944,6 +1991,7 @@ public class Pickup_Activity extends AppCompatActivity {
         View popupInputDialogView2 = null;
         boolean expanded = false;
 
+
         private final Context context;
         private final ArrayList<PickingUp_Model> list;
         private final HashMap<String, ArrayList<PickingUpEexpand_Model>> expandableListDetail;
@@ -1994,6 +2042,10 @@ public class Pickup_Activity extends AppCompatActivity {
                 convertView = layoutInflater.inflate(R.layout.item_expanditemline, null);
             }
 
+
+            UtilScan.addPickArray(expandedList);
+
+
             Log.d("qwegwegsdg", "getGroupView: " + (expandedListPosition + 1));
 
             Log.d("sad7as52a", "ss: " + expandedList.getPicture1());
@@ -2008,6 +2060,9 @@ public class Pickup_Activity extends AppCompatActivity {
             CheckBox checkBox = convertView.findViewById(R.id.cbExpand_isscaned);
             imgEditBoxNoPickup = convertView.findViewById(R.id.imgEditBoxNoPickup);
             textView29 = convertView.findViewById(R.id.textView29);
+
+//            SharedPreferences prefs = getSharedPreferences("status_scan", Context.MODE_PRIVATE);
+//            prefs.edit().putString("Is_scaned", expandedList.getIs_scaned()).apply();
 
 
             tvExpand_Count.setText(String.valueOf((expandedListPosition + 1)));
@@ -3579,7 +3634,7 @@ public class Pickup_Activity extends AppCompatActivity {
                         break;
                     case 2:
                         mess = "Sync error!!";
-                        if(progressDialog.isShowing()){
+                        if (progressDialog.isShowing()) {
                             progressDialog.dismiss();
                         }
                         Toast.makeText(Pickup_Activity.this, mess, Toast.LENGTH_SHORT).show();
@@ -3957,24 +4012,24 @@ public class Pickup_Activity extends AppCompatActivity {
                                                         }
                                                     }
                                                     IsSuccess = 1;
-                                                }else{
+                                                } else {
                                                     IsSuccess = 2;
                                                 }
 
                                             }
                                         }
-                                    }else{
+                                    } else {
                                         IsSuccess = 2;
                                     }
 
 
                                 }
-                            }else {
+                            } else {
                                 IsSuccess = 2;
                             }
                         }
                     }
-                }else{
+                } else {
                     IsSuccess = 2;
                 }
 
@@ -3994,7 +4049,7 @@ public class Pickup_Activity extends AppCompatActivity {
             if (progressDialog.isShowing()) {
                 progressDialog.dismiss();
             }
-            Log.d("8sssssfs", ":"+ IsSuccess);
+            Log.d("8sssssfs", ":" + IsSuccess);
             String mess = "";
             switch (IsSuccess) {
                 case 1:
@@ -4012,7 +4067,6 @@ public class Pickup_Activity extends AppCompatActivity {
                     Log.d("8sssssfs", String.valueOf(IsSuccess));
                     break;
             }
-
 
 
         }

@@ -8,6 +8,7 @@ import java.util.Locale;
 
 public class Invoice {
     private String waybill_no = "";
+    private String is_scanned = "";
     private String date = "";
     private double lat;
     private double lon;
@@ -29,6 +30,14 @@ public class Invoice {
         return temp;
     }
 
+
+    public String getIs_scanned() {
+        return is_scanned;
+    }
+
+    public void setIs_scanned(String is_scanned) {
+        this.is_scanned = is_scanned;
+    }
 
     public String getWaybill_no() {
         return waybill_no;
