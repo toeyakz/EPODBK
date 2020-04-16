@@ -106,6 +106,7 @@
     <string name="unselect_all">Unselect All</string>
     <string name="not_selected">Not Selected!</string>
     <string name="saving">Saving..</string>
+    <string name="please_scan_all_waybill_number">Please scan all waybill numbers.</string>
 
 
 </resources>

@@ -41,6 +41,7 @@ import com.google.gson.Gson;
 import java.util.ArrayList;
 import java.util.List;
 
+import es.dmoral.toasty.Toasty;
 import fr.ganfra.materialspinner.MaterialSpinner;
 import ws.epod.Helper.ConnectionDetector;
 import ws.epod.Helper.DatabaseHelper;
@@ -282,7 +283,7 @@ public class Invoice_Activity extends AppCompatActivity {
                     Log.d("checkIntent", "onPostExecute:  ติ๊ก return และ คอมเม้น return แล้ว");
                 } else {
                     Log.d("checkIntent", "onPostExecute:  ติ๊ก return ไม่ได้คอมเม้น");
-                    Toast.makeText(Invoice_Activity.this, "Please comment return.", Toast.LENGTH_SHORT).show();
+                    Toasty.info(Invoice_Activity.this, "Please comment return.", Toast.LENGTH_SHORT).show();
                     return false;
                 }
             }
@@ -292,7 +293,7 @@ public class Invoice_Activity extends AppCompatActivity {
                     Log.d("checkIntent", "onPostExecute:  ติ๊ก reject และ คอมเม้น reject แล้ว");
                 } else {
                     Log.d("checkIntent", "onPostExecute:  ติ๊ก reject ไม่ได้คอมเม้น");
-                    Toast.makeText(Invoice_Activity.this, "Please comment reject.", Toast.LENGTH_SHORT).show();
+                    Toasty.info(Invoice_Activity.this, "Please comment reject.", Toast.LENGTH_SHORT).show();
                     return false;
                 }
             }
@@ -309,7 +310,7 @@ public class Invoice_Activity extends AppCompatActivity {
 
 
         } else {
-            Toast.makeText(Invoice_Activity.this, "Please select invoice.", Toast.LENGTH_SHORT).show();
+            Toasty.info(Invoice_Activity.this, "Please select invoice.", Toast.LENGTH_SHORT).show();
             return false;
 
         }
@@ -323,7 +324,7 @@ public class Invoice_Activity extends AppCompatActivity {
         ArrayList<Sign_Model> signObjectClasses = new ArrayList<>();
 
         if (invAdapter == null) {
-            Toast.makeText(this, "Adapter null.", Toast.LENGTH_SHORT).show();
+            Toasty.error(this, "Adapter null.", Toast.LENGTH_SHORT).show();
         } else {
             for (int i = 0; i < invAdapter.getItemCount(); i++) {
                 Sign_Model sign_model = invAdapter.list.get(i);

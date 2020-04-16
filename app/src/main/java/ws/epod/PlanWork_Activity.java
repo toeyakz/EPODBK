@@ -86,6 +86,7 @@ import ws.epod.ObjectClass.LanguageClass;
 import ws.epod.ObjectClass.SQLiteModel.Plan_model;
 import ws.epod.ObjectClass.Var;
 import ws.epod.scan.view.OfflineScan.activity.ScanOfflineActivity;
+import ws.epod.scan.view.delivery.Deliver_Activity;
 import ws.epod.sync.UploadDataPlan;
 
 
@@ -1123,6 +1124,12 @@ public class PlanWork_Activity extends AppCompatActivity {
                     Snackbar.make(viewFab, mess, Snackbar.LENGTH_LONG)
                             .setAction("Action", null).show();
                     break;
+                case 0:
+                    if (progressDialog.isShowing()) {
+                        progressDialog.dismiss();
+                    }
+                    mess = "Sync error!!";
+                    Toast.makeText(PlanWork_Activity.this, mess, Toast.LENGTH_SHORT).show();
                 case 1:
                     deleteJobAndImage();
                     new uploadInvoice().execute();

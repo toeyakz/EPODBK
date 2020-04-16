@@ -33,6 +33,7 @@
                     android:layout_marginTop="20dp"/>
 
                 <TextView
+                    android:id="@+id/tvTitle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
@@ -43,11 +44,12 @@
                     android:textStyle="bold" />
 
                 <TextView
+                    android:id="@+id/tvMessess"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
-                    android:gravity="center"
                     android:layout_marginTop="10dp"
+                    android:gravity="center"
                     android:text="This Waybill No doesn't exist."
                     android:textSize="16dp" />
 

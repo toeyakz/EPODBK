@@ -644,19 +644,23 @@ public class Deliver_Activity extends AppCompatActivity {
                                                     }
 
                                                     cv.put("status_upload", "0");
+                                                    cv.put("picture1", expandedList.getPicture1());
+                                                    cv.put("picture2", expandedList.getPicture2());
+                                                    cv.put("picture3", expandedList.getPicture3());
+                                                    cv.put("comment", expandedList.getComment());
 
-                                                    if (!expandedList.getPicture1().equals("")) {
-                                                        cv.put("picture1", expandedList.getPicture1());
-                                                    }
-                                                    if (!expandedList.getPicture2().equals("")) {
-                                                        cv.put("picture2", expandedList.getPicture2());
-                                                    }
-                                                    if (!expandedList.getPicture3().equals("")) {
-                                                        cv.put("picture3", expandedList.getPicture3());
-                                                    }
-                                                    if (!expandedList.getComment().equals("")) {
-                                                        cv.put("comment", expandedList.getComment());
-                                                    }
+//                                                    if (!expandedList.getPicture1().equals("")) {
+//                                                        cv.put("picture1", expandedList.getPicture1());
+//                                                    }
+//                                                    if (!expandedList.getPicture2().equals("")) {
+//                                                        cv.put("picture2", expandedList.getPicture2());
+//                                                    }
+//                                                    if (!expandedList.getPicture3().equals("")) {
+//                                                        cv.put("picture3", expandedList.getPicture3());
+//                                                    }
+//                                                    if (!expandedList.getComment().equals("")) {
+//                                                        cv.put("comment", expandedList.getComment());
+//                                                    }
                                                     cv.put("modified_date", getdate());
                                                     databaseHelper.db().update("Plan", cv, "delivery_no= '" + expandedList.getDelivery_no() + "' and plan_seq = '" + expandedList.getPlan_seq() + "' and activity_type = 'UNLOAD' and " +
                                                             " consignment_no = '" + expandedList.getConsignment() + "' and waybill_no = '" + expandedList.getWaybil_no() + "' and trash = '0'", null);
@@ -703,7 +707,7 @@ public class Deliver_Activity extends AppCompatActivity {
                                     pd.dismiss();
 
                                     if (IsSuccess == 1) {
-                                        Toast.makeText(Deliver_Activity.this, "Saved.", Toast.LENGTH_SHORT).show();
+                                        Toasty.success(Deliver_Activity.this, "Saved", Toast.LENGTH_SHORT).show();
                                         getSQLite();
 
                                     } else {
@@ -720,7 +724,7 @@ public class Deliver_Activity extends AppCompatActivity {
 
 
                                         }
-                                        Toast.makeText(Deliver_Activity.this, "can't save.", Toast.LENGTH_SHORT).show();
+                                        Toasty.error(Deliver_Activity.this, "can't save", Toast.LENGTH_SHORT).show();
                                     }
                                 }
                             }.execute();
@@ -742,7 +746,7 @@ public class Deliver_Activity extends AppCompatActivity {
             expandableListView.smoothScrollToPositionFromTop(positionGroup, positionChiew);
 
 
-            Toasty.error(getApplicationContext(), "Please reason!", Toast.LENGTH_SHORT, true).show();
+            Toasty.info(getApplicationContext(), "Please reason!", Toast.LENGTH_SHORT, true).show();
             return;
         }
     }
@@ -1388,12 +1392,35 @@ public class Deliver_Activity extends AppCompatActivity {
                 startActivity(intent);
                 // Toast.makeText(getApplicationContext(), "ไปได้", Toast.LENGTH_SHORT).show();
             } else {
-                Toast.makeText(getApplicationContext(), "No enter.", Toast.LENGTH_SHORT).show();
+               // Toast.makeText(getApplicationContext(), "No enter.", Toast.LENGTH_SHORT).show();
+                dialogWarning();
             }
             // Toast.makeText(getApplicationContext(), "saved.", Toast.LENGTH_SHORT).show();
         } else {
-            Toast.makeText(getApplicationContext(), "Please save job.", Toast.LENGTH_SHORT).show();
+            Toasty.error(getApplicationContext(), "Please save job.", Toast.LENGTH_SHORT).show();
         }
+
+    }
+
+    private void dialogWarning() {
+        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
+        LayoutInflater inflater = this.getLayoutInflater();
+        View dialogView = inflater.inflate(R.layout.dialog_warning__scan, null);
+        dialogBuilder.setView(dialogView);
+        dialogBuilder.setCancelable(false);
+
+        Button btnCloseDialog = dialogView.findViewById(R.id.btnCloseDialog);
+        TextView tvTitle = dialogView.findViewById(R.id.tvTitle);
+        TextView tvMessess = dialogView.findViewById(R.id.tvMessess);
+
+        tvTitle.setText(getString(R.string.delivery));
+        tvMessess.setText(getString(R.string.please_scan_all_waybill_number));
+
+        alertDialog = dialogBuilder.create();
+        btnCloseDialog.setOnClickListener(v -> {
+            alertDialog.dismiss();
+        });
+        alertDialog.show();
 
     }
 
@@ -1451,7 +1478,7 @@ public class Deliver_Activity extends AppCompatActivity {
         if (isSaved) {
             Upload();
         } else {
-            Toast.makeText(getApplicationContext(), "Please save job.", Toast.LENGTH_SHORT).show();
+            Toasty.error(getApplicationContext(), "Please save job.", Toast.LENGTH_SHORT).show();
         }
 
     }
@@ -1707,7 +1734,7 @@ public class Deliver_Activity extends AppCompatActivity {
         IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
         if (result != null) {
             if (result.getContents() == null) {
-                Toast.makeText(this, "Result not found", Toast.LENGTH_SHORT).show();
+                Toasty.error(this, "Result not found", Toast.LENGTH_SHORT).show();
             } else {
                 String getScanText = result.getContents();
                 getScanText = getScanText.trim();
@@ -3475,6 +3502,7 @@ public class Deliver_Activity extends AppCompatActivity {
                     }
 
                 } catch (Exception e) {
+                    IsSuccess = 0;
                     e.printStackTrace();
                     return null;
                 }
@@ -3497,6 +3525,12 @@ public class Deliver_Activity extends AppCompatActivity {
 //                        Snackbar.make(viewFab, mess, Snackbar.LENGTH_LONG)
 //                                .setAction("Action", null).show();
                         break;
+                    case 0:
+                        if (progressDialog.isShowing()) {
+                            progressDialog.dismiss();
+                        }
+                        mess = "Sync error!!";
+                        Toasty.error(Deliver_Activity.this, mess, Toast.LENGTH_SHORT).show();
                     case 1:
                         //deleteJobAndImage();
                         new uploadInvoice().execute();
@@ -3508,7 +3542,7 @@ public class Deliver_Activity extends AppCompatActivity {
                         if (progressDialog.isShowing()) {
                             progressDialog.dismiss();
                         }
-                        Toast.makeText(Deliver_Activity.this, mess, Toast.LENGTH_SHORT).show();
+                        Toasty.error(Deliver_Activity.this, mess, Toast.LENGTH_SHORT).show();
 //                        Snackbar.make(viewFab, mess, Snackbar.LENGTH_LONG)
 //                                .setAction("Action", null).show();
                         break;
@@ -3927,12 +3961,12 @@ public class Deliver_Activity extends AppCompatActivity {
                     mess = "Synced";
                     getSQLite();
                     isSync = false;
-                    Toast.makeText(Deliver_Activity.this, mess, Toast.LENGTH_SHORT).show();
+                    Toasty.success(Deliver_Activity.this, mess, Toast.LENGTH_SHORT).show();
                     Var.synced = 1;
                     break;
                 case 2:
                     mess = "Sync error!!";
-                    Toast.makeText(Deliver_Activity.this, mess, Toast.LENGTH_SHORT).show();
+                    Toasty.error(Deliver_Activity.this, mess, Toast.LENGTH_SHORT).show();
                     break;
                 default:
                     Log.d("8sssssfs", String.valueOf(IsSuccess));

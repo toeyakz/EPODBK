@@ -50,6 +50,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
+import es.dmoral.toasty.Toasty;
 import ws.epod.BuildConfig;
 import ws.epod.Helper.ConnectionDetector;
 import ws.epod.Helper.DatabaseHelper;
@@ -203,20 +204,20 @@ public class Signature_Activity extends AppCompatActivity {
                 if (imgList[0] != null) {
                     if (takeImageFromcamera()) {
                         Log.d("Asfjklasasdf", "onClick: ถ่ายรูป");
-                        Toast.makeText(Signature_Activity.this, "Signature saved into the Gallery", Toast.LENGTH_SHORT).show();
+                        Toasty.success(Signature_Activity.this, "Signature saved into the Gallery", Toast.LENGTH_SHORT).show();
                         imgList = new String[2];
                         finish();
                     } else {
-                        Toast.makeText(Signature_Activity.this, "Unable to store the signature", Toast.LENGTH_SHORT).show();
+                        Toasty.error(Signature_Activity.this, "Unable to store the signature", Toast.LENGTH_SHORT).show();
                     }
 
                 } else {
                     if (addJpgSignatureToGallery(signatureBitmap)) {
                         Log.d("Asfjklasasdf", "onClick: เซ้็น");
-                        Toast.makeText(Signature_Activity.this, "Signature saved into the Gallery", Toast.LENGTH_SHORT).show();
+                        Toasty.success(Signature_Activity.this, "Signature saved into the Gallery", Toast.LENGTH_SHORT).show();
                         finish();
                     } else {
-                        Toast.makeText(Signature_Activity.this, "Unable to store the signature", Toast.LENGTH_SHORT).show();
+                        Toasty.error(Signature_Activity.this, "Unable to store the signature", Toast.LENGTH_SHORT).show();
                     }
                 }
 
@@ -314,7 +315,7 @@ public class Signature_Activity extends AppCompatActivity {
                 // If request is cancelled, the result arrays are empty.
                 if (grantResults.length <= 0
                         || grantResults[0] != PackageManager.PERMISSION_GRANTED) {
-                    Toast.makeText(Signature_Activity.this, "Cannot write images to external storage", Toast.LENGTH_SHORT).show();
+                    Toasty.error(Signature_Activity.this, "Cannot write images to external storage", Toast.LENGTH_SHORT).show();
                 }
             }
         }
