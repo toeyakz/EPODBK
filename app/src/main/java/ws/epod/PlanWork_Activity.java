@@ -1139,6 +1139,9 @@ public class PlanWork_Activity extends AppCompatActivity {
                     mess = "Sync error!!";
                     Snackbar.make(viewFab, mess, Snackbar.LENGTH_LONG)
                             .setAction("Action", null).show();
+                    if (progressDialog.isShowing()) {
+                        progressDialog.dismiss();
+                    }
                     break;
             }
             if (planWorkAdapter != null) {
