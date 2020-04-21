@@ -14,8 +14,8 @@ import java.util.Locale;
  */
 public class Var {
 
-    public static String dbname = "EPOD_DB.db";
-    // public static String dbname = Environment.getExternalStorageDirectory().getPath() + "/EPOD/EPOD_DB.db";
+    //public static String dbname = "EPOD_DB.db";
+     public static String dbname = Environment.getExternalStorageDirectory().getPath() + "/EPOD/EPOD_DB.db";
     // public static String dbname = "/storage/emulated/0/Android/data/ws.epod/files/DATABASE/EPOD_DB.db";
 
     //--------------

@@ -137,7 +137,7 @@ public interface APIInterface {
 
     @POST("services/service.php?func=getConsignment2")
     Call<ResponseBody> downloadConsignment(@Query("vehicle_id") String vehicle_id,
-                                           @Query("date") String date);
+                                           @Query("delivery_no") String date);
 
     @POST("services/service.php?func=logout")
     Call<ResponseBody> logout(@Query("user") String user,

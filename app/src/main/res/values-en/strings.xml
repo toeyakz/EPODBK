@@ -104,4 +104,6 @@
     <string name="saving">Saving..</string>
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="please_scan_all_waybill_number">Please scan all waybill numbers.</string>
+    <string name="go_to_setting">Go to setting</string>
+    <string name="please_enable_gps">Please enable GPS.</string>
 </resources>

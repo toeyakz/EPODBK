@@ -205,6 +205,7 @@ public class Login_Activity extends AppCompatActivity {
             Language_Locale.edit().putString("LANGUAGE_KEY", "THAI").apply();
 
         }
+
         setContentView(R.layout.activity_login_);
         final Toast tag = Toast.makeText(getBaseContext(), "Hello", Toast.LENGTH_SHORT);
 
@@ -230,6 +231,8 @@ public class Login_Activity extends AppCompatActivity {
         SharedPreferences login_data = getSharedPreferences("LOGIN", Context.MODE_PRIVATE);
         String status_login = login_data.getString("status_login", null);
         if (status_login != null) {
+
+
             if (status_login.equals("1")) {
 
                 Var.UserLogin.driver_id = login_data.getString("driver_id", "");
@@ -446,6 +449,7 @@ public class Login_Activity extends AppCompatActivity {
 
                                     jsonArray.getJSONObject(0).remove("status");
                                     Log.d("NARISLOG", "####" + jsonArray.toString());
+                                    Log.d("NARISLOG", "status_login: " + jsonArray.getJSONObject(0).getString("status_login"));
 
                                     NarisBaseValue.insertLogin(jsonArray);
 
@@ -516,8 +520,6 @@ public class Login_Activity extends AppCompatActivity {
                     Var.UserLogin.driver_lname = login_get.getString("driver_lname", "");
                     Var.UserLogin.driver_vehicle_id = login_get.getString("vehicle_id", "");
                     Var.UserLogin.driver_status_login = login_get.getString("status_login", "");
-
-
 
                     // login_get.edit().clear();
 

@@ -3,6 +3,9 @@ package ws.epod;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -13,6 +16,7 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.util.Log;
 import android.view.Menu;
 import android.view.View;
@@ -23,6 +27,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
@@ -62,9 +67,11 @@ import ws.epod.Helper.ConnectionDetector;
 import ws.epod.Helper.DatabaseHelper;
 import ws.epod.Helper.DirectionsJSONParser;
 import ws.epod.Helper.NarisBaseValue;
+import ws.epod.ObjectClass.CheckGPS.GPSActive;
 import ws.epod.ObjectClass.LanguageClass;
 import ws.epod.ObjectClass.SQLiteModel.JobList_Model;
 import ws.epod.ObjectClass.SQLiteModel.RouteMap_Model;
+
 
 public class DropPoint_Activity extends AppCompatActivity {
 
@@ -84,6 +91,7 @@ public class DropPoint_Activity extends AppCompatActivity {
 
     JobAdapter jobAdapter;
     String getDate = "";
+    GPSActive gpsActive;
 
 
     ArrayList<LatLng> markerPoints;
@@ -91,11 +99,15 @@ public class DropPoint_Activity extends AppCompatActivity {
     private ArrayList<LatLng> coords = new ArrayList<LatLng>();
     private GoogleMap mMap;
 
+
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         LanguageClass.setLanguage(getApplicationContext());
         setContentView(R.layout.activity_drop_point_);
+
+        gpsActive  = new GPSActive();
 
         narisv = new NarisBaseValue(getApplicationContext());
         netCon = new ConnectionDetector(getApplicationContext());
@@ -133,7 +145,10 @@ public class DropPoint_Activity extends AppCompatActivity {
         });
 
 
+
     }
+
+
 
 
     private void isListDrop() {
@@ -186,7 +201,7 @@ public class DropPoint_Activity extends AppCompatActivity {
 
         for (int i = 0; i < jobList_models.size(); i++) {
 
-            Log.d("dsfs7822s", "isListDrop: "+jobList_models.get(i).getRows_num());
+            Log.d("dsfs7822s", "isListDrop: " + jobList_models.get(i).getRows_num());
 
             String pick = jobList_models.get(i).getPick();
             String pickup = jobList_models.get(i).getPickUp();
@@ -588,6 +603,9 @@ public class DropPoint_Activity extends AppCompatActivity {
         super.onResume();
         mMapView.onResume();
         isListDrop();
+        if (!gpsActive.EnableGPSIfPossible(DropPoint_Activity.this)) {
+            Log.d("AS9d6asd", "yes");
+        }
     }
 
     @Override
