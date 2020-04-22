@@ -8,7 +8,6 @@ import android.provider.Settings;
 
 import androidx.appcompat.app.AlertDialog;
 
-import ws.epod.DropPoint_Activity;
 import ws.epod.R;
 
 public class GPSActive {

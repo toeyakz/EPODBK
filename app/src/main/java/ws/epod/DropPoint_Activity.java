@@ -100,14 +100,13 @@ public class DropPoint_Activity extends AppCompatActivity {
     private GoogleMap mMap;
 
 
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         LanguageClass.setLanguage(getApplicationContext());
         setContentView(R.layout.activity_drop_point_);
 
-        gpsActive  = new GPSActive();
+        gpsActive = new GPSActive();
 
         narisv = new NarisBaseValue(getApplicationContext());
         netCon = new ConnectionDetector(getApplicationContext());
@@ -145,10 +144,7 @@ public class DropPoint_Activity extends AppCompatActivity {
         });
 
 
-
     }
-
-
 
 
     private void isListDrop() {
@@ -156,7 +152,7 @@ public class DropPoint_Activity extends AppCompatActivity {
 
         String delivery_date = getIntent().getExtras().getString("delivery_date");
         String delivery_no = getIntent().getExtras().getString("delivery_no");
-        String sql = "select pl.station_name, pl.station_address, pl.plan_seq, pl.plan_in, plan_out, pl.delivery_no, pl.station_lat, pl.station_lon, pl.station_code  \n" +
+/*        String sql = "select pl.station_name, pl.station_address, pl.plan_seq, pl.plan_in, plan_out, pl.delivery_no, pl.station_lat, pl.station_lon, pl.station_code  \n" +
                 ", (select count( pl2.box_no) from Plan pl2 where pl2.activity_type = 'LOAD' and pl2.delivery_no = pl.delivery_no and pl2.station_code = pl.station_code and pl2.trash = pl.trash) as pick  \n" +
                 ", (select count( pl2.box_no) from Plan pl2 where pl2.activity_type = 'LOAD' and pl2.is_scaned <> '0'and pl2.delivery_no = pl.delivery_no and pl2.station_code = pl.station_code and pl2.trash = pl.trash \n" +
                 "and pl2.order_no in (select order_no from pic_sign where pic_sign_load <> '')) as pickUp  \n" +
@@ -166,7 +162,54 @@ public class DropPoint_Activity extends AppCompatActivity {
                 "and pl2.order_no in (select order_no from pic_sign where pic_sign_unload <> '')) as delivery\n" +
                 ", ROW_NUMBER() OVER(ORDER BY pl.plan_seq) AS rows_num \n" +
                 "from Plan pl where pl.delivery_date='" + delivery_date + "' and pl.delivery_no = '" + delivery_no + "' and pl.trash = '0'  " +
-                "GROUP BY pl.delivery_no, pl.station_name order by cast(pl.plan_seq as real) asc";
+                "GROUP BY pl.delivery_no, pl.station_name order by cast(pl.plan_seq as real) asc";*/
+/*       String sql = "select pl.station_name, pl.station_address, cast(pl.plan_seq as int) as plan_seq, pl.plan_in, plan_out, pl.delivery_no, pl.station_lat, pl.station_lon, pl.station_code   \n" +
+                ", (select count( pl2.box_no) from Plan pl2 where pl2.activity_type = 'LOAD' and pl2.delivery_no = pl.delivery_no and pl2.station_code = pl.station_code and pl2.trash = pl.trash) as pick   \n" +
+                ", (select count( pl2.box_no) from Plan pl2 where pl2.activity_type = 'LOAD' and pl2.is_scaned <> '0'and pl2.delivery_no = pl.delivery_no and pl2.station_code = pl.station_code and pl2.trash = pl.trash  \n" +
+                "and pl2.order_no in (select order_no from pic_sign where pic_sign_load <> '')) as pickUp   \n" +
+                ", (select count( pl2.box_no) from Plan pl2 where pl2.activity_type = 'UNLOAD' and pl2.delivery_no = pl.delivery_no and pl2.station_code = pl.station_code and pl2.trash = pl.trash  \n" +
+                "and pl2.order_no in (select order_no from pic_sign where pic_sign_load <> '')) as deli   \n" +
+                ", (select count( pl2.box_no) from Plan pl2 where pl2.activity_type = 'UNLOAD' and pl2.is_scaned <> '0' and pl2.delivery_no = pl.delivery_no and pl2.station_code = pl.station_code and pl2.trash = pl.trash  \n" +
+                "and pl2.order_no in (select order_no from pic_sign where pic_sign_unload <> '')) as delivery \n" +
+                ", ROW_NUMBER() OVER(ORDER BY pl.plan_seq) AS rows_num \n" +
+                ", 1 as fin " +
+                "from Plan pl where pl.delivery_date = '" + delivery_date + "' and pl.delivery_no = '" + delivery_no + "' and pl.trash = '0'   " +
+                "GROUP BY pl.delivery_no, pl.station_name \n" +
+                "having pick = pickUp and deli = delivery\n" +
+                "union\n" +
+                "select pl.station_name, pl.station_address, cast(pl.plan_seq as int) as plan_seq, pl.plan_in, plan_out, pl.delivery_no, pl.station_lat, pl.station_lon, pl.station_code   \n" +
+                ", (select count( pl2.box_no) from Plan pl2 where pl2.activity_type = 'LOAD' and pl2.delivery_no = pl.delivery_no and pl2.station_code = pl.station_code and pl2.trash = pl.trash) as pick   \n" +
+                ", (select count( pl2.box_no) from Plan pl2 where pl2.activity_type = 'LOAD' and pl2.is_scaned <> '0'and pl2.delivery_no = pl.delivery_no and pl2.station_code = pl.station_code and pl2.trash = pl.trash  \n" +
+                "and pl2.order_no in (select order_no from pic_sign where pic_sign_load <> '')) as pickUp   \n" +
+                ", (select count( pl2.box_no) from Plan pl2 where pl2.activity_type = 'UNLOAD' and pl2.delivery_no = pl.delivery_no and pl2.station_code = pl.station_code and pl2.trash = pl.trash  \n" +
+                "and pl2.order_no in (select order_no from pic_sign where pic_sign_load <> '')) as deli   \n" +
+                ", (select count( pl2.box_no) from Plan pl2 where pl2.activity_type = 'UNLOAD' and pl2.is_scaned <> '0' and pl2.delivery_no = pl.delivery_no and pl2.station_code = pl.station_code and pl2.trash = pl.trash  \n" +
+                "and pl2.order_no in (select order_no from pic_sign where pic_sign_unload <> '')) as delivery \n" +
+                ", ROW_NUMBER() OVER(ORDER BY pl.plan_seq) AS rows_num\n" +
+                ", 0 as fin " +
+                "from Plan pl where pl.delivery_date = '" + delivery_date + "' and pl.delivery_no = '" + delivery_no + "' and pl.trash = '0'   " +
+                "GROUP BY pl.delivery_no, pl.station_name \n" +
+                "having pick <> pickUp or deli <> delivery\n" +
+                "\n" +
+                "order by fin, plan_seq\n";*/
+
+        String sql = "select x1.*\n" +
+                ", (case when x1.pick = x1.pickUp and x1.deli = x1.delivery then 1 else 0 end) as fin\n" +
+                "from(\n" +
+                "select pl.station_name, pl.station_address, cast(pl.plan_seq as int) as plan_seq, pl.plan_in, plan_out, pl.delivery_no, pl.station_lat, pl.station_lon, pl.station_code   \n" +
+                ", (select count( pl2.box_no) from Plan pl2 where pl2.activity_type = 'LOAD' and pl2.delivery_no = pl.delivery_no and pl2.station_code = pl.station_code and pl2.trash = pl.trash) as pick   \n" +
+                ", (select count( pl2.box_no) from Plan pl2 where pl2.activity_type = 'LOAD' and pl2.is_scaned <> '0'and pl2.delivery_no = pl.delivery_no and pl2.station_code = pl.station_code and pl2.trash = pl.trash  \n" +
+                "and pl2.order_no in (select order_no from pic_sign where pic_sign_load <> '')) as pickUp   \n" +
+                ", (select count( pl2.box_no) from Plan pl2 where pl2.activity_type = 'UNLOAD' and pl2.delivery_no = pl.delivery_no and pl2.station_code = pl.station_code and pl2.trash = pl.trash  \n" +
+                "and pl2.order_no in (select order_no from pic_sign where pic_sign_load <> '')) as deli   \n" +
+                ", (select count( pl2.box_no) from Plan pl2 where pl2.activity_type = 'UNLOAD' and pl2.is_scaned <> '0' and pl2.delivery_no = pl.delivery_no and pl2.station_code = pl.station_code and pl2.trash = pl.trash  \n" +
+                "and pl2.order_no in (select order_no from pic_sign where pic_sign_unload <> '')) as delivery \n" +
+                ", ROW_NUMBER() OVER(ORDER BY cast(pl.plan_seq as int)) AS rows_num\n" +
+                "\n" +
+                "from Plan pl where pl.delivery_date = '" + delivery_date + "' and pl.delivery_no = '" + delivery_no + "' and pl.trash = '0'   " +
+                "GROUP BY pl.delivery_no, pl.station_name \n" +
+                ")x1\n" +
+                "order by fin, x1.plan_seq";
         Log.d("isListDrop", "total line " + sql);
         Cursor cursor = databaseHelper.selectDB(sql);
         Log.d("isListDrops8a3a89", "total line " + cursor.getCount());
@@ -199,7 +242,7 @@ public class DropPoint_Activity extends AppCompatActivity {
         ArrayList<JobList_Model> jobList_3 = new ArrayList<>();
 
 
-        for (int i = 0; i < jobList_models.size(); i++) {
+        /*for (int i = 0; i < jobList_models.size(); i++) {
 
             Log.d("dsfs7822s", "isListDrop: " + jobList_models.get(i).getRows_num());
 
@@ -224,24 +267,17 @@ public class DropPoint_Activity extends AppCompatActivity {
             // ลบหัวอันที่แอดเข้าไปแล้ว
             jobList_models.remove(jobList_2.get(i));
 
-//            for(int j = 0; j < jobList_models.size(); j++){
-//                jobList_models.get(j).setPlan_seq(j+jobList_models.get(j).getPlan_seq()+1);
-//                jobList_2.get(i).setPlan_seq(i+jobList_2.get(i).getPlan_seq()+1);
-//
-//            }
-
-
         }
 
         jobList_3.addAll(jobList_models);
-        jobList_3.addAll(jobList_2);
+        jobList_3.addAll(jobList_2);*/
 
 
         //setToolbar
         tvDelevery_no.setText(delivery_no);
 
         //setAdapter Lsit
-        jobAdapter = new JobAdapter(jobList_3, getApplicationContext());
+        jobAdapter = new JobAdapter(jobList_models, getApplicationContext());
         rvJob.setAdapter(jobAdapter);
         // cursor.close();
 

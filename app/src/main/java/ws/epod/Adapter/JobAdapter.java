@@ -55,7 +55,7 @@ public class JobAdapter extends RecyclerView.Adapter<JobAdapter.ViewHolder> {
 
         viewHolder.tvCustomer_name_Job.setText("("+list.get(i).getStation_code()+") "+list.get(i).getStation_name());
         viewHolder.tvStation_address_job.setText(list.get(i).getStation_address());
-        viewHolder.tvPlan_seq_Job.setText(list.get(i).getRows_num() + ".");
+        viewHolder.tvPlan_seq_Job.setText(list.get(i).getPlan_seq() + ".");
         // viewHolder.textView20.setText(context.getString(R.string.appoint) + ": ");
         viewHolder.textView17.setText(context.getString(R.string.address) + ": ");
 

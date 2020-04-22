@@ -36,8 +36,8 @@ public class Var {
     public static String WEBSERVICE = "http://wisasoft.com:8997/EPOD_MSM/EPOD_MSMMOBILE/index_1.php?";
     public static String WEBSERVICE2 = "http://www.wisasoft.com:8997/TMS_MSM/resources/function/php/service.php?";
     //public static String host = "http://www.wisasoft.com:8997";
-    public static String host = "https://tms.misumi.co.th";
-    // public static String host = "http://tmsthai.com/tms_msm/";
+    //public static String host = "https://tms.misumi.co.th";
+     public static String host = "http://tmsthai.com/tms_msm/";
     public static String WEBSERVICE_PICTURE = "http://wisasoft.com:8997/ILS/ILS_WSMOBILE/uploadpic.php";
 
 
